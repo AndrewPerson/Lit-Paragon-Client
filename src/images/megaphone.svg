@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="path_1" />
+    <path d="M16 32L16 32.66C15.9764 36.7831 14.4877 40.7634 11.7999 43.8901L11.8 43.94C6.4 50.32 0 61.74 0 80C0 96.55 5.3 108.23 11.68 115.91C14.4792 119.317 16.0064 123.591 16 128L16 128C16 145.673 30.3269 160 48 160L56 160C60.4183 160 64 156.418 64 152L64 8C64 3.58173 60.4183 0 56 0L48 0C30.3269 0 16 14.3269 16 32L16 32Z" transform="translate(32 144)" id="path_2" />
+    <path d="M180.21 154.601L179.28 154.431C177.394 154.071 176.03 152.422 176.03 150.501L176.03 30.0515C176.03 17.4115 167.64 6.05146 155.14 1.73146C143.22 -2.37854 130.8 0.97146 123.46 10.2615C107.845 28.9076 90.6807 46.1992 72.1503 61.9512C48.52 81.9515 25.91 96.2015 5.15002 104.261C2.05078 105.443 0.00213623 108.415 0 111.731L3.05176e-05 267.051C0.00497437 273.443 3.81476 279.22 9.68927 281.741C29.03 290.031 49.93 303.571 71.69 322.021C90.3601 337.916 107.649 355.365 123.37 374.182C128.476 380.587 136.281 384.238 144.47 384.051C148.021 384.036 151.546 383.448 154.91 382.311C167.74 378.051 176.03 367.101 176.03 354.451L176.03 233.581C176.032 231.632 177.438 229.968 179.36 229.641L180.21 229.501C189.83 226.891 208.03 215.721 208.03 192.051C208.03 168.381 189.83 157.211 180.21 154.601L180.21 154.601Z" transform="translate(271.96997 31.948547)" id="path_3" />
+    <path d="M112 176L112 8C112 3.58173 108.418 0 104 0L8 0C3.58173 0 0 3.58173 0 8L0 312C0 325.255 10.7452 336 24 336L76.45 336C86.5539 336.084 96.1279 331.488 102.38 323.55C108.802 315.319 110.751 304.45 107.59 294.5C105.97 289.32 103.96 283.5 101.82 277.31C93.91 254.41 83.48 240.24 80.7 207.99C98.0953 207.609 111.999 193.399 112 176L112 176Z" transform="translate(128 144)" id="path_4" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_2" />
+    </clipPath>
+    <clipPath id="clip_2">
+      <use xlink:href="#path_3" />
+    </clipPath>
+    <clipPath id="clip_3">
+      <use xlink:href="#path_4" />
+    </clipPath>
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+  </defs>
+  <g id="megaphone">
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="Background" fill="none" fill-rule="evenodd" stroke="none" />
+    <g clip-path="url(#mask_1)">
+      <g id="Shape">
+        <use stroke="none" fill="#000000" fill-opacity="0" xlink:href="#path_2" fill-rule="evenodd" />
+        <g clip-path="url(#clip_1)">
+          <use xlink:href="#path_2" fill="none" stroke="#000000" stroke-width="50" />
+        </g>
+      </g>
+      <g id="Shape">
+        <use stroke="none" fill="#000000" fill-opacity="0" xlink:href="#path_3" fill-rule="evenodd" />
+        <g clip-path="url(#clip_2)">
+          <use xlink:href="#path_3" fill="none" stroke="#000000" stroke-width="60" />
+        </g>
+      </g>
+      <g id="Shape">
+        <use stroke="none" fill="#000000" fill-opacity="0" xlink:href="#path_4" fill-rule="evenodd" />
+        <g clip-path="url(#clip_3)">
+          <use xlink:href="#path_4" fill="none" stroke="#000000" stroke-width="60" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

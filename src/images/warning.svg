@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="path_1" />
+    <path d="M401.024 333.33L230.594 16.83C218.514 -5.61 186.334 -5.61 174.244 16.83L3.82431 333.33C-1.51116 343.24 -1.24847 355.224 4.51612 364.89C10.2807 374.557 20.6996 380.484 31.9543 380.5L372.844 380.5C384.108 380.501 394.543 374.581 400.32 364.912C406.096 355.242 406.364 343.248 401.024 333.33L401.024 333.33Z" transform="translate(48.045685 65.75)" id="path_2" />
+    <path d="M43.5013 22.64L37.7613 144.64C37.7613 150.356 34.7117 155.638 29.7613 158.496C24.8109 161.355 18.7117 161.355 13.7613 158.496C8.81087 155.638 5.76129 150.356 5.76129 144.64L0.021286 22.69L0.021286 22.69C-0.239349 16.8021 1.9028 11.0609 5.95654 6.78276C10.0103 2.50464 15.6279 0.0566101 21.5213 1.52588e-05L21.7313 0C27.6656 -0.00306702 33.3433 2.41989 37.4469 6.70668C41.5505 10.9935 43.7234 16.7715 43.4613 22.7L43.5013 22.64Z" transform="translate(228.68872 173.46)" id="path_3" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_2" />
+    </clipPath>
+    <clipPath id="clip_2">
+      <use xlink:href="#path_3" />
+    </clipPath>
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+  </defs>
+  <g id="warning">
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="Background" fill="none" fill-rule="evenodd" stroke="none" />
+    <g clip-path="url(#mask_1)">
+      <g id="Shape-path">
+        <g clip-path="url(#clip_1)">
+          <use xlink:href="#path_2" fill="none" stroke="#000000" stroke-width="64" />
+        </g>
+      </g>
+      <path d="M20 40C8.95432 40 1.52588e-05 31.0457 0 20C-1.52588e-05 8.95435 8.95425 3.05176e-05 19.9999 0C31.0456 -3.05176e-05 39.9999 8.95422 40 19.9999C40 31.0457 31.0456 40.0001 19.9999 40L20 40Z" transform="translate(230.47 357.25)" id="Shape-path" fill="#000000" fill-rule="evenodd" stroke="none" />
+      <g id="Shape-path">
+        <g clip-path="url(#clip_2)">
+          <use xlink:href="#path_3" fill="none" stroke="#000000" stroke-width="64" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

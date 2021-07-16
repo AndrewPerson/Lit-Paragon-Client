@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="path_1" />
+    <path d="M197.66 2.21907C194.567 -0.739693 189.693 -0.739693 186.6 2.21907L2.5 178.089C0.920036 179.6 0.0275154 181.693 0.029995 183.879L0 348.939C0 366.612 14.3269 380.939 32 380.939L128.1 380.939C136.937 380.939 144.1 373.776 144.1 364.939L144.1 228.939C144.1 224.521 147.682 220.939 152.1 220.939L232.1 220.939C236.518 220.939 240.1 224.521 240.1 228.939L240.1 364.939C240.1 373.776 247.263 380.939 256.1 380.939L352.16 380.939C369.833 380.939 384.16 366.612 384.16 348.939L384.16 183.879C384.163 181.693 383.27 179.601 381.69 178.089L197.66 2.21907Z" transform="translate(63.899994 99.06093)" id="path_2" />
+    <path d="M474.91 212.15L400.11 140.59L400.11 32C400.11 23.1634 392.947 16 384.11 16L336.11 16C327.274 16 320.11 23.1634 320.11 32L320.11 64L262.19 8.62C256.77 3.14 248.71 0 240 0L240 0C231.32 0 223.28 3.14 217.86 8.63L5.16038 212.13C-1.05962 218.13 -1.83962 228 3.82038 234.5C6.69274 237.816 10.8005 239.807 15.1828 240.007C19.5651 240.207 23.8374 238.6 27.0004 235.56L234.5 37.28C237.593 34.3212 242.467 34.3212 245.56 37.28L453.08 235.56C459.445 241.664 469.548 241.467 475.67 235.12C481.81 228.76 481.3 218.26 474.91 212.15L474.91 212.15Z" transform="translate(15.999619 32)" id="path_3" />
+    <clipPath id="clip_1">
+      <use xlink:href="#path_2" />
+    </clipPath>
+    <clipPath id="clip_2">
+      <use xlink:href="#path_3" />
+    </clipPath>
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+  </defs>
+  <g id="home">
+    <path d="M0 0L512 0L512 512L0 512L0 0Z" id="Background" fill="none" fill-rule="evenodd" stroke="none" />
+    <g clip-path="url(#mask_1)">
+      <g id="Shape">
+        <use stroke="none" fill="#000000" fill-opacity="0" xlink:href="#path_2" fill-rule="evenodd" />
+        <g clip-path="url(#clip_1)">
+          <use xlink:href="#path_2" fill="none" stroke="#000000" stroke-width="60" />
+        </g>
+      </g>
+      <g id="Shape">
+        <use stroke="none" fill="#000000" fill-opacity="0" xlink:href="#path_3" fill-rule="evenodd" />
+        <g clip-path="url(#clip_2)">
+          <use xlink:href="#path_3" fill="none" stroke="#000000" stroke-width="60" />
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>
