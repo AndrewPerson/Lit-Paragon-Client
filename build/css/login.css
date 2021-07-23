@@ -1,0 +1,35 @@
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+body > * {
+    align-self: center;
+    margin-bottom: 3vmin;
+    margin-top: 3vmin;
+}
+
+.logo {
+    width: 60vmin;
+    height: 60vmin;
+}
+
+.login {
+    border: none;
+    background-color: rgb(82, 143, 255);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    max-width: max-content;
+}
+
+.login:hover {
+    background-color: rgb(63, 124, 255);
+}
+
+.login:active {
+    background-color: rgb(64, 100, 219);
+}

@@ -5,12 +5,7 @@ self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
 self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 self.addEventListener('message', event => onMessage(event));
 
-const OFFLINE_CACHE = 'Offline Resources';
-const VALID_CACHES = [
-    "Offline Resources",
-    "Version",
-    "User Resources"
-];
+const cacheName = 'Offline Resources';
 const offlineAssetsExclude = [ /^service-worker\.js$/ ];
 
 //const versionUrl = "https://paragonstorage.blob.core.windows.net/version/version.txt";
@@ -20,7 +15,7 @@ var updating = false;
 
 async function onInstall(event) {
     self.skipWaiting();
-    await Update(await GetLatestVersion());
+    //await Update(await GetLatestVersion());
 }
 
 async function GetLatestVersion() {
@@ -36,42 +31,33 @@ async function GetLatestVersion() {
     }
 }
 
-async function CacheFile(file, cache) {
-    var fileResponse = await fetch(file);
-    await cache.put(fileResponse.url, fileResponse);
-}
-
 async function Update(version) {
     updating = true;
     
-    var fileCache = await caches.open(OFFLINE_CACHE);
+    var fileCache = await caches.open(cacheName);
     var versionCache = await caches.open("Version");
 
     // Fetch and cache all matching items from the assets manifest
     var assetData = self.assets.
         filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset)));
 
-    var filePromises = [];
-    assetData.forEach((asset, index, array) => {
-        filePromises.push(CacheFile(asset, fileCache));
+    downloadsLeft = assetData.length;
+
+    self.assets.forEach((asset, index, array) => {
+        fetch(asset)
+        .then(file => {
+            fileCache.put(file.url, file)
+            .then(() => {
+                downloadsLeft--;
+                if (downloadsLeft == 0) {
+                    versionCache.put("Version", new Response(version))
+                    .then(() => {
+                        updating = false;
+                    });
+                }
+            });
+        });
     });
-
-    await Promise.all(filePromises);
-
-    var keys = await fileCache.keys();
-
-    keys.filter(key => self.assets.includes(key));
-
-    var deletePromises = [];
-    keys.forEach((key, index, array) => {
-        deletePromises.push(fileCache.delete(key));
-    });
-
-    await Promise.all(deletePromises);
-
-    await versionCache.put("Version", new Response(version));
-
-    updating = false;
 }
 
 async function onActivate(event) {
@@ -92,7 +78,7 @@ async function onFetch(event) {
 
         const request = event.request;
         request.redirect = "follow";
-        const cache = await caches.open(OFFLINE_CACHE);
+        const cache = await caches.open(cacheName);
 
         let result = await cache.match(request);
         if (result instanceof Response) return result;
@@ -104,8 +90,6 @@ async function onFetch(event) {
 
 async function onMessage(event) {
     if (event.data.command === 'update') {
-        if (updating) return;
-
         var latestVersion = await GetLatestVersion();
 
         if (latestVersion) {

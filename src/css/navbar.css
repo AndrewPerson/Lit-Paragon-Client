@@ -1,0 +1,25 @@
+.laptop-screen {
+    display: flex;
+    align-items: flex-start;
+}
+
+.laptop-screen > * :not(nav-bar) {
+    margin-left: 2vmin;
+}
+
+.mobile-screen {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    width: fit-content;
+    align-items: flex-start;
+}
+
+.mobile-screen > * :not(nav-bar) {
+    margin-left: 2vmin;
+    order: 1;
+}
+
+nav-bar + * {
+    flex: 1;
+}

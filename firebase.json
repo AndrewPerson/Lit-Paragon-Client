@@ -1,0 +1,35 @@
+{
+    "hosting": {
+        "public": "build",
+        "ignore": [
+            "firebase.json",
+            "**/.*",
+            "**/node_modules/**",
+            "build/assets"
+        ],
+        "redirects": [
+            {
+                "source": "/",
+                "destination": "/dailytimetable",
+                "type": 301
+            },
+            {
+                "source": "/daytimetable",
+                "destination": "/dailytimetable",
+                "type": 302
+            }
+        ],
+        "headers": [
+            {
+                "source": "**",
+                "headers": [
+                    {
+                        "key": "Cache-Control",
+                        "value": "no-store"
+                    }
+                ]
+            }
+        ],
+        "cleanUrls": "true"
+    }
+}
