@@ -146,3 +146,14 @@ export class NavItem extends LitElement {
 }
 
 customElements.define("nav-item", NavItem);
+
+export class Warning extends LitElement {
+    render() {
+        if (window.serversOffline) {
+            return html`
+                
+            `
+        }
+        else return html``;
+    }
+}

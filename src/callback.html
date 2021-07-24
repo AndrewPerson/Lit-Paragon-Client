@@ -13,7 +13,7 @@
     <base href="/" />
 
     <link href="css/app.css" rel="stylesheet" />
-    <link href="css/navbar.css" rel="stylesheet" />
+    <link href="css/login.css" rel="stylesheet" />
     <link href="css/bootstrap.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
@@ -22,20 +22,21 @@
 </head>
 
 <body>
-    <script src="main.js"></script>
+    <img class="logo" src="images/logo.svg" />
 
-    <nav-bar></nav-bar>
-
-    <main>
-        <p id="code"></p>
-    </main>
+    <h3>Logging in...</h3>
     
     <script>
         async function Token(code) {
-            var tokenResponse = await fetch("https://webparagon.azurewebsites.net/api/auth", {
-                method: "POST",
-                body: code
-            });
+            try {
+                var tokenResponse = await fetch("https://webparagon.azurewebsites.net/api/auth", {
+                    method: "POST",
+                    body: code
+                });
+            }
+            catch (e) {
+                location.href = location.origin + "/login";
+            }
 
             var textPromise = tokenResponse.text();
 
@@ -46,14 +47,14 @@
         var params = new URLSearchParams(window.location.search);
 
         var code = params.get("code");
-        document.getElementById("code").textContent = code;
 
         Token(code)
         .then(() => {
-            // location.href = "https://webparagon.web.app/dailytimetable";
-            console.log(code);
+            location.href = location.origin + "/dailytimetable";
         });
     </script>
+
+    <script src="main.js"></script>
 </body>
 
 </html>

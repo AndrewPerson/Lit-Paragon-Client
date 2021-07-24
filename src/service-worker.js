@@ -11,6 +11,7 @@ const VALID_CACHES = [
     "Version",
     "User Resources"
 ];
+
 const offlineAssetsExclude = [ /^service-worker\.js$/ ];
 
 //const versionUrl = "https://paragonstorage.blob.core.windows.net/version/version.txt";
@@ -37,11 +38,18 @@ async function GetLatestVersion() {
 }
 
 async function CacheFile(file, cache) {
-    var fileResponse = await fetch(file);
+    try {
+        var fileResponse = await fetch(file);
+    } catch (e) {
+        return;
+    }
+
     await cache.put(fileResponse.url, fileResponse);
 }
 
 async function Update(version) {
+    if (!version) return;
+
     updating = true;
     
     var fileCache = await caches.open(OFFLINE_CACHE);
@@ -52,20 +60,20 @@ async function Update(version) {
         filter(asset => !offlineAssetsExclude.some(pattern => pattern.test(asset)));
 
     var filePromises = [];
-    assetData.forEach((asset, index, array) => {
-        filePromises.push(CacheFile(asset, fileCache));
-    });
+    assetData.forEach(asset =>
+        filePromises.push(CacheFile(asset, fileCache))
+    );
 
     await Promise.all(filePromises);
 
     var keys = await fileCache.keys();
 
-    keys.filter(key => self.assets.includes(key));
-
+    var toDelete = keys.filter(key => !self.assets.includes(key.url.replace(location.origin, "")));
+    
     var deletePromises = [];
-    keys.forEach((key, index, array) => {
-        deletePromises.push(fileCache.delete(key));
-    });
+    toDelete.forEach(key =>
+        deletePromises.push(fileCache.delete(key))
+    );
 
     await Promise.all(deletePromises);
 
@@ -76,13 +84,6 @@ async function Update(version) {
 
 async function onActivate(event) {
     clients.claim();
-    // Delete unused caches
-    /*
-    const cacheKeys = await caches.keys();
-    await Promise.all(cacheKeys
-        .filter(key => key !== cacheName)
-        .map(key => caches.delete(key)));
-    */
 }
 
 async function onFetch(event) {
@@ -91,7 +92,6 @@ async function onFetch(event) {
         // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
 
         const request = event.request;
-        request.redirect = "follow";
         const cache = await caches.open(OFFLINE_CACHE);
 
         let result = await cache.match(request);

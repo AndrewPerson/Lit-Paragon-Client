@@ -171,4 +171,15 @@ class NavItem extends h {
 
 customElements.define("nav-item", NavItem);
 
-export { Arrangment, NavItem, Navbar };
+class Warning extends h {
+    render() {
+        if (window.serversOffline) {
+            return T`
+                
+            `
+        }
+        else return T``;
+    }
+}
+
+export { Arrangment, NavItem, Navbar, Warning };

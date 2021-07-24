@@ -10,59 +10,10 @@ function login() {
                     `&redirect_uri=${location.origin}/callback`;
 }
 
-async function onload() {
-    if (window.location.hostname == "web-paragon.firebaseapp.com") {
-        window.location.href = "https://web-paragon.web.app";
-    }
-
-    if (innerWidth >= innerHeight) {
-        document.getElementsByTagName("body").item(0).classList.add("laptop-screen");
-    }
-    else {
-        document.getElementsByTagName("body").item(0).classList.add("mobile-screen");
-    }
-
-    if (location.host != "web-paragon.web.app") return;
-    
-    var registration = await navigator.serviceWorker.getRegistration('service-worker.js');
-
-    if (registration) {
-        try
-        {
-            await registration.update();
-            await Update();
-        }
-        catch(e) {}
-    }
-    else
-    {
-        await navigator.serviceWorker.register("service-worker.js");
-        await Update();
-    }
-
-    if (location.pathname == "/login") return;
-    if (location.pathname == "/callback") return;
-
-    var resourceCache = await caches.open(RESOURCE_CACHE);
-
-    var token = await resourceCache.match("Token");
-        
-    if (!token) location.pathname = "/login";
-
-    var lastUpdatedResponse = await resourceCache.match("Last Updated");
-    
-    if (lastUpdatedResponse)
-    {
-        var lastUpdated = new Date(await lastUpdatedResponse.text());
-
-        if (new Date() - lastUpdated < 3600000) return;
-    }
-
+async function UpdateResources(token, resourceCache) {
     var token = await token.text();
 
     var resourceBundle = await GetAllResources(token);
-
-    console.log(resourceBundle);
 
     var resources = resourceBundle.resources;
     token = resourceBundle.token;
@@ -78,14 +29,64 @@ async function onload() {
     }
     
     await Promise.all(promises);
+}
 
-    if (finished) {
-        finished();
+async function onload() {
+    if (window.location.hostname == "web-paragon.firebaseapp.com") {
+        window.location.href = "https://web-paragon.web.app";
     }
+
+    if (innerWidth >= innerHeight) {
+        document.getElementsByTagName("body").item(0).classList.add("laptop-screen");
+    }
+    else {
+        document.getElementsByTagName("body").item(0).classList.add("mobile-screen");
+    }
+
+    if (location.origin == "https://web-paragon.web.app") {
+        var registration = await navigator.serviceWorker.getRegistration('service-worker.js');
+
+        if (registration) {
+            try
+            {
+                await registration.update();
+                await Update();
+            }
+            catch(e) {}
+        }
+        else
+        {
+            await navigator.serviceWorker.register("service-worker.js");
+            await Update();
+        }
+    }
+
+    if (location.pathname == "/login") return;
+    if (location.pathname == "/callback") return;
+
+    var resourceCache = await caches.open(RESOURCE_CACHE);
+
+    var token = await resourceCache.match("Token");
+    
+    if (!token) location.pathname = "/login";
+
+    var lastUpdatedResponse = await resourceCache.match("Last Updated");
+    
+    if (lastUpdatedResponse)
+    {
+        var lastUpdated = new Date(await lastUpdatedResponse.text());
+
+        if (new Date() - lastUpdated >= 3600000) UpdateResources(token, resourceCache);
+    }
+    else UpdateResources(token, resourceCache);
+
+    // Call function "finished" if it exists.
+    // This will execute a custom callback defined in the page.
+    if (window.finished instanceof Function) await window.finished();
 }
 
 async function Update() {
-    if (location.host != "web-paragon.web.app") return;
+    if (location.origin != "https://web-paragon.web.app") return;
 
     var worker = await navigator.serviceWorker.ready;
 
@@ -93,8 +94,18 @@ async function Update() {
 }
 
 async function GetAllResources(token) {
-    var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
-
+    try {
+        var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
+    } catch (e) {
+        if (resourceResponse.status == 403) {
+            window.serversOffline = true;
+        }
+        else {
+            await caches.delete(RESOURCE_CACHE);
+            location.href = location.origin + "/login";
+        }
+    }
+    
     var resources = JSON.parse(await resourceResponse.text());
 
     var newToken = resources["token"];

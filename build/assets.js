@@ -1,6 +1,7 @@
 self.assets = [
 	"/404",
 	"/announcements",
+	"/assets.js",
 	"/barcode",
 	"/calendar",
 	"/callback",

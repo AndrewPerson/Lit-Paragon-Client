@@ -21,9 +21,7 @@
     <script type="module" src="elements.js"></script>
 </head>
 
-<body>
-    <script src="main.js"></script>
-    
+<body>    
     <nav-bar></nav-bar>
     
     <main>
@@ -36,11 +34,13 @@
     </main>
 
     <script>
-        GetResourceFromCache("dailytimetable")
-        .then(resource => {
+        window.finished = async function () {
+            var resource = await GetResourceFromCache("dailytimetable");
             document.getElementById("output").innerText = resource;
-        });
+        }
     </script>
+
+    <script src="main.js"></script>
 </body>
 
 </html>
