@@ -94,25 +94,37 @@ async function Update() {
 }
 
 async function GetAllResources(token) {
-    try {
-        var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
-    } catch (e) {
-        if (resourceResponse.status == 403) {
-            window.serversOffline = true;
-        }
-        else {
-            await caches.delete(RESOURCE_CACHE);
-            location.href = location.origin + "/login";
-        }
+    var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
+
+    if (!resourceResponse) location.href = location.origin + "/login";
+
+    if (resourceResponse.status == 403) {
+        window.serversOffline = true;
+    }
+    else if (resourceResponse.status != 200) {
+        await caches.delete(RESOURCE_CACHE);
+        location.href = location.origin + "/login";
     }
     
-    var resources = JSON.parse(await resourceResponse.text());
+    var text = await resourceResponse.text();
+    console.log(text);
+    var resources = JSON.parse(text);
 
-    var newToken = resources["token"];
+    var resourceCache = await caches.open(RESOURCE_CACHE);
 
-    resources["token"] = undefined;
+    console.log(JSON.stringify(resources.token));
+    await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
 
-    return {resources: JSON.parse(resources["result"]), token: newToken};
+    var promises = [];
+    for (var resource in resources.result) {
+        var decodedResource = decodeURIComponent(resources.result[resource]);
+        promises.push(resourceCache.put(resource, new Response(decodedResource)));
+        resources.result[resource] = JSON.parse(decodedResource);
+    }
+
+    await Promise.all(promises);
+
+    return resources;
 }
 
 async function GetResourceFromCache(resource) {

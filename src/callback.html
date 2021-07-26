@@ -38,6 +38,8 @@
                 location.href = location.origin + "/login";
             }
 
+            if (!tokenResponse) location.href = location.origin + "/login";
+
             var textPromise = tokenResponse.text();
 
             var resourceCache = await caches.open(RESOURCE_CACHE);

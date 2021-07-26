@@ -69,9 +69,8 @@ async function Update(version) {
     var keys = await fileCache.keys();
 
     var toDelete = keys.filter(key => !self.assets.includes(key.url.replace(location.origin, "")));
-
+    
     var deletePromises = [];
-
     toDelete.forEach(key =>
         deletePromises.push(fileCache.delete(key))
     );
@@ -85,13 +84,6 @@ async function Update(version) {
 
 async function onActivate(event) {
     clients.claim();
-    // Delete unused caches
-    /*
-    const cacheKeys = await caches.keys();
-    await Promise.all(cacheKeys
-        .filter(key => key !== cacheName)
-        .map(key => caches.delete(key)));
-    */
 }
 
 async function onFetch(event) {

@@ -6,29 +6,8 @@ function login() {
     location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
                     "&scope=all-ro" +
                     "&state=abc" +
-                     `&client_id=${CLIENT_ID}` +
+                    `&client_id=${CLIENT_ID}` +
                     `&redirect_uri=${location.origin}/callback`;
-}
-
-async function UpdateResources(token, resourceCache) {
-    var token = await token.text();
-
-    var resourceBundle = await GetAllResources(token);
-
-    var resources = resourceBundle.resources;
-    token = resourceBundle.token;
-
-    var promises = [];
-
-    promises.push(resourceCache.put("Last Updated", new Response(new Date().toISOString())));
-
-    promises.push(resourceCache.put("Token", new Response(token)));
-
-    for (var resource in resources) {
-        promises.push(resourceCache.put(resource, new Response(resources[resource])));
-    }
-    
-    await Promise.all(promises);
 }
 
 async function onload() {
@@ -76,9 +55,9 @@ async function onload() {
     {
         var lastUpdated = new Date(await lastUpdatedResponse.text());
 
-        if (new Date() - lastUpdated >= 3600000) UpdateResources(token, resourceCache);
+        if (new Date() - lastUpdated >= 3600000) GetAllResources(token);
     }
-    else UpdateResources(token, resourceCache);
+    else GetAllResources(token);
 
     // Call function "finished" if it exists.
     // This will execute a custom callback defined in the page.
@@ -94,25 +73,36 @@ async function Update() {
 }
 
 async function GetAllResources(token) {
-    try {
-        var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
-    } catch (e) {
-        if (resourceResponse.status == 403) {
-            window.serversOffline = true;
-        }
-        else {
-            await caches.delete(RESOURCE_CACHE);
-            location.href = location.origin + "/login";
-        }
+    var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
+
+    if (!resourceResponse) location.href = location.origin + "/login";
+
+    if (resourceResponse.status == 403) {
+        window.serversOffline = true;
+    }
+    else if (resourceResponse.status != 200) {
+        await caches.delete(RESOURCE_CACHE);
+        location.href = location.origin + "/login";
     }
     
-    var resources = JSON.parse(await resourceResponse.text());
+    var text = await resourceResponse.text();
+    var resources = JSON.parse(text);
 
-    var newToken = resources["token"];
+    var resourceCache = await caches.open(RESOURCE_CACHE);
+    
+    await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
+    await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
 
-    resources["token"] = undefined;
+    var promises = [];
+    for (var resource in resources.result) {
+        var decodedResource = decodeURIComponent(resources.result[resource]);
+        promises.push(resourceCache.put(resource, new Response(decodedResource)));
+        resources.result[resource] = JSON.parse(decodedResource);
+    }
 
-    return {resources: JSON.parse(resources["result"]), token: newToken};
+    await Promise.all(promises);
+
+    return resources;
 }
 
 async function GetResourceFromCache(resource) {

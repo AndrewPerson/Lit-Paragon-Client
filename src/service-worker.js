@@ -37,16 +37,6 @@ async function GetLatestVersion() {
     }
 }
 
-async function CacheFile(file, cache) {
-    try {
-        var fileResponse = await fetch(file);
-    } catch (e) {
-        return;
-    }
-
-    await cache.put(fileResponse.url, fileResponse);
-}
-
 async function Update(version) {
     if (!version) return;
 
@@ -61,10 +51,18 @@ async function Update(version) {
 
     var filePromises = [];
     assetData.forEach(asset =>
-        filePromises.push(CacheFile(asset, fileCache))
+        filePromises.push(fetch(asset))
     );
 
-    await Promise.all(filePromises);
+    var files = await Promise.all(filePromises);
+
+    for (file in files) {
+        if (file) {
+            if (file.status == 200) {
+                await fileCache.put(file.url, file);
+            }
+        }
+    }
 
     var keys = await fileCache.keys();
 
@@ -88,15 +86,22 @@ async function onActivate(event) {
 
 async function onFetch(event) {
     if (event.request.method === 'GET' && !updating) {
-        // For all navigation requests, try to serve index.html from cache
-        // If you need some URLs to be server-rendered, edit the following check to exclude those URLs
-
         const request = event.request;
         const cache = await caches.open(OFFLINE_CACHE);
 
         let result = await cache.match(request);
         if (result instanceof Response) return result;
-        else return fetch(request);
+        else
+        {
+            var response = await fetch(request);
+
+            if (self.assets.includes(response.url) &&
+                !(await cache.keys()).includes(response.url)) {
+                await cache.put(response.url, response);
+            }
+
+            return ;
+        }
     }
 
     return fetch(event.request);
@@ -120,6 +125,7 @@ async function onMessage(event) {
             if (latestVersion != storedVersion) {
                 console.log("Updating...");
                 await Update(latestVersion);
+                console.log("Done updating");
             }
         }
     }
