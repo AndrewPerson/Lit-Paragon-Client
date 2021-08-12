@@ -1,4 +1,4 @@
-const {readdirSync, writeFileSync} = require('fs');
+const {readdirSync, writeFileSync, readFileSync} = require('fs');
 const {exec} = require('child_process');
 
 function getFiles(rootDir, relativeDir) {
@@ -7,7 +7,7 @@ function getFiles(rootDir, relativeDir) {
 
     items.forEach((item, index, array) => {
         if (item.isDirectory()) {
-            getFiles(rootDir, relativeDir + item.name + '/').forEach((file, index, array) => {
+            getFiles(rootDir, relativeDir + item.name + '/').forEach(file => {
                 files.push(file);
             });
         }
@@ -27,22 +27,27 @@ function getFiles(rootDir, relativeDir) {
 }
 
 exec("rollup -c", (err, stdout, stderr) => {
+    /*
     if (err) {
-        // node couldn't execute the command
+        console.log(err);
         return;
     }
     
-    // the *entire* stdout and stderr (buffered)
-    console.log(`stdout: ${stdout}`);
-    console.log(`stderr: ${stderr}`);
-      
+    console.log(`${stdout}\n${stderr}`);
+    
     var js = "self.assets = [\n"
 
-    getFiles(__dirname.replace('\\', '/') + "/build", "/").forEach((file, index, array) => {
-        js += `\t"${file}",\n`;
+    getFiles(__dirname.replace('\\', '/') + "/build", "/").forEach(file => {
+        if (!file.includes("service-worker")) js += `\t"${file}",\n`;
     });
 
     js += "];";
 
     writeFileSync(__dirname.replace('\\', '/') + "/build/assets.js", js);
+
+    if (process.argv[2] != "release") {
+        writeFileSync(__dirname.replace('\\', '/') + "/build/service-worker.js",
+                    readFileSync(__dirname.replace('\\', '/') + "/src/service-worker.debug.js"));
+    }
+    */
 });

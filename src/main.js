@@ -1,75 +1,116 @@
-const CLIENT_ID = "paragon";
-
 const RESOURCE_CACHE = "User Resources";
 
-function login() {
-    location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
-                    "&scope=all-ro" +
-                    "&state=abc" +
-                    `&client_id=${CLIENT_ID}` +
-                    `&redirect_uri=${location.origin}/callback`;
-}
+async function Load() {
+    RedirectToProperWebsiteIfNeeded();
 
-async function onload() {
-    if (window.location.hostname == "web-paragon.firebaseapp.com") {
-        window.location.href = "https://web-paragon.web.app";
+    UpdateScreenType();
+
+    if (await RegisterServiceWorker()) {
+        await Update();
     }
 
-    if (innerWidth >= innerHeight) {
-        document.getElementsByTagName("body").item(0).classList.add("laptop-screen");
-    }
-    else {
-        document.getElementsByTagName("body").item(0).classList.add("mobile-screen");
-    }
+    var token = await LoginIfNeeded();
 
-    if (location.origin == "https://web-paragon.web.app") {
-        var registration = await navigator.serviceWorker.getRegistration('service-worker.js');
+    await UpdateResourcesIfNeeded(token);
 
-        if (registration) {
-            try
-            {
-                await registration.update();
-                await Update();
-            }
-            catch(e) {}
-        }
-        else
-        {
-            await navigator.serviceWorker.register("service-worker.js");
-            await Update();
-        }
-    }
-
-    if (location.pathname == "/login") return;
-    if (location.pathname == "/callback") return;
-
-    var resourceCache = await caches.open(RESOURCE_CACHE);
-
-    var token = await resourceCache.match("Token");
-    
-    if (!token) location.pathname = "/login";
-
-    var lastUpdatedResponse = await resourceCache.match("Last Updated");
-    
-    if (lastUpdatedResponse)
-    {
-        var lastUpdated = new Date(await lastUpdatedResponse.text());
-
-        if (new Date() - lastUpdated >= 3600000) GetAllResources(token);
-    }
-    else GetAllResources(token);
+    window.addEventListener("resize", Debounce(event => {
+        UpdateScreenType();
+    }, 250));
 
     // Call function "finished" if it exists.
     // This will execute a custom callback defined in the page.
     if (window.finished instanceof Function) await window.finished();
 }
 
-async function Update() {
-    if (location.origin != "https://web-paragon.web.app") return;
+function RedirectToProperWebsiteIfNeeded() {
+    if (window.location.hostname == "web-paragon.firebaseapp.com")
+        window.location.href = "https://web-paragon.web.app";
+}
 
+function UpdateScreenType() {
+    var screenClass = "mobile-screen";
+    var oppScreenClass = "laptop-screen";
+
+    if (innerWidth >= innerHeight) {
+        screenClass = "laptop-screen";
+        oppScreenClass = "mobile-screen";
+    }
+
+    UpdateClasses(document.getElementsByTagName("body"), screenClass, oppScreenClass);
+}
+
+function UpdateClasses(elements, screenClass, oppClass) {
+    var i = 0;
+    while (i < elements.length) {
+        var classList = elements.item(i).classList;
+
+        classList.remove(oppClass);
+        classList.add(screenClass);
+
+        i++;
+    }
+}
+
+async function RegisterServiceWorker() {
+    try {
+        var registration = await navigator.serviceWorker.getRegistration('service-worker.js');
+
+        if (registration)
+            await registration.update();
+        else
+            await navigator.serviceWorker.register("service-worker.js");
+    } catch (e) {
+        return false;
+    }
+
+    return true;
+}
+
+async function Update() {
     var worker = await navigator.serviceWorker.ready;
 
-    worker.active.postMessage({ command: "update" });
+    worker.active.postMessage({
+        command: "update"
+    });
+}
+
+async function LoginIfNeeded() {
+    var resourceCache = await caches.open(RESOURCE_CACHE);
+
+    var token = await resourceCache.match("Token");
+    
+    if (!token) location.pathname = "/login";
+
+    return await token.text();
+}
+
+async function UpdateResourcesIfNeeded(token) {
+    var resourceCache = await caches.open(RESOURCE_CACHE);
+
+    var lastUpdatedResponse = await resourceCache.match("Last Updated");
+    
+    var resources;
+    if (lastUpdatedResponse)
+    {
+        var lastUpdated = new Date(await lastUpdatedResponse.text());
+
+        if (new Date() - lastUpdated >= 3600000) resources = await GetAllResources(token);
+    }
+    else resources = await GetAllResources(token);
+
+    if (resources) {
+        var resourceCache = await caches.open(RESOURCE_CACHE);
+        
+        await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
+        await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
+
+        var promises = [];
+        for (var resource in resources.result) {
+            promises.push(resourceCache.put(resource, new Response(JSON.stringify(resources.result[resource]))));
+        }
+
+        await Promise.all(promises);
+    }
 }
 
 async function GetAllResources(token) {
@@ -81,26 +122,12 @@ async function GetAllResources(token) {
         window.serversOffline = true;
     }
     else if (resourceResponse.status != 200) {
-        await caches.delete(RESOURCE_CACHE);
-        location.href = location.origin + "/login";
+        //await caches.delete(RESOURCE_CACHE);
+        //location.href = location.origin + "/login";
     }
     
     var text = await resourceResponse.text();
     var resources = JSON.parse(text);
-
-    var resourceCache = await caches.open(RESOURCE_CACHE);
-    
-    await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
-    await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
-
-    var promises = [];
-    for (var resource in resources.result) {
-        var decodedResource = decodeURIComponent(resources.result[resource]);
-        promises.push(resourceCache.put(resource, new Response(decodedResource)));
-        resources.result[resource] = JSON.parse(decodedResource);
-    }
-
-    await Promise.all(promises);
 
     return resources;
 }
@@ -115,4 +142,19 @@ async function GetResourceFromCache(resource) {
     return await resourceResponse.text();
 }
 
-onload();
+function Debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
+Load();

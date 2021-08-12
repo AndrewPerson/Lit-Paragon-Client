@@ -40,7 +40,6 @@ hr {
     }
 
 h1, h2, h3, h4, h5, h6 {
-    margin-top: 0;
     margin-bottom: .5rem;
     font-weight: 500;
     line-height: 1.2
@@ -95,7 +94,6 @@ h6 {
 }
 
 p {
-    margin-top: 0;
     margin-bottom: 1rem
 }
 
@@ -115,7 +113,6 @@ ol, ul {
 }
 
 dl, ol, ul {
-    margin-top: 0;
     margin-bottom: 1rem
 }
 
@@ -187,7 +184,6 @@ code, kbd, pre, samp {
 
 pre {
     display: block;
-    margin-top: 0;
     margin-bottom: 1rem;
     overflow: auto;
     font-size: .875em
@@ -257,16 +253,11 @@ label {
     display: inline-block
 }
 
-button {
-    border-radius: 0
-}
-
     button:focus:not(:focus-visible) {
         outline: 0
     }
 
 button, input, optgroup, select, textarea {
-    margin: 0;
     font-family: inherit;
     font-size: inherit;
     line-height: inherit

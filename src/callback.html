@@ -18,23 +18,31 @@
 
     <link href="manifest.json" rel="manifest" />
 
-    <script type="module" src="elements.js"></script>
+    <script type="module" src="mainElements.js"></script>
 </head>
 
 <body>
     <img class="logo" src="images/logo.svg" />
 
     <h3>Logging in...</h3>
-    
+
+    <button class="button" id="continue" style="display: none;" onclick="goToApp()">Continue</button>
+
     <script>
+        function goToApp() {
+            location.href = location.origin + "/dailytimetable";
+        }
+
         async function Token(code) {
-            try {
-                var tokenResponse = await fetch("https://webparagon.azurewebsites.net/api/auth", {
-                    method: "POST",
-                    body: code
-                });
+            var tokenResponse = await fetch("https://webparagon.azurewebsites.net/api/auth", {
+                method: "POST",
+                body: code
+            });
+            
+            if (tokenResponse.status == 403) {
+                window.serversOffline = true;
             }
-            catch (e) {
+            else if (tokenResponse.status != 200) {
                 location.href = location.origin + "/login";
             }
 
@@ -42,7 +50,7 @@
 
             var textPromise = tokenResponse.text();
 
-            var resourceCache = await caches.open(RESOURCE_CACHE);
+            var resourceCache = await caches.open("User Resources");
             resourceCache.put("Token", new Response(await textPromise));
         }
 
@@ -52,11 +60,10 @@
 
         Token(code)
         .then(() => {
-            location.href = location.origin + "/dailytimetable";
+            document.getElementById("continue").style = undefined;
+            //location.href = location.origin + "/dailytimetable";
         });
     </script>
-
-    <script src="main.js"></script>
 </body>
 
 </html>
