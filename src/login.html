@@ -18,7 +18,7 @@
 
     <link href="manifest.json" rel="manifest" />
 
-    <script type="module" src="elements.js"></script>
+    <script type="module" src="mainElements.js"></script>
 </head>
 
 <body>
@@ -26,9 +26,19 @@
 
     <h3>Paragon</h3>
 
-    <button class="login" onclick="login()">Login</button>
+    <button class="button" onclick="login()">Login</button>
 
-    <script src="main.js"></script>
+    <script>
+        const CLIENT_ID = "paragon";
+
+        function login() {
+            location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
+                            "&scope=all-ro" +
+                            "&state=abc" +
+                            `&client_id=${CLIENT_ID}` +
+                            `&redirect_uri=${location.origin}/callback`;
+        }
+    </script>
 </body>
 
 </html>

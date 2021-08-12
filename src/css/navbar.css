@@ -1,17 +1,24 @@
 .laptop-screen {
-    display: flex;
     align-items: flex-start;
 }
 
-.laptop-screen > * :not(nav-bar) {
-    margin-left: 2vmin;
+.laptop-screen > nav-bar {
+    flex-direction: column;
+    flex-wrap: wrap;
+    width: 12vmin;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+
+.laptop-screen > nav-bar + * {
+    padding-left: 2vmin;
+    min-height: 100vh;
 }
 
 .mobile-screen {
-    display: flex;
     flex-direction: column;
-    min-height: 100vh;
-    width: fit-content;
     align-items: flex-start;
 }
 
@@ -20,6 +27,17 @@
     order: 1;
 }
 
-nav-bar + * {
-    flex: 1;
+.mobile-screen > nav-bar {
+    flex-direction: row;
+    text-align: center;
+    order: 100;
+    width: 100%;
+    height: 12vw;
+    bottom: 0;
+    left: 0;
+}
+
+.mobile-screen > nav-bar + * {
+    padding-bottom: 2vmin;
+    min-width: 100%;
 }

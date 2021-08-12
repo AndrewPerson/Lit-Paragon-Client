@@ -18,11 +18,15 @@
 
     <link href="manifest.json" rel="manifest" />
 
-    <script type="module" src="elements.js"></script>
+    <script type="module" src="mainElements.js"></script>
 </head>
 
 <body>
     <script>
+        async function finished() {
+            var versionCache = await caches.open("Version");
+        }
+
         caches.open("Version")
         .then(versionCache => {
             versionCache.match("Version")
@@ -34,12 +38,49 @@
             });
         });
         
+        async function Patch() {
+            await caches.delete("Version");
+            await caches.delete("Offline Resources");
+
+            var serviceWorkers = await navigator.serviceWorker.getRegistrations();
+
+            var unregisterPromises = [];
+            serviceWorkers.forEach(serviceWorker => {
+                unregisterPromises.push(serviceWorker.unregister());
+            });
+
+            await Promise.all(unregisterPromises);
+
+            location.reload();
+        }
+
+        async function Purge() {
+            var keys = await caches.keys();
+
+            var promises = [];
+            keys.forEach(key => promises.push(caches.delete(key)));
+
+            await Promise.all(promises);
+
+            var serviceWorkers = await navigator.serviceWorker.getRegistrations();
+
+            var unregisterPromises = [];
+            serviceWorkers.forEach(serviceWorker => {
+                unregisterPromises.push(serviceWorker.unregister());
+            });
+
+            await Promise.all(unregisterPromises);
+
+            location.reload();
+        }
     </script>
 
     <nav-bar></nav-bar>
 
     <main>
         <p id="version"></p>
+        <button onclick="Patch()">Patch</button>
+        <button onclick="Purge()">Purge</button>
     </main>
 
     <script src="main.js"></script>

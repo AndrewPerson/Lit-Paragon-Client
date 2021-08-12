@@ -1,2 +1,2 @@
-node deploy.js
+node deploy.js release
 firebase deploy
