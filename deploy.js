@@ -27,7 +27,6 @@ function getFiles(rootDir, relativeDir) {
 }
 
 exec("rollup -c", (err, stdout, stderr) => {
-    /*
     if (err) {
         console.log(err);
         return;
@@ -49,5 +48,4 @@ exec("rollup -c", (err, stdout, stderr) => {
         writeFileSync(__dirname.replace('\\', '/') + "/build/service-worker.js",
                     readFileSync(__dirname.replace('\\', '/') + "/src/service-worker.debug.js"));
     }
-    */
 });
