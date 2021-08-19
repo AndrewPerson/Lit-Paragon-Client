@@ -6,7 +6,7 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 
 export default ["main", "dailytimetable"].map((file, index) => {
     var config = {
-        input: `src/${file}Elements.js`,
+        input: `src/elements/${file}-elements.js`,
         plugins: [
             // Resolve bare module specifiers to relative paths
             nodeResolve(),
@@ -37,7 +37,7 @@ export default ["main", "dailytimetable"].map((file, index) => {
                     'icons/**/*',
                     'images/**/*.svg',
                     'images/**/*.webp',
-                    //'js/**/*',
+                    'scripts/**/*',
                     //'loading/**/*',
                     '*.html',
                     'manifest.json',

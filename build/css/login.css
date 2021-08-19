@@ -1,0 +1,15 @@
+body {
+    flex-direction: column;
+    justify-content: center;
+}
+
+body > * {
+    align-self: center;
+    margin-bottom: 3vmin;
+    margin-top: 3vmin;
+}
+
+.logo {
+    width: 60vmin;
+    height: 60vmin;
+}
