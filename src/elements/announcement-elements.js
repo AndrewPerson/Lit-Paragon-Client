@@ -66,7 +66,17 @@ export class AnnouncementContainer extends LitElement {
         if (!this.data) {
             return html`<loading-element></loading-element>`;
         }
-        
+
+        if (this.data.notices.length == 0) {
+            return html`
+                <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
+                    <div class="line-right"></div>
+                    <p>Nothing For Today</p>
+                    <div class="line-left"></div>
+                </div>
+            `;
+        }
+
         var filteredNotices = [];
 
         if (this.filter != "all" && this.filter != "") {
@@ -78,12 +88,23 @@ export class AnnouncementContainer extends LitElement {
 
         filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight);
 
-        if (this.data.notices.length == 0) {
+        if (filteredNotices.length == 0) {
             return html`
-                <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
-                    <div class="line-right"></div>
-                    <p>Nothing For Today</p>
-                    <div class="line-left"></div>
+                <div class="header">
+                    <select id="filter" oninput="updateFilter(this.value)">
+                        <option value="all">All</option>
+                        <option value="Staff">Staff</option>
+                        <option value="12">12</option>
+                        <option value="11">11</option>
+                        <option value="10">10</option>
+                        <option value="9">9</option>
+                        <option value="8">8</option>
+                        <option value="7">7</option>
+                    </select>
+                </div>
+
+                <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                    <p>Nothing For This Filter</p>
                 </div>
             `;
         }
