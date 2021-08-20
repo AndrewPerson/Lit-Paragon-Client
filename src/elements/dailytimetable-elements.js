@@ -1,4 +1,4 @@
-import { html, css, nothing, LitElement } from "lit";
+import { html, nothing, LitElement } from "lit";
 import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable-css";
 
 export class BellItem extends LitElement {
@@ -150,7 +150,11 @@ export class DailyTimetable extends LitElement {
             });
         }
         else {
-            this.nextBell = nextBell.bell.bellDisplay;
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
+                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
+            else
+                this.nextBell = nextBell.bell.bellDisplay;
+
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
     }

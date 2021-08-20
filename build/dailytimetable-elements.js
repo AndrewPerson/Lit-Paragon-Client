@@ -292,7 +292,11 @@ class DailyTimetable extends h {
             });
         }
         else {
-            this.nextBell = nextBell.bell.bellDisplay;
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
+                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
+            else
+                this.nextBell = nextBell.bell.bellDisplay;
+
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
     }
