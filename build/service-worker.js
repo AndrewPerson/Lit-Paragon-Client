@@ -21,8 +21,6 @@ const VERSION_URL = "https://firestore.googleapis.com/v1/projects/web-paragon/da
 
 var UPDATING = false;
 
-var FIREBASE_TOKEN;
-
 async function Install(event) {
     self.skipWaiting();
 }
@@ -97,28 +95,30 @@ async function FirebaseAuth() {
 
     await firebase.auth().signInAnonymously();
 
-    var token = new Promise((resolve, reject) => {
+    var user = new Promise((resolve, reject) => {
         firebase.auth().onAuthStateChanged(user => {
+            resolve(user);
             user.getIdToken().then(idToken => {
                 resolve(idToken);
             });
         });
     });
 
-    FIREBASE_TOKEN = await token;
+    return await user;
 }
 
 async function GetLatestVersion() {
     var headers = new Headers();
 
-    if (!FIREBASE_TOKEN)
-        await FirebaseAuth();
+    var user = await FirebaseAuth()
 
-    headers.append("Authorization", "Bearer " + FIREBASE_TOKEN);
+    headers.append("Authorization", "Bearer " + await user.getIdToken());
 
     var request = await fetch(VERSION_URL, {
         headers: headers
     });
+
+    await user.delete();
 
     var text = await request.text();
     //return text;

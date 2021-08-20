@@ -15,10 +15,12 @@
     <link href="css/app.css" rel="stylesheet" />
     <link href="css/navbar.css" rel="stylesheet" />
     <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/announcements.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
 
     <script type="module" src="main-elements.js"></script>
+    <script type="module" src="announcement-elements.js"></script>
 </head>
 
 <body class="laptop-screen">
@@ -28,11 +30,39 @@
         
     </main>
     
+    <script>
+        var announcementsElement;
+
+        async function onUserData() {
+            var resource = await GetResourceFromCache("announcements");
+
+            if (!announcementsElement) {
+                announcementsElement = document.createElement("announcement-container");
+                document.getElementsByTagName("main")[0].appendChild(announcementsElement);
+            }
+
+            announcementsElement.setAttribute("data", resource);
+            announcementsElement.setAttribute("filter", "all");
+        }
+
+        //Toggles an elements collapsed/expanded state
+        //Called by AnnouncementItem in announcement-elements.js
+        function toggle(element) {
+            if (element.classList.contains("collapsed"))
+                element.classList.replace("collapsed", "expanded");
+            else
+                element.classList.replace("expanded", "collapsed");
+        }
+
+        //Called by AnnouncementItem in announcement-elements.js
+        function updateFilter(value) {
+            announcementsElement.setAttribute("filter", value);
+        }
+    </script>
+
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-auth.js"></script>
 
     <script src="main.js"></script>
 </body>

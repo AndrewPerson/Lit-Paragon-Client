@@ -4,7 +4,7 @@ import {nodeResolve} from '@rollup/plugin-node-resolve';
 //import minifyHTML from 'rollup-plugin-minify-html-literals';
 //import summary from 'rollup-plugin-summary';
 
-export default ["main", "dailytimetable"].map((file, index) => {
+export default ["main", "dailytimetable", "announcement"].map((file, index) => {
     var config = {
         input: `src/elements/${file}-elements.js`,
         plugins: [

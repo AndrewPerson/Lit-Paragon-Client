@@ -11,19 +11,13 @@
     left: 0;
 }
 
-
-.laptop-screen > nav-bar + * {
-    padding-left: 2vmin;
-    min-height: 100vh;
+.laptop-screen > main {
+    height: 100vh;
 }
 
 .mobile-screen {
     flex-direction: column;
     align-items: flex-start;
-}
-
-.mobile-screen > * :not(nav-bar) {
-    order: 1;
 }
 
 .mobile-screen > nav-bar {
@@ -36,7 +30,11 @@
     left: 0;
 }
 
-.mobile-screen > nav-bar + * {
-    padding-bottom: 2vmin;
-    min-width: 100%;
+.mobile-screen > main {
+    max-height: calc(100vh - 12vw);
+    width: 100%;
+}
+
+.mobile-screen > * :not(nav-bar) {
+    order: 1;
 }
