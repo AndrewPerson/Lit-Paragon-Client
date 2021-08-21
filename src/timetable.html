@@ -19,6 +19,7 @@
     <link href="manifest.json" rel="manifest" />
 
     <script type="module" src="main-elements.js"></script>
+    <script type="module" src="timetable-elements.js"></script>
 </head>
 
 <body class="laptop-screen">
@@ -27,6 +28,21 @@
     <main>
         
     </main>
+
+    <script>
+        var timetableElement;
+
+        async function onUserData() {
+            var resource = await GetResourceFromCache("timetable");
+
+            if (!timetableElement) {
+                timetableElement = document.createElement("full-timetable");
+                document.getElementsByTagName("main")[0].appendChild(timetableElement);
+            }
+
+            timetableElement.setAttribute("data", resource);
+        }
+    </script>
     
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 

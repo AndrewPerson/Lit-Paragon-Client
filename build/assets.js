@@ -45,5 +45,6 @@ self.assets = [
 	"/manifest.json",
 	"/scripts/bwip-js.js",
 	"/settings",
+	"/timetable-elements.js",
 	"/timetable",
 ];
