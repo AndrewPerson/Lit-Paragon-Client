@@ -10,4 +10,5 @@ Paragon has:
 5. And anything else you would expect, like a timetable.😉
 
 Paragon is built with love. (And [Lit](https://lit.dev).)
+
 The server for Paragon can be found [here](https://github.com/AndrewPerson/Paragon-Server).
