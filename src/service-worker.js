@@ -93,32 +93,33 @@ async function FirebaseAuth() {
     
     firebase.initializeApp(firebaseConfig);
 
+    if (firebase.auth().currentUser) {
+        return firebase.auth().getIdToken();
+    }
+
     await firebase.auth().signInAnonymously();
 
-    var user = new Promise((resolve, reject) => {
+    var token = new Promise(resolve => {
         firebase.auth().onAuthStateChanged(user => {
-            resolve(user);
             user.getIdToken().then(idToken => {
                 resolve(idToken);
             });
         });
     });
 
-    return await user;
+    return await token;
 }
 
 async function GetLatestVersion() {
     var headers = new Headers();
 
-    var user = await FirebaseAuth()
+    var token = await FirebaseAuth()
 
-    headers.append("Authorization", "Bearer " + await user.getIdToken());
+    headers.append("Authorization", "Bearer " + token);
 
     var request = await fetch(VERSION_URL, {
         headers: headers
     });
-
-    await user.delete();
 
     var text = await request.text();
     //return text;
