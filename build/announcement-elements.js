@@ -94,9 +94,9 @@ const announcementContainerCss = i$3`
         width: 96%;
         height: 96vh;
         padding: 2vmin;
-        background-color: white;
+        background-color: var(--surface2);
         border-radius: 2vmin;
-        box-shadow: lightgrey 0 0 1vmin;
+        box-shadow: var(--surface-shadow) 0 0 1vmin;
     }
 
     .header {
@@ -122,7 +122,7 @@ const announcementContainerCss = i$3`
     }
 
     .announcements::-webkit-scrollbar-thumb {
-        background-color: darkgrey;
+        background-color: var(--surface4);
         border-radius: 1vmin;
     }
 
@@ -142,39 +142,35 @@ const announcementContainerCss = i$3`
 
     button {
         border: solid rgb(82, 143, 255) 1px;
-        background-color: white;
-        color: rgb(82, 143, 255);
+        background-color: var(--surface2);
+        color: var(--text1);
         padding: 1vmin 2vmin;
         border-radius: 1vmin;
         max-width: max-content;
     }
 
     button:hover {
-        background-color: rgb(236 242 255);
+        background-color: var(--surface3);
     }
 
     button:active {
         border: none;
-        background-color: rgb(64, 100, 219);
-        color: white;
+        background-color: var(--surface4);
+        color: var(--text1);
     }
 
     select {
         border: solid rgb(82, 143, 255) 1px;
-        background-color: white;
-        color: rgb(82, 143, 255);
+        background-color: var(--surface2);
+        color: var(--text2);
         padding: 1vmin 0;
         padding-right: 6vmin;
         border-radius: 1vmin;
         max-width: max-content;
     }
 
-    select:hover {
-        background-color: rgb(236 242 255);
-    }
-
     option {
-        background-color: white;
+        background-color: var(--surface2);
     }
 `;
 

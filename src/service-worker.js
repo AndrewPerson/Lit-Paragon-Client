@@ -94,7 +94,7 @@ async function FirebaseAuth() {
     firebase.initializeApp(firebaseConfig);
 
     if (firebase.auth().currentUser) {
-        return firebase.auth().getIdToken();
+        return firebase.auth().currentUser.getIdToken();
     }
 
     await firebase.auth().signInAnonymously();
