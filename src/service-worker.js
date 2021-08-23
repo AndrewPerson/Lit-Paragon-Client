@@ -41,11 +41,13 @@ async function Fetch(event) {
             var response = await fetch(request);
 
             if (!UPDATING) {
-                if (self.assets.includes(response.url.replace(location.origin, ""))) {
+                var cachedResponse = response.clone();
+
+                if (self.assets.includes(cachedResponse.url.replace(location.origin, ""))) {
                     var keys = await cache.keys();
 
-                    if (!keys.includes(response.url))
-                        await cache.put(response.url, response);
+                    if (!keys.includes(cachedResponse.url))
+                        await cache.put(cachedResponse.url, cachedResponse);
                 }
             }
 
