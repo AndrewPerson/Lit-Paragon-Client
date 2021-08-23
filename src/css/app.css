@@ -1,8 +1,6 @@
 ﻿:root {
     --main-hue: 200;
-    --main-saturation: 100%;
-    --main-lightness: 60%;
-    --text1: hsl(var(--main-hue) var(--main-saturation) 10%);
+    --text1: hsl(var(--main-hue) 100% 10%);
     --text2: hsl(var(--main-hue) 90% 40%);
     --text3: hsl(var(--main-hue) 10% 70%);
     --text4: hsl(var(--main-hue) 50% 95%);
