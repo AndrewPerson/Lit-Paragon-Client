@@ -1,4 +1,4 @@
-﻿:root {
+﻿html {
     --main-hue: 200;
     --text1: hsl(var(--main-hue) 100% 10%);
     --text2: hsl(var(--main-hue) 90% 40%);
@@ -10,6 +10,21 @@
     --surface4: hsl(var(--main-hue) 90% 80%);
     --surface-shadow: hsl(var(--main-hue) 10% 80%);
     --surface-shadow-strong: hsl(var(--main-hue) 15% 60%);
+    --img-invert: 0;
+}
+
+html.dark {
+    --text1: hsl(var(--main-hue) 100% 90%);
+    --text2: hsl(var(--main-hue) 90% 60%);
+    --text3: hsl(var(--main-hue) 10% 30%);
+    --text4: hsl(var(--main-hue) 30% 95%);
+    --surface1: hsl(var(--main-hue) 30% 20%);
+    --surface2: hsl(var(--main-hue) 50% 15%);
+    --surface3: hsl(var(--main-hue) 40% 18%);
+    --surface4: hsl(var(--main-hue) 40% 25%);
+    --surface-shadow: hsl(var(--main-hue) 10% 10%);
+    --surface-shadow-strong: hsl(var(--main-hue) 15% 0%);
+    --img-invert: 100%;
 }
 
 html, body {
@@ -31,6 +46,14 @@ main {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+}
+
+img {
+    filter: invert(var(--img-invert));
+}
+
+p {
+    color: var(--text1);
 }
 
 button {

@@ -26,6 +26,7 @@ export const navItemCss = css`
     img {
         width: 5vmin;
         margin: 3.5vmin;
+        filter: invert(var(--img-invert));
     }
 `;
 
@@ -87,6 +88,7 @@ export const loginNotificationCss = css`
 
     p {
         text-align: center;
+        color: var(--text1);
     }
 
     .buttons {

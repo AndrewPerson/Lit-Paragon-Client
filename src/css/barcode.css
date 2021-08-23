@@ -8,6 +8,10 @@ main {
     box-shadow: var(--surface-shadow) 0 0 1vmin;
 }
 
+canvas {
+    background-color: white;
+}
+
 #info {
     display: none;
     position: absolute;

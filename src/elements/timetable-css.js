@@ -8,6 +8,7 @@ export const timetablePeriodCss = css`
     }
 
     p {
+        color: var(--text1);
         margin: 0;
         width: 10vmin;
         margin-right: 1vmin;
@@ -46,7 +47,7 @@ export const timetableDayCss = css`
         text-align: center;
         font-size: 2.2vmin;
         width: 8.8vmin;
-        color: var(--text1);
+        color: var(--text3);
         border-bottom: solid grey 1px;
 
         user-select: none;
@@ -79,7 +80,7 @@ export const timetableRowCss = css`
     }
 
     .period-nums > p {
-        color: var(--text1);
+        color: var(--text3);
         margin: 0;
         height: 3.9vmin;
 

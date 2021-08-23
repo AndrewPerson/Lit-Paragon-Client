@@ -28,7 +28,7 @@ export class NavItem extends LitElement {
         this.linkClass = location.pathname == this.link ? "nav-selected" : "";
 
         return html`
-            <a href="${this.link}" title="${this.title}" class="${this.linkClass}">
+            <a href="${this.link}${location.hash}" title="${this.title}" class="${this.linkClass}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </a>
         `;

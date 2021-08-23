@@ -1,0 +1,15 @@
+button {
+    margin-top: 2vmin;
+}
+
+.mode {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 7vmin;
+    height: 7vmin;
+}
+
+#modeImg {
+    width: inherit;
+}

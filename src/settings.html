@@ -15,6 +15,7 @@
     <link href="css/app.css" rel="stylesheet" />
     <link href="css/navbar.css" rel="stylesheet" />
     <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/settings.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
 
@@ -22,7 +23,20 @@
 </head>
 
 <body class="laptop-screen">
+    <nav-bar></nav-bar>
+
+    <main>
+        <p id="version"></p>
+        <button onclick="Patch()">Fix</button>
+        <button class="mode" onclick="ToggleDark()">
+            <img id="modeImg" src="images/moon.svg" />
+        </button>
+    </main>
+
     <script>
+        if (location.hash == "#dark")
+            document.getElementById("modeImg").src = "images/sun.svg"
+
         async function onUserData() {
             var metadataCache = await caches.open("Metadata");
 
@@ -32,47 +46,23 @@
             
             document.getElementById("version").textContent = `Version: ${version}`;
         }
+
+        async function ToggleDark() {
+            if (location.hash == "#dark")
+                location.hash = ""
+            else
+                location.hash = "#dark";
+
+            location.reload();
+        }
         
         async function Patch() {
             await caches.delete("Metadata");
             await caches.delete("Offline Resources");
 
-            var serviceWorkers = await navigator.serviceWorker.getRegistrations();
-
-            var unregisterPromises = [];
-            serviceWorkers.forEach(serviceWorker => {
-                unregisterPromises.push(serviceWorker.unregister());
-            });
-
-            await Promise.all(unregisterPromises);
-        }
-
-        async function Purge() {
-            var keys = await caches.keys();
-
-            var promises = [];
-            keys.forEach(key => promises.push(caches.delete(key)));
-
-            await Promise.all(promises);
-
-            var serviceWorkers = await navigator.serviceWorker.getRegistrations();
-
-            var unregisterPromises = [];
-            serviceWorkers.forEach(serviceWorker => {
-                unregisterPromises.push(serviceWorker.unregister());
-            });
-
-            await Promise.all(unregisterPromises);
+            location.reload();
         }
     </script>
-
-    <nav-bar></nav-bar>
-
-    <main>
-        <p id="version"></p>
-        <button onclick="Patch()">Patch</button>
-        <button onclick="Purge()">Purge</button>
-    </main>
 
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 

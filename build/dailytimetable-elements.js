@@ -111,6 +111,7 @@ const dailytimetableCss = i$2`
 
     p {
         margin: 0;
+        color: var(--text1);
 
         user-select: none;
         -ms-user-select: none;
