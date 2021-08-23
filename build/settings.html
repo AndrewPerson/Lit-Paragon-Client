@@ -45,12 +45,6 @@
             });
 
             await Promise.all(unregisterPromises);
-
-            indexedDB.deleteDatabase("firebase-installations-database").onsuccess = () => {
-                indexedDB.deleteDatabase("firebaseLocalStorageDb").onsuccess = () => {
-                    location.reload();
-                };
-            };
         }
 
         async function Purge() {
@@ -69,12 +63,6 @@
             });
 
             await Promise.all(unregisterPromises);
-
-            indexedDB.deleteDatabase("firebase-installations-database").onsuccess = () => {
-                indexedDB.deleteDatabase("firebaseLocalStorageDb").onsuccess = () => {
-                    location.reload();
-                };
-            };
         }
     </script>
 
