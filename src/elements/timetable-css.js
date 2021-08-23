@@ -2,8 +2,8 @@ import { css } from "lit"
 
 export const timetablePeriodCss = css`
     .highlighted {
-        background-color: lightskyblue;
-        color: white;
+        background-color: var(--surface4);
+        color: var(--text4);
         border-radius: 1vmin;
     }
 
@@ -46,7 +46,7 @@ export const timetableDayCss = css`
         text-align: center;
         font-size: 2.2vmin;
         width: 8.8vmin;
-        color: grey;
+        color: var(--text1);
         border-bottom: solid grey 1px;
 
         user-select: none;
@@ -79,7 +79,7 @@ export const timetableRowCss = css`
     }
 
     .period-nums > p {
-        color: grey;
+        color: var(--text1);
         margin: 0;
         height: 3.9vmin;
 
@@ -99,9 +99,9 @@ export const timetableRowCss = css`
 export const fullTimetableCss = css`
     :host {
         padding: 4vmin;
-        background-color: white;
+        background-color: var(--surface2);
         border-radius: 2vmin;
-        box-shadow: lightgrey 0 0 1vmin;
+        box-shadow: var(--surface-shadow) 0 0 1vmin;
     }
 
     timetable-row + timetable-row {

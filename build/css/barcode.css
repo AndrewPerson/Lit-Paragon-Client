@@ -3,9 +3,9 @@ main {
     flex: 0.96;
     width: 96% !important;
     height: 96vh !important;
-    background-color: white;
+    background-color: var(--surface2);
     border-radius: 2vmin;
-    box-shadow: lightgrey 0 0 1vmin;
+    box-shadow: var(--surface-shadow) 0 0 1vmin;
 }
 
 #info {

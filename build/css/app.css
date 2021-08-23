@@ -1,4 +1,20 @@
-﻿html, body {
+﻿:root {
+    --main-hue: 200;
+    --main-saturation: 100%;
+    --main-lightness: 60%;
+    --text1: hsl(var(--main-hue) var(--main-saturation) 10%);
+    --text2: hsl(var(--main-hue) 90% 40%);
+    --text3: hsl(var(--main-hue) 10% 70%);
+    --text4: hsl(var(--main-hue) 50% 95%);
+    --surface1: hsl(calc(var(--main-hue) + 200) 50% 97%);
+    --surface2: hsl(var(--main-hue) 100% 99%);
+    --surface3: hsl(var(--main-hue) 90% 97%);
+    --surface4: hsl(var(--main-hue) 90% 80%);
+    --surface-shadow: hsl(var(--main-hue) 10% 80%);
+    --surface-shadow-strong: hsl(var(--main-hue) 15% 60%);
+}
+
+html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
@@ -8,7 +24,7 @@ body {
     display: flex;
     width: fit-content;
     height: fit-content;
-    background-color: rgb(255, 252, 248) !important;
+    background-color: var(--surface1);
 }
 
 main {
@@ -21,17 +37,19 @@ main {
 
 button {
     border: none;
-    background-color: rgb(82, 143, 255);
-    color: white;
+    background-color: var(--surface4);
+    color: var(--text4);
     padding: 1vmin 2vmin;
     border-radius: 1vmin;
     max-width: max-content;
+    box-shadow: var(--surface-shadow) 0 0 1vmin;
 }
 
 button:hover {
-    background-color: rgb(63, 124, 255);
+    background-color: var(--surface3);
+    color: var(--text1);
 }
 
 button:active {
-    background-color: rgb(64, 100, 219);
+    color: var(--text3);
 }

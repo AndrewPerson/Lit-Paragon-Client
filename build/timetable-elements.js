@@ -26,8 +26,8 @@ var t,i$1,s$1,e;const o$1=globalThis.trustedTypes,l$1=o$1?o$1.createPolicy("lit-
 
 const timetablePeriodCss = i$2`
     .highlighted {
-        background-color: lightskyblue;
-        color: white;
+        background-color: var(--surface4);
+        color: var(--text4);
         border-radius: 1vmin;
     }
 
@@ -70,7 +70,7 @@ const timetableDayCss = i$2`
         text-align: center;
         font-size: 2.2vmin;
         width: 8.8vmin;
-        color: grey;
+        color: var(--text1);
         border-bottom: solid grey 1px;
 
         user-select: none;
@@ -103,7 +103,7 @@ const timetableRowCss = i$2`
     }
 
     .period-nums > p {
-        color: grey;
+        color: var(--text1);
         margin: 0;
         height: 3.9vmin;
 
@@ -123,9 +123,9 @@ const timetableRowCss = i$2`
 const fullTimetableCss = i$2`
     :host {
         padding: 4vmin;
-        background-color: white;
+        background-color: var(--surface2);
         border-radius: 2vmin;
-        box-shadow: lightgrey 0 0 1vmin;
+        box-shadow: var(--surface-shadow) 0 0 1vmin;
     }
 
     timetable-row + timetable-row {

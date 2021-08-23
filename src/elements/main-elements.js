@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { navItemCss, navMenuCss, loadingElementCss } from "./main-css";
+import { navItemCss, navMenuCss, loadingElementCss, loginNotificationCss } from "./main-css";
 
 export class NavItem extends LitElement {
     static get styles() {
@@ -53,7 +53,7 @@ export class Navbar extends LitElement {
     }
 }
 
-class LoadingElement extends LitElement {
+export class LoadingElement extends LitElement {
     static get styles() {
         return loadingElementCss;
     }
@@ -79,6 +79,36 @@ class LoadingElement extends LitElement {
     }
 }
 
+export class LoginNotification extends LitElement {
+    static get styles() {
+        return loginNotificationCss;
+    }
+
+    close(e) {
+        this.remove();
+    }
+
+    constructor() {
+        super();
+    }
+
+    render() {
+        return html`
+            <p>You need to log in to view the latest information.</p>
+
+            <div class="buttons">
+                <button onclick="location.pathname='login'">
+                Login
+                </button>
+                <button @click="${this.close}" class="dismiss">
+                    Dismiss
+                </button>
+            </div>
+        `;
+    }
+}
+
 customElements.define("nav-item", NavItem);
 customElements.define("nav-bar", Navbar);
 customElements.define("loading-element", LoadingElement);
+customElements.define("login-notification", LoginNotification);

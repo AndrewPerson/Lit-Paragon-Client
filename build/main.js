@@ -131,8 +131,7 @@ async function GetAllResources(token) {
         window.serversOffline = true;
     }
     else if (resourceResponse.status != 200) {
-        await caches.delete(RESOURCE_CACHE);
-        location.href = location.origin + "/login";
+        document.getElementsByClassName("body")[0].appendChild(document.createElement("login-notification"));
     }
     
     var text = await resourceResponse.text();

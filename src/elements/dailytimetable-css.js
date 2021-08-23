@@ -23,12 +23,17 @@ export const bellCss = css`
     }
 
     .changed {
-        color: lightskyblue;
+        color: var(--text2);
     }
 
     p {
         margin: 0;
-        color: rgb(185, 185, 185);
+        color: var(--text3);
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 `;
 
@@ -49,7 +54,7 @@ export const payloadBellCss = css`
     }
 
     p {
-        color: rgb(100, 100, 100);
+        color: var(--text1);
     }
 `;
 
@@ -68,9 +73,9 @@ export const dailytimetableCss = css`
         min-width: 300px;
         min-height: 70vh;
 
-        background-color: white;
+        background-color: var(--surface2);
         border-radius: 2vmin;
-        box-shadow: 0 0 1vmin lightgrey
+        box-shadow: var(--surface-shadow) 0 0 1vmin
     }
     
     @media (max-width: 300px) {
@@ -82,13 +87,18 @@ export const dailytimetableCss = css`
 
     p {
         margin: 0;
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 
     #timer {
         margin: 0;
         font-size: 6vmin;
         display: inline-block;
-        color: rgb(50, 50, 50);
+        color: var(--text1);
     }
 
     @media (max-aspect-ratio: 5/8) {

@@ -36,14 +36,14 @@ const navItemCss = i$2`
     }
 
     :host > :hover {
-        background-color: lightcyan;
-        box-shadow: 0 0 2vmin gray;
+        background-color: var(--surface2);
+        box-shadow: var(--surface-shadow) 0 0 2vmin;
         border-radius: 2vmin;
     }
 
     .nav-selected {
-        background-color: lightskyblue;
-        box-shadow: 0 0 2vmin gray;
+        background-color: var(--surface4);
+        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
         border-radius: 2vmin;
     }
 
@@ -58,15 +58,15 @@ const navMenuCss = i$2`
         position: absolute;
         left: 0;
         bottom: 0;
-        background-color: aliceblue;
+        background-color: var(--surface3);
     }
 
     :host {
         flex-shrink: 0;
         justify-content: center;
-        background-color: aliceblue;
+        background-color: var(--surface3);
         position: sticky;
-        box-shadow: 0 0 1vmin gray;
+        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
         overflow: hidden;
     }
 `;
@@ -92,6 +92,53 @@ const loadingElementCss = i$2`
         to {
             transform: rotate(360deg);
         }
+    }
+`;
+
+const loginNotificationCss = i$2`
+    :host {
+        position: absolute;
+        top: 1vh;
+        right: 1vw;
+        min-width: min-content;
+        width: 40vmin;
+        background-color: var(--surface2);
+        padding: 2vh 2vw;
+        border-radius: 2vmin;
+        z-index: 100;
+        box-shadow: var(--surface-shadow) 0 0 2vmin;
+    }
+
+    p {
+        text-align: center;
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .dismiss {
+        margin-left: 1vmin;
+    }
+
+    button {
+        border: none;
+        background-color: var(--surface4);
+        color: var(--text4);
+        padding: 1vmin 2vmin;
+        border-radius: 1vmin;
+        max-width: max-content;
+        box-shadow: var(--surface-shadow) 0 0 1vmin;
+    }
+
+    button:hover {
+        background-color: var(--surface3);
+        color: var(--text1);
+    }
+
+    button:active {
+        color: var(--text3);
     }
 `;
 
@@ -173,8 +220,38 @@ class LoadingElement extends h {
     }
 }
 
+class LoginNotification extends h {
+    static get styles() {
+        return loginNotificationCss;
+    }
+
+    close(e) {
+        this.remove();
+    }
+
+    constructor() {
+        super();
+    }
+
+    render() {
+        return T`
+            <p>You need to log in to view the latest information.</p>
+
+            <div class="buttons">
+                <button onclick="location.pathname='login'">
+                Login
+                </button>
+                <button @click="${this.close}" class="dismiss">
+                    Dismiss
+                </button>
+            </div>
+        `;
+    }
+}
+
 customElements.define("nav-item", NavItem);
 customElements.define("nav-bar", Navbar);
 customElements.define("loading-element", LoadingElement);
+customElements.define("login-notification", LoginNotification);
 
-export { NavItem, Navbar };
+export { LoadingElement, LoginNotification, NavItem, Navbar };
