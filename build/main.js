@@ -39,6 +39,11 @@ function UpdateScreenType() {
     }
 
     UpdateClasses(document.getElementsByTagName("body"), screenClass, oppScreenClass);
+
+    var dark = location.hash == "#dark";
+
+    if (dark)
+        document.getElementsByTagName("html")[0].classList.add("dark");
 }
 
 function UpdateClasses(elements, screenClass, oppClass) {

@@ -50,6 +50,7 @@ const navItemCss = i$2`
     img {
         width: 5vmin;
         margin: 3.5vmin;
+        filter: invert(var(--img-invert));
     }
 `;
 
@@ -111,6 +112,7 @@ const loginNotificationCss = i$2`
 
     p {
         text-align: center;
+        color: var(--text1);
     }
 
     .buttons {
@@ -169,7 +171,7 @@ class NavItem extends h {
         this.linkClass = location.pathname == this.link ? "nav-selected" : "";
 
         return T`
-            <a href="${this.link}" title="${this.title}" class="${this.linkClass}">
+            <a href="${this.link}${location.hash}" title="${this.title}" class="${this.linkClass}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </a>
         `;

@@ -9,7 +9,8 @@ export const announcementItemCss = css`
 
     p {
         margin: 0;
-        margin-top: 1vmin
+        margin-top: 1vmin;
+        color: var(--text1);
     }
 
     .title {
@@ -46,6 +47,7 @@ export const announcementItemCss = css`
         right: 0;
         width: 4vmin;
         cursor: pointer;
+        filter: invert(var(--img-invert));
     }
 `;
 

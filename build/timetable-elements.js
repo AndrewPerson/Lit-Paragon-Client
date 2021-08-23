@@ -32,6 +32,7 @@ const timetablePeriodCss = i$2`
     }
 
     p {
+        color: var(--text1);
         margin: 0;
         width: 10vmin;
         margin-right: 1vmin;
@@ -70,7 +71,7 @@ const timetableDayCss = i$2`
         text-align: center;
         font-size: 2.2vmin;
         width: 8.8vmin;
-        color: var(--text1);
+        color: var(--text3);
         border-bottom: solid grey 1px;
 
         user-select: none;
@@ -103,7 +104,7 @@ const timetableRowCss = i$2`
     }
 
     .period-nums > p {
-        color: var(--text1);
+        color: var(--text3);
         margin: 0;
         height: 3.9vmin;
 
