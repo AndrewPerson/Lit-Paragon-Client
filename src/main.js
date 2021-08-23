@@ -71,6 +71,8 @@ async function RegisterServiceWorker() {
                 // An interval of one day.
                 minInterval: 24 * 60 * 60 * 1000,
             });
+            
+            navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});
         } catch (e) {
             console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
             navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});
