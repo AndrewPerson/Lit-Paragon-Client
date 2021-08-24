@@ -18,10 +18,9 @@ export class AnnouncementItem extends LitElement {
     }
 
     toggle() {
-        if (this.classList.contains("collapsed"))
-            this.classList.replace("collapsed", "expanded");
-        else
-            this.classList.replace("expanded", "collapsed");
+        this.collapsed = !this.collapsed;
+
+        this.update();
     }
 
     constructor() {
@@ -32,16 +31,18 @@ export class AnnouncementItem extends LitElement {
         this.displayYears = "";
         this.author = "";
         this.time = null;
+
+        this.collapsed = true;
     }
 
     render() {
         return html`
             <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
-            <div id="content" class="content collapsed">
+            <div id="content" class="content ${this.collapsed ? 'collapsed' : 'expanded'}">
                 ${unsafeHTML(this.content)}
             </div>
-            <img onclick="toggle(this.parentNode.querySelector('#content'))" class="toggle" src="images/toggle.svg" />
+            <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
         `;
     }
 }
