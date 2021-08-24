@@ -43,7 +43,7 @@
             "icons": [
                 {
                     "src": "images/dailytimetable.webp",
-                    "sizes": "210x210"
+                    "sizes": "200x200"
                 }
             ]
         },
@@ -55,7 +55,7 @@
             "icons": [
                 {
                     "src": "images/barcode.webp",
-                    "sizes": "210x210"
+                    "sizes": "200x200"
                 }
             ]
         },
@@ -67,7 +67,7 @@
             "icons": [
                 {
                     "src": "images/announcements.webp",
-                    "sizes": "210x210"
+                    "sizes": "200x200"
                 }
             ]
         },
@@ -79,19 +79,19 @@
             "icons": [
                 {
                     "src": "images/timetable.webp",
-                    "sizes": "210x210"
+                    "sizes": "200x200"
                 }
             ]
         },
         {
-            "name": "Calendar",
-            "short_name": "Calendar",
-            "description": "Your school calendar",
-            "url": "./calendar",
+            "name": "Extensions",
+            "short_name": "Extensions",
+            "description": "Extensions for Paragon",
+            "url": "./extensions",
             "icons": [
                 {
-                    "src": "images/calendar.webp",
-                    "sizes": "210x210"
+                    "src": "images/extensions.webp",
+                    "sizes": "200x200"
                 }
             ]
         }

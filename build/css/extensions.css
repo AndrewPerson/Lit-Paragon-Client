@@ -7,19 +7,3 @@ main {
     border-radius: 2vmin;
     box-shadow: var(--surface-shadow) 0 0 1vmin;
 }
-
-button {
-    margin-top: 2vmin;
-}
-
-.mode {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 7vmin;
-    height: 7vmin;
-}
-
-#modeImg {
-    width: inherit;
-}

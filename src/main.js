@@ -136,9 +136,12 @@ async function GetAllResources(token) {
 
     if (resourceResponse.status == 403) {
         window.serversOffline = true;
+        return;
     }
-    else if (resourceResponse.status != 200) {
+
+    if (resourceResponse.status != 200) {
         document.getElementsByTagName("body")[0].appendChild(document.createElement("login-notification"));
+        return;
     }
     
     var text = await resourceResponse.text();

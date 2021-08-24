@@ -41,6 +41,11 @@
             }
 
             timetableElement.setAttribute("data", resource);
+
+            GetResourceFromCache("dailytimetable").then(string => {
+                var day = JSON.parse(string).timetable.timetable.dayname;
+                timetableElement.setAttribute("day", day);
+            });
         }
     </script>
     
