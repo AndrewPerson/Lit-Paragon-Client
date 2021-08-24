@@ -246,7 +246,7 @@ class LoginNotification extends h {
 
             <div class="buttons">
                 <button @click="${this.login}">
-                Login
+                    Login
                 </button>
                 <button @click="${this.close}" class="dismiss">
                     Dismiss

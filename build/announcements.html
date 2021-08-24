@@ -42,21 +42,6 @@
             }
 
             announcementsElement.setAttribute("data", resource);
-            announcementsElement.setAttribute("filter", "all");
-        }
-
-        //Toggles an elements collapsed/expanded state
-        //Called by AnnouncementItem in announcement-elements.js
-        function toggle(element) {
-            if (element.classList.contains("collapsed"))
-                element.classList.replace("collapsed", "expanded");
-            else
-                element.classList.replace("expanded", "collapsed");
-        }
-
-        //Called by AnnouncementItem in announcement-elements.js
-        function updateFilter(value) {
-            announcementsElement.setAttribute("filter", value);
         }
     </script>
 
