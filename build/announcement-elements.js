@@ -191,6 +191,13 @@ class AnnouncementItem extends h {
         }
     }
 
+    toggle() {
+        if (this.classList.contains("collapsed"))
+            this.classList.replace("collapsed", "expanded");
+        else
+            this.classList.replace("expanded", "collapsed");
+    }
+
     constructor() {
         super();
 
@@ -202,9 +209,8 @@ class AnnouncementItem extends h {
     }
 
     render() {
-        //"toggle" is located in announcements.html
         return T`
-            <p class="title" onclick="toggle(this.parentNode.querySelector('#content'))">${this.title}</p>
+            <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
             <div id="content" class="content collapsed">
                 ${o(this.content)}
@@ -221,9 +227,13 @@ class AnnouncementContainer extends h {
 
     static get properties() {
         return {
-            data: {type: Object},
-            filter: {type: String}
+            data: {type: Object}
         }
+    }
+
+    updateFilter(e) {
+        this.filter = e.target.value;
+        this.update();
     }
 
     constructor() {
@@ -233,7 +243,7 @@ class AnnouncementContainer extends h {
             notices: []
         };
 
-        this.filter = "";
+        this.filter = "all";
     }
 
     render() {
@@ -283,11 +293,9 @@ class AnnouncementContainer extends h {
             `;
         }
 
-        //"updateFilter" is in announcements.html
-        //"toggleAll" is in announcements.html
         return T`
             <div class="header">
-                <select id="filter" oninput="updateFilter(this.value)">
+                <select id="filter" @input="${this.updateFilter}">
                     <option value="all">All</option>
                     <option value="Staff">Staff</option>
                     <option value="12">12</option>

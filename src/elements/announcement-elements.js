@@ -17,6 +17,13 @@ export class AnnouncementItem extends LitElement {
         }
     }
 
+    toggle() {
+        if (this.classList.contains("collapsed"))
+            this.classList.replace("collapsed", "expanded");
+        else
+            this.classList.replace("expanded", "collapsed");
+    }
+
     constructor() {
         super();
 
@@ -28,9 +35,8 @@ export class AnnouncementItem extends LitElement {
     }
 
     render() {
-        //"toggle" is located in announcements.html
         return html`
-            <p class="title" onclick="toggle(this.parentNode.querySelector('#content'))">${this.title}</p>
+            <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
             <div id="content" class="content collapsed">
                 ${unsafeHTML(this.content)}
@@ -47,9 +53,13 @@ export class AnnouncementContainer extends LitElement {
 
     static get properties() {
         return {
-            data: {type: Object},
-            filter: {type: String}
+            data: {type: Object}
         }
+    }
+
+    updateFilter(e) {
+        this.filter = e.target.value;
+        this.update();
     }
 
     constructor() {
@@ -59,7 +69,7 @@ export class AnnouncementContainer extends LitElement {
             notices: []
         }
 
-        this.filter = "";
+        this.filter = "all";
     }
 
     render() {
@@ -109,11 +119,9 @@ export class AnnouncementContainer extends LitElement {
             `;
         }
 
-        //"updateFilter" is in announcements.html
-        //"toggleAll" is in announcements.html
         return html`
             <div class="header">
-                <select id="filter" oninput="updateFilter(this.value)">
+                <select id="filter" @input="${this.updateFilter}">
                     <option value="all">All</option>
                     <option value="Staff">Staff</option>
                     <option value="12">12</option>
