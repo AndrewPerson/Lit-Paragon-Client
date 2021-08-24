@@ -189,7 +189,7 @@ class Navbar extends h {
             <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item link="/announcements" title="Announcements"></nav-item>
             <nav-item link="/timetable" title="Timetable"></nav-item>
-            <nav-item link="/calendar" title="Calendar"></nav-item>
+            <nav-item link="/extensions" title="Extensions"></nav-item>
 
             <nav-item link="/settings" title="Settings"></nav-item>
         `;
@@ -231,6 +231,11 @@ class LoginNotification extends h {
         this.remove();
     }
 
+    async login(e) {
+        await caches.delete("User Resources");
+        location.pathname = "login";
+    }
+
     constructor() {
         super();
     }
@@ -240,7 +245,7 @@ class LoginNotification extends h {
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
-                <button onclick="location.pathname='login'">
+                <button @click="${this.login}">
                 Login
                 </button>
                 <button @click="${this.close}" class="dismiss">

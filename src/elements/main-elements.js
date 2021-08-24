@@ -46,7 +46,7 @@ export class Navbar extends LitElement {
             <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item link="/announcements" title="Announcements"></nav-item>
             <nav-item link="/timetable" title="Timetable"></nav-item>
-            <nav-item link="/calendar" title="Calendar"></nav-item>
+            <nav-item link="/extensions" title="Extensions"></nav-item>
 
             <nav-item link="/settings" title="Settings"></nav-item>
         `;
@@ -88,6 +88,11 @@ export class LoginNotification extends LitElement {
         this.remove();
     }
 
+    async login(e) {
+        await caches.delete("User Resources");
+        location.pathname = "login";
+    }
+
     constructor() {
         super();
     }
@@ -97,8 +102,8 @@ export class LoginNotification extends LitElement {
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
-                <button onclick="location.pathname='login'">
-                Login
+                <button @click="${this.login}">
+                    Login
                 </button>
                 <button @click="${this.close}" class="dismiss">
                     Dismiss

@@ -1,10 +1,46 @@
 import { css } from "lit"
 
+export const roomPopupCss = css`
+    :host {
+        position: absolute;
+        background-image: url(images/popup.svg);
+        background-size: 100%;
+    }
+
+    p {
+        color: var(--text4);
+        margin: 0;
+        width: 10vmin;
+        height: 3.9vmin;
+        margin-top: 2vmin;
+        text-align: center;
+        cursor: default;
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+    }
+
+    @media (max-aspect-ratio: 5/8) {
+        p {
+            width: 8vmax;
+            height: 3vmax;
+            margin-top: 1.7vmax;
+        }
+    }
+`;
+
 export const timetablePeriodCss = css`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
         border-radius: 1vmin;
+    }
+
+    div {
+        display: flex;
+        justify-content: center;
     }
 
     p {
@@ -61,6 +97,10 @@ export const timetableDayCss = css`
             width: 5.8vmax;
             font-size: 1.6vmax;
         }
+    }
+
+    .highlighted {
+        color: var(--text2);
     }
 `;
 

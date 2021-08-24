@@ -15,34 +15,19 @@
     <link href="css/app.css" rel="stylesheet" />
     <link href="css/navbar.css" rel="stylesheet" />
     <link href="css/bootstrap.css" rel="stylesheet" />
+    <link href="css/extensions.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
 
     <script type="module" src="main-elements.js"></script>
-    <script type="module" src="calendar-elements.js"></script>
 </head>
 
 <body class="laptop-screen">
     <nav-bar></nav-bar>
 
     <main>
-
+        <p>Extensions are coming early 2022!</p>
     </main>
-
-    <script>
-        var calendarElement;
-
-        async function onUserData() {
-            var resource = await GetResourceFromCache("calendar");
-
-            if (!calendarElement) {
-                calendarElement = document.createElement("calendar-element");
-                document.getElementsByTagName("main")[0].appendChild(calendarElement);
-            }
-
-            calendarElement.setAttribute("data", resource);
-        }
-    </script>
     
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 

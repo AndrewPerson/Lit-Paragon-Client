@@ -24,11 +24,47 @@ var t,i$1,s$1,e;const o$1=globalThis.trustedTypes,l$1=o$1?o$1.createPolicy("lit-
  * SPDX-License-Identifier: BSD-3-Clause
  */var i,l,o,s,n,a;(null!==(i=(a=globalThis).litElementVersions)&&void 0!==i?i:a.litElementVersions=[]).push("3.0.0-rc.2");class h extends a$2{constructor(){super(...arguments),this.renderOptions={host:this},this.Φt=void 0;}createRenderRoot(){var t,e;const r=super.createRenderRoot();return null!==(t=(e=this.renderOptions).renderBefore)&&void 0!==t||(e.renderBefore=r.firstChild),r}update(t){const r=this.render();super.update(t),this.Φt=V(r,this.renderRoot,this.renderOptions);}connectedCallback(){var t;super.connectedCallback(),null===(t=this.Φt)||void 0===t||t.setConnected(!0);}disconnectedCallback(){var t;super.disconnectedCallback(),null===(t=this.Φt)||void 0===t||t.setConnected(!1);}render(){return w}}h.finalized=!0,h._$litElement$=!0,null===(o=(l=globalThis).litElementHydrateSupport)||void 0===o||o.call(l,{LitElement:h}),null===(n=(s=globalThis).litElementPlatformSupport)||void 0===n||n.call(s,{LitElement:h});
 
+const roomPopupCss = i$2`
+    :host {
+        position: absolute;
+        background-image: url(images/popup.svg);
+        background-size: 100%;
+    }
+
+    p {
+        color: var(--text4);
+        margin: 0;
+        width: 10vmin;
+        height: 3.9vmin;
+        margin-top: 2vmin;
+        text-align: center;
+        cursor: default;
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+    }
+
+    @media (max-aspect-ratio: 5/8) {
+        p {
+            width: 8vmax;
+            height: 3vmax;
+            margin-top: 1.7vmax;
+        }
+    }
+`;
+
 const timetablePeriodCss = i$2`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
         border-radius: 1vmin;
+    }
+
+    div {
+        display: flex;
+        justify-content: center;
     }
 
     p {
@@ -86,6 +122,10 @@ const timetableDayCss = i$2`
             font-size: 1.6vmax;
         }
     }
+
+    .highlighted {
+        color: var(--text2);
+    }
 `;
 
 const timetableRowCss = i$2`
@@ -134,6 +174,30 @@ const fullTimetableCss = i$2`
     }
 `;
 
+class RoomPopup extends h {
+    static get styles() {
+        return roomPopupCss;
+    }
+
+    static get properties() {
+        return {
+            room: {type: String}
+        }
+    }
+
+    constructor() {
+        super();
+
+        this.room = "";
+    }
+
+    render() {
+        return T`
+            <p>${this.room}</p>
+        `;
+    }
+}
+
 class TimetablePeriod extends h {
     static get styles() {
         return timetablePeriodCss;
@@ -141,7 +205,8 @@ class TimetablePeriod extends h {
 
     static get properties() {
         return {
-            name: {type: String}
+            name: {type: String},
+            room: {type: String}
         }
     }
 
@@ -160,14 +225,28 @@ class TimetablePeriod extends h {
         TimetablePeriod.instances.push(this);
 
         this.name = "";
+        this.room = "";
 
         this.onmouseover = () => TimetablePeriod.highlight(this.name);
         this.onmouseleave = () => TimetablePeriod.highlight("");
     }
 
     render() {
+        var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+
         return T`
-            <p class="${TimetablePeriod.highlighted == this.name && this.name ? 'highlighted' : ''}">${this.name}</p>
+            <div>
+                <p class="${highlighted ? 'highlighted' : ''}">
+                    ${this.name}
+                </p>
+                ${
+                    highlighted ?  T`<room-popup room="${this.room}"
+                                                    style="top: ${this.offsetTop + this.clientHeight}px; width: ${this.style.width}">
+                                        </room-popup>`
+                                        :
+                                        A
+                }
+            </div>
         `;
     }
 }
@@ -180,11 +259,8 @@ class TimetableDay extends h {
     static get properties() {
         return {
             name: {type: String},
-            period1: {type: String},
-            period2: {type: String},
-            period3: {type: String},
-            period4: {type: String},
-            period5: {type: String}
+            data: {type: Object},
+            day: {type: String}
         };
     }
     
@@ -193,21 +269,34 @@ class TimetableDay extends h {
 
         this.name = "";
 
-        this.period1 = "";
-        this.period2 = "";
-        this.period3 = "";
-        this.period4 = "";
-        this.period5 = "";
+        this.data = {};
+
+        this.day = "";
     }
 
     render() {
         return T`
-            <p class="name">${this.name}</p>
-            <timetable-period name="${this.period1}"></timetable-period>
-            <timetable-period name="${this.period2}"></timetable-period>
-            <timetable-period name="${this.period3}"></timetable-period>
-            <timetable-period name="${this.period4}"></timetable-period>
-            <timetable-period name="${this.period5}"></timetable-period>
+            <p class="name ${this.day == this.name ? 'highlighted' : ''}">${this.name}</p>
+            
+            <timetable-period name="${this.data['1']?.title}"
+                              room="${this.data['1']?.room}">
+            </timetable-period>
+
+            <timetable-period name="${this.data['2']?.title}"
+                              room="${this.data['2']?.room}">
+            </timetable-period>
+
+            <timetable-period name="${this.data['3']?.title}"
+                              room="${this.data['3']?.room}">
+            </timetable-period>
+
+            <timetable-period name="${this.data['4']?.title}"
+                              room="${this.data['4']?.room}">
+            </timetable-period>
+
+            <timetable-period name="${this.data['5']?.title}"
+                              room="${this.data['5']?.room}">
+            </timetable-period>
         `;
     }
 }
@@ -224,7 +313,8 @@ class TimetableRow extends h {
             day2: {type: Object},
             day3: {type: Object},
             day4: {type: Object},
-            day5: {type: Object}
+            day5: {type: Object},
+            day: {type: String}
         };
     }
     
@@ -233,35 +323,13 @@ class TimetableRow extends h {
 
         this.week = "";
 
-        this.day1 = {
-            periods: {
-                
-            }
-        };
+        this.day1 = {};
+        this.day2 = {};
+        this.day3 = {};
+        this.day4 = {};
+        this.day5 = {};
 
-        this.day2 = {
-            periods: {
-                
-            }
-        };
-        
-        this.day3 = {
-            periods: {
-                
-            }
-        };
-        
-        this.day4 = {
-            periods: {
-                
-            }
-        };
-        
-        this.day5 = {
-            periods: {
-                
-            }
-        };
+        this.day = "";
     }
 
     render() {
@@ -275,43 +343,28 @@ class TimetableRow extends h {
             </div>
 
             <timetable-day name="MON ${this.week}"
-                           period1="${this.day1.periods['1']?.title}"
-                           period2="${this.day1.periods['2']?.title}"
-                           period3="${this.day1.periods['3']?.title}"
-                           period4="${this.day1.periods['4']?.title}"
-                           period5="${this.day1.periods['5']?.title}">
+                           data="${JSON.stringify(this.day1.periods)}"
+                           day="${this.day}">
             </timetable-day>
 
             <timetable-day name="TUE ${this.week}"
-                           period1="${this.day2.periods['1']?.title}"
-                           period2="${this.day2.periods['2']?.title}"
-                           period3="${this.day2.periods['3']?.title}"
-                           period4="${this.day2.periods['4']?.title}"
-                           period5="${this.day2.periods['5']?.title}">
+                           data="${JSON.stringify(this.day2.periods)}"
+                           day="${this.day}">
             </timetable-day>
 
             <timetable-day name="WED ${this.week}"
-                           period1="${this.day3.periods['1']?.title}"
-                           period2="${this.day3.periods['2']?.title}"
-                           period3="${this.day3.periods['3']?.title}"
-                           period4="${this.day3.periods['4']?.title}"
-                           period5="${this.day3.periods['5']?.title}">
+                           data="${JSON.stringify(this.day3.periods)}"
+                           day="${this.day}">
             </timetable-day>
 
             <timetable-day name="THU ${this.week}"
-                           period1="${this.day4.periods['1']?.title}"
-                           period2="${this.day4.periods['2']?.title}"
-                           period3="${this.day4.periods['3']?.title}"
-                           period4="${this.day4.periods['4']?.title}"
-                           period5="${this.day4.periods['5']?.title}">
+                           data="${JSON.stringify(this.day4.periods)}"
+                           day="${this.day}">
             </timetable-day>
 
             <timetable-day name="FRI ${this.week}"
-                           period1="${this.day5.periods['1']?.title}"
-                           period2="${this.day5.periods['2']?.title}"
-                           period3="${this.day5.periods['3']?.title}"
-                           period4="${this.day5.periods['4']?.title}"
-                           period5="${this.day5.periods['5']?.title}">
+                           data="${JSON.stringify(this.day5.periods)}"
+                           day="${this.day}">
             </timetable-day>
         `;
     }
@@ -324,7 +377,8 @@ class FullTimetable extends h {
 
     static get properties() {
         return {
-            data: {type: Object}
+            data: {type: Object},
+            day: {type: String}
         }
     }
 
@@ -336,6 +390,8 @@ class FullTimetable extends h {
 
             }
         };
+
+        this.day = "";
     }
 
     render() {
@@ -343,13 +399,16 @@ class FullTimetable extends h {
             return T`<loading-element></loading-element>`
         }
 
+        this.day = this.day.slice(0, 3).toUpperCase() + " " + this.day.slice(-1);
+
         return T`
             <timetable-row week="A"
                            day1="${JSON.stringify(this.data.days['1'])}"
                            day2="${JSON.stringify(this.data.days['2'])}"
                            day3="${JSON.stringify(this.data.days['3'])}"
                            day4="${JSON.stringify(this.data.days['4'])}"
-                           day5="${JSON.stringify(this.data.days['5'])}">
+                           day5="${JSON.stringify(this.data.days['5'])}"
+                           day="${this.day}">
             </timetable-row>
 
             <timetable-row week="B"
@@ -357,7 +416,8 @@ class FullTimetable extends h {
                            day2="${JSON.stringify(this.data.days['7'])}"
                            day3="${JSON.stringify(this.data.days['8'])}"
                            day4="${JSON.stringify(this.data.days['9'])}"
-                           day5="${JSON.stringify(this.data.days['10'])}">
+                           day5="${JSON.stringify(this.data.days['10'])}"
+                           day="${this.day}">
             </timetable-row>
 
             <timetable-row week="C"
@@ -365,15 +425,17 @@ class FullTimetable extends h {
                            day2="${JSON.stringify(this.data.days['12'])}"
                            day3="${JSON.stringify(this.data.days['13'])}"
                            day4="${JSON.stringify(this.data.days['14'])}"
-                           day5="${JSON.stringify(this.data.days['15'])}">
+                           day5="${JSON.stringify(this.data.days['15'])}"
+                           day="${this.day}">
             </timetable-row>
         `;
     }
 }
 
+customElements.define("room-popup", RoomPopup);
 customElements.define("timetable-period", TimetablePeriod);
 customElements.define("timetable-day", TimetableDay);
 customElements.define("timetable-row", TimetableRow);
 customElements.define("full-timetable", FullTimetable);
 
-export { FullTimetable, TimetableDay, TimetablePeriod, TimetableRow };
+export { FullTimetable, RoomPopup, TimetableDay, TimetablePeriod, TimetableRow };
