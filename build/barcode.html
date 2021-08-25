@@ -130,6 +130,8 @@
 
                     barcode.style.width = (maxX - minX) + "px";
                     barcode.style.height = (maxY - minY) + "px";
+
+                    barcode.style.transform = "";
                 }
                 else {
                     var width = maxX - minX;
@@ -146,8 +148,7 @@
 
                 JsBarcode(barcode, id, {
                     displayValue: false,
-                    margin: 0,
-                    flat: true
+                    margin: 0
                 });
             }
         }
@@ -171,6 +172,7 @@
 
             id = JSON.parse(userInfo).studentId;
 
+            barcode.imageSmoothingEnabled = false;
             RequestBarcodeSize();
         }
     </script>
