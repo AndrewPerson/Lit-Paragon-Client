@@ -18,13 +18,7 @@ export const announcementItemCss = css`
     }
 
     .sub {
-        font-size: 1.7vmin
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        .sub {
-            font-size: 1.1vmax;
-        }
+        font-size: calc(var(--font-size) / 1.5);
     }
 
     .collapsed {

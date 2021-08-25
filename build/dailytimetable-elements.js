@@ -68,13 +68,7 @@ const payloadBellCss = i$2`
     }
 
     .time {
-        font-size: 1.5vmin
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        .time {
-            font-size: 1vmax;
-        }
+        font-size: calc(var(--font-size) / 1.8);
     }
 
     p {
@@ -121,15 +115,9 @@ const dailytimetableCss = i$2`
 
     #timer {
         margin: 0;
-        font-size: 6vmin;
+        font-size: calc(var(--font-size) * 2.5);
         display: inline-block;
         color: var(--text1);
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        #timer {
-            font-size: 5vmax;
-        }
     }
 
     .timer-container {
