@@ -104,9 +104,10 @@ export const timetableDayCss = css`
 
     .name {
         margin: 0;
+        margin-bottom: 1vmin;
         text-align: center;
-        font-size: 2.2vmin;
-        width: 8.8vmin;
+        font-size: calc(var(--font-size) / 1.1);
+        width: calc(var(--font-size) * 3.63);
         color: var(--text3);
         border-bottom: solid grey 1px;
 
@@ -114,13 +115,6 @@ export const timetableDayCss = css`
         -ms-user-select: none;
         -moz-user-select: none;
         -webkit-user-select: none;
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        .name {
-            width: 5.8vmax;
-            font-size: 1.6vmax;
-        }
     }
 
     .highlighted {
