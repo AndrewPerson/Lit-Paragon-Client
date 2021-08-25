@@ -10,10 +10,17 @@ main {
 
 canvas {
     background-color: white;
+    filter: contrast(5);
 }
 
 #point1, #point2 {
     filter: none;
+    width: 20px;
+}
+
+canvas, #point1, #point2 {
+    display: none;
+    position: absolute;
 }
 
 #info {
