@@ -38,6 +38,15 @@ body {
     width: fit-content;
     height: fit-content;
     background-color: var(--surface1);
+    margin: 0;
+    font-size: 2.6vmin;
+}
+
+
+@media (max-aspect-ratio: 3/4) {
+    body {
+        font-size: 2vmax;
+    }
 }
 
 main {
@@ -50,10 +59,22 @@ main {
 
 img {
     filter: invert(var(--img-invert));
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 p {
     color: var(--text1);
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 button {

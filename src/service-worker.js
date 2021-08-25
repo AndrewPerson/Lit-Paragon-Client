@@ -93,11 +93,13 @@ async function FirebaseAuth() {
         measurementId: "G-DK3FHC0RDM"
     };
     
-    firebase.initializeApp(firebaseConfig);
-
-    if (firebase.auth().currentUser) {
-        return firebase.auth().currentUser.getIdToken();
+    try {
+        firebase.initializeApp(firebaseConfig);
     }
+    catch (e) {}
+
+    if (firebase.auth().currentUser)
+        return firebase.auth().currentUser.getIdToken();
 
     await firebase.auth().signInAnonymously();
 

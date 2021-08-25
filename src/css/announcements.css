@@ -1,3 +1,10 @@
+main {
+    flex: 0.96;
+    height: 96vh !important;
+    width: 96% !important;
+    margin: auto;
+}
+
 .mobile-screen announcement-container {
     height: calc(96vh - 12vw);
 }

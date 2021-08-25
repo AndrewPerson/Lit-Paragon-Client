@@ -144,8 +144,10 @@ export class DailyTimetable extends LitElement {
 
         if (!nextBell) {
             LoginIfNeeded().then(token => {
-                UpdateResourcesIfNeeded(token, true).then(() => {
-                    location.reload();
+                UpdateResourcesIfNeeded(token, true).then(succeeded => {
+                    if (succeeded) {
+                        location.reload();
+                    }
                 });
             });
         }

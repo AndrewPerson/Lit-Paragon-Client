@@ -14,10 +14,12 @@ async function Load() {
 
     var token = await LoginIfNeeded();
 
-    if (window.onUserData instanceof Function) await window.onUserData();
+    if (window.onUserData instanceof Function) 
+        try { await window.onUserData(); } catch (e) {}
 
     if (await UpdateResourcesIfNeeded(token)) {
-        if (window.onUserData instanceof Function) await window.onUserData();
+        if (window.onUserData instanceof Function)
+            try { await window.onUserData(); } catch (e) {}
     }
 
     if (location.origin == "https://web-paragon.web.app")
@@ -44,6 +46,18 @@ function UpdateScreenType() {
 
     if (dark)
         document.getElementsByTagName("html")[0].classList.add("dark");
+
+    caches.open("User Preferences").then(async cache => {
+        var darkResponse = await cache.match("dark");
+
+        if (darkResponse) {
+            if (await darkResponse.text() == "true") {
+                document.getElementsByTagName("html")[0].classList.add("dark");
+                location.hash = "#dark";
+            }
+        }
+        else await cache.put("dark", new Response("false"));
+    });
 }
 
 function UpdateClasses(elements, screenClass, oppClass) {
@@ -76,8 +90,6 @@ async function RegisterServiceWorker() {
                 // An interval of one day.
                 minInterval: 24 * 60 * 60 * 1000,
             });
-            
-            navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});
         } catch (e) {
             console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
             navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});

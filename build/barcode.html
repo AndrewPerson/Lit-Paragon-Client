@@ -14,17 +14,18 @@
 
     <link href="css/app.css" rel="stylesheet" />
     <link href="css/navbar.css" rel="stylesheet" />
-    <link href="css/bootstrap.css" rel="stylesheet" />
     <link href="css/barcode.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
 
-    <script src="scripts/bwip-js.js"></script>
+    <script src="scripts/jsbarcode.js"></script>
 
     <script type="module" src="main-elements.js"></script>
 </head>
 
 <body class="laptop-screen">
+    <script src="main.js"></script>
+
     <nav-bar></nav-bar>
 
     <main id="main">
@@ -123,24 +124,32 @@
                     minY = y1;
                 }
 
-                barcode.style.top = (minY + 10) + "px";
-                barcode.style.left = (minX + 10) + "px";
+                if (maxX - minX > maxY - minY) {
+                    barcode.style.top = (minY + 10) + "px";
+                    barcode.style.left = (minX + 10) + "px";
 
-                barcode.style.width = (maxX - minX) + "px";
-                barcode.style.height = (maxY - minY) + "px";
+                    barcode.style.width = (maxX - minX) + "px";
+                    barcode.style.height = (maxY - minY) + "px";
+                }
+                else {
+                    var width = maxX - minX;
+                    var height = maxY - minY;
 
-                RenderBarcode(maxX - minX > maxY - minY ? "N" : "R");
+                    barcode.style.top = (minY + 10) + "px";
+                    barcode.style.left = (minX + 10) + "px";
+
+                    barcode.style.width = height + "px";
+                    barcode.style.height = width + "px";
+
+                    barcode.style.transform = "rotate(90deg) translate(" + (height / 2 - width / 2) + "px, " + (-width / 2 + height / 2) + "px)";
+                }
+
+                JsBarcode(barcode, id, {
+                    displayValue: false,
+                    margin: 0,
+                    flat: true
+                });
             }
-        }
-
-        async function RenderBarcode(rotation) {
-            bwipjs.toCanvas(barcode, {
-                bcid: "code128",
-                text: id,
-                scale: 12,
-                height: 15,
-                rotate: rotation
-            });
         }
 
         async function onUserData() {
@@ -169,8 +178,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
-
-    <script src="main.js"></script>
 </body>
 
 </html>

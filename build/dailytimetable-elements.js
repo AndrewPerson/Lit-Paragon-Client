@@ -71,7 +71,7 @@ const payloadBellCss = i$2`
         font-size: 1.5vmin
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .time {
             font-size: 1vmax;
         }
@@ -126,7 +126,7 @@ const dailytimetableCss = i$2`
         color: var(--text1);
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         #timer {
             font-size: 5vmax;
         }
@@ -297,8 +297,10 @@ class DailyTimetable extends h {
 
         if (!nextBell) {
             LoginIfNeeded().then(token => {
-                UpdateResourcesIfNeeded(token, true).then(() => {
-                    location.reload();
+                UpdateResourcesIfNeeded(token, true).then(succeeded => {
+                    if (succeeded) {
+                        location.reload();
+                    }
                 });
             });
         }

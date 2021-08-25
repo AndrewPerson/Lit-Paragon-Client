@@ -9,6 +9,7 @@ export const navItemCss = css`
         display: flex;
         width: 12vmin;
         height: 12vmin;
+        cursor: default;
     }
 
     :host > :hover {
@@ -27,6 +28,11 @@ export const navItemCss = css`
         width: 5vmin;
         margin: 3.5vmin;
         filter: invert(var(--img-invert));
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 `;
 
