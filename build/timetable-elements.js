@@ -29,6 +29,18 @@ const roomPopupCss = i$2`
         position: absolute;
         background-image: url(images/popup.svg);
         background-size: 100%;
+
+        animation: appear 0.5s;
+    }
+
+    @keyframes appear {
+        from {
+            filter: opacity(0);
+        }
+
+        to {
+            filter: opacity(1);
+        }
     }
 
     p {
@@ -46,7 +58,7 @@ const roomPopupCss = i$2`
         -webkit-user-select: none;
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         p {
             width: 8vmax;
             height: 3vmax;
@@ -60,6 +72,18 @@ const timetablePeriodCss = i$2`
         background-color: var(--surface4);
         color: var(--text4);
         border-radius: 1vmin;
+
+        animation: appear 0.5s;
+    }
+
+    @keyframes appear {
+        from {
+            filter: opacity(0);
+        }
+
+        to {
+            filter: opacity(1);
+        }
     }
 
     div {
@@ -83,7 +107,7 @@ const timetablePeriodCss = i$2`
         -webkit-user-select: none;
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         p {
             width: 8vmax;
             margin-left: 0.5vmax;
@@ -116,7 +140,7 @@ const timetableDayCss = i$2`
         -webkit-user-select: none;
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .name {
             width: 5.8vmax;
             font-size: 1.6vmax;
@@ -154,7 +178,7 @@ const timetableRowCss = i$2`
         -webkit-user-select: none;
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .period-nums > p {
             height: 3vmax;
         }

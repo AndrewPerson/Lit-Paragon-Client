@@ -33,6 +33,7 @@ const navItemCss = i$2`
         display: flex;
         width: 12vmin;
         height: 12vmin;
+        cursor: default;
     }
 
     :host > :hover {
@@ -51,6 +52,11 @@ const navItemCss = i$2`
         width: 5vmin;
         margin: 3.5vmin;
         filter: invert(var(--img-invert));
+
+        user-select: none;
+        -ms-user-select: none;
+        -moz-user-select: none;
+        -webkit-user-select: none;
     }
 `;
 

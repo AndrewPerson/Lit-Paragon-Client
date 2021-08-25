@@ -14,12 +14,14 @@
 
     <link href="css/app.css" rel="stylesheet" />
     <link href="css/navbar.css" rel="stylesheet" />
-    <link href="css/bootstrap.css" rel="stylesheet" />
+    
     <link href="css/settings.css" rel="stylesheet" />
 
     <link href="manifest.json" rel="manifest" />
 
     <script type="module" src="main-elements.js"></script>
+    
+    <script src="main.js"></script>
 </head>
 
 <body class="laptop-screen">
@@ -35,7 +37,17 @@
 
     <script>
         if (location.hash == "#dark")
-            document.getElementById("modeImg").src = "images/sun.svg"
+            document.getElementById("modeImg").src = "images/sun.svg";
+
+        caches.open("User Preferences").then(async cache => {
+            var darkResponse = await cache.match("dark");
+
+            if (darkResponse) {
+                if (await darkResponse.text() == "true") {
+                    document.getElementsByTagName("html")[0].classList.add("dark");
+                }
+            }
+        });
 
         async function onUserData() {
             var metadataCache = await caches.open("Metadata");
@@ -48,10 +60,16 @@
         }
 
         async function ToggleDark() {
-            if (location.hash == "#dark")
-                location.hash = ""
-            else
+            var cache = await caches.open("User Preferences");
+
+            if (location.hash == "#dark") {
+                location.hash = "";
+                await cache.put("dark", new Response("false"));
+            }
+            else {
                 location.hash = "#dark";
+                await cache.put("dark", new Response("true"));
+            }
 
             location.reload();
         }
@@ -60,6 +78,9 @@
             await caches.delete("Metadata");
             await caches.delete("Offline Resources");
 
+            var serviceWorker = await navigator.serviceWorker.ready;
+            serviceWorker.active.postMessage({command: 'metadata-fetch'});
+
             location.reload();
         }
     </script>
@@ -67,8 +88,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
 
     <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
-
-    <script src="main.js"></script>
 </body>
 
 </html>

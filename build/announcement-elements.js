@@ -58,7 +58,7 @@ const announcementItemCss = i$3`
         font-size: 1.7vmin
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .sub {
             font-size: 1.1vmax;
         }
@@ -273,27 +273,6 @@ class AnnouncementContainer extends h {
 
         filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight);
 
-        if (filteredNotices.length == 0) {
-            return T`
-                <div class="header">
-                    <select id="filter" oninput="updateFilter(this.value)">
-                        <option value="all">All</option>
-                        <option value="Staff">Staff</option>
-                        <option value="12">12</option>
-                        <option value="11">11</option>
-                        <option value="10">10</option>
-                        <option value="9">9</option>
-                        <option value="8">8</option>
-                        <option value="7">7</option>
-                    </select>
-                </div>
-
-                <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <p>Nothing For This Filter</p>
-                </div>
-            `;
-        }
-
         return T`
             <div class="header">
                 <select id="filter" @input="${this.updateFilter}">
@@ -309,6 +288,12 @@ class AnnouncementContainer extends h {
             </div>
             <div class="announcements">
                 ${
+                    filteredNotices.length == 0 ? T`
+                        <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <p>Nothing For This Filter</p>
+                        </div>
+                    `
+                    :
                     filteredNotices.map(notice => {
                         return T`
                             <announcement-item title="${notice.title}"

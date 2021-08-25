@@ -21,7 +21,7 @@ export const announcementItemCss = css`
         font-size: 1.7vmin
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .sub {
             font-size: 1.1vmax;
         }

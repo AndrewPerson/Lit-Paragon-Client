@@ -47,7 +47,7 @@ export const payloadBellCss = css`
         font-size: 1.5vmin
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         .time {
             font-size: 1vmax;
         }
@@ -102,7 +102,7 @@ export const dailytimetableCss = css`
         color: var(--text1);
     }
 
-    @media (max-aspect-ratio: 5/8) {
+    @media (max-aspect-ratio: 3/4) {
         #timer {
             font-size: 5vmax;
         }

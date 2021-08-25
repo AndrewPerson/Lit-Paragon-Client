@@ -99,27 +99,6 @@ export class AnnouncementContainer extends LitElement {
 
         filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight);
 
-        if (filteredNotices.length == 0) {
-            return html`
-                <div class="header">
-                    <select id="filter" oninput="updateFilter(this.value)">
-                        <option value="all">All</option>
-                        <option value="Staff">Staff</option>
-                        <option value="12">12</option>
-                        <option value="11">11</option>
-                        <option value="10">10</option>
-                        <option value="9">9</option>
-                        <option value="8">8</option>
-                        <option value="7">7</option>
-                    </select>
-                </div>
-
-                <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                    <p>Nothing For This Filter</p>
-                </div>
-            `;
-        }
-
         return html`
             <div class="header">
                 <select id="filter" @input="${this.updateFilter}">
@@ -135,6 +114,12 @@ export class AnnouncementContainer extends LitElement {
             </div>
             <div class="announcements">
                 ${
+                    filteredNotices.length == 0 ? html`
+                        <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+                            <p>Nothing For This Filter</p>
+                        </div>
+                    `
+                    :
                     filteredNotices.map(notice => {
                         return html`
                             <announcement-item title="${notice.title}"

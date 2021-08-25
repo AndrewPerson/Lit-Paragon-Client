@@ -12,6 +12,10 @@ canvas {
     background-color: white;
 }
 
+#point1, #point2 {
+    filter: none;
+}
+
 #info {
     display: none;
     position: absolute;
