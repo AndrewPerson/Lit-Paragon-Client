@@ -1,5 +1,4 @@
 self.assets = [
-	"/404",
 	"/announcement-elements.js",
 	"/announcements",
 	"/assets.js",

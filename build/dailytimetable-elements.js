@@ -284,13 +284,16 @@ class DailyTimetable extends h {
         var nextBell = this.getNextBell();
 
         if (!nextBell) {
-            LoginIfNeeded().then(token => {
-                UpdateResourcesIfNeeded(token, true).then(succeeded => {
-                    if (succeeded) {
-                        location.reload();
-                    }
+            if (!DailyTimetable.gettingNextDay) {
+                DailyTimetable.gettingNextDay = true;
+                LoginIfNeeded().then(token => {
+                    UpdateResourcesIfNeeded(token, true).then(succeeded => {
+                        if (succeeded && this.getNextBell()) {
+                            location.reload();
+                        }
+                    });
                 });
-            });
+            }
         }
         else {
             if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
@@ -301,6 +304,8 @@ class DailyTimetable extends h {
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
     }
+
+    static gettingNextDay = false;
 
     constructor() {
         super();
