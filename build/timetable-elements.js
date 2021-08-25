@@ -130,7 +130,7 @@ const timetableDayCss = i$2`
         margin: 0;
         margin-bottom: 1vmin;
         text-align: center;
-        font-size: calc(var(--font-size) / 1.1);
+        font-size: calc(var(--font-size) / 1.2);
         width: calc(var(--font-size) * 3.63);
         color: var(--text3);
         border-bottom: solid grey 1px;
