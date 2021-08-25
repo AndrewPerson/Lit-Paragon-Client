@@ -49,7 +49,7 @@ export const timetablePeriodCss = css`
         color: var(--text4);
         border-radius: 1vmin;
 
-        animation: appear 0.5s;
+        animation: appear 0.3s ease-out;
     }
 
     @keyframes appear {

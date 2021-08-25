@@ -88,7 +88,7 @@ const announcementContainerCss = i$3`
         flex-direction: column;
         margin: auto;
         width: 96%;
-        height: 96vh;
+        height: 96%;
         padding: 2vmin;
         background-color: var(--surface2);
         border-radius: 2vmin;

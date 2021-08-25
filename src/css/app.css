@@ -85,6 +85,7 @@ button {
     border-radius: 1vmin;
     max-width: max-content;
     box-shadow: var(--surface-shadow) 0 0 1vmin;
+    font-size: var(--font-size);
 }
 
 button:hover {

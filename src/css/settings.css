@@ -12,12 +12,16 @@ button {
     margin-top: 2vmin;
 }
 
+button > p {
+    margin: 0;
+}
+
 .mode {
     display: flex;
     align-items: center;
     justify-content: center;
     width: fit-content;
-    aspect-ratio: 1;
+    padding: 1vmin;
 }
 
 #modeImg {
