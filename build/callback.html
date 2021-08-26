@@ -19,9 +19,9 @@
 </head>
 
 <body>
-    <img class="logo" src="images/logo-with-rings.svg" />
+    <img draggable="false" class="logo" src="images/logo-with-rings.svg" />
 
-    <h3>Logging in...</h3>
+    <p class="important">Logging in...</p>
 
     <script>
         async function Token(code) {
@@ -49,10 +49,12 @@
 
         var code = params.get("code");
 
-        Token(code)
-        .then(() => {
-            location.href = location.origin + "/dailytimetable";
-        });
+        if (code) {
+            Token(code)
+            .then(() => {
+                location.href = location.origin + "/dailytimetable";
+            });
+        }
     </script>
 </body>
 

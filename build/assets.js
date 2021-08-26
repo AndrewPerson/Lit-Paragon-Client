@@ -1,7 +1,6 @@
 self.assets = [
 	"/announcement-elements.js",
 	"/announcements",
-	"/assets.js",
 	"/barcode",
 	"/callback",
 	"/css/announcements.css",
@@ -16,10 +15,8 @@ self.assets = [
 	"/extensions",
 	"/icons/128.webp",
 	"/icons/256.webp",
-	"/icons/48.webp",
 	"/icons/512.webp",
 	"/icons/64.webp",
-	"/icons/96.webp",
 	"/images/announcements.svg",
 	"/images/announcements.webp",
 	"/images/barcode.svg",

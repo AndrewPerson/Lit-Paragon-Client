@@ -180,7 +180,7 @@ export class DailyTimetable extends LitElement {
         }, 1000);
 
         this.data = {
-            date: "0001-01-01",
+            date: "",
             bells: [],
             timetable: {
                 timetable: {
