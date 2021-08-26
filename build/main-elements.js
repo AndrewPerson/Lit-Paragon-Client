@@ -223,7 +223,7 @@ class LoadingElement extends h {
 
     render() {
         return T`
-            <img class="spinner" src="images/rings.svg" />
+            <img draggable="false" class="spinner" src="images/rings.svg" />
         `;
     }
 }

@@ -21,16 +21,8 @@
             "sizes": "128x128"
         },
         {
-            "src": "icons/96.webp",
-            "sizes": "96x96"
-        },
-        {
             "src": "icons/64.webp",
             "sizes": "64x64"
-        },
-        {
-            "src": "icons/48.webp",
-            "sizes": "48x48"
         }
     ],
     "screenshots": [],

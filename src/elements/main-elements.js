@@ -74,7 +74,7 @@ export class LoadingElement extends LitElement {
 
     render() {
         return html`
-            <img class="spinner" src="images/rings.svg" />
+            <img draggable="false" class="spinner" src="images/rings.svg" />
         `;
     }
 }
