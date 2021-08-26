@@ -30,6 +30,8 @@ self.assets = [
 	"/images/edit.svg",
 	"/images/extensions.svg",
 	"/images/extensions.webp",
+	"/images/logo-dark.svg",
+	"/images/logo-with-rings.svg",
 	"/images/logo.svg",
 	"/images/moon.svg",
 	"/images/popup.svg",

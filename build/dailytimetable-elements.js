@@ -288,7 +288,7 @@ class DailyTimetable extends h {
                 DailyTimetable.gettingNextDay = true;
                 LoginIfNeeded().then(token => {
                     UpdateResourcesIfNeeded(token, true).then(succeeded => {
-                        if (succeeded && this.getNextBell()) {
+                        if (succeeded) {
                             location.reload();
                         }
                     });
