@@ -147,7 +147,7 @@ export class DailyTimetable extends LitElement {
                 DailyTimetable.gettingNextDay = true;
                 LoginIfNeeded().then(token => {
                     UpdateResourcesIfNeeded(token, true).then(succeeded => {
-                        if (succeeded && this.getNextBell()) {
+                        if (succeeded) {
                             location.reload();
                         }
                     });

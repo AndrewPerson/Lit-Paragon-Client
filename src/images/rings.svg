@@ -1,78 +1,118 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="512px" height="512px" viewBox="0 0 512 512" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<svg width="529px" height="528px" viewBox="0 0 529 528" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256Z" transform="translate(8.290711E-05 9.766625E-05)" id="path_1" />
-    <path d="M0 256.002C0 114.616 114.614 4.54747e-12 255.997 0C397.38 4.76939e-09 511.994 114.616 511.994 256.002C511.995 397.387 397.381 512.003 255.997 512.003C114.614 512.003 0 397.387 0 256.002Z" transform="matrix(-4.371139E-08 -1 1 -4.371139E-08 2.2379983E-05 511.99435)" id="path_2" />
-    <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509Z" transform="translate(14.489749 14.49072)" id="path_3" />
-    <path d="M439.471 102.929C362.832 -6.23395 212.294 -32.8001 102.971 43.6784C-6.35063 120.157 -32.7554 270.86 43.7218 380.023C120.199 489.186 270.738 515.752 380.06 439.273C489.383 362.956 515.948 212.253 439.471 102.929C439.471 103.09 439.471 102.929 439.471 102.929L439.471 102.929Z" transform="matrix(-4.371139E-08 1 -1 -4.371139E-08 497.45047 14.347222)" id="path_4" />
-    <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019Z" transform="translate(28.979437 28.981264)" id="path_5" />
-    <path d="M451.359 262.54C471.002 138.725 386.473 22.4778 262.66 2.83486C138.847 -16.808 22.4394 67.7209 2.79663 191.536C-16.685 315.35 67.6815 431.598 191.496 451.241L191.496 451.241C315.47 470.884 431.716 386.355 451.359 262.54L451.359 262.54L451.359 262.54Z" transform="matrix(-4.371139E-08 -1 1 -4.371139E-08 28.984362 483.01385)" id="path_6" />
-    <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308Z" transform="translate(46.68905 46.69192)" id="path_7" />
-    <path d="M0 209.31C3.8147e-06 93.7111 93.7094 0 209.306 0C324.902 -3.05176e-05 418.612 93.7106 418.612 209.31C418.612 324.908 324.902 418.619 209.306 418.619C93.7094 418.619 7.62939e-06 324.908 0 209.31Z" transform="matrix(-4.371139E-08 1 -1 -4.371139E-08 465.31018 46.69173)" id="path_8" />
-    <clipPath id="clip_1">
+    <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_1" />
+    <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_2" />
+    <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_3" />
+    <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_4" />
+    <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_5" />
+    <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_6" />
+    <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_7" />
+    <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_8" />
+    <clipPath id="mask_1">
       <use xlink:href="#path_1" />
     </clipPath>
-    <clipPath id="clip_2">
+    <clipPath id="mask_2">
       <use xlink:href="#path_2" />
     </clipPath>
-    <clipPath id="clip_3">
+    <clipPath id="mask_3">
       <use xlink:href="#path_3" />
     </clipPath>
-    <clipPath id="clip_4">
+    <clipPath id="mask_4">
       <use xlink:href="#path_4" />
     </clipPath>
-    <clipPath id="clip_5">
+    <clipPath id="mask_5">
       <use xlink:href="#path_5" />
     </clipPath>
-    <clipPath id="clip_6">
+    <clipPath id="mask_6">
       <use xlink:href="#path_6" />
     </clipPath>
-    <clipPath id="clip_7">
+    <clipPath id="mask_7">
       <use xlink:href="#path_7" />
     </clipPath>
-    <clipPath id="clip_8">
+    <clipPath id="mask_8">
       <use xlink:href="#path_8" />
     </clipPath>
   </defs>
-  <g id="Rings" transform="translate(-2.1871947E-05 0)">
-    <g id="Green-Solid">
-      <g clip-path="url(#clip_1)">
-        <use xlink:href="#path_1" fill="none" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70" />
+  <g id="Rings" transform="translate(8 8)">
+    <g id="Green-Solid" transform="translate(7.6293945E-05 0)">
+      <g id="Mask-group">
+        <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_1)">
+          <g id="Group">
+            <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Green-Transparent">
-      <g clip-path="url(#clip_2)">
-        <use xlink:href="#path_2" fill="none" stroke="#78AFA0" stroke-opacity="0.28" stroke-width="8" stroke-dasharray="46 2 12 46 2 12" />
+    <g id="Green-Transparent" transform="translate(0 0.00030517578)">
+      <g id="Mask-group">
+        <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_2)">
+          <g id="Group">
+            <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-opacity="0.2784314" stroke-width="8" stroke-dasharray="46 2 12 46 2 12" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Yellow-Solid">
-      <g clip-path="url(#clip_3)">
-        <use xlink:href="#path_3" fill="none" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180" />
+    <g id="Yellow-Solid" transform="translate(14.489731 14.490631)">
+      <g id="Mask-group">
+        <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_3)">
+          <g id="Group">
+            <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Yellow-Transparent">
-      <g clip-path="url(#clip_4)">
-        <use xlink:href="#path_4" fill="none" stroke="#DDA131" stroke-opacity="0.69" stroke-width="16" stroke-dasharray="56 2 4 56 2 4" />
+    <g id="Yellow-Transparent" transform="translate(14.498611 14.347076)">
+      <g id="Mask-group">
+        <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_4)">
+          <g id="Group">
+            <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-opacity="0.6901961" stroke-width="16" stroke-dasharray="56 2 4 56 2 4" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Orange-Solid">
-      <g clip-path="url(#clip_5)">
-        <use xlink:href="#path_5" fill="none" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80" />
+    <g id="Orange-Solid" transform="translate(28.979431 28.98117)">
+      <g id="Mask-group">
+        <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_5)">
+          <g id="Group">
+            <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Orange-Transparent">
-      <g clip-path="url(#clip_6)">
-        <use xlink:href="#path_6" fill="none" stroke="#D36F2B" stroke-opacity="0.44" stroke-width="8" stroke-dasharray="140 4 10 80" />
+    <g id="Orange-Transparent" transform="translate(28.98436 28.81987)">
+      <g id="Mask-group">
+        <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_6)">
+          <g id="Group">
+            <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-opacity="0.4392157" stroke-width="8" stroke-dasharray="140 4 10 80" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Red-Solid">
-      <g clip-path="url(#clip_7)">
-        <use xlink:href="#path_7" fill="none" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80" />
+    <g id="Red-Solid" transform="translate(46.68904 46.691833)">
+      <g id="Mask-group">
+        <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_7)">
+          <g id="Group">
+            <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80" />
+          </g>
+        </g>
       </g>
     </g>
-    <g id="Red-Transparent">
-      <g clip-path="url(#clip_8)">
-        <use xlink:href="#path_8" fill="none" stroke="#C24127" stroke-opacity="0.28" stroke-width="4" stroke-dasharray="35 7 10 80" />
+    <g id="Red-Transparent" transform="translate(46.691147 46.691635)">
+      <g id="Mask-group">
+        <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_8)">
+          <g id="Group">
+            <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-opacity="0.2784314" stroke-width="4" stroke-dasharray="35 7 10 80" />
+          </g>
+        </g>
       </g>
     </g>
   </g>

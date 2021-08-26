@@ -28,16 +28,22 @@
     <nav-bar></nav-bar>
 
     <main>
-        <p id="version">Version: </p>
+        <p id="version">Paragon v0</p>
         <button onclick="Patch()">Fix</button>
         <button class="mode" onclick="ToggleDark()">
             <img id="modeImg" src="images/moon.svg" />
         </button>
+        <div id="background">
+            <loading-element></loading-element>
+            <img id="backgroundimg" src="images/logo.svg" />
+        </div>
     </main>
 
     <script>
-        if (location.hash == "#dark")
+        if (location.hash == "#dark") {
             document.getElementById("modeImg").src = "images/sun.svg";
+            document.getElementById("backgroundimg").src = "images/logo-dark.svg";
+        }
 
         caches.open("User Preferences").then(async cache => {
             var darkResponse = await cache.match("dark");
@@ -56,7 +62,7 @@
 
             var version = await versionResponse.text();
             
-            document.getElementById("version").textContent = `Version: ${version}`;
+            document.getElementById("version").textContent = `Paragon v${version}`;
         }
 
         async function ToggleDark() {
