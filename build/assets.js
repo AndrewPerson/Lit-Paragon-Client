@@ -1,6 +1,7 @@
 self.assets = [
 	"/announcement-elements.js",
 	"/announcements",
+	"/assets.js",
 	"/barcode",
 	"/callback",
 	"/css/announcements.css",

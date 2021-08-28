@@ -18,7 +18,7 @@ main > * {
     justify-content: center;
     position: absolute;
     z-index: 0;
-    filter: blur(2px);
+    filter: blur(1vmin) opacity(0.3);
 }
 
 #backgroundimg {

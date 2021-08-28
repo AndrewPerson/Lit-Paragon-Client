@@ -95,6 +95,10 @@ const announcementContainerCss = i$3`
         box-shadow: var(--surface-shadow) 0 0 1vmin;
     }
 
+    p {
+        color: var(--text1);
+    }
+
     .header {
         min-width: 100%;
         margin-top: 1vmin;
@@ -243,7 +247,7 @@ class AnnouncementContainer extends h {
 
     render() {
         if (!this.data) {
-            return T`<loading-element></loading-element>`;
+            return T`<loading-element style="width: 80%"></loading-element>`;
         }
 
         if (this.data.notices.length == 0) {

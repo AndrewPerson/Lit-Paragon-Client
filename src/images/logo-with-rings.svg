@@ -35,6 +35,7 @@
     </clipPath>
   </defs>
   <g id="Logo" transform="translate(8 8)">
+    <path d="M0 256C0 114.615 114.615 0 256 0C397.385 0 512 114.615 512 256C512 397.385 397.385 512 256 512C114.615 512 0 397.385 0 256Z" id="Background" fill="#FFFFFF" fill-rule="evenodd" stroke="none" />
     <g id="Green-Solid" transform="translate(7.6293945E-05 0)">
       <g id="Mask-group">
         <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="none" />

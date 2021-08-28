@@ -50,7 +50,8 @@
 
             if (darkResponse) {
                 if (await darkResponse.text() == "true") {
-                    document.getElementsByTagName("html")[0].classList.add("dark");
+                    document.getElementById("modeImg").src = "images/sun.svg";
+                    document.getElementById("backgroundimg").src = "images/logo-dark.svg";
                 }
             }
         });
@@ -90,10 +91,6 @@
             location.reload();
         }
     </script>
-
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
-
-    <script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-analytics.js"></script>
 </body>
 
 </html>

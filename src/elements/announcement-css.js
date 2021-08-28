@@ -58,6 +58,10 @@ export const announcementContainerCss = css`
         box-shadow: var(--surface-shadow) 0 0 1vmin;
     }
 
+    p {
+        color: var(--text1);
+    }
+
     .header {
         min-width: 100%;
         margin-top: 1vmin;
