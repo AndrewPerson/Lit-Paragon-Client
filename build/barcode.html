@@ -1,30 +1,27 @@
-<!DOCTYPE html>
-<html>
-
-<head>
-    <meta charset="utf-8" />
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
     
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <link rel="shortcut icon" type="image/webp" href="icons/128.webp" />
+    <link rel="shortcut icon" type="image/webp" href="icons/128.webp">
     
     <title>Paragon</title>
     
-    <base href="/" />
+    <base href="/">
 
-    <link href="css/app.css" rel="stylesheet" />
-    <link href="css/navbar.css" rel="stylesheet" />
-    <link href="css/barcode.css" rel="stylesheet" />
+    <link href="assets/app-44cc30c0.css" rel="stylesheet">
+    <link href="assets/navbar-3f734f3a.css" rel="stylesheet">
+    <link href="assets/barcode-6e09db71.css" rel="stylesheet">
 
-    <link href="manifest.json" rel="manifest" />
+    <link href="assets/manifest.json" rel="manifest">
 
-    <script src="scripts/jsbarcode.js"></script>
+    <script src="assets/jsbarcode-cf8d2644.js"></script>
 
-    <script type="module" src="main-elements.js"></script>
+    
 </head>
 
 <body class="laptop-screen">
-    <script src="main.js"></script>
+    <script src="assets/main-a2b25703.js"></script>
 
     <nav-bar></nav-bar>
 
@@ -33,12 +30,12 @@
         
         <div>
             <canvas id="barcode"></canvas>
-            <img id="point1" draggable="false" src="images/circle.svg" />
-            <img id="point2" draggable="false" src="images/circle.svg" />
+            <img id="point1" draggable="false" src="assets/circle-6885aafd.svg">
+            <img id="point2" draggable="false" src="assets/circle-6885aafd.svg">
         </div>
 
         <button title="Edit" onclick="RequestBarcodeSize()">
-            <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />
+            <img draggable="false" style="width: inherit; height: inherit;" src="assets/edit-b6534a1f.svg">
         </button>
     </main>
 
@@ -52,8 +49,6 @@
         var info = document.getElementById("info");
 
         var barcode = document.getElementById("barcode");
-
-        var main = document.getElementById("main");
 
         async function RequestBarcodeSize() {
             info.style.display = "unset";
@@ -161,7 +156,7 @@
 
                 loadingElement.style = "width: 80%";
 
-                main.appendChild(loadingElement);
+                document.getElementById("main").appendChild(loadingElement);
 
                 return;
             }
@@ -169,13 +164,13 @@
             if (loadingElement)
                 loadingElement.remove();
 
-
             id = JSON.parse(userInfo).studentId;
 
             barcode.imageSmoothingEnabled = false;
             RequestBarcodeSize();
         }
     </script>
-</body>
 
-</html>
+
+
+<script type="module" src="./main-elements.js"></script></body></html>
