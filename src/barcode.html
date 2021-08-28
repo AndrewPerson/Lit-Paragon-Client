@@ -20,7 +20,7 @@
 
     <script src="scripts/jsbarcode.js"></script>
 
-    <script type="module" src="main-elements.js"></script>
+    <script type="module" src="elements/main-elements.js"></script>
 </head>
 
 <body class="laptop-screen">
@@ -52,8 +52,6 @@
         var info = document.getElementById("info");
 
         var barcode = document.getElementById("barcode");
-
-        var main = document.getElementById("main");
 
         async function RequestBarcodeSize() {
             info.style.display = "unset";
@@ -161,14 +159,13 @@
 
                 loadingElement.style = "width: 80%";
 
-                main.appendChild(loadingElement);
+                document.getElementById("main").appendChild(loadingElement);
 
                 return;
             }
 
             if (loadingElement)
                 loadingElement.remove();
-
 
             id = JSON.parse(userInfo).studentId;
 
