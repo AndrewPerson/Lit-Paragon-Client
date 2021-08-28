@@ -75,7 +75,7 @@ export class AnnouncementContainer extends LitElement {
 
     render() {
         if (!this.data) {
-            return html`<loading-element></loading-element>`;
+            return html`<loading-element style="width: 80%"></loading-element>`;
         }
 
         if (this.data.notices.length == 0) {

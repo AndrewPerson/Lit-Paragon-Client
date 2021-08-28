@@ -223,7 +223,7 @@ export class FullTimetable extends LitElement {
 
     render() {
         if (!this.data) {
-            return html`<loading-element></loading-element>`
+            return html`<loading-element style="width: 80%"></loading-element>`
         }
 
         this.day = this.day.slice(0, 3).toUpperCase() + " " + this.day.slice(-1);

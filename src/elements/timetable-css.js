@@ -7,15 +7,25 @@ export const roomPopupCss = css`
         background-size: 100%;
 
         animation: appear 0.5s;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    p {
+        line-height: calc(var(--font-size) * 1.5);
     }
 
     @keyframes appear {
         from {
             filter: opacity(0);
+            z-index: 100;
         }
 
         to {
             filter: opacity(1);
+            z-index: 100;
         }
     }
 
@@ -71,8 +81,6 @@ export const timetablePeriodCss = css`
         color: var(--text1);
         margin: 0;
         width: 10vmin;
-        margin-right: 1vmin;
-        margin-left: 1vmin;
         height: 3.9vmin;
         text-align: center;
         cursor: default;
@@ -86,8 +94,6 @@ export const timetablePeriodCss = css`
     @media (max-aspect-ratio: 3/4) {
         p {
             width: 8vmax;
-            margin-left: 0.5vmax;
-            margin-right: 0.5vmax;
             height: 3vmax;
             margin-top: 0.5vmax;
         }
@@ -100,6 +106,13 @@ export const timetableDayCss = css`
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        width: 12vmin;
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host {
+            width: 9vmax;
+        }
     }
 
     .name {

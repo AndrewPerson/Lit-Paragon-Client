@@ -31,15 +31,25 @@ const roomPopupCss = i$2`
         background-size: 100%;
 
         animation: appear 0.5s;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    p {
+        line-height: calc(var(--font-size) * 1.5);
     }
 
     @keyframes appear {
         from {
             filter: opacity(0);
+            z-index: 100;
         }
 
         to {
             filter: opacity(1);
+            z-index: 100;
         }
     }
 
@@ -95,8 +105,6 @@ const timetablePeriodCss = i$2`
         color: var(--text1);
         margin: 0;
         width: 10vmin;
-        margin-right: 1vmin;
-        margin-left: 1vmin;
         height: 3.9vmin;
         text-align: center;
         cursor: default;
@@ -110,8 +118,6 @@ const timetablePeriodCss = i$2`
     @media (max-aspect-ratio: 3/4) {
         p {
             width: 8vmax;
-            margin-left: 0.5vmax;
-            margin-right: 0.5vmax;
             height: 3vmax;
             margin-top: 0.5vmax;
         }
@@ -124,6 +130,13 @@ const timetableDayCss = i$2`
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
+        width: 12vmin;
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host {
+            width: 9vmax;
+        }
     }
 
     .name {
@@ -414,7 +427,7 @@ class FullTimetable extends h {
 
     render() {
         if (!this.data) {
-            return T`<loading-element></loading-element>`
+            return T`<loading-element style="width: 80%"></loading-element>`
         }
 
         this.day = this.day.slice(0, 3).toUpperCase() + " " + this.day.slice(-1);

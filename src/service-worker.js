@@ -1,7 +1,7 @@
-importScripts("./assets.js");
+import { initializeApp } from 'firebase/app';
+import { initializeAuth, indexedDBLocalPersistence, signInAnonymously, getIdToken } from "firebase/auth";
 
-importScripts("https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/8.9.1/firebase-auth.js");
+importScripts("./assets.js");
 
 self.addEventListener('install', event => event.waitUntil(Install(event)));
 self.addEventListener('activate', event => event.waitUntil(Activate(event)));
@@ -94,24 +94,17 @@ async function FirebaseAuth() {
     };
     
     try {
-        firebase.initializeApp(firebaseConfig);
+        var app = initializeApp(firebaseConfig);
     }
     catch (e) {}
 
-    if (firebase.auth().currentUser)
-        return firebase.auth().currentUser.getIdToken();
+    const auth = initializeAuth(app, {persistence: indexedDBLocalPersistence});
+    if (auth.currentUser)
+        return await getIdToken(auth.currentUser);
+        
+    var user = (await signInAnonymously(auth)).user;
 
-    await firebase.auth().signInAnonymously();
-
-    var token = new Promise(resolve => {
-        firebase.auth().onAuthStateChanged(user => {
-            user.getIdToken().then(idToken => {
-                resolve(idToken);
-            });
-        });
-    });
-
-    return await token;
+    return await getIdToken(user);
 }
 
 async function GetLatestVersion() {
