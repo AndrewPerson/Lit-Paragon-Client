@@ -5,6 +5,18 @@ export const navItemCss = css`
         display: inline-block;
     }
 
+    :host(:hover) {
+        background-color: var(--surface2);
+        box-shadow: var(--surface-shadow) 0 0 2vmin;
+        border-radius: 2vmin;
+    }
+
+    :host(.nav-selected) {
+        background-color: var(--surface4) !important;
+        box-shadow: var(--surface-shadow-strong) 0 0 2vmin !important;
+        border-radius: 2vmin;
+    }
+
     a {
         display: flex;
         width: 12vmin;
@@ -12,21 +24,9 @@ export const navItemCss = css`
         cursor: default;
     }
 
-    :host > :hover {
-        background-color: var(--surface2);
-        box-shadow: var(--surface-shadow) 0 0 2vmin;
-        border-radius: 2vmin;
-    }
-
-    .nav-selected {
-        background-color: var(--surface4);
-        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
-        border-radius: 2vmin;
-    }
-
     img {
-        width: 5vmin;
-        margin: 3.5vmin;
+        margin: 3.3vmin;
+        width: 5.4vmin;
         filter: invert(var(--img-invert));
 
         user-select: none;
@@ -114,6 +114,7 @@ export const loginNotificationCss = css`
         border-radius: 1vmin;
         max-width: max-content;
         box-shadow: var(--surface-shadow) 0 0 1vmin;
+        font-size: calc(var(--font-size) / 1.2);
     }
 
     button:hover {

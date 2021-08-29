@@ -29,7 +29,7 @@
     <nav-bar></nav-bar>
 
     <main id="main">
-        <p id="info">Tap in two places to form the barcode</p>
+        <p id="info" style="display: none;">Tap in two places to form the barcode</p>
         
         <div>
             <canvas id="barcode"></canvas>
@@ -40,6 +40,10 @@
         <button title="Edit" onclick="RequestBarcodeSize()">
             <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />
         </button>
+
+        <img draggable="false" onmouseenter="ShowDescription()" onmouseleave="HideDescripion()" id="description" src="images/info.svg" />
+    
+        <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card</p>
     </main>
 
     <script>
@@ -52,6 +56,14 @@
         var info = document.getElementById("info");
 
         var barcode = document.getElementById("barcode");
+
+        function ShowDescription() {
+            document.getElementById("descriptionContent").style.display = "unset";
+        }
+
+        function HideDescripion() {
+            document.getElementById("descriptionContent").style.display = "none";
+        }
 
         async function RequestBarcodeSize() {
             info.style.display = "unset";
@@ -170,7 +182,14 @@
             id = JSON.parse(userInfo).studentId;
 
             barcode.imageSmoothingEnabled = false;
-            RequestBarcodeSize();
+            
+            point1.style.top = `${screen.availHeight * 0.1}px`;
+            point1.style.left = `${screen.availWidth * 0.8}px`;
+
+            point2.style.top = `${screen.availHeight * 0.3}px`;
+            point2.style.left = `${screen.availWidth * 0.2}px`;
+
+            UpdateBarcodeSize();
         }
     </script>
 </body>

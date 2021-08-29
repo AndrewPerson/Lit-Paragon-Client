@@ -19,7 +19,6 @@ canvas {
 }
 
 canvas, #point1, #point2 {
-    display: none;
     position: absolute;
 }
 
@@ -27,6 +26,32 @@ canvas, #point1, #point2 {
     display: none;
     position: absolute;
     top: 3vmin;
+}
+
+#description {
+    position: absolute;
+    top: calc(2vh + 1vmin);
+    width: 4vmin;
+}
+
+#descriptionContent {
+    position: absolute;
+    top: calc(2vh + 5vmin);
+    width: 40vmin;
+    background-color: var(--surface1);
+    padding: 2vmin;
+    border-radius: 2vmin;
+    box-shadow: var(--surface-shadow) 0 0 2vmin;
+}
+
+.laptop-screen #description,
+.laptop-screen #descriptionContent {
+    left: calc(13vmin + 2%);
+}
+
+.mobile-screen #description,
+.mobile-screen #descriptionContent {
+    left: 3vw;
 }
 
 button {

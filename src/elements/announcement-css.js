@@ -47,11 +47,13 @@ export const announcementItemCss = css`
 
 export const announcementContainerCss = css`
     :host {
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
         margin: auto;
+        flex: 0.96;
         width: 96%;
-        height: 96%;
+        height: 96vh;
         padding: 2vmin;
         background-color: var(--surface2);
         border-radius: 2vmin;
@@ -103,25 +105,6 @@ export const announcementContainerCss = css`
         margin-left: 10px;
     }
 
-    button {
-        border: solid rgb(82, 143, 255) 1px;
-        background-color: var(--surface2);
-        color: var(--text1);
-        padding: 1vmin 2vmin;
-        border-radius: 1vmin;
-        max-width: max-content;
-    }
-
-    button:hover {
-        background-color: var(--surface3);
-    }
-
-    button:active {
-        border: none;
-        background-color: var(--surface4);
-        color: var(--text1);
-    }
-
     select {
         border: solid rgb(82, 143, 255) 1px;
         background-color: var(--surface2);
@@ -130,6 +113,7 @@ export const announcementContainerCss = css`
         padding-right: 6vmin;
         border-radius: 1vmin;
         max-width: max-content;
+        font-size: calc(var(--font-size) / 1.2);
     }
 
     option {

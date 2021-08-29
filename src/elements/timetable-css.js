@@ -13,6 +13,20 @@ export const roomPopupCss = css`
         align-items: center;
     }
 
+    :host(.reversed) {
+        transform: rotate(180deg);
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host(.reversed) {
+            transform: translateY(1vmax) rotate(180deg);
+        }
+    }
+
+    :host(.reversed) p {
+        transform: rotate(180deg);
+    }
+
     p {
         line-height: calc(var(--font-size) * 1.5);
     }
@@ -164,6 +178,7 @@ export const timetableRowCss = css`
     @media (max-aspect-ratio: 3/4) {
         .period-nums > p {
             height: 3vmax;
+            margin-top: 0.5vmax;
         }
     }
 `;

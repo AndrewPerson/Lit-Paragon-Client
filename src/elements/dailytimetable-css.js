@@ -35,6 +35,10 @@ export const bellCss = css`
         -moz-user-select: none;
         -webkit-user-select: none;
     }
+
+    style {
+        display: none !important;
+    }
 `;
 
 export const payloadBellCss = css`

@@ -2,7 +2,6 @@ import {copy} from '@web/rollup-plugin-copy';
 import {nodeResolve} from '@rollup/plugin-node-resolve';
 import {terser} from 'rollup-plugin-terser';
 import html from '@web/rollup-plugin-html';
-import minifyHTML from 'rollup-plugin-minify-html-literals';
 
 const ServiceWorkerConfig = {
     input: "src/service-worker.js",
@@ -24,7 +23,6 @@ function Config() {
         plugins: [
             nodeResolve(),
             html(),
-            minifyHTML(),
             terser({
                 ecma: 2020,
                 module: true,
