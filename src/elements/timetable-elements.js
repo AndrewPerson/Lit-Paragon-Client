@@ -8,7 +8,7 @@ export class RoomPopup extends LitElement {
 
     static get properties() {
         return {
-            room: {type: String}
+            room: {type: String},
         }
     }
 
@@ -54,12 +54,17 @@ export class TimetablePeriod extends LitElement {
         this.name = "";
         this.room = "";
 
-        this.onmouseover = () => TimetablePeriod.highlight(this.name);
-        this.onmouseleave = () => TimetablePeriod.highlight("");
+        this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
+
+        this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
     }
 
     render() {
         var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+        var nextSibling = this.nextElementSibling;
+        var nextNextSibling = nextSibling?.nextElementSibling;
+
+        var displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
 
         return html`
             <div>
@@ -67,11 +72,25 @@ export class TimetablePeriod extends LitElement {
                     ${this.name}
                 </p>
                 ${
-                    highlighted ?  html`<room-popup room="${this.room}"
-                                                    style="top: ${this.offsetTop + this.clientHeight}px; width: ${this.style.width}">
-                                        </room-popup>`
-                                        :
-                                        nothing
+                    highlighted ? (
+                        displayPopupTop ?
+                        html`
+                            <room-popup style="top: ${this.offsetTop - this.clientHeight * 1.5}px"
+                                        room="${this.room}"
+                                        class="reversed"
+                                        @mouseover=${() => TimetablePeriod.highlight("")}>
+                            </room-popup>
+                        `
+                        :
+                        html`
+                            <room-popup style="top: ${this.offsetTop + this.clientHeight}px"
+                                        room="${this.room}"
+                                        @mouseover=${() => TimetablePeriod.highlight("")}>
+                            </room-popup>
+                        `
+                    )
+                    :
+                    nothing 
                 }
             </div>
         `;

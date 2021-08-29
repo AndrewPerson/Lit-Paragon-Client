@@ -24,11 +24,11 @@ export class NavItem extends LitElement {
     render() {
         if (!this.icon) this.icon = this.title.toLowerCase();
 
-        //Trims / off front and end of the path and the link.
-        this.linkClass = location.pathname == this.link ? "nav-selected" : "";
+        if (location.pathname == this.link)
+            this.classList.add("nav-selected");
 
         return html`
-            <a href="${this.link}${location.hash}" title="${this.title}" class="${this.linkClass}">
+            <a href="${this.link}${location.hash}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </a>
         `;
@@ -84,11 +84,7 @@ export class LoginNotification extends LitElement {
         return loginNotificationCss;
     }
 
-    close(e) {
-        this.remove();
-    }
-
-    async login(e) {
+    async login() {
         await caches.delete("User Resources");
         location.pathname = "login";
     }
@@ -102,10 +98,10 @@ export class LoginNotification extends LitElement {
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
-                <button @click="${this.login}">
+                <button @click=${this.login}>
                     Login
                 </button>
-                <button @click="${this.close}" class="dismiss">
+                <button @click=${() => this.remove()} class="dismiss">
                     Dismiss
                 </button>
             </div>

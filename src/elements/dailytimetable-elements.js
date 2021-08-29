@@ -187,7 +187,8 @@ export class DailyTimetable extends LitElement {
             timetable: {
                 timetable: {
                     periods: {}
-                }
+                },
+                subjects: {}
             },
             roomVariations: [],
             classVariations: []
@@ -225,20 +226,32 @@ export class DailyTimetable extends LitElement {
                             var roomChanged = false;
 
                             if (bell.bell in this.data.roomVariations) {
-                                roomChanged = true;
-                                room = this.data.roomVariations[bell.bell].roomTo;
+                                var variation = this.data.roomVariations[bell.bell];
+
+                                if (period.year == variation.year) {
+                                    roomChanged = true;
+                                    room = variation.roomTo;
+                                }
                             }
                             
                             var teacher = period.fullTeacher;
                             var teacherChanged = false;
 
                             if (bell.bell in this.data.classVariations) {
-                                teacherChanged = true;
-                                teacher = this.data.classVariations[bell.bell].casualSurname;
+                                var variation = this.data.classVariations[bell.bell];
+
+                                if (period.year == variation.year) {
+                                    teacherChanged = true;
+                                    teacher = variation.casualSurname;
+                                }
                             }
 
+                            var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
+
+                            title = title.split(" ").filter(value => isNaN(value)).join(" ");
+
                             return html`
-                                <payload-bell-item name="${period.title}"
+                                <payload-bell-item name="${title}"
                                                    time="${bell.time}"
                                                    ?timechanged="${bell.reason != ""}"
                                                    room="${room}"

@@ -9,19 +9,19 @@
     "orientation": "any",
     "icons": [
         {
-            "src": "icons/512.webp",
+            "src": "../icons/512.webp",
             "sizes": "512x512"
         },
         {
-            "src": "icons/256.webp",
+            "src": "../icons/256.webp",
             "sizes": "256x256"
         },
         {
-            "src": "icons/128.webp",
+            "src": "../icons/128.webp",
             "sizes": "128x128"
         },
         {
-            "src": "icons/64.webp",
+            "src": "../icons/64.webp",
             "sizes": "64x64"
         }
     ],
@@ -34,7 +34,7 @@
             "url": "./dailytimetable",
             "icons": [
                 {
-                    "src": "images/dailytimetable.webp",
+                    "src": "../images/dailytimetable.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -46,7 +46,7 @@
             "url": "./barcode",
             "icons": [
                 {
-                    "src": "images/barcode.webp",
+                    "src": "../images/barcode.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -58,7 +58,7 @@
             "url": "./announcements",
             "icons": [
                 {
-                    "src": "images/announcements.webp",
+                    "src": "../images/announcements.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -70,7 +70,7 @@
             "url": "./timetable",
             "icons": [
                 {
-                    "src": "images/timetable.webp",
+                    "src": "../images/timetable.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -82,7 +82,7 @@
             "url": "./extensions",
             "icons": [
                 {
-                    "src": "images/extensions.webp",
+                    "src": "../images/extensions.webp",
                     "sizes": "200x200"
                 }
             ]
