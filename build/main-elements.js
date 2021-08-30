@@ -37,7 +37,6 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
         position: absolute;
         left: 0;
         bottom: 0;
-        background-color: var(--surface3);
     }
 
     :host {
@@ -121,7 +120,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
             <a href="${this.link}${location.hash}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </a>
-        `}}class c extends e{static get styles(){return s}render(){return i`
+        `}}class l extends e{static get styles(){return s}render(){return i`
             <nav-item link="/dailytimetable" title="Daily Timetable" icon="dailytimetable"></nav-item>
             <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item link="/timetable" title="Timetable"></nav-item>
@@ -129,7 +128,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
             <nav-item link="/extensions" title="Extensions"></nav-item>
 
             <nav-item link="/settings" title="Settings"></nav-item>
-        `}}class l extends e{static get styles(){return o}static get properties(){return{width:{type:String},height:{type:String}}}constructor(){super(),this.width="0",this.height="0"}render(){return i`
+        `}}class c extends e{static get styles(){return o}static get properties(){return{width:{type:String},height:{type:String}}}constructor(){super(),this.width="0",this.height="0"}render(){return i`
             <img draggable="false" class="spinner" src="images/rings.svg" />
         `}}class d extends e{static get styles(){return r}async login(){await caches.delete("User Resources"),location.pathname="login"}constructor(){super()}render(){return i`
             <p>You need to log in to view the latest information.</p>
@@ -142,4 +141,4 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
                     Dismiss
                 </button>
             </div>
-        `}}customElements.define("nav-item",a),customElements.define("nav-bar",c),customElements.define("loading-element",l),customElements.define("login-notification",d);export{l as LoadingElement,d as LoginNotification,a as NavItem,c as Navbar};
+        `}}customElements.define("nav-item",a),customElements.define("nav-bar",l),customElements.define("loading-element",c),customElements.define("login-notification",d);export{c as LoadingElement,d as LoginNotification,a as NavItem,l as Navbar};

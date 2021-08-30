@@ -256,7 +256,7 @@ export class DailyTimetable extends LitElement {
                                                    ?timechanged="${bell.reason != ""}"
                                                    room="${room}"
                                                    ?roomChanged="${roomChanged}"
-                                                   teacher="${teacher}"
+                                                   teacher="${teacher == "" ? "No one" : teacher}"
                                                    ?teacherChanged="${teacherChanged}">
                                 </payload-bell-item>`;
                         }

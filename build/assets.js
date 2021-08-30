@@ -3,7 +3,7 @@ self.assets = [
 	"/announcements",
 	"/assets/announcements-9dddc327.css",
 	"/assets/app-44cc30c0.css",
-	"/assets/barcode-d571552a.css",
+	"/assets/barcode-b3bf130e.css",
 	"/assets/circle-6885aafd.svg",
 	"/assets/edit-b6534a1f.svg",
 	"/assets/extensions-04008533.css",

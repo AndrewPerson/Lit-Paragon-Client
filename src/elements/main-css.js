@@ -41,7 +41,6 @@ export const navMenuCss = css`
         position: absolute;
         left: 0;
         bottom: 0;
-        background-color: var(--surface3);
     }
 
     :host {
