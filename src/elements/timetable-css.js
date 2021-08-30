@@ -97,6 +97,7 @@ export const timetablePeriodCss = css`
         width: 10vmin;
         height: 3.9vmin;
         text-align: center;
+        line-height: calc(var(--font-size) * 1.5);
         cursor: default;
 
         user-select: none;
@@ -168,6 +169,7 @@ export const timetableRowCss = css`
         color: var(--text3);
         margin: 0;
         height: 3.9vmin;
+        line-height: calc(var(--font-size) * 1.5);
 
         user-select: none;
         -ms-user-select: none;

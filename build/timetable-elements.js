@@ -93,6 +93,7 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
         width: 10vmin;
         height: 3.9vmin;
         text-align: center;
+        line-height: calc(var(--font-size) * 1.5);
         cursor: default;
 
         user-select: none;
@@ -108,7 +109,7 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
             margin-top: 0.5vmax;
         }
     }
-`,o=t`
+`,n=t`
     :host {
         display: inline-flex;
         flex-direction: column;
@@ -141,7 +142,7 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
     .highlighted {
         color: var(--text2);
     }
-`,n=t`
+`,o=t`
     :host {
         display: flex;
         align-items: flex-end;
@@ -160,6 +161,7 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
         color: var(--text3);
         margin: 0;
         height: 3.9vmin;
+        line-height: calc(var(--font-size) * 1.5);
 
         user-select: none;
         -ms-user-select: none;
@@ -192,19 +194,19 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
                     ${this.name}
                 </p>
                 ${t?r?i`
-                            <room-popup style="top: ${this.offsetTop-1.5*this.clientHeight}px"
+                            <room-popup style="top: ${this.offsetTop-1.5*this.clientHeight-.5}px"
                                         room="${this.room}"
                                         class="reversed"
                                         @mouseover=${()=>h.highlight("")}>
                             </room-popup>
                         `:i`
-                            <room-popup style="top: ${this.offsetTop+this.clientHeight}px"
+                            <room-popup style="top: ${this.offsetTop+this.clientHeight+.5}px"
                                         room="${this.room}"
                                         @mouseover=${()=>h.highlight("")}>
                             </room-popup>
                         `:a}
             </div>
-        `}}class l extends e{static get styles(){return o}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return i`
+        `}}class l extends e{static get styles(){return n}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return i`
             <p class="name ${this.day==this.name?"highlighted":""}">${this.name}</p>
             
             <timetable-period name="${this.data[1]?.title}"
@@ -226,7 +228,7 @@ import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
             <timetable-period name="${this.data[5]?.title}"
                               room="${this.data[5]?.room}">
             </timetable-period>
-        `}}class y extends e{static get styles(){return n}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return i`
+        `}}class y extends e{static get styles(){return o}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return i`
             <div class="period-nums">
                 <p>1</p>
                 <p>2</p>

@@ -75,7 +75,7 @@ export class TimetablePeriod extends LitElement {
                     highlighted ? (
                         displayPopupTop ?
                         html`
-                            <room-popup style="top: ${this.offsetTop - this.clientHeight * 1.5}px"
+                            <room-popup style="top: ${this.offsetTop - this.clientHeight * 1.5 - 0.5}px"
                                         room="${this.room}"
                                         class="reversed"
                                         @mouseover=${() => TimetablePeriod.highlight("")}>
@@ -83,7 +83,7 @@ export class TimetablePeriod extends LitElement {
                         `
                         :
                         html`
-                            <room-popup style="top: ${this.offsetTop + this.clientHeight}px"
+                            <room-popup style="top: ${this.offsetTop + this.clientHeight + 0.5}px"
                                         room="${this.room}"
                                         @mouseover=${() => TimetablePeriod.highlight("")}>
                             </room-popup>

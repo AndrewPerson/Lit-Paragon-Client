@@ -44,8 +44,8 @@ export class Navbar extends LitElement {
         return html`
             <nav-item link="/dailytimetable" title="Daily Timetable" icon="dailytimetable"></nav-item>
             <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
-            <nav-item link="/announcements" title="Announcements"></nav-item>
             <nav-item link="/timetable" title="Timetable"></nav-item>
+            <nav-item link="/announcements" title="Announcements"></nav-item>
             <nav-item link="/extensions" title="Extensions"></nav-item>
 
             <nav-item link="/settings" title="Settings"></nav-item>
