@@ -19,6 +19,7 @@ export class NavItem extends LitElement {
 
         this.link = "";
         this.title = "Home";
+        this.icon = "";
     }
 
     render() {
