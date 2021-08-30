@@ -140,7 +140,7 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-97c1479f.js";const s=e`
                                                    ?timechanged="${""!=e.reason}"
                                                    room="${s}"
                                                    ?roomChanged="${n}"
-                                                   teacher="${r}"
+                                                   teacher="${""==r?"No one":r}"
                                                    ?teacherChanged="${o}">
                                 </payload-bell-item>`}return"Transition"==e.bell||"End of Day"==e.bell?a:i`<bell-item name="${e.bellDisplay}" time="${e.time}"></bell-item>`}))}
         `):i`

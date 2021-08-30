@@ -65,12 +65,22 @@
 
         var barcode = document.getElementById("barcode");
 
+        var main = document.getElementById("main");
+
         function ShowDescription() {
             document.getElementById("descriptionContent").style.display = "unset";
         }
 
         function HideDescripion() {
             document.getElementById("descriptionContent").style.display = "none";
+        }
+
+        function GetPercentageFromPixels(x, y) {
+            return {x: (x - main.offsetLeft) / main.clientWidth * 100, y: (y - main.offsetTop) / main.clientHeight * 100};
+        }
+
+        function GetPixelsFromPercentage(x, y) {
+            return {x: main.clientWidth * x / 100 + main.offsetLeft, y: main.clientHeight * y / 100 + main.offsetTop};
         }
 
         async function RequestBarcodeSize() {
@@ -86,13 +96,17 @@
                     clicks++;
 
                     if (clicks == 1) {
-                        point1.style.left = `${event.clientX - 10}px`;
-                        point1.style.top = `${event.clientY - 10}px`;
+                        var {x, y} = GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
+                        
+                        point1.style.left = `${x}%`;
+                        point1.style.top = `${y}%`;
                         point1.style.display = "unset";
                     }
                     else if (clicks == 2) {
-                        point2.style.left = `${event.clientX - 10}px`;
-                        point2.style.top = `${event.clientY - 10}px`;
+                        var {x, y} = GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
+
+                        point2.style.left = `${x}%`;
+                        point2.style.top = `${y}%`;
                         point2.style.display = "unset";
 
                         document.removeEventListener("pointerdown", this);
@@ -112,11 +126,11 @@
 
         function UpdateBarcodeSize() {
             if (id) {
-                var x1 = Number.parseInt(point1.style.left.replace("px", ""));
-                var y1 = Number.parseInt(point1.style.top.replace("px", ""));
+                var x1 = parseFloat(point1.style.left.replace("%", ""));
+                var y1 = parseFloat(point1.style.top.replace("%", ""));
 
-                var x2 = Number.parseInt(point2.style.left.replace("px", ""));
-                var y2 = Number.parseInt(point2.style.top.replace("px", ""));
+                var x2 = parseFloat(point2.style.left.replace("%", ""));
+                var y2 = parseFloat(point2.style.top.replace("%", ""));
 
                 var maxX;
                 var minX;
@@ -142,27 +156,11 @@
                     minY = y1;
                 }
 
-                if (maxX - minX > maxY - minY) {
-                    barcode.style.top = (minY + 10) + "px";
-                    barcode.style.left = (minX + 10) + "px";
+                barcode.style.top = `${minY}%`;
+                barcode.style.left = `${minX}%`;
 
-                    barcode.style.width = (maxX - minX) + "px";
-                    barcode.style.height = (maxY - minY) + "px";
-
-                    barcode.style.transform = "";
-                }
-                else {
-                    var width = maxX - minX;
-                    var height = maxY - minY;
-
-                    barcode.style.top = (minY + 10) + "px";
-                    barcode.style.left = (minX + 10) + "px";
-
-                    barcode.style.width = height + "px";
-                    barcode.style.height = width + "px";
-
-                    barcode.style.transform = "rotate(90deg) translate(" + (height / 2 - width / 2) + "px, " + (-width / 2 + height / 2) + "px)";
-                }
+                barcode.style.width = `${maxX - minX}%`;
+                barcode.style.height = `${maxY - minY}%`;
 
                 JsBarcode(barcode, id, {
                     displayValue: false,
@@ -179,7 +177,7 @@
 
                 loadingElement.style = "width: 80%";
 
-                document.getElementById("main").appendChild(loadingElement);
+                main.appendChild(loadingElement);
 
                 return;
             }
@@ -191,11 +189,17 @@
 
             barcode.imageSmoothingEnabled = false;
             
-            point1.style.top = `${screen.availHeight * 0.1}px`;
-            point1.style.left = `${screen.availWidth * 0.8}px`;
+            var {x, y} = GetPixelsFromPercentage(80, 10);
+            ({x, y} = GetPercentageFromPixels(x - 10, y - 10));
 
-            point2.style.top = `${screen.availHeight * 0.3}px`;
-            point2.style.left = `${screen.availWidth * 0.2}px`;
+            point1.style.top = `${y}%`;
+            point1.style.left = `${x}%`;
+
+            ({x, y} = GetPixelsFromPercentage(20, 30));
+            ({x, y} = GetPercentageFromPixels(x - 10, y - 10));
+
+            point2.style.top = `${y}%`;
+            point2.style.left = `${x}%`;
 
             UpdateBarcodeSize();
         }

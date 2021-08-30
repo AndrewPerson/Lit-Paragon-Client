@@ -1,6 +1,7 @@
 main {
     margin: auto;
     flex: 0.96;
+    position: relative;
     width: 96% !important;
     height: 96vh !important;
     background-color: var(--surface2);
@@ -11,6 +12,7 @@ main {
 canvas {
     background-color: white;
     filter: contrast(5);
+    transform: translate(10px, 10px);
 }
 
 #point1, #point2 {
@@ -25,18 +27,18 @@ canvas, #point1, #point2 {
 #info {
     display: none;
     position: absolute;
-    top: 3vmin;
+    top: 1vmin;
 }
 
 #description {
     position: absolute;
-    top: calc(2vh + 1vmin);
+    top: 1vmin;
     width: 4vmin;
 }
 
 #descriptionContent {
     position: absolute;
-    top: calc(2vh + 5vmin);
+    top: 5vmin;
     width: 40vmin;
     background-color: var(--surface2);
     padding: 2vmin;
@@ -46,18 +48,18 @@ canvas, #point1, #point2 {
 
 .laptop-screen #description,
 .laptop-screen #descriptionContent {
-    left: calc(13vmin + 2%);
+    left: 1vmin;
 }
 
 .mobile-screen #description,
 .mobile-screen #descriptionContent {
-    left: 3vw;
+    left: 1vw;
 }
 
 .edit {
     position: absolute;
-    top: 2vh;
-    right: 2vw;
+    top: 0;
+    right: 0;
     background-color: rgba(0, 0, 0, 0);
     border-radius: 0;
     width: 8vmin;
