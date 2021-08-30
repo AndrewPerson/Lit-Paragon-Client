@@ -38,7 +38,7 @@ canvas, #point1, #point2 {
     position: absolute;
     top: calc(2vh + 5vmin);
     width: 40vmin;
-    background-color: var(--surface1);
+    background-color: var(--surface2);
     padding: 2vmin;
     border-radius: 2vmin;
     box-shadow: var(--surface-shadow) 0 0 2vmin;
@@ -54,8 +54,10 @@ canvas, #point1, #point2 {
     left: 3vw;
 }
 
-button {
+.edit {
     position: absolute;
+    top: 2vh;
+    right: 2vw;
     background-color: rgba(0, 0, 0, 0);
     border-radius: 0;
     width: 8vmin;
@@ -66,20 +68,10 @@ button {
     box-shadow: none;
 }
 
-button:hover {
+.edit:hover {
     background-color: rgba(0, 0, 0, 0);
 }
 
-button:active {
+.edit:active {
     background-color: rgba(0, 0, 0, 0);
-}
-
-.laptop-screen button {
-    bottom: 2vh;
-    right: 2vw;
-}
-
-.mobile-screen button {
-    top: 2vh;
-    right: 2vw;
 }

@@ -35,6 +35,6 @@
     width: 100%;
 }
 
-.mobile-screen > * :not(nav-bar) {
+.mobile-screen > *:not(nav-bar) {
     order: 1;
 }

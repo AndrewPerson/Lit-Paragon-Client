@@ -1,4 +1,4 @@
-const {readdirSync, writeFileSync, readFileSync} = require('fs');
+const {readdirSync, writeFileSync, readFileSync, rmSync} = require('fs');
 const {exec} = require('child_process');
 
 function getFiles(rootDir, relativeDir) {
@@ -25,6 +25,8 @@ function getFiles(rootDir, relativeDir) {
 
     return files;
 }
+
+rmSync(__dirname.replace('\\', '/') + "/build", { recursive: true, force: true });
 
 exec("rollup -c", (err, stdout, stderr) => {
     if (err) {

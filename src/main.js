@@ -12,16 +12,18 @@ async function Load() {
     if (location.origin != "https://web-paragon.web.app")
         await RegisterServiceWorker();
 
-    var token = await LoginIfNeeded();
+    if (location.pathname != "login" && location.pathname != "callback") {
+        var token = await LoginIfNeeded();
 
-    if (window.onUserData instanceof Function) 
-        try { await window.onUserData(); } catch (e) {}
-
-    if (await UpdateResourcesIfNeeded(token)) {
-        if (window.onUserData instanceof Function)
+        if (window.onUserData instanceof Function) 
             try { await window.onUserData(); } catch (e) {}
-    }
 
+        if (await UpdateResourcesIfNeeded(token)) {
+            if (window.onUserData instanceof Function)
+                try { await window.onUserData(); } catch (e) {}
+        }
+    }
+    
     if (location.origin == "https://web-paragon.web.app")
         await RegisterServiceWorker();
 }
@@ -55,8 +57,9 @@ function UpdateScreenType() {
                 document.getElementsByTagName("html")[0].classList.add("dark");
                 location.hash = "#dark";
             }
+            else await cache.put("dark", new Response(dark.toString()));
         }
-        else await cache.put("dark", new Response("false"));
+        else await cache.put("dark", new Response(dark.toString()));
     });
 }
 
