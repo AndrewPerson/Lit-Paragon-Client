@@ -33,27 +33,19 @@ canvas, #point1, #point2 {
 #description {
     position: absolute;
     top: 1vmin;
+    left: 1vmin;
     width: 4vmin;
 }
 
 #descriptionContent {
     position: absolute;
     top: 5vmin;
+    left: 1vmin;
     width: 40vmin;
     background-color: var(--surface2);
     padding: 2vmin;
     border-radius: 2vmin;
     box-shadow: var(--surface-shadow) 0 0 2vmin;
-}
-
-.laptop-screen #description,
-.laptop-screen #descriptionContent {
-    left: 1vmin;
-}
-
-.mobile-screen #description,
-.mobile-screen #descriptionContent {
-    left: 1vw;
 }
 
 .edit {

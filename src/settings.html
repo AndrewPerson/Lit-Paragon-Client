@@ -35,7 +35,11 @@
 
     <nav-bar></nav-bar>
 
-    <main>
+    <main onmousedown="HideDescription(event)">
+        <img draggable="false" onmousedown="ShowDescription()" id="description" src="images/info.svg" />
+    
+        <p style="display: none;" id="descriptionContent">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
+
         <p id="version">Paragon v0</p>
         <button onclick="Patch()">Fix</button>
         <button class="mode" onclick="ToggleDark()">
@@ -63,6 +67,15 @@
                 }
             }
         });
+
+        function ShowDescription() {
+            document.getElementById("descriptionContent").style.display = "unset";
+        }
+
+        function HideDescription(e) {
+            if (e.target != document.getElementById("description") && e.target.parentNode != document.getElementById("descriptionContent"))
+                document.getElementById("descriptionContent").style.display = "none";
+        }
 
         async function onUserData() {
             var metadataCache = await caches.open("Metadata");
