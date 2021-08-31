@@ -1,0 +1,63 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" type="image/webp" href="icons/128.webp">
+    
+    <meta property="og:image" content="https://web-paragon.web.app/icons/512.webp">
+    <meta property="og:image:alt" content="Paragon is the next generation of Student Portal Alternatives at SBHS">
+    <meta property="og:site_name" content="Paragon">
+    <meta property="og:type" content="object">
+    <meta property="og:title" content="Paragon">
+    <meta property="og:url" content="https://web-paragon.web.app/">
+    <meta property="og:description" content="Paragon is the next generation of Student Portal Alternatives at SBHS, with offline functionality, blazingly fast load times and student ID barcode replication.">
+
+    <title>Paragon</title>
+
+    <base href="/">
+
+    <link href="assets/app-44cc30c0.css" rel="stylesheet">
+    <link href="assets/navbar-dc971bb4.css" rel="stylesheet">
+    <link href="assets/404-078d85c0.css" rel="stylesheet">
+
+    <link href="assets/manifest.json" rel="manifest">
+
+    
+</head>
+
+<body class="laptop-screen">
+    <script src="assets/main-f8dc20f6.js"></script>
+
+    <nav-bar></nav-bar>
+    
+    <main>
+        <p>Uh oh! It looks like <span id="location"></span> isn't in Paragon! Please try somewhere else.</p>
+    
+        <div id="background">
+            <loading-element></loading-element>
+            <img draggable="false" id="backgroundimg" src="assets/logo-ddb5fa25.svg">
+        </div>
+    </main>
+
+    <script>
+        document.getElementById("location").textContent = location.pathname.substring(1);
+
+        if (location.hash == "#dark") {
+            document.getElementById("backgroundimg").src = "images/logo-dark.svg";
+        }
+
+        caches.open("User Preferences").then(async cache => {
+            var darkResponse = await cache.match("dark");
+
+            if (darkResponse) {
+                if (await darkResponse.text() == "true") {
+                    document.getElementById("backgroundimg").src = "images/logo-dark.svg";
+                }
+            }
+        });
+    </script>
+
+
+
+<script type="module" src="./main-elements.js"></script></body></html>

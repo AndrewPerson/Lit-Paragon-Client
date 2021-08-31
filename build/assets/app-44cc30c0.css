@@ -1,0 +1,98 @@
+﻿html {
+    --main-hue: 200;
+    --text1: hsl(var(--main-hue) 100% 10%);
+    --text2: hsl(var(--main-hue) 90% 40%);
+    --text3: hsl(var(--main-hue) 10% 70%);
+    --text4: hsl(var(--main-hue) 50% 95%);
+    --surface1: hsl(calc(var(--main-hue) + 200) 50% 97%);
+    --surface2: hsl(var(--main-hue) 100% 99%);
+    --surface3: hsl(var(--main-hue) 90% 97%);
+    --surface4: hsl(var(--main-hue) 90% 80%);
+    --surface-shadow: hsl(var(--main-hue) 10% 80%);
+    --surface-shadow-strong: hsl(var(--main-hue) 15% 60%);
+    --img-invert: 0;
+    --font-size: 2.6vmin;
+}
+
+@media (max-aspect-ratio: 3/4) {
+    html {
+        --font-size: 2vmax;
+    }
+}
+
+html.dark {
+    --text1: hsl(var(--main-hue) 100% 90%);
+    --text2: hsl(var(--main-hue) 90% 60%);
+    --text3: hsl(var(--main-hue) 10% 30%);
+    --text4: hsl(var(--main-hue) 30% 95%);
+    --surface1: hsl(var(--main-hue) 30% 20%);
+    --surface2: hsl(var(--main-hue) 50% 15%);
+    --surface3: hsl(var(--main-hue) 40% 18%);
+    --surface4: hsl(var(--main-hue) 40% 25%);
+    --surface-shadow: hsl(var(--main-hue) 10% 10%);
+    --surface-shadow-strong: hsl(var(--main-hue) 15% 0%);
+    --img-invert: 100%;
+}
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+body {
+    min-width: 100%;
+    min-height: 100vh;
+    display: flex;
+    width: fit-content;
+    height: fit-content;
+    background-color: var(--surface1);
+    margin: 0;
+    font-size: var(--font-size);
+}
+
+main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+img {
+    filter: invert(var(--img-invert));
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+p {
+    color: var(--text1);
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+button {
+    border: none;
+    background-color: var(--surface4);
+    color: var(--text4);
+    padding: 1vmin 2vmin;
+    border-radius: 1vmin;
+    max-width: max-content;
+    box-shadow: var(--surface-shadow) 0 0 1vmin;
+    font-size: var(--font-size);
+}
+
+button:hover {
+    background-color: var(--surface3);
+    color: var(--text1);
+}
+
+button:active {
+    color: var(--text3);
+}
