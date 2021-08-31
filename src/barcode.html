@@ -49,7 +49,7 @@
             <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />
         </button>
 
-        <img draggable="false" onmouseenter="ShowDescription()" onmouseleave="HideDescripion()" id="description" src="images/info.svg" />
+        <img draggable="false" onmouseenter="ShowDescription()" onmouseleave="HideDescription()" id="description" src="images/info.svg" />
     
         <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card</p>
     </main>
@@ -71,7 +71,7 @@
             document.getElementById("descriptionContent").style.display = "unset";
         }
 
-        function HideDescripion() {
+        function HideDescription() {
             document.getElementById("descriptionContent").style.display = "none";
         }
 
