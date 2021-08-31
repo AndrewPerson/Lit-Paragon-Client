@@ -1,0 +1,35 @@
+main {
+    margin: auto;
+    flex: 0.96;
+    position: relative;
+    width: 96% !important;
+    height: 96vh !important;
+    background-color: var(--surface2);
+    border-radius: 2vmin;
+    box-shadow: var(--surface-shadow) 0 0 1vmin;
+}
+
+main > p {
+    text-align: center;
+    z-index: 1;
+}
+
+#background {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    z-index: 0;
+    filter: blur(1vmin) opacity(0.3);
+}
+
+#backgroundimg {
+    position: absolute;
+    filter: none;
+    height: 70vmin;
+    transform: translate(5vmin, 0);
+}
+
+loading-element {
+    width: 96vmin;
+}

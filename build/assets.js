@@ -1,6 +1,8 @@
 self.assets = [
+	"/404",
 	"/announcement-elements.js",
 	"/announcements",
+	"/assets/404-078d85c0.css",
 	"/assets/announcements-9dddc327.css",
 	"/assets/app-44cc30c0.css",
 	"/assets/barcode-b3bf130e.css",
