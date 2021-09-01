@@ -17,7 +17,7 @@ const VALID_CACHES = [
     "User Resources"
 ];
 
-const VERSION_URL = "https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Metadata";
+const VERSION_URL = "https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Version";
 
 var UPDATING = false;
 
