@@ -25,7 +25,6 @@ canvas, #point1, #point2 {
 }
 
 #info {
-    display: none;
     position: absolute;
     top: 1vmin;
 }
