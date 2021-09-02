@@ -112,6 +112,24 @@
             location.reload();
         }
     </script>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXDDZJS3mHlAGwcLL9qRYs30SAW5h3Ly0",
+            authDomain: "web-paragon.firebaseapp.com",
+            projectId: "web-paragon",
+            storageBucket: "web-paragon.appspot.com",
+            messagingSenderId: "59394117419",
+            appId: "1:59394117419:web:fc7173d15609bb0332bf6e",
+            measurementId: "G-DK3FHC0RDM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+    </script>
 </body>
 
 </html>

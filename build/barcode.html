@@ -19,7 +19,7 @@
 
     <link href="assets/app-44cc30c0.css" rel="stylesheet">
     <link href="assets/navbar-dc971bb4.css" rel="stylesheet">
-    <link href="assets/barcode-dff0364f.css" rel="stylesheet">
+    <link href="assets/barcode-988e5a57.css" rel="stylesheet">
 
     <link href="assets/manifest.json" rel="manifest">
 
@@ -37,9 +37,9 @@
         <p id="info" style="display: none;">Tap in two places to form the barcode</p>
         
         <div>
-            <canvas id="barcode"></canvas>
-            <img id="point1" draggable="false" src="assets/circle-6885aafd.svg">
-            <img id="point2" draggable="false" src="assets/circle-6885aafd.svg">
+            <canvas style="display: none;" id="barcode"></canvas>
+            <img style="display: none;" id="point1" draggable="false" src="assets/circle-6885aafd.svg">
+            <img style="display: none;" id="point2" draggable="false" src="assets/circle-6885aafd.svg">
         </div>
 
         <button title="Edit" class="edit" onclick="RequestBarcodeSize()">
@@ -65,7 +65,7 @@
         var main = document.getElementById("main");
 
         function ShowDescription() {
-            document.getElementById("descriptionContent").style.display = "unset";
+            document.getElementById("descriptionContent").style.display = "";
         }
 
         function HideDescription() {
@@ -81,7 +81,7 @@
         }
 
         async function RequestBarcodeSize() {
-            info.style.display = "unset";
+            info.style.display = "";
             barcode.style.display = "none";
 
             point1.style.display = "none";
@@ -97,14 +97,14 @@
                         
                         point1.style.left = `${x}%`;
                         point1.style.top = `${y}%`;
-                        point1.style.display = "unset";
+                        point1.style.display = "";
                     }
                     else if (clicks == 2) {
                         var {x, y} = GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
 
                         point2.style.left = `${x}%`;
                         point2.style.top = `${y}%`;
-                        point2.style.display = "unset";
+                        point2.style.display = "";
 
                         document.removeEventListener("pointerdown", this);
 
@@ -117,7 +117,7 @@
 
             info.style.display = "none";
 
-            barcode.style.display = "unset";
+            barcode.style.display = "";
             UpdateBarcodeSize();
         }
 
@@ -199,9 +199,15 @@
             point2.style.left = `${x}%`;
 
             UpdateBarcodeSize();
+
+            barcode.style.display = "";
+            point1.style.display = "";
+            point2.style.display = "";
         }
     </script>
 
+    
 
 
-<script type="module" src="./main-elements.js"></script></body></html>
+
+<script type="module" src="./main-elements.js"></script><script type="module" src="./inline-module-960e17a3142d9c5984597582438dae3d.js"></script></body></html>
