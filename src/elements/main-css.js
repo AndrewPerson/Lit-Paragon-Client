@@ -50,6 +50,7 @@ export const navMenuCss = css`
         position: sticky;
         box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
         overflow: hidden;
+        z-index: 100;
     }
 `;
 

@@ -46,6 +46,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
         position: sticky;
         box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
         overflow: hidden;
+        z-index: 100;
     }
 `,o=t`
     :host {
