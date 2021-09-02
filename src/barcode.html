@@ -40,9 +40,9 @@
         <p id="info" style="display: none;">Tap in two places to form the barcode</p>
         
         <div>
-            <canvas id="barcode"></canvas>
-            <img id="point1" draggable="false" src="images/circle.svg" />
-            <img id="point2" draggable="false" src="images/circle.svg" />
+            <canvas style="display: none;" id="barcode"></canvas>
+            <img style="display: none;" id="point1" draggable="false" src="images/circle.svg" />
+            <img style="display: none;" id="point2" draggable="false" src="images/circle.svg" />
         </div>
 
         <button title="Edit" class="edit" onclick="RequestBarcodeSize()">
@@ -68,7 +68,7 @@
         var main = document.getElementById("main");
 
         function ShowDescription() {
-            document.getElementById("descriptionContent").style.display = "unset";
+            document.getElementById("descriptionContent").style.display = "";
         }
 
         function HideDescription() {
@@ -84,7 +84,7 @@
         }
 
         async function RequestBarcodeSize() {
-            info.style.display = "unset";
+            info.style.display = "";
             barcode.style.display = "none";
 
             point1.style.display = "none";
@@ -100,14 +100,14 @@
                         
                         point1.style.left = `${x}%`;
                         point1.style.top = `${y}%`;
-                        point1.style.display = "unset";
+                        point1.style.display = "";
                     }
                     else if (clicks == 2) {
                         var {x, y} = GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
 
                         point2.style.left = `${x}%`;
                         point2.style.top = `${y}%`;
-                        point2.style.display = "unset";
+                        point2.style.display = "";
 
                         document.removeEventListener("pointerdown", this);
 
@@ -120,7 +120,7 @@
 
             info.style.display = "none";
 
-            barcode.style.display = "unset";
+            barcode.style.display = "";
             UpdateBarcodeSize();
         }
 
@@ -202,7 +202,29 @@
             point2.style.left = `${x}%`;
 
             UpdateBarcodeSize();
+
+            barcode.style.display = "";
+            point1.style.display = "";
+            point2.style.display = "";
         }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "firebase/app";
+        import { getAnalytics } from "firebase/analytics";
+        
+        const firebaseConfig = {
+            apiKey: "AIzaSyDXDDZJS3mHlAGwcLL9qRYs30SAW5h3Ly0",
+            authDomain: "web-paragon.firebaseapp.com",
+            projectId: "web-paragon",
+            storageBucket: "web-paragon.appspot.com",
+            messagingSenderId: "59394117419",
+            appId: "1:59394117419:web:fc7173d15609bb0332bf6e",
+            measurementId: "G-DK3FHC0RDM"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
     </script>
 </body>
 
