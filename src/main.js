@@ -1,4 +1,5 @@
 const RESOURCE_CACHE = "User Resources";
+const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
 
 async function Load() {
     UpdateScreenType();
@@ -151,7 +152,7 @@ async function UpdateResourcesIfNeeded(token, force) {
 }
 
 async function GetAllResources(token) {
-    var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
+    var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
 
     if (!resourceResponse) location.href = location.origin + "/login";
 

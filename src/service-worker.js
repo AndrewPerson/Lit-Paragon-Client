@@ -1,6 +1,3 @@
-import { initializeApp } from 'firebase/app';
-import { initializeAuth, indexedDBLocalPersistence, signInAnonymously, getIdToken } from "firebase/auth";
-
 importScripts("./assets.js");
 
 self.addEventListener('install', event => event.waitUntil(Install(event)));
@@ -17,15 +14,15 @@ const VALID_CACHES = [
     "User Resources"
 ];
 
-const VERSION_URL = "https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Metadata";
+const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
 
 var UPDATING = false;
 
-async function Install(event) {
+async function Install() {
     self.skipWaiting();
 }
 
-async function Activate(event) {
+async function Activate() {
     await clients.claim();
 }
 
@@ -82,44 +79,10 @@ async function Message(event) {
     }
 }
 
-async function FirebaseAuth() {
-    var firebaseConfig = {
-        apiKey: "AIzaSyDXDDZJS3mHlAGwcLL9qRYs30SAW5h3Ly0",
-        authDomain: "web-paragon.firebaseapp.com",
-        projectId: "web-paragon",
-        storageBucket: "web-paragon.appspot.com",
-        messagingSenderId: "59394117419",
-        appId: "1:59394117419:web:fc7173d15609bb0332bf6e",
-        measurementId: "G-DK3FHC0RDM"
-    };
-    
-    try {
-        var app = initializeApp(firebaseConfig);
-    }
-    catch (e) {}
-
-    const auth = initializeAuth(app, {persistence: indexedDBLocalPersistence});
-    if (auth.currentUser)
-        return await getIdToken(auth.currentUser);
-        
-    var user = (await signInAnonymously(auth)).user;
-
-    return await getIdToken(user);
-}
-
 async function GetLatestVersion() {
-    var headers = new Headers();
-
-    var token = await FirebaseAuth()
-
-    headers.append("Authorization", "Bearer " + token);
-
-    var request = await fetch(VERSION_URL, {
-        headers: headers
-    });
+    var request = await fetch(SERVER_ENDPOINT + "/metadata");
 
     var text = await request.text();
-    //return text;
     var object = await JSON.parse(text);
     return object.fields.Version.stringValue;
 }
@@ -147,7 +110,7 @@ async function DataFetch() {
     var tokenResponse = await resourceCache.match("Token");
     var token = await tokenResponse.text();
 
-    var resourceResponse = await fetch(`https://webparagon.azurewebsites.net/api/resource?resource=all&token=${token}`);
+    var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
     
     var text = await resourceResponse.text();
     var resources = JSON.parse(text);
