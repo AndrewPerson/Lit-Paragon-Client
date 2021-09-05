@@ -79,28 +79,27 @@ async function Message(event) {
     }
 }
 
-async function GetLatestVersion() {
+async function GetLatestMetadata() {
     var request = await fetch(SERVER_ENDPOINT + "/metadata");
 
     var text = await request.text();
-    var object = await JSON.parse(text);
-    return object.fields.Version.stringValue;
+    return await JSON.parse(text);
 }
 
 async function MetadataFetch() {
     var metadataCache = await caches.open(METADATA_CACHE);
-    var currentVersionResponse = await metadataCache.match("Version");
+    var currentMetadataResponse = await metadataCache.match("Metadata");
 
-    var currentVersion = "0";
+    var currentMetadata = null;
 
-    if (currentVersionResponse) currentVersion = await currentVersionResponse.text();
-    else await metadataCache.put("Version", new Response("0"));
+    if (currentMetadataResponse) currentMetadata = JSON.parse(await currentMetadataResponse.text());
 
-    var latestVersion = await GetLatestVersion();
+    var latestMetadata = await GetLatestMetadata();
 
-    if (currentVersion != latestVersion)
-        await Update(latestVersion);
+    if (currentMetadata == null || currentMetadata.version != latestMetadata.version)
+        await Update();
 
+    await metadataCache.put("Metadata", new Response(JSON.stringify(latestMetadata)));
     await metadataCache.put("Last Fetched", new Response(new Date().toISOString()));
 }
 
@@ -127,13 +126,10 @@ async function DataFetch() {
     await Promise.all(promises);
 }
 
-async function Update(version) {
-    if (!version) return;
-
+async function Update() {
     UPDATING = true;
     
     var fileCache = await caches.open(OFFLINE_CACHE);
-    var metadataCache = await caches.open(METADATA_CACHE);
 
     // Fetch and cache all matching items from the assets manifest
     var assetData = self.assets;
@@ -151,8 +147,6 @@ async function Update(version) {
     );
 
     await Promise.all(putPromises);
-
-    await metadataCache.put("Version", new Response(version));
 
     UPDATING = false;
     

@@ -37,7 +37,7 @@
         async function Token(code) {
             var tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
                 method: "POST",
-                body: JSON.stringify({code: code})
+                body: code
             });
             
             if (tokenResponse.status == 403) {

@@ -1,5 +1,6 @@
 {
     "hosting": {
+        "site": "beta-paragon",
         "public": "build",
         "ignore": [],
         "redirects": [

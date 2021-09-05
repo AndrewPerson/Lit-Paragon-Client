@@ -10,6 +10,6 @@ firebase hosting:channel:deploy preview
 goto end
 
 :deploy
-firebase deploy
+firebase deploy --only hosting:beta-paragon
 
 :end

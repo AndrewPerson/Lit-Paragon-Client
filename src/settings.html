@@ -31,7 +31,7 @@
 </head>
 
 <body class="laptop-screen">
-    <script src="main.js"></script>
+    <script src="display.js"></script>
 
     <nav-bar></nav-bar>
 
@@ -80,11 +80,11 @@
         async function onUserData() {
             var metadataCache = await caches.open("Metadata");
 
-            var versionResponse = await metadataCache.match("Version");
+            var versionResponse = await metadataCache.match("Metadata");
 
-            var version = await versionResponse.text();
+            var metadata = JSON.parse(versionResponse.text());
             
-            document.getElementById("version").textContent = `Paragon v${version}`;
+            document.getElementById("version").textContent = `Paragon v${metadata.version}`;
         }
 
         async function ToggleDark() {
@@ -112,6 +112,8 @@
             location.reload();
         }
     </script>
+
+    <script src="main.js"></script>
 
     <script type="module">
         import { initializeApp } from "firebase/app";

@@ -28,7 +28,7 @@
 </head>
 
 <body class="laptop-screen">
-    <script src="assets/main-f8dc20f6.js"></script>
+    <script src="assets/display-b90ab9d7.js"></script>
 
     <nav-bar></nav-bar>
 
@@ -77,11 +77,11 @@
         async function onUserData() {
             var metadataCache = await caches.open("Metadata");
 
-            var versionResponse = await metadataCache.match("Version");
+            var versionResponse = await metadataCache.match("Metadata");
 
-            var version = await versionResponse.text();
+            var metadata = JSON.parse(versionResponse.text());
             
-            document.getElementById("version").textContent = `Paragon v${version}`;
+            document.getElementById("version").textContent = `Paragon v${metadata.version}`;
         }
 
         async function ToggleDark() {
@@ -109,6 +109,8 @@
             location.reload();
         }
     </script>
+
+    <script src="assets/main-4e795f19.js"></script>
 
     
 

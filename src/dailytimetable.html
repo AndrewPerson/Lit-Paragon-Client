@@ -30,7 +30,7 @@
 </head>
 
 <body class="laptop-screen">
-    <script src="main.js"></script>
+    <script src="display.js"></script>
 
     <nav-bar></nav-bar>
     
@@ -42,7 +42,9 @@
         var dailyTimetableElement;
 
         async function onUserData() {
+            console.log("start");
             var resource = await GetResourceFromCache("dailytimetable");
+            console.log("end");
 
             if (!dailyTimetableElement) {
                 dailyTimetableElement = document.createElement("daily-timetable");
@@ -52,6 +54,8 @@
             dailyTimetableElement.setAttribute("data", resource);
         }
     </script>
+
+    <script src="main.js"></script>
 
     <script type="module">
         import { initializeApp } from "firebase/app";

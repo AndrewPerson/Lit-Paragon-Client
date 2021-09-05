@@ -27,7 +27,7 @@
 </head>
 
 <body class="laptop-screen">
-    <script src="assets/main-f8dc20f6.js"></script>
+    <script src="assets/display-b90ab9d7.js"></script>
 
     <nav-bar></nav-bar>
     
@@ -39,7 +39,9 @@
         var dailyTimetableElement;
 
         async function onUserData() {
+            console.log("start");
             var resource = await GetResourceFromCache("dailytimetable");
+            console.log("end");
 
             if (!dailyTimetableElement) {
                 dailyTimetableElement = document.createElement("daily-timetable");
@@ -49,6 +51,8 @@
             dailyTimetableElement.setAttribute("data", resource);
         }
     </script>
+
+    <script src="assets/main-4e795f19.js"></script>
 
     
 

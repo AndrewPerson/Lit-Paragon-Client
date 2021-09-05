@@ -2,27 +2,19 @@ const RESOURCE_CACHE = "User Resources";
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
 
 async function Load() {
-    UpdateScreenType();
-
-    window.addEventListener("resize", Debounce(() => {
-        UpdateScreenType();
-    }, 250));
-
     RedirectToProperWebsiteIfNeeded();
+
+    if (window.onUserData instanceof Function) 
+        try { await window.onUserData(); } catch (e) {}
 
     if (location.origin != "https://web-paragon.web.app")
         await RegisterServiceWorker();
 
-    if (location.pathname != "login" && location.pathname != "callback") {
-        var token = await LoginIfNeeded();
+    var token = await LoginIfNeeded();
 
-        if (window.onUserData instanceof Function) 
+    if (await UpdateResourcesIfNeeded(token)) {
+        if (window.onUserData instanceof Function)
             try { await window.onUserData(); } catch (e) {}
-
-        if (await UpdateResourcesIfNeeded(token)) {
-            if (window.onUserData instanceof Function)
-                try { await window.onUserData(); } catch (e) {}
-        }
     }
     
     if (location.origin == "https://web-paragon.web.app")
@@ -32,48 +24,6 @@ async function Load() {
 function RedirectToProperWebsiteIfNeeded() {
     if (window.location.hostname == "web-paragon.firebaseapp.com")
         window.location.href = "https://web-paragon.web.app";
-}
-
-function UpdateScreenType() {
-    var screenClass = "mobile-screen";
-    var oppScreenClass = "laptop-screen";
-
-    if (innerWidth >= innerHeight) {
-        screenClass = "laptop-screen";
-        oppScreenClass = "mobile-screen";
-    }
-
-    UpdateClasses(document.getElementsByTagName("body"), screenClass, oppScreenClass);
-
-    var dark = location.hash == "#dark";
-
-    if (dark)
-        document.getElementsByTagName("html")[0].classList.add("dark");
-
-    caches.open("User Preferences").then(async cache => {
-        var darkResponse = await cache.match("dark");
-
-        if (darkResponse) {
-            if (await darkResponse.text() == "true") {
-                document.getElementsByTagName("html")[0].classList.add("dark");
-                location.hash = "#dark";
-            }
-            else await cache.put("dark", new Response(dark.toString()));
-        }
-        else await cache.put("dark", new Response(dark.toString()));
-    });
-}
-
-function UpdateClasses(elements, screenClass, oppClass) {
-    var i = 0;
-    while (i < elements.length) {
-        var classList = elements.item(i).classList;
-
-        classList.remove(oppClass);
-        classList.add(screenClass);
-
-        i++;
-    }
 }
 
 async function RegisterServiceWorker() {
@@ -152,6 +102,11 @@ async function UpdateResourcesIfNeeded(token, force) {
 }
 
 async function GetAllResources(token) {
+    if (new Date() > new Date(JSON.parse(token).termination)) {
+        document.getElementsByTagName("body")[0].appendChild(document.createElement("login-notification"));
+        return;
+    }
+
     var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
 
     if (!resourceResponse) location.href = location.origin + "/login";
@@ -181,20 +136,5 @@ async function GetResourceFromCache(resource) {
     
     return await resourceResponse.text();
 }
-
-function Debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
 
 Load();
