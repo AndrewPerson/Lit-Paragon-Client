@@ -1,5 +1,9 @@
 UpdateScreenType();
 
+window.SERVER_ENDPOINT = "";
+window.USER_RESOURCES = "";
+// etc
+
 window.addEventListener("resize", Debounce(() => {
     UpdateScreenType();
 }, 250));

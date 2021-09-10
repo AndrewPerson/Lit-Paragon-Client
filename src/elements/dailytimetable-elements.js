@@ -164,13 +164,20 @@ export class DailyTimetable extends LitElement {
             }
         }
         else {
-            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
-                this.nextBell = this.formatClassName(this.data.timetable.timetable.periods[nextBell.bell.bell].title);
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R") {
+                var period = this.data.timetable.timetable.periods[nextBell.bell.bell];
+                this.nextBell = this.getClassName(period);
+            }
             else
                 this.nextBell = nextBell.bell.bellDisplay;
 
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
+    }
+
+    getClassName(period) {
+        var name = this.data.timetable.subjects[`${period.year}${period.title}`].title;
+        return this.formatClassName(name);
     }
 
     formatClassName(name) {
@@ -257,9 +264,7 @@ export class DailyTimetable extends LitElement {
                                 }
                             }
 
-                            var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
-
-                            title = this.formatClassName(title);
+                            var title = this.getClassName(period);
 
                             return html`
                                 <payload-bell-item name="${title}"
