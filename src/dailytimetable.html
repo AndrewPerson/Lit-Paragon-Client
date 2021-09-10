@@ -42,9 +42,7 @@
         var dailyTimetableElement;
 
         async function onUserData() {
-            console.log("start");
             var resource = await GetResourceFromCache("dailytimetable");
-            console.log("end");
 
             if (!dailyTimetableElement) {
                 dailyTimetableElement = document.createElement("daily-timetable");

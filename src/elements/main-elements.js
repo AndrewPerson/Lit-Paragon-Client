@@ -8,16 +8,25 @@ export class NavItem extends LitElement {
 
     static get properties() {
         return {
-            link: {type: String},
+            page: {type: String},
             title: {type: String},
             icon: {type: String}
         };
     }
 
+    UpdatePage() {
+        if (location.hash.includes("dark"))
+            location.hash = `${this.page}-dark`;
+        else
+            location.hash = this.page;
+
+        UpdatePage();
+    }
+
     constructor() {
         super();
 
-        this.link = "";
+        this.page = "";
         this.title = "Home";
         this.icon = "";
     }
@@ -25,13 +34,15 @@ export class NavItem extends LitElement {
     render() {
         if (!this.icon) this.icon = this.title.toLowerCase();
 
-        if (location.pathname == this.link)
+        if (window.page == this.page)
             this.classList.add("nav-selected");
+        else
+            this.classList.remove("nav-selected")
 
         return html`
-            <a href="${this.link}${location.hash}" title="${this.title}">
+            <button @click="${this.UpdatePage}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
-            </a>
+            </button>
         `;
     }
 }
@@ -41,15 +52,25 @@ export class Navbar extends LitElement {
         return navMenuCss;
     }
 
+    updatePage() {
+        var children = this.shadowRoot.children;
+
+        var i = 0;
+        while (i < children.length) {
+            children[i].update();
+            i++;
+        }
+    }
+
     render() {
         return html`
-            <nav-item link="/dailytimetable" title="Daily Timetable" icon="dailytimetable"></nav-item>
-            <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
-            <nav-item link="/timetable" title="Timetable"></nav-item>
-            <nav-item link="/announcements" title="Announcements"></nav-item>
-            <nav-item link="/extensions" title="Extensions"></nav-item>
+            <nav-item page="dailytimetable" title="Daily Timetable" icon="dailytimetable"></nav-item>
+            <nav-item page="barcode" title="ID Barcode" icon="barcode"></nav-item>
+            <nav-item page="timetable" title="Timetable"></nav-item>
+            <nav-item page="announcements" title="Announcements"></nav-item>
+            <nav-item page="extensions" title="Extensions"></nav-item>
 
-            <nav-item link="/settings" title="Settings"></nav-item>
+            <nav-item page="settings" title="Settings"></nav-item>
         `;
     }
 }

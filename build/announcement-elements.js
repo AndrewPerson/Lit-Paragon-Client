@@ -1,15 +1,9 @@
-import{A as t,w as e,i,h as n,T as r}from"./lit-element-97c1479f.js";
+import{A as t,w as e,i,h as n,T as r}from"./lit-element-6ea6c272.js";import{s as o,t as s,i as a,c as l}from"./repeat-3881cae5.js";
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
- */const o=2;
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}S(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}{constructor(e){if(super(e),this.vt=t,e.type!==o)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(i){if(i===t)return this.Vt=void 0,this.vt=i;if(i===e)return i;if("string"!=typeof i)throw Error(this.constructor.directiveName+"() called with a non-string value");if(i===this.vt)return this.Vt;this.vt=i;const n=[i];return n.raw=n,this.Vt={_$litType$:this.constructor.resultType,strings:n,values:[]}}}s.directiveName="unsafeHTML",s.resultType=1;const a=(t=>(...e)=>({_$litDirective$:t,values:e}))(s),l=i`
+ */class c extends o{constructor(e){if(super(e),this.vt=t,e.type!==s.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(i){if(i===t)return this.Vt=void 0,this.vt=i;if(i===e)return i;if("string"!=typeof i)throw Error(this.constructor.directiveName+"() called with a non-string value");if(i===this.vt)return this.Vt;this.vt=i;const n=[i];return n.raw=n,this.Vt={_$litType$:this.constructor.resultType,strings:n,values:[]}}}c.directiveName="unsafeHTML",c.resultType=1;const d=a(c),p=i`
     :host {
         position: relative;
         margin-top: 2vmin;
@@ -52,7 +46,7 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
         cursor: pointer;
         filter: invert(var(--img-invert));
     }
-`,c=i`
+`,u=i`
     :host {
         box-sizing: border-box;
         display: flex;
@@ -126,14 +120,14 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
     option {
         background-color: var(--surface2);
     }
-`;class d extends n{static get styles(){return l}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return r`
+`;class h extends n{static get styles(){return p}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return r`
             <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time?"| At "+this.time+" ":""}| By ${this.author}</p>
             <div id="content" class="content ${this.collapsed?"collapsed":"expanded"}">
-                ${a(this.content)}
+                ${d(this.content)}
             </div>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
-        `}}class p extends n{static get styles(){return c}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.data)return r`<loading-element style="width: 80%"></loading-element>`;if(0==this.data.notices.length)return r`
+        `}}class m extends n{static get styles(){return u}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.data)return r`<loading-element style="width: 80%"></loading-element>`;if(0==this.data.notices.length)return r`
                 <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
                     <div class="line-right"></div>
                     <p>Nothing For Today</p>
@@ -157,13 +151,13 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
                         <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
                             <p>Nothing For This Filter</p>
                         </div>
-                    `:t.map((t=>r`
-                            <announcement-item title="${t.title}"
-                                               content="${t.content}"
-                                               displayYears="${t.displayYears}"
-                                               author="${t.authorName}"
-                                               time="${t.isMeeting?t.meetingTime:""}">
-                            </announcement-item>
-                        `))}
+                    `:l(t,(t=>t.title),(t=>r`
+                        <announcement-item title="${t.title}"
+                                           content="${t.content}"
+                                           displayYears="${t.displayYears}"
+                                           author="${t.authorName}"
+                                           time="${t.isMeeting?t.meetingTime:""}">
+                        </announcement-item>
+                    `))}
             </div>
-        `}}customElements.define("announcement-item",d),customElements.define("announcement-container",p);export{p as AnnouncementContainer,d as AnnouncementItem};
+        `}}customElements.define("announcement-item",h),customElements.define("announcement-container",m);export{m as AnnouncementContainer,h as AnnouncementItem};

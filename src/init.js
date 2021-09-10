@@ -1,23 +1,12 @@
 UpdateScreenType();
 
+window.SERVER_ENDPOINT = "";
+window.USER_RESOURCES = "";
+// etc
+
 window.addEventListener("resize", Debounce(() => {
     UpdateScreenType();
 }, 250));
-
-function Debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
 
 function UpdateScreenType() {
     var screenClass = "mobile-screen";
@@ -30,7 +19,8 @@ function UpdateScreenType() {
 
     UpdateClasses(document.getElementsByTagName("body"), screenClass, oppScreenClass);
 
-    var dark = location.hash == "#dark";
+    var hash = location.hash.replace("#", "").split("-");
+    var dark = hash.includes("dark");
 
     if (dark)
         document.getElementsByTagName("html")[0].classList.add("dark");
@@ -41,7 +31,7 @@ function UpdateScreenType() {
         if (darkResponse) {
             if (await darkResponse.text() == "true") {
                 document.getElementsByTagName("html")[0].classList.add("dark");
-                location.hash = "#dark";
+                if (!dark) location.hash += "-dark";
             }
             else await cache.put("dark", new Response(dark.toString()));
         }
@@ -60,3 +50,18 @@ function UpdateClasses(elements, screenClass, oppClass) {
         i++;
     }
 }
+
+function Debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};

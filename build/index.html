@@ -1,0 +1,81 @@
+<!DOCTYPE html><html><head>
+    <meta charset="utf-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="shortcut icon" type="image/webp" href="icons/128.webp">
+
+    <meta property="og:image" content="https://web-paragon.web.app/icons/512.webp">
+    <meta property="og:image:alt" content="Paragon is the next generation of Student Portal Alternatives at SBHS">
+    <meta property="og:site_name" content="Paragon">
+    <meta property="og:type" content="object">
+    <meta property="og:title" content="Paragon">
+    <meta property="og:url" content="https://web-paragon.web.app/">
+    <meta property="og:description" content="Paragon is the next generation of Student Portal Alternatives at SBHS, with offline functionality, blazingly fast load times and student ID barcode replication.">
+    
+    <title>Paragon</title>
+
+    <base href="/">
+
+    <link href="assets/app-455406b4.css" rel="stylesheet">
+    <link href="assets/navbar-dc971bb4.css" rel="stylesheet">
+    
+    <link href="assets/manifest.json" rel="manifest">
+
+    
+    
+    
+</head>
+
+<body class="laptop-screen" id="body">
+    <script src="assets/display-6ef977a5.js"></script>
+
+    <nav-bar id="nav"></nav-bar>
+
+    <script src="assets/jsbarcode-cf8d2644.js"></script>
+
+    <script>
+        var body = document.getElementById("body");
+
+        var dailyTimetable = document.createElement("daily-timetable");
+        dailyTimetable.id = "dailytimetable";
+        var dailyTimetableRendered = false;
+
+        var barcode = document.createElement("student-barcode");
+        barcode.id = "barcode";
+        var barcodeRendered = false;
+
+        async function onUserData() {
+            var resource = await GetResourceFromCache("dailytimetable");
+            dailyTimetable.setAttribute("data", resource);
+
+            if (!dailyTimetableRendered) {
+                if (window.page != "dailytimetable") dailyTimetable.classList.add("hidden");
+                body.appendChild(dailyTimetable);
+                dailyTimetableRendered = true;
+            }
+
+            resource = await GetResourceFromCache("userinfo");
+            barcode.setAttribute("data", resource);
+
+            if (!barcodeRendered) {
+                if (window.page != "barcode") barcode.classList.add("hidden");
+                body.appendChild(barcode);
+                barcodeRendered = true;
+            }
+        }
+
+        function onPageUpdate() {
+            if (window.page == "barcode")
+                if (window.updateBarcode instanceof Function)
+                    window.updateBarcode();
+        }
+    </script>
+
+    <script src="assets/pages-524b4941.js"></script>
+
+    <script src="assets/main-4e795f19.js"></script>
+
+
+
+<script type="module" src="./main-elements.js"></script><script type="module" src="./dailytimetable-elements.js"></script><script type="module" src="./barcode-elements.js"></script></body></html>

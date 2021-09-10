@@ -1,4 +1,5 @@
 import { html, nothing, LitElement } from "lit";
+import { repeat } from 'lit/directives/repeat.js';
 import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable-css";
 
 export class BellItem extends LitElement {
@@ -99,6 +100,9 @@ export class DailyTimetable extends LitElement {
     }
 
     getNextBell() {
+        if (this.data == undefined || this.data == null)
+            return undefined;
+
         var now = new Date();
 
         for (var index in this.data.bells) {
@@ -140,6 +144,9 @@ export class DailyTimetable extends LitElement {
     }
 
     updateCountdown() {
+        if (!this.hasAttribute("data"))
+            return;
+
         var nextBell = this.getNextBell();
 
         if (!nextBell) {
@@ -158,12 +165,16 @@ export class DailyTimetable extends LitElement {
         }
         else {
             if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
-                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
+                this.nextBell = this.formatClassName(this.data.timetable.timetable.periods[nextBell.bell.bell].title);
             else
                 this.nextBell = nextBell.bell.bellDisplay;
 
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
+    }
+
+    formatClassName(name) {
+        return name.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
     }
 
     static gettingNextDay = false;
@@ -196,7 +207,7 @@ export class DailyTimetable extends LitElement {
     }
 
     render() {
-        if (!this.data) {
+        if (!this.hasAttribute("data") || this.data == null || this.data == undefined) {
             return html`
                 <loading-element style="width: 80%"></loading-element>
             `;
@@ -215,7 +226,7 @@ export class DailyTimetable extends LitElement {
             </div>
 
             ${
-                this.data.bells.map(bell => {
+                repeat(this.data.bells, bell => bell.time, bell => {
                     var period = this.data.timetable.timetable.periods[bell.bell];
 
                     if (period) {
@@ -248,7 +259,7 @@ export class DailyTimetable extends LitElement {
 
                             var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
 
-                            title = title.split(" ").filter(value => isNaN(value)).join(" ");
+                            title = this.formatClassName(title);
 
                             return html`
                                 <payload-bell-item name="${title}"
@@ -260,7 +271,6 @@ export class DailyTimetable extends LitElement {
                                                    ?teacherChanged="${teacherChanged}">
                                 </payload-bell-item>`;
                         }
-                    
                     }
                     else {
                         if (bell.bell == "Transition" || bell.bell == "End of Day")

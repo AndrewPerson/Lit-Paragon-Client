@@ -17,7 +17,7 @@
 
     <base href="/">
 
-    <link href="assets/app-44cc30c0.css" rel="stylesheet">
+    <link href="assets/app-455406b4.css" rel="stylesheet">
     <link href="assets/navbar-dc971bb4.css" rel="stylesheet">
 
     <link href="assets/manifest.json" rel="manifest">
@@ -27,7 +27,7 @@
 </head>
 
 <body class="laptop-screen">
-    <script src="assets/display-b90ab9d7.js"></script>
+    <script src="assets/display-6ef977a5.js"></script>
 
     <nav-bar></nav-bar>
     
@@ -39,9 +39,7 @@
         var dailyTimetableElement;
 
         async function onUserData() {
-            console.log("start");
             var resource = await GetResourceFromCache("dailytimetable");
-            console.log("end");
 
             if (!dailyTimetableElement) {
                 dailyTimetableElement = document.createElement("daily-timetable");

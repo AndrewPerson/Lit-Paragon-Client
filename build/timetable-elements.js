@@ -1,4 +1,4 @@
-import{i as t,h as e,T as i,A as a}from"./lit-element-97c1479f.js";const s=t`
+import{i as t,h as e,T as i,A as a}from"./lit-element-6ea6c272.js";const s=t`
     :host {
         position: absolute;
         background-image: url(images/popup.svg);

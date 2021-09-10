@@ -17,11 +17,14 @@ export const navItemCss = css`
         border-radius: 2vmin;
     }
 
-    a {
+    button {
         display: flex;
         width: 12vmin;
         height: 12vmin;
         cursor: default;
+        background: rgba(0, 0, 0, 0);
+        border: none;
+        padding: 0px;
     }
 
     img {

@@ -135,9 +135,9 @@ async function Update() {
     var assetData = self.assets;
     
     var filePromises = [];
-    assetData.forEach(asset => {
+    assetData.forEach(asset =>
         filePromises.push(fetch(asset))
-    });
+    );
 
     var files = await Promise.all(filePromises);
 

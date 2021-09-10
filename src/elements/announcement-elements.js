@@ -1,4 +1,5 @@
 import { html, LitElement, nothing } from "lit";
+import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { announcementItemCss, announcementContainerCss } from "./announcement-css";
 
@@ -120,16 +121,14 @@ export class AnnouncementContainer extends LitElement {
                         </div>
                     `
                     :
-                    filteredNotices.map(notice => {
-                        return html`
-                            <announcement-item title="${notice.title}"
-                                               content="${notice.content}"
-                                               displayYears="${notice.displayYears}"
-                                               author="${notice.authorName}"
-                                               time="${notice.isMeeting ? notice.meetingTime : ''}">
-                            </announcement-item>
-                        `;
-                    })
+                    repeat(filteredNotices, notice => notice.title, notice => html`
+                        <announcement-item title="${notice.title}"
+                                           content="${notice.content}"
+                                           displayYears="${notice.displayYears}"
+                                           author="${notice.authorName}"
+                                           time="${notice.isMeeting ? notice.meetingTime : ''}">
+                        </announcement-item>
+                    `)
                 }
             </div>
         `;
