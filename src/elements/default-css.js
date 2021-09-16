@@ -10,7 +10,7 @@ export const containerCss = css`
 
 export const imgCss = css`
     img {
-        filter: invert(var(--img-invert));
+        filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
         cursor: default;
 
         user-select: none;
@@ -45,7 +45,7 @@ export const buttonCss = css`
         background-color: var(--surface4);
         color: var(--text4);
         padding: 1vmin 2vmin;
-        border-radius: 1vmin;
+        border-radius: calc(var(--font-size) / 2.5);
         max-width: max-content;
         box-shadow: var(--surface-shadow) 0 0 1vmin;
         font-size: var(--font-size);
@@ -61,6 +61,25 @@ export const buttonCss = css`
     }
 `;
 
+export const sliderCss = css`
+    input[type=range] {
+        appearance: none;
+        width: calc(var(--font-size) * 7);
+        background-color: var(--surface2);
+        height: calc(var(--font-size) / 1.5);
+        box-shadow: var(--surface-shadow) 0 0 2vmin;
+        border-radius: calc(var(--font-size) / 2.5);
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        background-color: var(--surface4);
+        border-radius: 100%;
+        width: calc(var(--font-size) / 1.5);
+        height: calc(var(--font-size) / 1.5);
+    }
+`;
+
 export const blockQuoteCss = css`
     blockquote {
         border-left: calc(var(--font-size) / 2) solid var(--surface4);
@@ -71,7 +90,7 @@ export const blockQuoteCss = css`
 
 export const selectCss = css`
     select {
-        border: solid rgb(82, 143, 255) 1px;
+        border: 1px solid var(--text2);
         background-color: var(--surface2);
         color: var(--text2);
 

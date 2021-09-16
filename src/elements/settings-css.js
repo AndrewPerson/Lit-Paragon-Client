@@ -29,7 +29,7 @@ export const settingsCss = css`
 
     #backgroundimg {
         position: absolute;
-        filter: none;
+        filter: hue-rotate(var(--hue-rotate));
         height: 70vmin;
         transform: translate(5vmin, 0);
     }
@@ -39,11 +39,15 @@ export const settingsCss = css`
     }
 
     button {
-        margin-top: 2vmin;
+        margin-bottom: 2vmin;
     }
 
     button > p {
         margin: 0;
+    }
+
+    input[type=range] {
+        margin-top: 2vmin;
     }
 
     .mode {
@@ -69,7 +73,7 @@ export const settingsCss = css`
     #descriptionContent {
         z-index: 1;
         position: absolute;
-        top: 5vmin;
+        top: 7vmin;
         left: 1vmin;
         width: 40vmin;
         background-color: var(--surface2);

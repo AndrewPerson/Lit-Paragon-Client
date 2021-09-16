@@ -1,4 +1,4 @@
-import{i as e,h as t,t as s,a as i,c as o,T as a}from"./default-css-78eb0074.js";const n=e`
+import{i as e,h as t,t as s,a as i,c as o,T as a}from"./default-css-6e30774d.js";const n=e`
     :host {
         position: relative;
 
@@ -39,7 +39,7 @@ import{i as e,h as t,t as s,a as i,c as o,T as a}from"./default-css-78eb0074.js"
 
     #descriptionContent {
         position: absolute;
-        top: 5vmin;
+        top: 7vmin;
         left: 1vmin;
         width: 40vmin;
         background-color: var(--surface2);

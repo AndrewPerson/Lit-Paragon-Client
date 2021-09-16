@@ -90,17 +90,29 @@ function UpdateScreenType() {
     else
         document.getElementsByTagName("html")[0].classList.remove("dark");
 
-    caches.open("User Preferences").then(async cache => {
-        var darkResponse = await cache.match("dark");
+    caches.open("User Preferences").then(cache => {
+        cache.match("Dark").then(async darkResponse => {
+            if (darkResponse) {
+                if (await darkResponse.text() == "true") {
+                    document.getElementsByTagName("html")[0].classList.add("dark");
+                    if (!dark) location.hash += "-dark";
+                }
+                else await cache.put("Dark", new Response(dark.toString()));
+            }
+            else await cache.put("Dark", new Response(dark.toString()));
+        });
 
-        if (darkResponse) {
-            if (await darkResponse.text() == "true") {
-                document.getElementsByTagName("html")[0].classList.add("dark");
-                if (!dark) location.hash += "-dark";
+        cache.match("Hue").then(async hueResponse => {
+            if (hueResponse) {
+                var hue = await hueResponse.text();
+
+                var style = document.getElementsByTagName("html")[0].style;
+
+                style.setProperty("--main-hue", hue);
+                style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`)
             }
             else await cache.put("dark", new Response(dark.toString()));
-        }
-        else await cache.put("dark", new Response(dark.toString()));
+        });
     });
 }
 

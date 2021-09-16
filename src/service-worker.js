@@ -15,6 +15,7 @@ const VALID_CACHES = [
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
+const METADATA_ENDPOINT = "https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Metadata";
 
 var UPDATING = false;
 

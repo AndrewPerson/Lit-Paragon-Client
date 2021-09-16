@@ -6,6 +6,8 @@ export const roomPopupCss = css`
         background-image: url(images/popup.svg);
         background-size: 100%;
 
+        filter: hue-rotate(var(--hue-rotate));
+
         animation: appear 0.5s;
 
         display: flex;
@@ -39,12 +41,12 @@ export const roomPopupCss = css`
 
     @keyframes appear {
         from {
-            filter: opacity(0);
+            filter: opacity(0) hue-rotate(var(--hue-rotate));
             z-index: 100;
         }
 
         to {
-            filter: opacity(1);
+            filter: opacity(1) hue-rotate(var(--hue-rotate));
             z-index: 100;
         }
     }

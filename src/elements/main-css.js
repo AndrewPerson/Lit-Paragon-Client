@@ -90,6 +90,7 @@ export const loginNotificationCss = css`
 
     p {
         text-align: center;
+        margin: var(--font-size);
     }
 
     .buttons {

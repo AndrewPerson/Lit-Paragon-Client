@@ -1,4 +1,4 @@
-import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-78eb0074.js";const r=t`
+import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e30774d.js";const r=t`
     :host {
         display: inline-block;
     }
@@ -82,6 +82,7 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-78eb0
 
     p {
         text-align: center;
+        margin: var(--font-size);
     }
 
     .buttons {

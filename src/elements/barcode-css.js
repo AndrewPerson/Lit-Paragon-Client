@@ -41,7 +41,7 @@ export const barcodeCss = css`
 
     #descriptionContent {
         position: absolute;
-        top: 5vmin;
+        top: 7vmin;
         left: 1vmin;
         width: 40vmin;
         background-color: var(--surface2);
