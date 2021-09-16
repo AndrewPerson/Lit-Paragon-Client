@@ -1,9 +1,10 @@
 import { html, LitElement } from "lit";
 import { barcodeCss } from "./barcode-css";
+import { textCss, imgCss, containerCss } from "./default-css";
 
 export class StudentBarcode extends LitElement {
     static get styles() {
-        return barcodeCss;
+        return [textCss, imgCss, containerCss, barcodeCss];
     }
 
     static get properties() {
@@ -42,6 +43,7 @@ export class StudentBarcode extends LitElement {
         point1.style.display = "none";
         point2.style.display = "none";
 
+        var x1, y1, x2, y2;
         var userInput = new Promise(resolve => {
             var clicks = 0;
             this.addEventListener("pointerdown", event => {
@@ -50,12 +52,18 @@ export class StudentBarcode extends LitElement {
                 if (clicks == 1) {
                     var { x, y } = this.GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
 
+                    x1 = x;
+                    y1 = y;
+
                     point1.style.left = `${x}%`;
                     point1.style.top = `${y}%`;
                     point1.style.display = "";
                 }
                 else if (clicks == 2) {
                     var { x, y } = this.GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
+
+                    x2 = x;
+                    y2 = x;
 
                     point2.style.left = `${x}%`;
                     point2.style.top = `${y}%`;
@@ -69,6 +77,10 @@ export class StudentBarcode extends LitElement {
         });
 
         await userInput;
+
+        var preferenceCache = await caches.open("User Preferences");
+
+        await preferenceCache.put("Barcode Size", new Response(`${x1} ${y1} ${x2} ${y2}`));
 
         info.style.display = "none";
 
@@ -127,8 +139,6 @@ export class StudentBarcode extends LitElement {
     async CreateBarcode() {
         var x1, x2, y1, y2;
 
-        var preferenceCache = caches.open("User Preferences");
-
         var point1 = this.shadowRoot.getElementById("point1");
         var point2 = this.shadowRoot.getElementById("point2");
         
@@ -136,17 +146,32 @@ export class StudentBarcode extends LitElement {
 
         barcode.imageSmoothingEnabled = false;
 
-        var { x, y } = this.GetPixelsFromPercentage(80, 10);
-        ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
+        var preferenceCache = await caches.open("User Preferences");
 
-        point1.style.top = `${y}%`;
-        point1.style.left = `${x}%`;
+        var preferenceResponse = await preferenceCache.match("Barcode Size");
 
-        ({ x, y } = this.GetPixelsFromPercentage(20, 30));
-        ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
+        if (preferenceResponse) {
+            var [x1, y1, x2, y2] = (await preferenceResponse.text()).split(" ");
 
-        point2.style.top = `${y}%`;
-        point2.style.left = `${x}%`;
+            point1.style.left = `${x1}%`;
+            point1.style.top = `${y1}%`;
+
+            point2.style.left = `${x2}%`;
+            point2.style.top = `${y2}%`;
+        }
+        else {
+            var { x, y } = this.GetPixelsFromPercentage(80, 10);
+            ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
+
+            point1.style.left = `${x}%`;
+            point1.style.top = `${y}%`;
+
+            ({ x, y } = this.GetPixelsFromPercentage(20, 30));
+            ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
+
+            point2.style.left = `${x}%`;
+            point2.style.top = `${y}%`;
+        }
 
         this.UpdateBarcodeSize();
 
@@ -173,9 +198,7 @@ export class StudentBarcode extends LitElement {
 
     render() {
         if (!this.hasAttribute("data")) {
-            return html`
-                <loading-element style="width: 80%"></loading-element>
-            `;
+            return html`<loading-element style="width: 80%"></loading-element>`;
         }
                 
         return html`

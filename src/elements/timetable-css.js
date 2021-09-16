@@ -28,6 +28,12 @@ export const roomPopupCss = css`
     }
 
     p {
+        color: var(--text4);
+        margin: 0;
+        width: 10vmin;
+        height: 3.9vmin;
+        margin-top: 2vmin;
+        text-align: center;
         line-height: calc(var(--font-size) * 1.5);
     }
 
@@ -41,21 +47,6 @@ export const roomPopupCss = css`
             filter: opacity(1);
             z-index: 100;
         }
-    }
-
-    p {
-        color: var(--text4);
-        margin: 0;
-        width: 10vmin;
-        height: 3.9vmin;
-        margin-top: 2vmin;
-        text-align: center;
-        cursor: default;
-
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -92,18 +83,10 @@ export const timetablePeriodCss = css`
     }
 
     p {
-        color: var(--text1);
-        margin: 0;
         width: 10vmin;
         height: 3.9vmin;
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
-        cursor: default;
-
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -122,6 +105,7 @@ export const timetableDayCss = css`
         align-items: center;
         justify-content: flex-start;
         width: 12vmin;
+        min-width: 0;
     }
 
     @media (max-aspect-ratio: 3/4) {
@@ -131,18 +115,12 @@ export const timetableDayCss = css`
     }
 
     .name {
-        margin: 0;
         margin-bottom: 1vmin;
         text-align: center;
         font-size: calc(var(--font-size) / 1.2);
         width: calc(var(--font-size) * 3.63);
         color: var(--text3);
         border-bottom: solid grey 1px;
-
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
     }
 
     .highlighted {
@@ -167,7 +145,6 @@ export const timetableRowCss = css`
 
     .period-nums > p {
         color: var(--text3);
-        margin: 0;
         height: 3.9vmin;
         line-height: calc(var(--font-size) * 1.5);
 
@@ -187,10 +164,9 @@ export const timetableRowCss = css`
 
 export const fullTimetableCss = css`
     :host {
+        margin: auto;
         padding: 4vmin;
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin;
+        max-width: 92%;
     }
 
     timetable-row + timetable-row {

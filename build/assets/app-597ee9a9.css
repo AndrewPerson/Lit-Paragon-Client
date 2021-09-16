@@ -21,7 +21,7 @@
 }
 
 html.dark {
-    --text1: hsl(var(--main-hue) 100% 90%);
+    --text1: hsl(var(--main-hue) 45% 90%);
     --text2: hsl(var(--main-hue) 90% 60%);
     --text3: hsl(var(--main-hue) 10% 30%);
     --text4: hsl(var(--main-hue) 30% 95%);
@@ -36,21 +36,17 @@ html.dark {
 
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    width: 100%;
+    height: 100%;
 }
 
 body {
-    min-width: 100%;
-    min-height: 100vh;
     display: flex;
-    width: fit-content;
-    height: fit-content;
+    align-content: stretch;
+    justify-content: stretch;
     background-color: var(--surface1);
     margin: 0;
     font-size: var(--font-size);
-}
-
-body > *:not(nav-bar) {
-    margin: auto;
 }
 
 .hidden {
@@ -67,7 +63,7 @@ img {
     -webkit-user-select: none;
 }
 
-p {
+h1, h2, h3, h4, h5, h6, p {
     color: var(--text1);
     cursor: default;
 

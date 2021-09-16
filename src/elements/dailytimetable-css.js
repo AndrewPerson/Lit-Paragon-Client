@@ -66,14 +66,12 @@ export const dailytimetableCss = css`
         padding-top: 4vmin;
         padding-bottom: 4vmin;
 
+        margin: auto;
+
         width: 60vw;
         max-width: 60vh;
         min-width: 300px;
         min-height: 70vh;
-
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin
     }
     
     @media (max-width: 300px) {
@@ -83,21 +81,9 @@ export const dailytimetableCss = css`
         }
     }
 
-    p {
-        margin: 0;
-        color: var(--text1);
-
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-    }
-
     #timer {
-        margin: 0;
         font-size: calc(var(--font-size) * 2.5);
         display: inline-block;
-        color: var(--text1);
     }
 
     .timer-container {

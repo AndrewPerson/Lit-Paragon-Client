@@ -1,5 +1,6 @@
 import { html, LitElement, nothing } from "lit"
 import { roomPopupCss, timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable-css";
+import { textCss, containerCss } from "./default-css";
 
 export class RoomPopup extends LitElement {
     static get styles() {
@@ -27,7 +28,7 @@ export class RoomPopup extends LitElement {
 
 export class TimetablePeriod extends LitElement {
     static get styles() {
-        return timetablePeriodCss;
+        return [textCss, timetablePeriodCss];
     }
 
     static get properties() {
@@ -99,7 +100,7 @@ export class TimetablePeriod extends LitElement {
 
 export class TimetableDay extends LitElement {
     static get styles() {
-        return timetableDayCss;
+        return [textCss, timetableDayCss];
     }
 
     static get properties() {
@@ -149,7 +150,7 @@ export class TimetableDay extends LitElement {
 
 export class TimetableRow extends LitElement {
     static get styles() {
-        return timetableRowCss;
+        return [textCss, timetableRowCss];
     }
 
     static get properties() {
@@ -218,7 +219,7 @@ export class TimetableRow extends LitElement {
 
 export class FullTimetable extends LitElement {
     static get styles() {
-        return fullTimetableCss;
+        return [containerCss, fullTimetableCss];
     }
 
     static get properties() {

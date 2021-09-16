@@ -1,9 +1,12 @@
 main {
-    margin: auto;
-    flex: 0.96;
-    position: relative;
-    width: 96% !important;
-    height: 96vh !important;
+    flex: 1;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    margin: 2vh 2%;
+
     background-color: var(--surface2);
     border-radius: 2vmin;
     box-shadow: var(--surface-shadow) 0 0 1vmin;

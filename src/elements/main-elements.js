@@ -1,9 +1,10 @@
 import { html, LitElement } from "lit";
 import { navItemCss, navMenuCss, loadingElementCss, loginNotificationCss } from "./main-css";
+import { imgCss, containerCss, textCss, buttonCss } from "./default-css";
 
 export class NavItem extends LitElement {
     static get styles() {
-        return navItemCss;
+        return [imgCss, navItemCss];
     }
 
     static get properties() {
@@ -20,7 +21,10 @@ export class NavItem extends LitElement {
         else
             location.hash = this.page;
 
-        UpdatePage();
+        if (location.pathname != "") location.pathname = "";
+
+        window.UpdatePage();
+        window.UpdateScreenType();
     }
 
     constructor() {
@@ -103,7 +107,7 @@ export class LoadingElement extends LitElement {
 
 export class LoginNotification extends LitElement {
     static get styles() {
-        return loginNotificationCss;
+        return [containerCss, textCss, buttonCss, loginNotificationCss];
     }
 
     async login() {

@@ -1,4 +1,4 @@
-import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s}from"./repeat-3881cae5.js";const n=e`
+import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-78eb0074.js";import{c as l}from"./repeat-9738f10a.js";const r=t`
     :host {
         display: flex;
         align-items: center;
@@ -37,7 +37,7 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
     style {
         display: none !important;
     }
-`,l=e`
+`,o=t`
     :host {
         margin-top: 1.5vmin;
         margin-bottom: 1.5vmin;
@@ -50,7 +50,7 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
     p {
         color: var(--text1);
     }
-`,r=e`
+`,m=t`
     :host {
         display: flex;
         flex-direction: column;
@@ -60,14 +60,12 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
         padding-top: 4vmin;
         padding-bottom: 4vmin;
 
+        margin: auto;
+
         width: 60vw;
         max-width: 60vh;
         min-width: 300px;
         min-height: 70vh;
-
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin
     }
     
     @media (max-width: 300px) {
@@ -77,21 +75,9 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
         }
     }
 
-    p {
-        margin: 0;
-        color: var(--text1);
-
-        user-select: none;
-        -ms-user-select: none;
-        -moz-user-select: none;
-        -webkit-user-select: none;
-    }
-
     #timer {
-        margin: 0;
         font-size: calc(var(--font-size) * 2.5);
         display: inline-block;
-        color: var(--text1);
     }
 
     .timer-container {
@@ -114,17 +100,17 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
     .line-left {
         margin-left: 10px;
     }
-`;class o extends t{static get styles(){return n}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return i`
+`;class d extends e{static get styles(){return[i,r]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return a`
             <p class="start">${this.name}</p>
             <p class="end">${this.time}</p>
-        `}}class m extends t{static get styles(){return[n,l]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var e=this.timeChanged?"changed":"",t=this.teacherChanged?"changed":"",a=this.roomChanged?"changed":"";return i`
+        `}}class h extends e{static get styles(){return[i,r,o]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var t=this.timeChanged?"changed":"",e=this.teacherChanged?"changed":"",i=this.roomChanged?"changed":"";return a`
             <div>
                 <p class="start">${this.name}</p>
-                <p class="time">at <span class="${e}">${this.time}</span> with <span class="${t}">${this.teacher}</span></p>
+                <p class="time">at <span class="${t}">${this.time}</span> with <span class="${e}">${this.teacher}</span></p>
             </div>
             
-            <p class="end ${a}">${this.room}</p>
-        `}}class d extends t{static get styles(){return r}static get properties(){return{data:{type:Object}}}getDate(e){var t=new Date(this.data.date),i=e.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return t.setHours(a),t.setMinutes(s),t}getNextBell(){if(null!=this.data&&null!=this.data){var e=new Date;for(var t in this.data.bells){var i=this.data.bells[t],a=this.getDate(i);if(a>=e)return{bell:i,time:Math.round((a-e)/1e3)}}}}secondsToString(e){var t=e%60,i=(e-t)/60%60,a=((e-t)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),t<10&&(t="0"+t);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+t}updateCountdown(){if(this.hasAttribute("data")){var e=this.getNextBell();if(e){if(e.bell.bell in this.data.timetable.timetable.periods&&"R"!=e.bell.bell){var t=this.data.timetable.timetable.periods[e.bell.bell];this.nextBell=this.getClassName(t)}else this.nextBell=e.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(e.time)}else d.gettingNextDay||(d.gettingNextDay=!0,this.data=null,this.update(),LoginIfNeeded().then((e=>{UpdateResourcesIfNeeded(e,!0).then((e=>{e&&location.reload()}))})))}}getClassName(e){var t=this.data.timetable.subjects[`${e.year}${e.title}`].title;return this.formatClassName(t)}formatClassName(e){return e.split(" ").filter((e=>isNaN(e)&&e.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]}}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?(this.updateCountdown(),i`
+            <p class="end ${i}">${this.room}</p>
+        `}}class p extends e{static get styles(){return[i,s,m]}static get properties(){return{data:{type:Object}}}getDate(t){var e=new Date(this.data.date),i=t.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return e.setHours(a),e.setMinutes(s),e}getNextBell(){if(null!=this.data&&null!=this.data){var t=new Date;for(var e in this.data.bells){var i=this.data.bells[e],a=this.getDate(i);if(a>=t)return{bell:i,time:Math.round((a-t)/1e3)}}}}secondsToString(t){var e=t%60,i=(t-e)/60%60,a=((t-e)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),e<10&&(e="0"+e);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+e}updateCountdown(){if(this.hasAttribute("data")){var t=this.getNextBell();if(t){if(t.bell.bell in this.data.timetable.timetable.periods&&"R"!=t.bell.bell){var e=this.data.timetable.timetable.periods[t.bell.bell];this.nextBell=this.getClassName(e)}else this.nextBell=t.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(t.time)}else p.gettingNextDay||(p.gettingNextDay=!0,this.data=null,this.update(),LoginIfNeeded().then((t=>{UpdateResourcesIfNeeded(t,!0).then((t=>{t&&location.reload()}))})))}}getClassName(t){var e=this.data.timetable.subjects[`${t.year}${t.title}`].title;return this.formatClassName(e)}formatClassName(t){return t.split(" ").filter((t=>isNaN(t)&&t.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]}}firstUpdated(){this.updateCountdown(),this.update()}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?a`
             <p>${this.nextBell}</p>
             <p>in</p>
 
@@ -134,15 +120,15 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-6ea6c272.js";import{c as s
                 <span class="line-left"></span>
             </div>
 
-            ${s(this.data.bells,(e=>e.time),(e=>{var t=this.data.timetable.timetable.periods[e.bell];if(t){if("R"==e.bell)return a;var s=t.room,n=!1;if(e.bell in this.data.roomVariations){var l=this.data.roomVariations[e.bell];t.year==l.year&&(n=!0,s=l.roomTo)}var r=t.fullTeacher,o=!1;if(e.bell in this.data.classVariations){l=this.data.classVariations[e.bell];t.year==l.year&&(o=!0,r=l.casualSurname)}var m=this.getClassName(t);return i`
+            ${l(this.data.bells,(t=>t.time),(t=>{var e=this.data.timetable.timetable.periods[t.bell];if(e){if("R"==t.bell)return n;var i=e.room,s=!1;if(t.bell in this.data.roomVariations){var l=this.data.roomVariations[t.bell];e.year==l.year&&(s=!0,i=l.roomTo)}var r=e.fullTeacher,o=!1;if(t.bell in this.data.classVariations){l=this.data.classVariations[t.bell];e.year==l.year&&(o=!0,r=l.casualSurname)}var m=this.getClassName(e);return a`
                                 <payload-bell-item name="${m}"
-                                                   time="${e.time}"
-                                                   ?timechanged="${""!=e.reason}"
-                                                   room="${s}"
-                                                   ?roomChanged="${n}"
+                                                   time="${t.time}"
+                                                   ?timechanged="${""!=t.reason}"
+                                                   room="${i}"
+                                                   ?roomChanged="${s}"
                                                    teacher="${""==r?"No one":r}"
                                                    ?teacherChanged="${o}">
-                                </payload-bell-item>`}return"Transition"==e.bell||"End of Day"==e.bell?a:i`<bell-item name="${e.bellDisplay}" time="${e.time}"></bell-item>`}))}
-        `):i`
+                                </payload-bell-item>`}return"Transition"==t.bell||"End of Day"==t.bell?n:a`<bell-item name="${t.bellDisplay}" time="${t.time}"></bell-item>`}))}
+        `:a`
                 <loading-element style="width: 80%"></loading-element>
-            `}}customElements.define("bell-item",o),customElements.define("payload-bell-item",m),customElements.define("daily-timetable",d);export{o as BellItem,d as DailyTimetable,m as PayloadBellItem};
+            `}}customElements.define("bell-item",d),customElements.define("payload-bell-item",h),customElements.define("daily-timetable",p);export{d as BellItem,p as DailyTimetable,h as PayloadBellItem};

@@ -2,16 +2,14 @@ import { css } from "lit";
 
 export const barcodeCss = css`
     :host {
-        margin: auto;
-        flex: 0.96;
         position: relative;
+
+        flex: 1;
+
         display: flex;
         justify-content: center;
-        width: 96% !important;
-        height: 96vh !important;
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin;
+
+        margin: 2vh 2%;
     }
 
     canvas {
@@ -32,7 +30,6 @@ export const barcodeCss = css`
     #info {
         position: absolute;
         top: 1vmin;
-        color: var(--text1);
     }
 
     #description {
@@ -40,7 +37,6 @@ export const barcodeCss = css`
         top: 1vmin;
         left: 1vmin;
         width: 4vmin;
-        filter: invert(var(--img-invert));
     }
 
     #descriptionContent {
@@ -52,33 +48,18 @@ export const barcodeCss = css`
         padding: 2vmin;
         border-radius: 2vmin;
         box-shadow: var(--surface-shadow) 0 0 2vmin;
-        color: var(--text1);
     }
 
     #edit {
         position: absolute;
         top: 0;
         right: 0;
-        background-color: rgba(0, 0, 0, 0);
-        border-radius: 0;
         width: 8vmin;
         height: 8vmin;
         display: flex;
         align-items: center;
-        justify-content: center; 
-        box-shadow: none;
-        filter: invert(var(--img-invert));
-    }
-
-    .edit:hover {
+        justify-content: center;
         background-color: rgba(0, 0, 0, 0);
-    }
-
-    .edit:active {
-        background-color: rgba(0, 0, 0, 0);
-    }
-
-    button {
         border: none;
     }
 `;

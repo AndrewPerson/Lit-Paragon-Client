@@ -5,11 +5,6 @@
         "ignore": [],
         "redirects": [
             {
-                "source": "/",
-                "destination": "/dailytimetable",
-                "type": 301
-            },
-            {
                 "source": "/daytimetable",
                 "destination": "/dailytimetable",
                 "type": 302

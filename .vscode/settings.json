@@ -6,10 +6,11 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
+        "**/Thumbs.db": true,
         "node_modules": true,
         ".vscode": true,
         "package-lock.json": true,
-        "package.json": true,
+        "package.json": false,
         ".firebase": true,
         "build": false,
         "**/*.sketch": true

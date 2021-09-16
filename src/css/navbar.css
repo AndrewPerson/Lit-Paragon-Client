@@ -1,23 +1,13 @@
-.laptop-screen {
-    align-items: flex-start;
-}
-
 .laptop-screen > nav-bar {
     flex-direction: column;
     flex-wrap: wrap;
     width: 12vmin;
-    height: 100vh;
     top: 0;
     left: 0;
 }
 
-.laptop-screen > main {
-    height: 100vh;
-}
-
 .mobile-screen {
     flex-direction: column;
-    align-items: flex-start;
 }
 
 .mobile-screen > nav-bar {
@@ -30,11 +20,10 @@
     left: 0;
 }
 
-.mobile-screen > main {
-    max-height: calc(100vh - 12vw);
-    width: 100%;
+.mobile-screen > :not(nav-bar) {
+    order: 1;
 }
 
-.mobile-screen > *:not(nav-bar) {
-    order: 1;
+.mobile-screen > daily-timetable {
+    flex: 0;
 }

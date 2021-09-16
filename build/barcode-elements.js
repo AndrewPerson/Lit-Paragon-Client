@@ -1,15 +1,13 @@
-import{i as e,h as t,T as i}from"./lit-element-6ea6c272.js";const s=e`
+import{i as e,h as t,t as s,a as i,c as o,T as a}from"./default-css-78eb0074.js";const n=e`
     :host {
-        margin: auto;
-        flex: 0.96;
         position: relative;
+
+        flex: 1;
+
         display: flex;
         justify-content: center;
-        width: 96% !important;
-        height: 96vh !important;
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin;
+
+        margin: 2vh 2%;
     }
 
     canvas {
@@ -30,7 +28,6 @@ import{i as e,h as t,T as i}from"./lit-element-6ea6c272.js";const s=e`
     #info {
         position: absolute;
         top: 1vmin;
-        color: var(--text1);
     }
 
     #description {
@@ -38,7 +35,6 @@ import{i as e,h as t,T as i}from"./lit-element-6ea6c272.js";const s=e`
         top: 1vmin;
         left: 1vmin;
         width: 4vmin;
-        filter: invert(var(--img-invert));
     }
 
     #descriptionContent {
@@ -50,36 +46,21 @@ import{i as e,h as t,T as i}from"./lit-element-6ea6c272.js";const s=e`
         padding: 2vmin;
         border-radius: 2vmin;
         box-shadow: var(--surface-shadow) 0 0 2vmin;
-        color: var(--text1);
     }
 
     #edit {
         position: absolute;
         top: 0;
         right: 0;
-        background-color: rgba(0, 0, 0, 0);
-        border-radius: 0;
         width: 8vmin;
         height: 8vmin;
         display: flex;
         align-items: center;
-        justify-content: center; 
-        box-shadow: none;
-        filter: invert(var(--img-invert));
-    }
-
-    .edit:hover {
+        justify-content: center;
         background-color: rgba(0, 0, 0, 0);
-    }
-
-    .edit:active {
-        background-color: rgba(0, 0, 0, 0);
-    }
-
-    button {
         border: none;
     }
-`;class o extends t{static get styles(){return s}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(e,t){return{x:(e-this.offsetLeft)/this.clientWidth*100,y:(t-this.offsetTop)/this.clientHeight*100}}GetPixelsFromPercentage(e,t){return{x:this.clientWidth*e/100+this.offsetLeft,y:this.clientHeight*t/100+this.offsetTop}}async RequestBarcodeSize(){var e=this.shadowRoot.getElementById("point1"),t=this.shadowRoot.getElementById("point2"),i=this.shadowRoot.getElementById("info"),s=this.shadowRoot.getElementById("barcode-canv");i.style.display="",s.style.display="none",e.style.display="none",t.style.display="none";var o=new Promise((i=>{var s=0;this.addEventListener("pointerdown",(o=>{if(1==++s){var{x:a,y:n}=this.GetPercentageFromPixels(o.clientX-10,o.clientY-10);e.style.left=`${a}%`,e.style.top=`${n}%`,e.style.display=""}else if(2==s){var{x:a,y:n}=this.GetPercentageFromPixels(o.clientX-10,o.clientY-10);t.style.left=`${a}%`,t.style.top=`${n}%`,t.style.display="",this.removeEventListener("pointerdown",this),i()}}))}));await o,i.style.display="none",s.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var e,t,i,s,o=this.shadowRoot.getElementById("point1"),a=this.shadowRoot.getElementById("point2"),n=this.shadowRoot.getElementById("barcode-canv"),r=parseFloat(o.style.left.replace("%","")),l=parseFloat(o.style.top.replace("%","")),d=parseFloat(a.style.left.replace("%","")),c=parseFloat(a.style.top.replace("%",""));r>d?(e=r,t=d):(e=d,t=r),l>c?(i=l,s=c):(i=c,s=l),n.style.top=`${s}%`,n.style.left=`${t}%`,n.style.width=e-t+"%",n.style.height=i-s+"%",JsBarcode(n,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){caches.open("User Preferences");var e=this.shadowRoot.getElementById("point1"),t=this.shadowRoot.getElementById("point2"),i=this.shadowRoot.getElementById("barcode-canv");i.imageSmoothingEnabled=!1;var{x:s,y:o}=this.GetPixelsFromPercentage(80,10);({x:s,y:o}=this.GetPercentageFromPixels(s-10,o-10)),e.style.top=`${o}%`,e.style.left=`${s}%`,({x:s,y:o}=this.GetPixelsFromPercentage(20,30)),({x:s,y:o}=this.GetPercentageFromPixels(s-10,o-10)),t.style.top=`${o}%`,t.style.left=`${s}%`,this.UpdateBarcodeSize(),i.style.display="",e.style.display="",t.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?i`
+`;class l extends t{static get styles(){return[s,i,o,n]}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(e,t){return{x:(e-this.offsetLeft)/this.clientWidth*100,y:(t-this.offsetTop)/this.clientHeight*100}}GetPixelsFromPercentage(e,t){return{x:this.clientWidth*e/100+this.offsetLeft,y:this.clientHeight*t/100+this.offsetTop}}async RequestBarcodeSize(){var e,t,s,i,o=this.shadowRoot.getElementById("point1"),a=this.shadowRoot.getElementById("point2"),n=this.shadowRoot.getElementById("info"),l=this.shadowRoot.getElementById("barcode-canv");n.style.display="",l.style.display="none",o.style.display="none",a.style.display="none";var r=new Promise((n=>{var l=0;this.addEventListener("pointerdown",(r=>{if(1==++l){var{x:d,y:c}=this.GetPercentageFromPixels(r.clientX-10,r.clientY-10);e=d,t=c,o.style.left=`${d}%`,o.style.top=`${c}%`,o.style.display=""}else if(2==l){var{x:d,y:c}=this.GetPercentageFromPixels(r.clientX-10,r.clientY-10);s=d,i=d,a.style.left=`${d}%`,a.style.top=`${c}%`,a.style.display="",this.removeEventListener("pointerdown",this),n()}}))}));await r;var d=await caches.open("User Preferences");await d.put("Barcode Size",new Response(`${e} ${t} ${s} ${i}`)),n.style.display="none",l.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var e,t,s,i,o=this.shadowRoot.getElementById("point1"),a=this.shadowRoot.getElementById("point2"),n=this.shadowRoot.getElementById("barcode-canv"),l=parseFloat(o.style.left.replace("%","")),r=parseFloat(o.style.top.replace("%","")),d=parseFloat(a.style.left.replace("%","")),c=parseFloat(a.style.top.replace("%",""));l>d?(e=l,t=d):(e=d,t=l),r>c?(s=r,i=c):(s=c,i=r),n.style.top=`${i}%`,n.style.left=`${t}%`,n.style.width=e-t+"%",n.style.height=s-i+"%",JsBarcode(n,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){var e,t,s,i,o=this.shadowRoot.getElementById("point1"),a=this.shadowRoot.getElementById("point2"),n=this.shadowRoot.getElementById("barcode-canv");n.imageSmoothingEnabled=!1;var l=await caches.open("User Preferences"),r=await l.match("Barcode Size");if(r){var[e,s,t,i]=(await r.text()).split(" ");o.style.left=`${e}%`,o.style.top=`${s}%`,a.style.left=`${t}%`,a.style.top=`${i}%`}else{var{x:d,y:c}=this.GetPixelsFromPercentage(80,10);({x:d,y:c}=this.GetPercentageFromPixels(d-10,c-10)),o.style.left=`${d}%`,o.style.top=`${c}%`,({x:d,y:c}=this.GetPixelsFromPercentage(20,30)),({x:d,y:c}=this.GetPercentageFromPixels(d-10,c-10)),a.style.left=`${d}%`,a.style.top=`${c}%`}this.UpdateBarcodeSize(),n.style.display="",o.style.display="",a.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?a`
             <p id="info" style="display: none;">Tap in two places to form the barcode</p>
             
             <div>
@@ -95,6 +76,4 @@ import{i as e,h as t,T as i}from"./lit-element-6ea6c272.js";const s=e`
             <img draggable="false" @mouseover="${this.ShowDescription}" @mouseout="${this.HideDescription}" id="description" src="images/info.svg" />
         
             <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card</p>
-        `:i`
-                <loading-element style="width: 80%"></loading-element>
-            `}}customElements.define("student-barcode",o);export{o as StudentBarcode};
+        `:a`<loading-element style="width: 80%"></loading-element>`}}customElements.define("student-barcode",l);export{l as StudentBarcode};

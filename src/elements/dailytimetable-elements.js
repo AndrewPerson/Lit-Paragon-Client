@@ -1,10 +1,11 @@
 import { html, nothing, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
 import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable-css";
+import { textCss, containerCss } from "./default-css";
 
 export class BellItem extends LitElement {
     static get styles() {
-        return bellCss;
+        return [textCss, bellCss];
     }
 
     static get properties() {
@@ -31,7 +32,7 @@ export class BellItem extends LitElement {
 
 export class PayloadBellItem extends LitElement {
     static get styles() {
-        return [bellCss, payloadBellCss];
+        return [textCss, bellCss, payloadBellCss];
     }
 
     static get properties() {
@@ -76,7 +77,7 @@ export class PayloadBellItem extends LitElement {
 
 export class DailyTimetable extends LitElement {
     static get styles() {
-        return dailytimetableCss;
+        return [textCss, containerCss, dailytimetableCss];
     }
 
     static get properties() {
@@ -213,14 +214,17 @@ export class DailyTimetable extends LitElement {
         };
     }
 
+    firstUpdated() {
+        this.updateCountdown();
+        this.update();
+    }
+
     render() {
         if (!this.hasAttribute("data") || this.data == null || this.data == undefined) {
             return html`
                 <loading-element style="width: 80%"></loading-element>
             `;
         }
-
-        this.updateCountdown();
 
         return html`
             <p>${this.nextBell}</p>

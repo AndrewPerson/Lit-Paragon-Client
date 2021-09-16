@@ -10,7 +10,6 @@ export const announcementItemCss = css`
     p {
         margin: 0;
         margin-top: 1vmin;
-        color: var(--text1);
     }
 
     .title {
@@ -36,38 +35,40 @@ export const announcementItemCss = css`
 
     .toggle {
         margin-top: 2vmin;
+
         position: absolute;
         top: 0;
         right: 0;
+
         width: 4vmin;
+
         cursor: pointer;
-        filter: invert(var(--img-invert));
     }
 `;
 
 export const announcementContainerCss = css`
     :host {
         box-sizing: border-box;
+
         display: flex;
         flex-direction: column;
-        margin: auto;
-        flex: 0.96;
-        width: 96%;
-        height: 96vh;
-        padding: 2vmin;
-        background-color: var(--surface2);
-        border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 1vmin;
-    }
+        
+        flex: 1;
+        
+        margin: 2vh 2%;
 
-    p {
-        color: var(--text1);
+        padding: 2vmin;
+
+        min-width: 0;
+        min-height: 0;
     }
 
     .header {
         min-width: 100%;
+
         margin-top: 1vmin;
         margin-bottom: 1vmin;
+
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -75,10 +76,14 @@ export const announcementContainerCss = css`
 
     .announcements {
         margin-top: 2vmin;
+
         display: flex;
         flex-direction: column;
+
         flex: 1;
+
         overflow-y: scroll;
+
         padding-right: 1vmin;
     }
 
@@ -103,20 +108,5 @@ export const announcementContainerCss = css`
 
     .line-left {
         margin-left: 10px;
-    }
-
-    select {
-        border: solid rgb(82, 143, 255) 1px;
-        background-color: var(--surface2);
-        color: var(--text2);
-        padding: 1vmin 0;
-        padding-right: 6vmin;
-        border-radius: 1vmin;
-        max-width: max-content;
-        font-size: calc(var(--font-size) / 1.2);
-    }
-
-    option {
-        background-color: var(--surface2);
     }
 `;

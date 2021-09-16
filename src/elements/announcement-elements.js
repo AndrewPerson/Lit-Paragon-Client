@@ -1,11 +1,12 @@
-import { html, LitElement, nothing } from "lit";
+import { html, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { announcementItemCss, announcementContainerCss } from "./announcement-css";
+import { textCss, imgCss, blockQuoteCss, selectCss, containerCss } from "./default-css";
 
 export class AnnouncementItem extends LitElement {
     static get styles() {
-        return announcementItemCss;
+        return [textCss, blockQuoteCss, imgCss, announcementItemCss];
     }
 
     static get properties() {
@@ -40,17 +41,17 @@ export class AnnouncementItem extends LitElement {
         return html`
             <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
-            <div id="content" class="content ${this.collapsed ? 'collapsed' : 'expanded'}">
+            <blockquote id="content" class="content ${this.collapsed ? 'collapsed' : 'expanded'}">
                 ${unsafeHTML(this.content)}
-            </div>
+            </blockquote>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
         `;
     }
 }
 
-export class AnnouncementContainer extends LitElement {
+export class SchoolAnnouncements extends LitElement {
     static get styles() {
-        return announcementContainerCss;
+        return [textCss, selectCss, containerCss, announcementContainerCss];
     }
 
     static get properties() {
@@ -136,4 +137,4 @@ export class AnnouncementContainer extends LitElement {
 }
 
 customElements.define("announcement-item", AnnouncementItem);
-customElements.define("announcement-container", AnnouncementContainer);
+customElements.define("school-announcements", SchoolAnnouncements);

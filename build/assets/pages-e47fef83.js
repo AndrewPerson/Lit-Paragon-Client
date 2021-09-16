@@ -8,15 +8,22 @@ const PAGES = [
 ];
 
 function UpdatePage() {
-    var hash = location.hash.replace("#", "").split("-");
+    var hash = location.hash.replace("#", "").split("-").filter(key => key.trim());
 
     var page = "dailytimetable";
 
+    var gotPage = false;
     for (var part of hash) {
         if (PAGES.includes(part)) {
             page = part;
+            gotPage = true;
             break;
         }
+    }
+
+    if (!gotPage) {
+        hash.unshift(page);
+        location.hash = hash.join("-");
     }
 
     document.getElementById(page)?.classList.remove("hidden");
