@@ -59,7 +59,7 @@ export const announcementContainerCss = css`
 
         padding: 2vmin;
 
-        min-width: 0;
+        min-width: calc(300px - 4vmin);
         min-height: 0;
     }
 

@@ -70,14 +70,13 @@ export const dailytimetableCss = css`
 
         width: 60vw;
         max-width: 60vh;
-        min-width: 300px;
         min-height: 70vh;
     }
     
     @media (max-width: 300px) {
         :host {
             width: 100vw;
-            min-width: unset;
+            min-width: 0;
         }
     }
 

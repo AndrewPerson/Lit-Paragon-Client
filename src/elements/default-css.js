@@ -5,6 +5,16 @@ export const containerCss = css`
         box-shadow: var(--surface-shadow) 0 0 1vmin;
         background-color: var(--surface2);
         border-radius: 2vmin;
+        min-width: 300px;
+    }
+
+    @media (max-width: 300px) {
+        :host {
+            min-width: 0 !important;
+            width: 100vw !important;
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+        }
     }
 `;
 

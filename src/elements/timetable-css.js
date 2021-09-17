@@ -32,8 +32,8 @@ export const roomPopupCss = css`
     p {
         color: var(--text4);
         margin: 0;
-        width: 10vmin;
-        height: 3.9vmin;
+        width: calc(var(--font-size) * 4);
+        height: calc(var(--font-size) * 1.5);
         margin-top: 2vmin;
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
@@ -53,8 +53,6 @@ export const roomPopupCss = css`
 
     @media (max-aspect-ratio: 3/4) {
         p {
-            width: 8vmax;
-            height: 3vmax;
             margin-top: 1.7vmax;
         }
     }
@@ -85,16 +83,14 @@ export const timetablePeriodCss = css`
     }
 
     p {
-        width: 10vmin;
-        height: 3.9vmin;
+        width: calc(var(--font-size) * 4);
+        height: calc(var(--font-size) * 1.5);
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
     }
 
     @media (max-aspect-ratio: 3/4) {
         p {
-            width: 8vmax;
-            height: 3vmax;
             margin-top: 0.5vmax;
         }
     }
@@ -106,14 +102,8 @@ export const timetableDayCss = css`
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        width: 12vmin;
+        width: calc(var(--font-size) * 4.5);
         min-width: 0;
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        :host {
-            width: 9vmax;
-        }
     }
 
     .name {
@@ -147,7 +137,7 @@ export const timetableRowCss = css`
 
     .period-nums > p {
         color: var(--text3);
-        height: 3.9vmin;
+        height: calc(var(--font-size) * 1.5);
         line-height: calc(var(--font-size) * 1.5);
 
         user-select: none;
@@ -158,7 +148,6 @@ export const timetableRowCss = css`
 
     @media (max-aspect-ratio: 3/4) {
         .period-nums > p {
-            height: 3vmax;
             margin-top: 0.5vmax;
         }
     }
@@ -169,6 +158,15 @@ export const fullTimetableCss = css`
         margin: auto;
         padding: 4vmin;
         max-width: 92%;
+        min-width: 0;
+
+        height: calc(calc(calc(calc(var(--font-size) / 1.2) + calc(var(--font-size) * 7.5)) + 4vmin) * 3);
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host {
+            height: calc(calc(calc(calc(calc(var(--font-size) / 1.2) + calc(var(--font-size) * 7.5)) + 4vmin) + 2.5vmax) * 3);
+        }
     }
 
     timetable-row + timetable-row {

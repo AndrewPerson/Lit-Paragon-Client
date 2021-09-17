@@ -30,14 +30,13 @@ function UpdatePage() {
 
     var elements = document.getElementById("body").children;
 
-    var i = 0;
-    while (i < elements.length) {
-        if (elements[i].id != page
-         && elements[i].tagName != "SCRIPT"
-         && elements[i].tagName != "NAV-BAR")
-            elements[i].classList.add("hidden");
-        
-        i++;
+    for (var element of elements) {
+        if (element.id != page
+         && element.tagName != "SCRIPT"
+         && element.tagName != "NAV-BAR"
+         && element.tagName != "LOGIN-NOTIFICATION") {
+            element.classList.add("hidden");
+        }
     }
 
     window.page = page;

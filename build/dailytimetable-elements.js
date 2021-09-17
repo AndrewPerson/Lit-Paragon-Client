@@ -1,4 +1,4 @@
-import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-6e30774d.js";import{c as l}from"./repeat-15a7ed5a.js";const r=t`
+import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-22d073f2.js";import{c as l}from"./repeat-acb79229.js";const r=t`
     :host {
         display: flex;
         align-items: center;
@@ -64,14 +64,13 @@ import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-6e30774d.js"
 
         width: 60vw;
         max-width: 60vh;
-        min-width: 300px;
         min-height: 70vh;
     }
     
     @media (max-width: 300px) {
         :host {
             width: 100vw;
-            min-width: unset;
+            min-width: 0;
         }
     }
 

@@ -1,4 +1,4 @@
-import{i as e,h as t,t as i,a as s,c as o,T as a}from"./default-css-6e30774d.js";const n=e`
+import{i as e,h as t,t as i,a as s,c as o,T as a}from"./default-css-22d073f2.js";const n=e`
     :host {
         position: relative;
 
@@ -8,6 +8,8 @@ import{i as e,h as t,t as i,a as s,c as o,T as a}from"./default-css-6e30774d.js"
         justify-content: center;
 
         margin: 2vh 2%;
+
+        min-width: calc(300px - 4vmin);
     }
 
     canvas {
