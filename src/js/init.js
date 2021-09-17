@@ -18,7 +18,8 @@ window.isDark = callback => {
         caches.open(window.PREFERENCE_CACHE).then(async cache => {
             var darkResponse = await cache.match("Dark");
 
-            callback(darkResponse && await darkResponse.text() == "true");
+            if (!darkResponse) callback(false);
+            else callback(await darkResponse.text() == "true");
         });
     }
 }

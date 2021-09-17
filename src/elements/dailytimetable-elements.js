@@ -151,10 +151,12 @@ export class DailyTimetable extends LitElement {
         var nextBell = this.getNextBell();
 
         if (!nextBell) {
-            if (!DailyTimetable.gettingNextDay) {
-                DailyTimetable.gettingNextDay = true;
+            if (!this.gettingNextDay) {
+                this.gettingNextDay = true;
+
                 this.data = null;
                 this.update();
+                
                 LoginIfNeeded().then(token => {
                     UpdateResourcesIfNeeded(token, true).then(succeeded => {
                         if (succeeded) {
@@ -212,6 +214,8 @@ export class DailyTimetable extends LitElement {
             roomVariations: [],
             classVariations: []
         };
+
+        this.gettingNextDay = false;
     }
 
     firstUpdated() {

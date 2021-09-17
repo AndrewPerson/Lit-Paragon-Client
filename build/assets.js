@@ -4,7 +4,7 @@ self.assets = [
 	"/assets/404-fc93550a.css",
 	"/assets/app-d40dc102.css",
 	"/assets/createElements-4dceb61e.js",
-	"/assets/init-0918dd63.js",
+	"/assets/init-b2aee6e4.js",
 	"/assets/jsbarcode-cf8d2644.js",
 	"/assets/login-aec7b0ef.css",
 	"/assets/logo-ddb5fa25.svg",
