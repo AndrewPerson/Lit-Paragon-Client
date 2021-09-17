@@ -93,7 +93,7 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e307
     .dismiss {
         margin-left: 1vmin;
     }
-`;class g extends e{static get styles(){return[i,r]}static get properties(){return{page:{type:String},title:{type:String},icon:{type:String}}}UpdatePage(){location.hash.includes("dark")?location.hash=`${this.page}-dark`:location.hash=this.page,""!=location.pathname&&(location.pathname=""),window.UpdatePage(),window.UpdateScreenType()}constructor(){super(),this.page="",this.title="Home",this.icon=""}render(){return this.icon||(this.icon=this.title.toLowerCase()),window.page==this.page?this.classList.add("nav-selected"):this.classList.remove("nav-selected"),n`
+`;class g extends e{static get styles(){return[i,r]}static get properties(){return{page:{type:String},title:{type:String},icon:{type:String}}}UpdatePage(){window.getHash().includes("dark")?location.hash=`${this.page}-dark`:location.hash=this.page,""!=location.pathname&&(location.pathname=""),window.UpdatePage(),window.UpdateScreenType()}constructor(){super(),this.page="",this.title="Home",this.icon=""}render(){return this.icon||(this.icon=this.title.toLowerCase()),window.page==this.page?this.classList.add("nav-selected"):this.classList.remove("nav-selected"),n`
             <button @click="${this.UpdatePage}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </button>

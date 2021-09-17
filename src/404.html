@@ -30,6 +30,8 @@
 </head>
 
 <body class="laptop-screen">
+    <script src="js/init.js"></script>
+
     <nav-bar></nav-bar>
     
     <main>
@@ -44,24 +46,16 @@
     <script>
         document.getElementById("location").textContent = location.pathname.substring(1);
 
-        if (location.hash == "#dark") {
-            document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-        }
-
-        caches.open("User Preferences").then(async cache => {
-            var darkResponse = await cache.match("dark");
-
-            if (darkResponse) {
-                if (await darkResponse.text() == "true") {
-                    document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-                }
+        window.isDark(dark => {
+            if (dark) {
+                document.getElementById("backgroundimg").src = "images/logo-dark.svg";
             }
         });
     </script>
 
-    <script src="pages.js"></script>
+    <script src="js/pages.js"></script>
 
-    <script src="main.js"></script>
+    <script src="js/main.js"></script>
 </body>
 
 </html>

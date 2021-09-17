@@ -1,4 +1,4 @@
-import{i as e,h as t,t as a,a as i,b as n,e as o,c as s,T as r}from"./default-css-6e30774d.js";const d=e`
+import{i as e,h as t,t as n,a as i,b as a,e as o,c as s,T as r}from"./default-css-6e30774d.js";const d=e`
     :host {
         position: relative;
 
@@ -29,11 +29,11 @@ import{i as e,h as t,t as a,a as i,b as n,e as o,c as s,T as r}from"./default-cs
         position: absolute;
         filter: hue-rotate(var(--hue-rotate));
         height: 70vmin;
-        transform: translate(5vmin, 0);
+        transform: translateX(5vmin);
     }
 
     loading-element {
-        width: 96vmin;
+        width: 90vmin;
     }
 
     button {
@@ -79,7 +79,7 @@ import{i as e,h as t,t as a,a as i,b as n,e as o,c as s,T as r}from"./default-cs
         border-radius: 2vmin;
         box-shadow: var(--surface-shadow) 0 0 2vmin;
     }
-`;class c extends t{static get styles(){return[a,i,n,o,s,d]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){var e=location.hash.replace("#","").split("-").filter((e=>e.trim()));if(e.includes("dark")){location.hash=e.filter((e=>"dark"!=e)).join("-");var t=await this.preferenceCache;await t.put("Dark",new Response("false"))}else e.push("dark"),location.hash=e.join("-");window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}async SetColour(){var e=document.getElementsByTagName("html")[0].style,t=this.shadowRoot.getElementById("hue").value;e.setProperty("--main-hue",t),e.setProperty("--hue-rotate",parseFloat(t)-200+"deg"),await(await this.preferenceCache).put("Hue",new Response(t))}createRenderRoot(){const e=super.createRenderRoot();return e.addEventListener("click",(e=>{var t=this.shadowRoot;e.target!=t.getElementById("description")&&(t.getElementById("descriptionContent").style.display="none")})),e}updated(){caches.open("Metadata").then((async e=>{var t=await e.match("Metadata"),a=JSON.parse(await t.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${a.version}`})),this.preferenceCache.then((async e=>{var t=await e.match("Hue"),a=await t.text();this.shadowRoot.getElementById("hue").value=a}))}constructor(){super(),this.preferenceCache=caches.open("User Preferences")}render(){var e=location.hash.replace("#","").split("-").includes("dark"),t=e?"images/sun.svg":"images/moon.svg";return r`
+`;class c extends t{static get styles(){return[n,i,a,o,s,d]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){var e=window.getHash();if(e.includes("dark")){e.pop(e.indexOf("dark")),location.hash=e.join("-");var t=await this.preferenceCache;await t.put("Dark",new Response("false"))}else e.push("dark"),location.hash=e.join("-");window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}async SetColour(){var e=document.getElementsByTagName("html")[0].style,t=this.shadowRoot.getElementById("hue").value;e.setProperty("--main-hue",t),e.setProperty("--hue-rotate",parseFloat(t)-200+"deg"),await(await this.preferenceCache).put("Hue",new Response(t))}ResetColour(){this.shadowRoot.getElementById("hue").value="200",this.SetColour()}createRenderRoot(){const e=super.createRenderRoot();return e.addEventListener("click",(e=>{var t=this.shadowRoot;e.target!=t.getElementById("description")&&(t.getElementById("descriptionContent").style.display="none")})),e}updated(){caches.open(window.METADATA_CACHE).then((async e=>{var t=await e.match("Metadata"),n=JSON.parse(await t.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${n.version}`})),window.getHue().then((e=>{this.shadowRoot.getElementById("hue").value=e.hue}))}constructor(){super(),this.preferenceCache=caches.open(window.PREFERENCE_CACHE)}render(){var e=window.getHash().includes("dark"),t=e?"images/sun.svg":"images/moon.svg";return r`
             <div id="background">
                 <loading-element></loading-element>
                 <img draggable="false" id="backgroundimg" src="${e?"images/logo-dark.svg":"images/logo.svg"}" />
@@ -96,6 +96,8 @@ import{i as e,h as t,t as a,a as i,b as n,e as o,c as s,T as r}from"./default-cs
             </button>
             
             <p id="version">Paragon v0</p>
+
+            <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
             <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}"/>            
         `}}customElements.define("user-settings",c);export{c as UserSettings};

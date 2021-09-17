@@ -11,6 +11,7 @@ self.addEventListener('message', event => event.waitUntil(Message(event)));
 
 const OFFLINE_CACHE = 'Offline Resources';
 const METADATA_CACHE = "Metadata";
+const RESOURCE_CACHE = "User Resources";
 const VALID_CACHES = [
     "Offline Resources",
     "Metadata",
@@ -101,12 +102,15 @@ async function GetLatestMetadata() {
     else app = initializeApp(firebaseConfig);
 
     const auth = initializeAuth(app, {persistence: indexedDBLocalPersistence});
-    if (auth.currentUser)
-        return await getIdToken(auth.currentUser);
-        
-    var user = (await signInAnonymously(auth)).user;
 
-    var token = await getIdToken(user);
+    var token;
+    if (auth.currentUser)
+        var token = await getIdToken(auth.currentUser);
+    else {
+        var user = (await signInAnonymously(auth)).user;
+
+        token = await getIdToken(user);
+    }
 
     var request = await fetch(METADATA_ENDPOINT, {
         headers: {
@@ -115,7 +119,12 @@ async function GetLatestMetadata() {
     });
 
     var text = await request.text();
-    return await JSON.parse(text);
+    var object = JSON.parse(text);
+
+    //TODO: Add extension fields later
+    return {
+        version: object.fields.Version.stringValue
+    };
 }
 
 async function MetadataFetch() {
@@ -136,7 +145,7 @@ async function MetadataFetch() {
 }
 
 async function DataFetch() {
-    var resourceCache = await caches.open("User Resources");
+    var resourceCache = await caches.open(RESOURCE_CACHE);
 
     var tokenResponse = await resourceCache.match("Token");
     var token = await tokenResponse.text();
@@ -180,11 +189,16 @@ async function Update() {
 
     await Promise.all(putPromises);
 
+    await fileCache.put("/", await fetch("/"));
+
     UPDATING = false;
     
     var keys = await fileCache.keys();
 
-    var toDelete = keys.filter(key => !self.assets.includes(key.url.replace(location.origin, "")));
+    var toDelete = keys.filter(key =>  {
+        var url = key.url.replace(location.origin, "");
+        return !self.assets.includes(url) && url != "/";
+    });
     
     var deletePromises = [];
     toDelete.forEach(key =>

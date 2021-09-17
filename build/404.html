@@ -19,7 +19,7 @@
 
     <link href="assets/app-d40dc102.css" rel="stylesheet">
     <link href="assets/navbar-f2f19a3c.css" rel="stylesheet">
-    <link href="assets/404-cc066ab1.css" rel="stylesheet">
+    <link href="assets/404-fc93550a.css" rel="stylesheet">
 
     <link href="assets/manifest.json" rel="manifest">
 
@@ -27,6 +27,8 @@
 </head>
 
 <body class="laptop-screen">
+    <script src="assets/init-0918dd63.js"></script>
+
     <nav-bar></nav-bar>
     
     <main>
@@ -41,24 +43,16 @@
     <script>
         document.getElementById("location").textContent = location.pathname.substring(1);
 
-        if (location.hash == "#dark") {
-            document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-        }
-
-        caches.open("User Preferences").then(async cache => {
-            var darkResponse = await cache.match("dark");
-
-            if (darkResponse) {
-                if (await darkResponse.text() == "true") {
-                    document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-                }
+        window.isDark(dark => {
+            if (dark) {
+                document.getElementById("backgroundimg").src = "images/logo-dark.svg";
             }
         });
     </script>
 
-    <script src="assets/pages-e47fef83.js"></script>
+    <script src="assets/pages-fbc756ec.js"></script>
 
-    <script src="assets/main-4e795f19.js"></script>
+    <script src="assets/main-5ab0affc.js"></script>
 
 
 

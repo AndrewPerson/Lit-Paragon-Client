@@ -39,7 +39,7 @@ exec("rollup -c", (err, stdout, stderr) => {
     var js = "self.assets = [\n"
 
     getFiles(__dirname.replace('\\', '/') + "/build", "/").forEach(file => {
-        if (!file.includes("service-worker")) js += `\t"${file}",\n`;
+        if (!file.includes("service-worker") && !file.includes("index.html")) js += `\t"${file}",\n`;
     });
 
     js += "];";

@@ -78,7 +78,7 @@ export class StudentBarcode extends LitElement {
 
         await userInput;
 
-        var preferenceCache = await caches.open("User Preferences");
+        var preferenceCache = await caches.open(window.PREFERENCE_CACHE);
 
         await preferenceCache.put("Barcode Size", new Response(`${x1} ${y1} ${x2} ${y2}`));
 
@@ -146,7 +146,7 @@ export class StudentBarcode extends LitElement {
 
         barcode.imageSmoothingEnabled = false;
 
-        var preferenceCache = await caches.open("User Preferences");
+        var preferenceCache = await caches.open(window.PREFERENCE_CACHE);
 
         var preferenceResponse = await preferenceCache.match("Barcode Size");
 
@@ -216,7 +216,7 @@ export class StudentBarcode extends LitElement {
 
             <img draggable="false" @mouseover="${this.ShowDescription}" @mouseout="${this.HideDescription}" id="description" src="images/info.svg" />
         
-            <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card</p>
+            <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
         `;
     }
 }

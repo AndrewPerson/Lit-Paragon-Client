@@ -18,19 +18,28 @@
     <base href="/">
 
     <link href="assets/app-d40dc102.css" rel="stylesheet">
-    <link href="assets/login-ce543d2c.css" rel="stylesheet">
+    <link href="assets/login-aec7b0ef.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
 </head>
 
 <body>
-    <img draggable="false" class="logo" src="assets/logo-with-rings-87a5cfc9.svg">
+    <script src="assets/init-0918dd63.js"></script>
+
+    <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
+    <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
 
     <p class="important">Paragon</p>
 
     <button class="button" onclick="login()">Login</button>
 
     <script>
+        window.isDark(dark => {
+            if (dark) {
+                document.getElementById("logo").src = "images/logo-dark.svg";
+            }
+        });
+
         const CLIENT_ID = "Paragon_Tools";
 
         function login() {

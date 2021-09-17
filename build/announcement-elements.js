@@ -117,7 +117,7 @@ import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./defaul
                 ${g(this.content)}
             </blockquote>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
-        `}}class b extends n{static get styles(){return[s,a,c,f]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.data)return l`<loading-element style="width: 80%"></loading-element>`;if(0==this.data.notices.length)return l`
+        `}}class b extends n{static get styles(){return[s,a,c,f]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.hasAttribute("data"))return l`<loading-element style="width: 80%; margin: auto;"></loading-element>`;if(0==this.data.notices.length)return l`
                 <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
                     <div class="line-right"></div>
                     <p>Nothing For Today</p>

@@ -12,10 +12,11 @@ export class UserSettings extends LitElement {
     }
 
     async ToggleDark() {
-        var hash = location.hash.replace("#", "").split("-").filter(key => key.trim());
+        var hash = window.getHash();
 
         if (hash.includes("dark")) {
-            location.hash = hash.filter(key => key != "dark").join("-");
+            hash.pop(hash.indexOf("dark"));
+            location.hash = hash.join("-");
             
             var cache = await this.preferenceCache;
             await cache.put("Dark", new Response("false"));
@@ -50,6 +51,11 @@ export class UserSettings extends LitElement {
         await (await this.preferenceCache).put("Hue", new Response(hue));
     }
 
+    ResetColour() {
+        this.shadowRoot.getElementById("hue").value = "200";
+        this.SetColour();
+    }
+
     createRenderRoot() {
         const root = super.createRenderRoot();
 
@@ -64,7 +70,7 @@ export class UserSettings extends LitElement {
     }
 
     updated() {
-        caches.open("Metadata").then(async metadataCache => {
+        caches.open(window.METADATA_CACHE).then(async metadataCache => {
             var metadataResponse = await metadataCache.match("Metadata");
 
             var metadata = JSON.parse(await metadataResponse.text());
@@ -72,22 +78,19 @@ export class UserSettings extends LitElement {
             this.shadowRoot.getElementById("version").textContent = `Paragon v${metadata.version}`;
         });
 
-        this.preferenceCache.then(async cache => {
-            var hueResponse = await cache.match("Hue");
-            var hue = await hueResponse.text();
-
-            this.shadowRoot.getElementById("hue").value = hue;
+        window.getHue().then(hue => {
+            this.shadowRoot.getElementById("hue").value = hue.hue;
         });
     }
 
     constructor() {
         super();
 
-        this.preferenceCache = caches.open("User Preferences");
+        this.preferenceCache = caches.open(window.PREFERENCE_CACHE);
     }
 
     render() {
-        var hash = location.hash.replace("#", "").split("-");
+        var hash = window.getHash();
         var dark = hash.includes("dark");
 
         var mode = dark ? "images/sun.svg" : "images/moon.svg";
@@ -110,6 +113,8 @@ export class UserSettings extends LitElement {
             </button>
             
             <p id="version">Paragon v0</p>
+
+            <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
             <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}"/>            
         `;

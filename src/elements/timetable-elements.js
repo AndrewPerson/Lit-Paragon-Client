@@ -242,8 +242,8 @@ export class FullTimetable extends LitElement {
     }
 
     render() {
-        if (!this.data) {
-            return html`<loading-element style="width: 80%"></loading-element>`
+        if (!this.hasAttribute("data")) {
+            return html`<loading-element style="width: 80%; margin: auto;"></loading-element>`
         }
 
         this.day = this.day.slice(0, 3).toUpperCase() + " " + this.day.slice(-1);

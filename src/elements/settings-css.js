@@ -31,11 +31,11 @@ export const settingsCss = css`
         position: absolute;
         filter: hue-rotate(var(--hue-rotate));
         height: 70vmin;
-        transform: translate(5vmin, 0);
+        transform: translateX(5vmin);
     }
 
     loading-element {
-        width: 96vmin;
+        width: 90vmin;
     }
 
     button {

@@ -28,7 +28,7 @@ main > p {
 
 #backgroundimg {
     position: absolute;
-    filter: none;
+    filter: hue-rotate(var(--hue-rotate));
     height: 70vmin;
     transform: translate(5vmin, 0);
 }

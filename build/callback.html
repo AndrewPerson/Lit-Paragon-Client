@@ -18,21 +18,28 @@
     <base href="/">
 
     <link href="assets/app-d40dc102.css" rel="stylesheet">
-    <link href="assets/login-ce543d2c.css" rel="stylesheet">
+    <link href="assets/login-aec7b0ef.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
 </head>
 
 <body>
-    <img draggable="false" class="logo" src="assets/logo-with-rings-87a5cfc9.svg">
+    <script src="assets/init-0918dd63.js"></script>
+
+    <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
+    <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
 
     <p class="important">Logging in...</p>
 
     <script>
-        const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
+        window.isDark(dark => {
+            if (dark) {
+                document.getElementById("logo").src = "images/logo-dark.svg";
+            }
+        });
 
         async function Token(code) {
-            var tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
+            var tokenResponse = await fetch(window.SERVER_ENDPOINT + "/auth", {
                 method: "POST",
                 body: code
             });

@@ -1,6 +1,3 @@
-const RESOURCE_CACHE = "User Resources";
-const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
-
 async function Load() {
     RedirectToProperWebsiteIfNeeded();
 
@@ -58,7 +55,7 @@ async function RegisterServiceWorker() {
 }
 
 async function LoginIfNeeded() {
-    var resourceCache = await caches.open(RESOURCE_CACHE);
+    var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
     var token = await resourceCache.match("Token");
     
@@ -68,7 +65,7 @@ async function LoginIfNeeded() {
 }
 
 async function UpdateResourcesIfNeeded(token, force) {
-    var resourceCache = await caches.open(RESOURCE_CACHE);
+    var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
     var lastUpdatedResponse = await resourceCache.match("Last Updated");
     
@@ -82,7 +79,7 @@ async function UpdateResourcesIfNeeded(token, force) {
     else resources = await GetAllResources(token);
 
     if (resources) {
-        var resourceCache = await caches.open(RESOURCE_CACHE);
+        var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
         await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
 
@@ -107,7 +104,7 @@ async function GetAllResources(token) {
         return;
     }
 
-    var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
+    var resourceResponse = await fetch(`${window.SERVER_ENDPOINT}/resources?token=${token}`);
 
     if (!resourceResponse) location.href = location.origin + "/login";
 
@@ -128,7 +125,7 @@ async function GetAllResources(token) {
 }
 
 async function GetResourceFromCache(resource) {
-    var resourceCache = await caches.open(RESOURCE_CACHE);
+    var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
     var resourceResponse = await resourceCache.match(resource);
 

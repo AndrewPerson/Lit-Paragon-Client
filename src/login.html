@@ -27,13 +27,22 @@
 </head>
 
 <body>
-    <img draggable="false" class="logo" src="images/logo-with-rings.svg" />
+    <script src="js/init.js"></script>
+
+    <img draggable="false" id="logo" src="images/logo.svg" />
+    <img draggable="false" class="logo-rings" src="images/rings.svg" />
 
     <p class="important">Paragon</p>
 
     <button class="button" onclick="login()">Login</button>
 
     <script>
+        window.isDark(dark => {
+            if (dark) {
+                document.getElementById("logo").src = "images/logo-dark.svg";
+            }
+        });
+
         const CLIENT_ID = "Paragon_Tools";
 
         function login() {

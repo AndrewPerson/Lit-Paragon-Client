@@ -16,7 +16,7 @@ export class NavItem extends LitElement {
     }
 
     UpdatePage() {
-        if (location.hash.includes("dark"))
+        if (window.getHash().includes("dark"))
             location.hash = `${this.page}-dark`;
         else
             location.hash = this.page;

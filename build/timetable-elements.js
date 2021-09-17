@@ -239,7 +239,7 @@ import{i as t,h as e,T as i,t as a,A as s,c as r}from"./default-css-6e30774d.js"
                            data="${JSON.stringify(this.day5.periods)}"
                            day="${this.day}">
             </timetable-day>
-        `}}class c extends e{static get styles(){return[r,h]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.data?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),i`
+        `}}class c extends e{static get styles(){return[r,h]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.hasAttribute("data")?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),i`
             <timetable-row week="A"
                            day1="${JSON.stringify(this.data.days[1])}"
                            day2="${JSON.stringify(this.data.days[2])}"
@@ -266,4 +266,4 @@ import{i as t,h as e,T as i,t as a,A as s,c as r}from"./default-css-6e30774d.js"
                            day5="${JSON.stringify(this.data.days[15])}"
                            day="${this.day}">
             </timetable-row>
-        `):i`<loading-element style="width: 80%"></loading-element>`}}customElements.define("room-popup",y),customElements.define("timetable-period",l),customElements.define("timetable-day",p),customElements.define("timetable-row",g),customElements.define("full-timetable",c);export{c as FullTimetable,y as RoomPopup,p as TimetableDay,l as TimetablePeriod,g as TimetableRow};
+        `):i`<loading-element style="width: 80%; margin: auto;"></loading-element>`}}customElements.define("room-popup",y),customElements.define("timetable-period",l),customElements.define("timetable-day",p),customElements.define("timetable-row",g),customElements.define("full-timetable",c);export{c as FullTimetable,y as RoomPopup,p as TimetableDay,l as TimetablePeriod,g as TimetableRow};

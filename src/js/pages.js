@@ -8,7 +8,7 @@ const PAGES = [
 ];
 
 function UpdatePage() {
-    var hash = location.hash.replace("#", "").split("-").filter(key => key.trim());
+    var hash = window.getHash();
 
     var page = "dailytimetable";
 
