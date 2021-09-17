@@ -1,3 +1,6 @@
+import { initializeApp, getApps } from 'firebase/app';
+import { initializeAuth, indexedDBLocalPersistence, signInAnonymously, getIdToken } from "firebase/auth";
+
 importScripts("./assets.js");
 
 self.addEventListener('install', event => event.waitUntil(Install(event)));
@@ -81,7 +84,35 @@ async function Message(event) {
 }
 
 async function GetLatestMetadata() {
-    var request = await fetch(SERVER_ENDPOINT + "/metadata");
+    var firebaseConfig = {
+        apiKey: "AIzaSyDXDDZJS3mHlAGwcLL9qRYs30SAW5h3Ly0",
+        authDomain: "web-paragon.firebaseapp.com",
+        projectId: "web-paragon",
+        storageBucket: "web-paragon.appspot.com",
+        messagingSenderId: "59394117419",
+        appId: "1:59394117419:web:fc7173d15609bb0332bf6e",
+        measurementId: "G-DK3FHC0RDM"
+    };
+
+    var apps = getApps();
+
+    var app;
+    if (apps.length > 0) app = apps[0];
+    else app = initializeApp(firebaseConfig);
+
+    const auth = initializeAuth(app, {persistence: indexedDBLocalPersistence});
+    if (auth.currentUser)
+        return await getIdToken(auth.currentUser);
+        
+    var user = (await signInAnonymously(auth)).user;
+
+    var token = await getIdToken(user);
+
+    var request = await fetch(METADATA_ENDPOINT, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
 
     var text = await request.text();
     return await JSON.parse(text);
