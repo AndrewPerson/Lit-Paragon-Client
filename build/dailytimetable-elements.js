@@ -1,4 +1,4 @@
-import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-e65204ef.js";import{c as l}from"./repeat-c4db3c9f.js";const r=t`
+import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-2140c871.js";import{c as l}from"./repeat-11f113ac.js";const r=t`
     :host {
         display: flex;
         align-items: center;
@@ -100,10 +100,10 @@ import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-e65204ef.js"
     .line-left {
         margin-left: 10px;
     }
-`;class d extends e{static get styles(){return[i,r]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return a`
+`;class h extends e{static get styles(){return[i,r]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return a`
             <p class="start">${this.name}</p>
             <p class="end">${this.time}</p>
-        `}}class h extends e{static get styles(){return[i,r,o]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var t=this.timeChanged?"changed":"",e=this.teacherChanged?"changed":"",i=this.roomChanged?"changed":"";return a`
+        `}}class d extends e{static get styles(){return[i,r,o]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var t=this.timeChanged?"changed":"",e=this.teacherChanged?"changed":"",i=this.roomChanged?"changed":"";return a`
             <div>
                 <p class="start">${this.name}</p>
                 <p class="time">at <span class="${t}">${this.time}</span> with <span class="${e}">${this.teacher}</span></p>
@@ -131,4 +131,4 @@ import{i as t,h as e,t as i,T as a,c as s,A as n}from"./default-css-e65204ef.js"
                                 </payload-bell-item>`}return"Transition"==t.bell||"End of Day"==t.bell?n:a`<bell-item name="${t.bellDisplay}" time="${t.time}"></bell-item>`}))}
         `:a`
                 <loading-element style="width: 80%"></loading-element>
-            `}}customElements.define("bell-item",d),customElements.define("payload-bell-item",h),customElements.define("daily-timetable",p);export{d as BellItem,p as DailyTimetable,h as PayloadBellItem};
+            `}}customElements.define("bell-item",h),customElements.define("payload-bell-item",d),customElements.define("daily-timetable",p);export{h as BellItem,p as DailyTimetable,d as PayloadBellItem};

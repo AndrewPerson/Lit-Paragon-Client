@@ -34,7 +34,8 @@ function UpdatePage() {
     while (i < elements.length) {
         if (elements[i].id != page
          && elements[i].tagName != "SCRIPT"
-         && elements[i].tagName != "NAV-BAR")
+         && elements[i].tagName != "NAV-BAR"
+         && elements[i].tagName != "LOGIN-NOTIFICATION")
             elements[i].classList.add("hidden");
         
         i++;

@@ -71,7 +71,15 @@ export const sliderCss = css`
         border-radius: calc(var(--font-size) / 2.5);
     }
 
-    input[type=range]::-webkit-slider-thumb, input[type=range]::-moz-range-thumb {
+    input[type=range]::-moz-range-thumb {
+        background-color: var(--surface4);
+        border-radius: 100%;
+        width: calc(var(--font-size) / 1.5);
+        height: calc(var(--font-size) / 1.5);
+        border: none;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
         -webkit-appearance: none;
         background-color: var(--surface4);
         border-radius: 100%;
