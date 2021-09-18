@@ -33,6 +33,8 @@ export class NavItem extends LitElement {
         this.page = "";
         this.title = "Home";
         this.icon = "";
+
+        Navbar.NavItems.push(this);
     }
 
     render() {
@@ -57,14 +59,12 @@ export class Navbar extends LitElement {
     }
 
     updatePage() {
-        var children = this.shadowRoot.children;
-
-        var i = 0;
-        while (i < children.length) {
-            children[i].update();
-            i++;
+        for (var child of Navbar.NavItems) {
+            child.requestUpdate();
         }
     }
+
+    static NavItems = [];
 
     render() {
         return html`

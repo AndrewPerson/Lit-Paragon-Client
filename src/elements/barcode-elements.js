@@ -63,7 +63,7 @@ export class StudentBarcode extends LitElement {
                     var { x, y } = this.GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
 
                     x2 = x;
-                    y2 = x;
+                    y2 = y;
 
                     point2.style.left = `${x}%`;
                     point2.style.top = `${y}%`;

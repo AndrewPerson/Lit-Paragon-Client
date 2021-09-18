@@ -82,9 +82,12 @@ export const announcementContainerCss = css`
 
         flex: 1;
 
-        overflow-y: scroll;
+        overflow-y: auto;
 
         padding-right: 1vmin;
+
+        scrollbar-width: thin;
+        scrollbar-color: var(--surface4) transparent;
     }
 
     .announcements::-webkit-scrollbar {

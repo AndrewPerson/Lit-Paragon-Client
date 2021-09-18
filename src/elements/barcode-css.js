@@ -59,7 +59,7 @@ export const barcodeCss = css`
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: rgba(0, 0, 0, 0);
+        background-color: transparent;
         border: none;
     }
 `;

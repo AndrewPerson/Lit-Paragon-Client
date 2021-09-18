@@ -1,4 +1,4 @@
-import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e30774d.js";const r=t`
+import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-e65204ef.js";const r=t`
     :host {
         display: inline-block;
     }
@@ -23,7 +23,7 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e307
 
         padding: 0px;
 
-        background-color: rgba(0, 0, 0, 0);
+        background-color: transparent;
         border: none;
     }
 
@@ -32,7 +32,7 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e307
         width: 5.4vmin;
     }
 `,c=t`
-    :host :last-child {
+    nav-item:last-of-type {
         position: absolute;
         left: 0;
         bottom: 0;
@@ -93,11 +93,11 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e307
     .dismiss {
         margin-left: 1vmin;
     }
-`;class g extends e{static get styles(){return[i,r]}static get properties(){return{page:{type:String},title:{type:String},icon:{type:String}}}UpdatePage(){window.getHash().includes("dark")?location.hash=`${this.page}-dark`:location.hash=this.page,""!=location.pathname&&(location.pathname=""),window.UpdatePage(),window.UpdateScreenType()}constructor(){super(),this.page="",this.title="Home",this.icon=""}render(){return this.icon||(this.icon=this.title.toLowerCase()),window.page==this.page?this.classList.add("nav-selected"):this.classList.remove("nav-selected"),n`
+`;class m extends e{static get styles(){return[i,r]}static get properties(){return{page:{type:String},title:{type:String},icon:{type:String}}}UpdatePage(){window.getHash().includes("dark")?location.hash=`${this.page}-dark`:location.hash=this.page,""!=location.pathname&&(location.pathname=""),window.UpdatePage(),window.UpdateScreenType()}constructor(){super(),this.page="",this.title="Home",this.icon="",g.NavItems.push(this)}render(){return this.icon||(this.icon=this.title.toLowerCase()),window.page==this.page?this.classList.add("nav-selected"):this.classList.remove("nav-selected"),n`
             <button @click="${this.UpdatePage}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </button>
-        `}}class m extends e{static get styles(){return c}updatePage(){for(var t=this.shadowRoot.children,e=0;e<t.length;)t[e].update(),e++}render(){return n`
+        `}}class g extends e{static get styles(){return c}updatePage(){for(var t of g.NavItems)t.requestUpdate()}static NavItems=[];render(){return n`
             <nav-item page="dailytimetable" title="Daily Timetable" icon="dailytimetable"></nav-item>
             <nav-item page="barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item page="timetable" title="Timetable"></nav-item>
@@ -118,4 +118,4 @@ import{i as t,h as e,a as i,T as n,c as s,t as a,b as o}from"./default-css-6e307
                     Dismiss
                 </button>
             </div>
-        `}}customElements.define("nav-item",g),customElements.define("nav-bar",m),customElements.define("loading-element",h),customElements.define("login-notification",p);export{h as LoadingElement,p as LoginNotification,g as NavItem,m as Navbar};
+        `}}customElements.define("nav-item",m),customElements.define("nav-bar",g),customElements.define("loading-element",h),customElements.define("login-notification",p);export{h as LoadingElement,p as LoginNotification,m as NavItem,g as Navbar};

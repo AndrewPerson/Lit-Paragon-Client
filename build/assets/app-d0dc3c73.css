@@ -32,6 +32,8 @@ html.dark {
     --surface4: hsl(var(--main-hue) 40% 25%);
     --surface-shadow: hsl(var(--main-hue) 10% 10%);
     --surface-shadow-strong: hsl(var(--main-hue) 15% 0%);
+    --shadow-x: 1vmin;
+    --shadow-y: 1vmin;
     --img-invert: 100%;
 }
 

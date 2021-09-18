@@ -1,4 +1,4 @@
-import{i as t,h as e,T as i,t as a,A as s,c as r}from"./default-css-6e30774d.js";const d=t`
+import{i as t,h as e,T as i,t as a,A as s,c as r}from"./default-css-e65204ef.js";const d=t`
     :host {
         position: absolute;
         background-image: url(images/popup.svg);

@@ -25,7 +25,7 @@ export const navItemCss = css`
 
         padding: 0px;
 
-        background-color: rgba(0, 0, 0, 0);
+        background-color: transparent;
         border: none;
     }
 
@@ -36,7 +36,7 @@ export const navItemCss = css`
 `;
 
 export const navMenuCss = css`
-    :host :last-child {
+    nav-item:last-of-type {
         position: absolute;
         left: 0;
         bottom: 0;

@@ -1,4 +1,4 @@
-import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./default-css-6e30774d.js";import{s as d,t as p,i as h,c as u}from"./repeat-15a7ed5a.js";
+import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./default-css-e65204ef.js";import{s as d,t as p,i as h,c as u}from"./repeat-c4db3c9f.js";
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -83,9 +83,12 @@ import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./defaul
 
         flex: 1;
 
-        overflow-y: scroll;
+        overflow-y: auto;
 
         padding-right: 1vmin;
+
+        scrollbar-width: thin;
+        scrollbar-color: var(--surface4) transparent;
     }
 
     .announcements::-webkit-scrollbar {
