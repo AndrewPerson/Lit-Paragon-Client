@@ -1,4 +1,4 @@
-import{i as e,h as t,t as n,a as i,b as a,e as o,c as s,T as r}from"./default-css-22d073f2.js";const d=e`
+import{i as e,h as t,t as n,a as i,b as a,e as o,c as s,T as r}from"./default-css-6e30774d.js";const d=e`
     :host {
         position: relative;
 
@@ -10,8 +10,6 @@ import{i as e,h as t,t as n,a as i,b as a,e as o,c as s,T as r}from"./default-cs
         align-items: center;
 
         margin: 2vh 2%;
-
-        min-width: calc(300px - 4vmin);
     }
 
     * {

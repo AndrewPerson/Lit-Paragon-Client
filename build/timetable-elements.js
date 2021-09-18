@@ -1,4 +1,4 @@
-import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js";const o=t`
+import{i as t,h as e,T as i,t as a,A as s,c as r}from"./default-css-6e30774d.js";const d=t`
     :host {
         position: absolute;
         background-image: url(images/popup.svg);
@@ -30,8 +30,8 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
     p {
         color: var(--text4);
         margin: 0;
-        width: calc(var(--font-size) * 4);
-        height: calc(var(--font-size) * 1.5);
+        width: 10vmin;
+        height: 3.9vmin;
         margin-top: 2vmin;
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
@@ -51,10 +51,12 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
 
     @media (max-aspect-ratio: 3/4) {
         p {
+            width: 8vmax;
+            height: 3vmax;
             margin-top: 1.7vmax;
         }
     }
-`,d=t`
+`,o=t`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
@@ -79,14 +81,16 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
     }
 
     p {
-        width: calc(var(--font-size) * 4);
-        height: calc(var(--font-size) * 1.5);
+        width: 10vmin;
+        height: 3.9vmin;
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
     }
 
     @media (max-aspect-ratio: 3/4) {
         p {
+            width: 8vmax;
+            height: 3vmax;
             margin-top: 0.5vmax;
         }
     }
@@ -96,8 +100,14 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        width: calc(var(--font-size) * 4.5);
+        width: 12vmin;
         min-width: 0;
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host {
+            width: 9vmax;
+        }
     }
 
     .name {
@@ -112,7 +122,7 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
     .highlighted {
         color: var(--text2);
     }
-`,h=t`
+`,m=t`
     :host {
         display: flex;
         align-items: flex-end;
@@ -129,7 +139,7 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
 
     .period-nums > p {
         color: var(--text3);
-        height: calc(var(--font-size) * 1.5);
+        height: 3.9vmin;
         line-height: calc(var(--font-size) * 1.5);
 
         user-select: none;
@@ -140,49 +150,41 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
 
     @media (max-aspect-ratio: 3/4) {
         .period-nums > p {
+            height: 3vmax;
             margin-top: 0.5vmax;
         }
     }
-`,m=t`
+`,h=t`
     :host {
         margin: auto;
         padding: 4vmin;
         max-width: 92%;
-        min-width: 0;
-
-        height: calc(calc(calc(calc(var(--font-size) / 1.2) + calc(var(--font-size) * 7.5)) + 4vmin) * 3);
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        :host {
-            height: calc(calc(calc(calc(calc(var(--font-size) / 1.2) + calc(var(--font-size) * 7.5)) + 4vmin) + 2.5vmax) * 3);
-        }
     }
 
     timetable-row + timetable-row {
         border-top: solid grey 1px;
     }
-`;class l extends e{static get styles(){return o}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return a`
+`;class y extends e{static get styles(){return d}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return i`
             <p>${this.room}</p>
-        `}}class y extends e{static get styles(){return[i,d]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),y.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>y.highlight(this.name))),this.addEventListener("mouseleave",(()=>y.highlight("")))}render(){var t=y.highlighted==this.name&&this.name,e=this.nextElementSibling,i=e?.nextElementSibling,r=e?.getAttribute("name")==this.name||i?.getAttribute("name")==this.name;return a`
+        `}}class l extends e{static get styles(){return[a,o]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),l.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>l.highlight(this.name))),this.addEventListener("mouseleave",(()=>l.highlight("")))}render(){var t=l.highlighted==this.name&&this.name,e=this.nextElementSibling,a=e?.nextElementSibling,r=e?.getAttribute("name")==this.name||a?.getAttribute("name")==this.name;return i`
             <div>
                 <p class="${t?"highlighted":""}">
                     ${this.name}
                 </p>
-                ${t?r?a`
+                ${t?r?i`
                             <room-popup style="top: ${this.offsetTop-1.5*this.clientHeight-.5}px"
                                         room="${this.room}"
                                         class="reversed"
-                                        @mouseover=${()=>y.highlight("")}>
+                                        @mouseover=${()=>l.highlight("")}>
                             </room-popup>
-                        `:a`
+                        `:i`
                             <room-popup style="top: ${this.offsetTop+this.clientHeight+.5}px"
                                         room="${this.room}"
-                                        @mouseover=${()=>y.highlight("")}>
+                                        @mouseover=${()=>l.highlight("")}>
                             </room-popup>
                         `:s}
             </div>
-        `}}class c extends e{static get styles(){return[i,n]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return a`
+        `}}class p extends e{static get styles(){return[a,n]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return i`
             <p class="name ${this.day==this.name?"highlighted":""}">${this.name}</p>
             
             <timetable-period name="${this.data[1]?.title}"
@@ -204,7 +206,7 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
             <timetable-period name="${this.data[5]?.title}"
                               room="${this.data[5]?.room}">
             </timetable-period>
-        `}}class p extends e{static get styles(){return[i,h]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return a`
+        `}}class g extends e{static get styles(){return[a,m]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return i`
             <div class="period-nums">
                 <p>1</p>
                 <p>2</p>
@@ -237,7 +239,7 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
                            data="${JSON.stringify(this.day5.periods)}"
                            day="${this.day}">
             </timetable-day>
-        `}}class g extends e{static get styles(){return[r,m]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.hasAttribute("data")?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),a`
+        `}}class c extends e{static get styles(){return[r,h]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.hasAttribute("data")?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),i`
             <timetable-row week="A"
                            day1="${JSON.stringify(this.data.days[1])}"
                            day2="${JSON.stringify(this.data.days[2])}"
@@ -264,4 +266,4 @@ import{i as t,h as e,T as a,t as i,A as s,c as r}from"./default-css-22d073f2.js"
                            day5="${JSON.stringify(this.data.days[15])}"
                            day="${this.day}">
             </timetable-row>
-        `):a`<loading-element style="width: 80%; margin: auto;"></loading-element>`}}customElements.define("room-popup",l),customElements.define("timetable-period",y),customElements.define("timetable-day",c),customElements.define("timetable-row",p),customElements.define("full-timetable",g);export{g as FullTimetable,l as RoomPopup,c as TimetableDay,y as TimetablePeriod,p as TimetableRow};
+        `):i`<loading-element style="width: 80%; margin: auto;"></loading-element>`}}customElements.define("room-popup",y),customElements.define("timetable-period",l),customElements.define("timetable-day",p),customElements.define("timetable-row",g),customElements.define("full-timetable",c);export{c as FullTimetable,y as RoomPopup,p as TimetableDay,l as TimetablePeriod,g as TimetableRow};

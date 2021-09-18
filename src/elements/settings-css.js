@@ -12,8 +12,6 @@ export const settingsCss = css`
         align-items: center;
 
         margin: 2vh 2%;
-
-        min-width: calc(300px - 4vmin);
     }
 
     * {

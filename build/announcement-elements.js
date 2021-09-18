@@ -1,4 +1,4 @@
-import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./default-css-22d073f2.js";import{s as d,t as p,i as h,c as u}from"./repeat-acb79229.js";
+import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./default-css-6e30774d.js";import{s as d,t as p,i as h,c as u}from"./repeat-15a7ed5a.js";
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -60,7 +60,7 @@ import{A as t,w as e,i,h as n,t as s,d as o,a as r,T as l,s as a,c}from"./defaul
 
         padding: 2vmin;
 
-        min-width: calc(300px - 4vmin);
+        min-width: 0;
         min-height: 0;
     }
 
