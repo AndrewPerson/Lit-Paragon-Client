@@ -7,6 +7,13 @@ export const announcementItemCss = css`
         margin-bottom: 2vmin;
     }
 
+    h1, h2, h3, h4, h5, h6, p {
+        user-select: auto;
+        -ms-user-select: auto;
+        -moz-user-select: auto;
+        -webkit-user-select: auto;
+    }
+
     p {
         margin: 0;
         margin-top: 1vmin;
@@ -52,10 +59,6 @@ export const announcementContainerCss = css`
 
         display: flex;
         flex-direction: column;
-        
-        flex: 1;
-        
-        margin: 2vh 2%;
 
         padding: 2vmin;
 

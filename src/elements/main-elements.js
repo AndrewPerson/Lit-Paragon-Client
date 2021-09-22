@@ -72,7 +72,7 @@ export class Navbar extends LitElement {
             <nav-item page="barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item page="timetable" title="Timetable"></nav-item>
             <nav-item page="announcements" title="Announcements"></nav-item>
-            <nav-item page="extensions" title="Extensions"></nav-item>
+            <nav-item page="pages" title="Pages Marketplace" icon="marketplace"></nav-item>
 
             <nav-item page="settings" title="Settings"></nav-item>
         `;

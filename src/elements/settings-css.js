@@ -4,17 +4,13 @@ export const settingsCss = css`
     :host {
         position: relative;
 
-        flex: 1;
-
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
-
-        margin: 2vh 2%;
     }
 
-    * {
+    :host > * {
         z-index: 1;
     }
 
@@ -30,12 +26,12 @@ export const settingsCss = css`
     #backgroundimg {
         position: absolute;
         filter: hue-rotate(var(--hue-rotate));
-        height: 70vmin;
+        height: 75%;
         transform: translateX(5vmin);
     }
 
     loading-element {
-        width: 90vmin;
+        width: 95%;
     }
 
     button {
@@ -79,6 +75,6 @@ export const settingsCss = css`
         background-color: var(--surface2);
         padding: 2vmin;
         border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 2vmin;
+        box-shadow: var(--shadow);
     }
 `;

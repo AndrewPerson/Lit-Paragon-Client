@@ -1,10 +1,10 @@
 import { html, LitElement } from "lit";
 import { barcodeCss } from "./barcode-css";
-import { textCss, imgCss, containerCss } from "./default-css";
+import { textCss, imgCss, fullContainerCss, containerCss } from "./default-css";
 
 export class StudentBarcode extends LitElement {
     static get styles() {
-        return [textCss, imgCss, containerCss, barcodeCss];
+        return [textCss, imgCss, fullContainerCss, containerCss, barcodeCss];
     }
 
     static get properties() {

@@ -2,7 +2,7 @@ import { html, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { announcementItemCss, announcementContainerCss } from "./announcement-css";
-import { textCss, imgCss, blockQuoteCss, selectCss, containerCss } from "./default-css";
+import { textCss, imgCss, blockQuoteCss, selectCss, fullContainerCss, containerCss } from "./default-css";
 
 export class AnnouncementItem extends LitElement {
     static get styles() {
@@ -51,7 +51,7 @@ export class AnnouncementItem extends LitElement {
 
 export class SchoolAnnouncements extends LitElement {
     static get styles() {
-        return [textCss, selectCss, containerCss, announcementContainerCss];
+        return [textCss, selectCss, fullContainerCss, containerCss, announcementContainerCss];
     }
 
     static get properties() {

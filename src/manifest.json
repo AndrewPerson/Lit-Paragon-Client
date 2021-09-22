@@ -31,7 +31,7 @@
             "name": "Daily Timetable",
             "short_name": "Day Timetable",
             "description": "Your timetable for the day",
-            "url": "./dailytimetable",
+            "url": "./#dailytimetable",
             "icons": [
                 {
                     "src": "../images/dailytimetable.webp",
@@ -43,7 +43,7 @@
             "name": "ID Barcode",
             "short_name": "Barcode",
             "description": "Your Student ID Barcode",
-            "url": "./barcode",
+            "url": "./#barcode",
             "icons": [
                 {
                     "src": "../images/barcode.webp",
@@ -55,7 +55,7 @@
             "name": "Announcements",
             "short_name": "Announcements",
             "description": "School announcements",
-            "url": "./announcements",
+            "url": "./#announcements",
             "icons": [
                 {
                     "src": "../images/announcements.webp",
@@ -67,7 +67,7 @@
             "name": "Timetable",
             "short_name": "Timetable",
             "description": "Your timetable",
-            "url": "./timetable",
+            "url": "./#timetable",
             "icons": [
                 {
                     "src": "../images/timetable.webp",
@@ -76,13 +76,13 @@
             ]
         },
         {
-            "name": "Extensions",
-            "short_name": "Extensions",
-            "description": "Extensions for Paragon",
-            "url": "./extensions",
+            "name": "Pages Marketplace",
+            "short_name": "Pages",
+            "description": "New pages to extend Paragon",
+            "url": "./#pages",
             "icons": [
                 {
-                    "src": "../images/extensions.webp",
+                    "src": "../images/marketplace.webp",
                     "sizes": "200x200"
                 }
             ]

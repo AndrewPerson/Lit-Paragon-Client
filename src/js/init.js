@@ -2,7 +2,6 @@ window.SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6b
 window.PREFERENCE_CACHE = "User Preferences";
 window.METADATA_CACHE = "Metadata";
 window.RESOURCE_CACHE = "User Resources";
-// etc
 
 window.getHash = () => {
     return location.hash.replace("#", "").split("-").filter(key => key.trim());
@@ -32,6 +31,15 @@ window.getHue = async () => {
 
     return {hue: hue, rotation: hue - 200};
 }
+
+window.EXTENSIONS = null;
+window.getExtensions = async () => {
+    var cache = await caches.open(window.METADATA_CACHE);
+    var response = await cache.match("/Metadata");
+    var object = JSON.parse(await response.text());
+
+    window.EXTENSIONS = object.pages;
+};
 
 UpdateScreenType();
 

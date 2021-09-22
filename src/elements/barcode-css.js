@@ -4,18 +4,15 @@ export const barcodeCss = css`
     :host {
         position: relative;
 
-        flex: 1;
-
         display: flex;
         justify-content: center;
-
-        margin: 2vh 2%;
     }
 
     canvas {
         background-color: white;
         filter: contrast(5);
         transform: translate(10px, 10px);
+        box-shadow: var(--shadow);
     }
 
     #point1, #point2 {
@@ -47,7 +44,7 @@ export const barcodeCss = css`
         background-color: var(--surface2);
         padding: 2vmin;
         border-radius: 2vmin;
-        box-shadow: var(--surface-shadow) 0 0 2vmin;
+        box-shadow: var(--shadow);
     }
 
     #edit {

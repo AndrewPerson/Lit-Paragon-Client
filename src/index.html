@@ -25,19 +25,23 @@
     
     <link href="manifest.json" rel="manifest" />
 
-    <script type="module" src="elements/main-elements.js"></script>
-    <script type="module" src="elements/dailytimetable-elements.js"></script>
-    <script type="module" src="elements/barcode-elements.js"></script>
-    <script type="module" src="elements/timetable-elements.js"></script>
-    <script type="module" src="elements/announcement-elements.js"></script>
-    <script type="module" src="elements/settings-elements.js"></script>
+    <script type="module" src="elements/all-elements.js"></script>
 </head>
 
-<body class="laptop-screen" id="body">
+<body class="laptop-screen">
     <script src="js/init.js"></script>
     <script src="js/createElements.js"></script>
 
     <nav-bar id="nav"></nav-bar>
+
+    <main id="pages-container">
+        <daily-timetable class="hidden" id="dailytimetable"></daily-timetable>
+        <student-barcode class="hidden" id="barcode"></student-barcode>
+        <full-timetable class="hidden" id="timetable"></full-timetable>
+        <school-announcements class="hidden" id="announcements"></school-announcements>
+        <pages-marketplace class="hidden" id="pages"></pages-marketplace>
+        <user-settings class="hidden" id="settings"></user-settings>
+    </main>
 
     <script src="js/jsbarcode.js"></script>
 

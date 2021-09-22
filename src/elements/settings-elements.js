@@ -1,10 +1,10 @@
 import { html, LitElement } from "lit";
 import { settingsCss } from "./settings-css";
-import { textCss, imgCss, buttonCss, sliderCss, containerCss } from "./default-css";
+import { textCss, imgCss, buttonCss, sliderCss, fullContainerCss, containerCss } from "./default-css";
 
 export class UserSettings extends LitElement {
     static get styles() {
-        return [textCss, imgCss, buttonCss, sliderCss, containerCss, settingsCss];
+        return [textCss, imgCss, buttonCss, sliderCss, fullContainerCss, containerCss, settingsCss];
     }
 
     ShowDescription() {
@@ -73,9 +73,11 @@ export class UserSettings extends LitElement {
         caches.open(window.METADATA_CACHE).then(async metadataCache => {
             var metadataResponse = await metadataCache.match("Metadata");
 
-            var metadata = JSON.parse(await metadataResponse.text());
+            if (metadataResponse) {
+                var metadata = JSON.parse(await metadataResponse.text());
             
-            this.shadowRoot.getElementById("version").textContent = `Paragon v${metadata.version}`;
+                this.shadowRoot.getElementById("version").textContent = `Paragon v${metadata.version}`;
+            }
         });
 
         window.getHue().then(hue => {

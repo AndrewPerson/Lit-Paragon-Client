@@ -7,13 +7,13 @@ export const navItemCss = css`
 
     :host(:hover) {
         background-color: var(--surface2);
-        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
+        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
         border-radius: 2vmin;
     }
 
     :host(.nav-selected) {
         background-color: var(--surface4) !important;
-        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
+        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
         border-radius: 2vmin;
     }
 
@@ -49,7 +49,7 @@ export const navMenuCss = css`
         position: sticky;
         overflow: hidden;
         z-index: 100;
-        box-shadow: var(--surface-shadow-strong) 0 0 2vmin;
+        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
     }
 `;
 

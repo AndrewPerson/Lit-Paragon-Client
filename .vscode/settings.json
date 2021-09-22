@@ -15,5 +15,12 @@
         "build": false,
         "**/*.sketch": true
     },
-    "explorerExclude.backup": null
+    "explorerExclude.backup": null,
+    "cSpell.words": [
+        "dailytimetable",
+        "dayname",
+        "SBHS",
+        "userinfo"
+    ],
+    "cSpell.language": "en-GB"
 }

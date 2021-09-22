@@ -121,9 +121,22 @@ async function GetLatestMetadata() {
     var text = await request.text();
     var object = JSON.parse(text);
 
+    var pages = object.fields.Pages.mapValue.fields;
+
     //TODO: Add extension fields later
     return {
-        version: object.fields.Version.stringValue
+        version: object.fields.Version.stringValue,
+        pages: Object.keys(pages).map(key => {
+            var page = pages[key].mapValue.fields;
+            
+            return {
+                finished: page.Finished.booleanValue,
+                url: page.Url?.stringValue,
+                description: page.Description?.stringValue,
+                icon: page.Icon?.stringValue,
+                navIcon: page.NavIcon?.stringValue
+            };
+        })
     };
 }
 
