@@ -17,17 +17,17 @@
 
     <base href="/">
 
-    <link href="assets/app-6a6e6919.css" rel="stylesheet">
-    <link href="assets/navbar-d9acc275.css" rel="stylesheet">
-    <link href="assets/404-58c9f81e.css" rel="stylesheet">
+    <link href="assets/app-98886f33.css" rel="stylesheet">
+    <link href="assets/navbar-81be9bdd.css" rel="stylesheet">
+    <link href="assets/404-84b39311.css" rel="stylesheet">
 
     <link href="assets/manifest.json" rel="manifest">
 
     
 </head>
 
-<body class="laptop-screen">
-    <script src="assets/init-2776622b.js"></script>
+<body>
+    <script src="assets/init-9f2e42f5.js"></script>
 
     <nav-bar></nav-bar>
     
@@ -36,21 +36,19 @@
     
         <div id="background">
             <loading-element></loading-element>
-            <img draggable="false" id="backgroundimg" src="assets/logo-ddb5fa25.svg">
+            <img draggable="false" id="background-img" src="assets/logo-ddb5fa25.svg">
         </div>
     </main>
 
     <script>
         document.getElementById("location").textContent = location.pathname.substring(1);
 
-        window.isDark(dark => {
-            if (dark) {
-                document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-            }
-        });
+        if (window.isDark()) {
+            document.getElementById("background-img").src = "images/logo-dark.svg";
+        }
     </script>
 
-    <script src="assets/pages-261d1ffb.js"></script>
+    <script src="assets/pages-b811cbac.js"></script>
 
     <script src="assets/main-5ab0affc.js"></script>
 

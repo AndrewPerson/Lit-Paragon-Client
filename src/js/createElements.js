@@ -4,7 +4,7 @@ window.onPageUpdate = () => {
             window.updateBarcode();
 }
 
-window.RECEIVED_DATA = false;
+window.received_data = false;
 
 const ELEMENTS = [
     "dailytimetable",
@@ -33,7 +33,7 @@ window.onUserData = async () => {
 
     await Promise.all(promises);
 
-    window.RECEIVED_DATA = true;
+    window.received_data = true;
 
     if (window.page) document.getElementById(window.page).classList.remove("hidden");
 }

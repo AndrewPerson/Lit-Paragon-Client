@@ -12,19 +12,10 @@ export class UserSettings extends LitElement {
     }
 
     async ToggleDark() {
-        var hash = window.getHash();
-
-        if (hash.includes("dark")) {
-            hash.pop(hash.indexOf("dark"));
-            location.hash = hash.join("-");
-            
-            var cache = await this.preferenceCache;
-            await cache.put("Dark", new Response("false"));
-        }
-        else {
-            hash.push("dark");
-            location.hash = hash.join("-");
-        }
+        if (window.isDark())
+            localStorage.setItem("Dark", "false");
+        else
+            localStorage.setItem("Dark", "true");
 
         window.UpdateScreenType();
         this.requestUpdate();
@@ -40,20 +31,23 @@ export class UserSettings extends LitElement {
         location.reload();
     }
 
-    async SetColour() {
+    SetColour() {
         var style = document.getElementsByTagName("html")[0].style;
         
         var hue = this.shadowRoot.getElementById("hue").value;
 
         style.setProperty("--main-hue", hue);
         style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+    }
 
-        await (await this.preferenceCache).put("Hue", new Response(hue));
+    SaveColour() {
+        localStorage.setItem("Hue", this.shadowRoot.getElementById("hue").value);
     }
 
     ResetColour() {
         this.shadowRoot.getElementById("hue").value = "200";
         this.SetColour();
+        this.SaveColour();
     }
 
     createRenderRoot() {
@@ -80,20 +74,11 @@ export class UserSettings extends LitElement {
             }
         });
 
-        window.getHue().then(hue => {
-            this.shadowRoot.getElementById("hue").value = hue.hue;
-        });
-    }
-
-    constructor() {
-        super();
-
-        this.preferenceCache = caches.open(window.PREFERENCE_CACHE);
+        this.shadowRoot.getElementById("hue").value = window.getHue().hue;
     }
 
     render() {
-        var hash = window.getHash();
-        var dark = hash.includes("dark");
+        var dark = window.isDark();
 
         var mode = dark ? "images/sun.svg" : "images/moon.svg";
         var background = dark ? "images/logo-dark.svg" : "images/logo.svg";
@@ -118,7 +103,7 @@ export class UserSettings extends LitElement {
 
             <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}"/>            
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @mouseup="${this.SaveColour}"/>            
         `;
     }
 }

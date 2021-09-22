@@ -78,9 +78,7 @@ export class StudentBarcode extends LitElement {
 
         await userInput;
 
-        var preferenceCache = await caches.open(window.PREFERENCE_CACHE);
-
-        await preferenceCache.put("Barcode Size", new Response(`${x1} ${y1} ${x2} ${y2}`));
+        localStorage.setItem("Barcode Size", `${x1} ${y1} ${x2} ${y2}`);
 
         info.style.display = "none";
 
@@ -146,12 +144,10 @@ export class StudentBarcode extends LitElement {
 
         barcode.imageSmoothingEnabled = false;
 
-        var preferenceCache = await caches.open(window.PREFERENCE_CACHE);
+        var barcodeSize = localStorage.getItem("Barcode Size");
 
-        var preferenceResponse = await preferenceCache.match("Barcode Size");
-
-        if (preferenceResponse) {
-            var [x1, y1, x2, y2] = (await preferenceResponse.text()).split(" ");
+        if (barcodeSize) {
+            var [x1, y1, x2, y2] = barcodeSize.split(" ");
 
             point1.style.left = `${x1}%`;
             point1.style.top = `${y1}%`;

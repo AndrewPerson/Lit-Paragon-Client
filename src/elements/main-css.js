@@ -3,10 +3,12 @@ import { css } from "lit";
 export const navItemCss = css`
     :host {
         display: inline-block;
+        width: fit-content;
+        height: fit-content;
     }
 
     :host(:hover) {
-        background-color: var(--surface2);
+        background-color: var(--surface2) !important;
         box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
         border-radius: 2vmin;
     }
@@ -36,20 +38,93 @@ export const navItemCss = css`
 `;
 
 export const navMenuCss = css`
-    nav-item:last-of-type {
-        position: absolute;
+    :host {
+        display: flex;
+        flex-direction: column;
+        align-content: center;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+        
+        flex-shrink: 0;
+        
+        background-color: var(--surface3);
+
+        width: 12vmin;
+
+        position: sticky;
+        top: 0;
         left: 0;
-        bottom: 0;
+
+        overflow: hidden;
+
+        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+    
+        scrollbar-width: thin;
+        scrollbar-color: var(--text3) transparent;
     }
 
-    :host {
-        flex-shrink: 0;
-        justify-content: center;
-        background-color: var(--surface3);
+    :host(:hover) {
+        overflow-y: auto;
+    }
+
+    @media (max-aspect-ratio: 1/1) {
+        :host {
+            flex-direction: row;
+
+            text-align: center;
+
+            order: 100;
+
+            width: 100%;
+            height: 12vw;
+
+            bottom: 0;
+            left: 0;
+        }
+
+        :host(:hover) {
+            overflow-x: auto;
+        }
+
+        .end {
+            order: -1 !important;
+        }
+    }
+
+    :host::-webkit-scrollbar {
+        width: 1vmin;
+        height: 1vmin;
+    }
+
+    :host::-webkit-scrollbar-thumb {
+        background-color: var(--text3);
+    }
+
+    :host::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    .end {
+        order: 100000;
+
         position: sticky;
-        overflow: hidden;
-        z-index: 100;
-        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+        left: 0px;
+        bottom: 0px;
+
+        justify-self: flex-end;
+        flex: 1;
+
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+
+        height: fit-content;
+    }
+
+    .end > * {
+        border-radius: 2vmin;
+        background-color: var(--surface3);
+        box-shadow: var(--shadow);
     }
 `;
 

@@ -23,7 +23,7 @@ function DisplayExtension(extension) {
 
 function DisplayPage(page) {
     var currentPage = document.getElementById(page);
-    if (window.RECEIVED_DATA) currentPage.classList.remove("hidden");
+    if (window.received_data) currentPage.classList.remove("hidden");
 
     var elements = document.getElementById("pages-container").children;
 
@@ -57,7 +57,7 @@ function UpdatePage() {
             break;
         }
 
-        if (part.startsWith("(extension)")) {
+        if (part.startsWith("(page)")) {
             page = part.substring(11);
             gotPage = true;
             extension = true;
@@ -66,28 +66,25 @@ function UpdatePage() {
     }
 
     if (!gotPage) {
-        hash.unshift("dailytimetable");
-        location.hash = hash.join("-");
+        location.hash = "dailytimetable";
     }
 
     if (extension) {
-        if (window.EXTENSIONS) {
-            if (window.EXTENSIONS.includes(page)) {
+        if (window.extensions) {
+            if (window.extensions.includes(page)) {
                 DisplayExtension(page);
             }
             else {
-                hash.unshift("dailytimetable");
-                location.hash = hash.join("-");
+                location.hash = "dailytimetable"
             }
         }
         else {
             window.getExtensions().then(() => {
-                if (window.EXTENSIONS.includes(page)) {
+                if (window.extensions.includes(page)) {
                     DisplayExtension(page);
                 }
                 else {
-                    hash.unshift("dailytimetable");
-                    location.hash = hash.join("-");
+                    location.hash = "dailytimetable";
                 }
             });
         }

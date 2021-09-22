@@ -1,14 +1,4 @@
-import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s as c,d as m,e as p}from"./main-elements-bf520b06.js";
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */const g=2,u=t=>(...e)=>({_$litDirective$:t,values:e});class y{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}S(t,e){return this.update(t,e)}update(t,e){return this.render(...e)}}
-/**
- * @license
- * Copyright 2020 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */const{et:f}=t,v=()=>document.createComment(""),b=(t,e,i)=>{var a;const s=t.A.parentNode,n=void 0===e?t.B:e.A;if(void 0===i){const e=s.insertBefore(v(),n),a=s.insertBefore(v(),n);i=new f(e,a,t,t.options)}else{const e=i.B.nextSibling,o=i.M!==t;if(o&&(null===(a=i.Q)||void 0===a||a.call(i,t),i.M=t),e!==n||o){let t=i.A;for(;t!==e;){const e=t.nextSibling;s.insertBefore(t,n),t=e}}}return i},w=(t,e,i=t)=>(t.I(e,i),t),x={},$=(t,e=x)=>t.H=e,S=t=>{var e;null===(e=t.P)||void 0===e||e.call(t,!1,!0);let i=t.A;const a=t.B.nextSibling;for(;i!==a;){const t=i.nextSibling;i.remove(),i=t}},E=(t,e,i)=>{const a=new Map;for(let s=e;s<=i;s++)a.set(t[s],s);return a},k=u(class extends y{constructor(t){if(super(t),t.type!==g)throw Error("repeat() can only be used in text expressions")}Mt(t,e,i){let a;void 0===i?i=e:void 0!==e&&(a=e);const s=[],n=[];let o=0;for(const e of t)s[o]=a?a(e,o):o,n[o]=i(e,o),o++;return{values:n,keys:s}}render(t,e,i){return this.Mt(t,e,i).values}update(t,[i,a,s]){var n;const o=(t=>t.H)(t),{values:r,keys:l}=this.Mt(i,a,s);if(!o)return this.Pt=l,r;const d=null!==(n=this.Pt)&&void 0!==n?n:this.Pt=[],h=[];let c,m,p=0,g=o.length-1,u=0,y=r.length-1;for(;p<=g&&u<=y;)if(null===o[p])p++;else if(null===o[g])g--;else if(d[p]===l[u])h[u]=w(o[p],r[u]),p++,u++;else if(d[g]===l[y])h[y]=w(o[g],r[y]),g--,y--;else if(d[p]===l[y])h[y]=w(o[p],r[y]),b(t,h[y+1],o[p]),p++,y--;else if(d[g]===l[u])h[u]=w(o[g],r[u]),b(t,o[p],o[g]),g--,u++;else if(void 0===c&&(c=E(l,u,y),m=E(d,p,g)),c.has(d[p]))if(c.has(d[g])){const e=m.get(l[u]),i=void 0!==e?o[e]:null;if(null===i){const e=b(t,o[p]);w(e,r[u]),h[u]=e}else h[u]=w(i,r[u]),b(t,o[p],i),o[e]=null;u++}else S(o[g]),g--;else S(o[p]),p++;for(;u<=y;){const e=b(t,h[y+1]);w(e,r[u]),h[u++]=e}for(;p<=g;){const t=o[p++];null!==t&&S(t)}return this.Pt=l,$(t,h),e}}),C=i`
+import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d as h,w as m,e as c,g as p,j as g,k as y,l as u}from"./main-elements-7d3b734e.js";const v=t`
     :host {
         display: flex;
         align-items: center;
@@ -47,7 +37,7 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
     style {
         display: none !important;
     }
-`,N=i`
+`,f=t`
     :host {
         margin-top: 1.5vmin;
         margin-bottom: 1.5vmin;
@@ -60,7 +50,7 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
     p {
         color: var(--text1);
     }
-`,B=i`
+`,b=t`
     :host {
         display: flex;
         flex-direction: column;
@@ -110,22 +100,17 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
     .line-left {
         margin-left: 10px;
     }
-`;
-/**
- * @license
- * Copyright 2017 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */customElements.define("bell-item",class extends a{static get styles(){return[s,C]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return n`
+`;customElements.define("bell-item",class extends e{static get styles(){return[i,v]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return a`
             <p class="start">${this.name}</p>
             <p class="end">${this.time}</p>
-        `}}),customElements.define("payload-bell-item",class extends a{static get styles(){return[s,C,N]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var t=this.timeChanged?"changed":"",e=this.teacherChanged?"changed":"",i=this.roomChanged?"changed":"";return n`
+        `}}),customElements.define("payload-bell-item",class extends e{static get styles(){return[i,v,f]}static get properties(){return{time:{type:String},timeChanged:{type:Boolean},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.timeChanged=!1,this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var t=this.timeChanged?"changed":"",e=this.teacherChanged?"changed":"",i=this.roomChanged?"changed":"";return a`
             <div>
                 <p class="start">${this.name}</p>
                 <p class="time">at <span class="${t}">${this.time}</span> with <span class="${e}">${this.teacher}</span></p>
             </div>
             
             <p class="end ${i}">${this.room}</p>
-        `}}),customElements.define("daily-timetable",class extends a{static get styles(){return[s,o,B]}static get properties(){return{data:{type:Object}}}getDate(t){var e=new Date(this.data.date),i=t.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return e.setHours(a),e.setMinutes(s),e}getNextBell(){if(null!=this.data&&null!=this.data){var t=new Date;for(var e in this.data.bells){var i=this.data.bells[e],a=this.getDate(i);if(a>=t)return{bell:i,time:Math.round((a-t)/1e3)}}}}secondsToString(t){var e=t%60,i=(t-e)/60%60,a=((t-e)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),e<10&&(e="0"+e);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+e}updateCountdown(){if(this.hasAttribute("data")){var t=this.getNextBell();if(t){if(t.bell.bell in this.data.timetable.timetable.periods&&"R"!=t.bell.bell){var e=this.data.timetable.timetable.periods[t.bell.bell];this.nextBell=this.getClassName(e)}else this.nextBell=t.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(t.time)}else this.gettingNextDay||(this.gettingNextDay=!0,this.data=null,this.update(),LoginIfNeeded().then((t=>{UpdateResourcesIfNeeded(t,!0).then((t=>{t&&location.reload()}))})))}}getClassName(t){var e=this.data.timetable.subjects[`${t.year}${t.title}`].title;return this.formatClassName(e)}formatClassName(t){return t.split(" ").filter((t=>isNaN(t)&&t.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]},this.gettingNextDay=!1}firstUpdated(){this.updateCountdown(),this.update()}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?n`
+        `}}),customElements.define("daily-timetable",class extends e{static get styles(){return[i,s,b]}static get properties(){return{data:{type:Object}}}getDate(t){var e=new Date(this.data.date),i=t.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return e.setHours(a),e.setMinutes(s),e}getNextBell(){if(null!=this.data&&null!=this.data){var t=new Date;for(var e in this.data.bells){var i=this.data.bells[e],a=this.getDate(i);if(a>=t)return{bell:i,time:Math.round((a-t)/1e3)}}}}secondsToString(t){var e=t%60,i=(t-e)/60%60,a=((t-e)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),e<10&&(e="0"+e);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+e}updateCountdown(){if(this.hasAttribute("data")){var t=this.getNextBell();if(t){if(t.bell.bell in this.data.timetable.timetable.periods&&"R"!=t.bell.bell){var e=this.data.timetable.timetable.periods[t.bell.bell];this.nextBell=this.getClassName(e)}else this.nextBell=t.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(t.time)}else this.gettingNextDay||(this.gettingNextDay=!0,this.data=null,this.update(),LoginIfNeeded().then((t=>{UpdateResourcesIfNeeded(t,!0).then((t=>{t&&location.reload()}))})))}}getClassName(t){var e=this.data.timetable.subjects[`${t.year}${t.title}`].title;return this.formatClassName(e)}formatClassName(t){return t.split(" ").filter((t=>isNaN(t)&&t.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]},this.gettingNextDay=!1}firstUpdated(){this.updateCountdown(),this.update()}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?a`
             <p>${this.nextBell}</p>
             <p>in</p>
 
@@ -135,18 +120,18 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
                 <span class="line-left"></span>
             </div>
 
-            ${k(this.data.bells,(t=>t.time),(t=>{var e=this.data.timetable.timetable.periods[t.bell];if(e){if("R"==t.bell)return r;var i=e.room,a=!1;if(t.bell in this.data.roomVariations){var s=this.data.roomVariations[t.bell];e.year==s.year&&(a=!0,i=s.roomTo)}var o=e.fullTeacher,l=!1;if(t.bell in this.data.classVariations){s=this.data.classVariations[t.bell];e.year==s.year&&(l=!0,o=s.casualSurname)}var d=this.getClassName(e);return n`
+            ${n(this.data.bells,(t=>t.time),(t=>{var e=this.data.timetable.timetable.periods[t.bell];if(e){if("R"==t.bell)return o;var i=e.room,s=!1;if(t.bell in this.data.roomVariations){var n=this.data.roomVariations[t.bell];e.year==n.year&&(s=!0,i=n.roomTo)}var r=e.fullTeacher,l=!1;if(t.bell in this.data.classVariations){n=this.data.classVariations[t.bell];e.year==n.year&&(l=!0,r=n.casualSurname)}var d=this.getClassName(e);return a`
                                 <payload-bell-item name="${d}"
                                                    time="${t.time}"
                                                    ?timechanged="${""!=t.reason}"
                                                    room="${i}"
-                                                   ?roomChanged="${a}"
-                                                   teacher="${""==o?"No one":o}"
+                                                   ?roomChanged="${s}"
+                                                   teacher="${""==r?"No one":r}"
                                                    ?teacherChanged="${l}">
-                                </payload-bell-item>`}return"Transition"==t.bell||"End of Day"==t.bell?r:n`<bell-item name="${t.bellDisplay}" time="${t.time}"></bell-item>`}))}
-        `:n`
+                                </payload-bell-item>`}return"Transition"==t.bell||"End of Day"==t.bell?o:a`<bell-item name="${t.bellDisplay}" time="${t.time}"></bell-item>`}))}
+        `:a`
                 <loading-element style="width: 80%"></loading-element>
-            `}});const R=i`
+            `}});const x=t`
     :host {
         position: relative;
 
@@ -205,7 +190,7 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
         background-color: transparent;
         border: none;
     }
-`;customElements.define("student-barcode",class extends a{static get styles(){return[s,l,d,o,R]}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(t,e){return{x:(t-this.offsetLeft)/this.clientWidth*100,y:(e-this.offsetTop)/this.clientHeight*100}}GetPixelsFromPercentage(t,e){return{x:this.clientWidth*t/100+this.offsetLeft,y:this.clientHeight*e/100+this.offsetTop}}async RequestBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("info"),r=this.shadowRoot.getElementById("barcode-canv");o.style.display="",r.style.display="none",s.style.display="none",n.style.display="none";var l=new Promise((o=>{var r=0;this.addEventListener("pointerdown",(l=>{if(1==++r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);t=d,e=h,s.style.left=`${d}%`,s.style.top=`${h}%`,s.style.display=""}else if(2==r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);i=d,a=h,n.style.left=`${d}%`,n.style.top=`${h}%`,n.style.display="",this.removeEventListener("pointerdown",this),o()}}))}));await l;var d=await caches.open(window.PREFERENCE_CACHE);await d.put("Barcode Size",new Response(`${t} ${e} ${i} ${a}`)),o.style.display="none",r.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv"),r=parseFloat(s.style.left.replace("%","")),l=parseFloat(s.style.top.replace("%","")),d=parseFloat(n.style.left.replace("%","")),h=parseFloat(n.style.top.replace("%",""));r>d?(t=r,e=d):(t=d,e=r),l>h?(i=l,a=h):(i=h,a=l),o.style.top=`${a}%`,o.style.left=`${e}%`,o.style.width=t-e+"%",o.style.height=i-a+"%",JsBarcode(o,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv");o.imageSmoothingEnabled=!1;var r=await caches.open(window.PREFERENCE_CACHE),l=await r.match("Barcode Size");if(l){var[t,i,e,a]=(await l.text()).split(" ");s.style.left=`${t}%`,s.style.top=`${i}%`,n.style.left=`${e}%`,n.style.top=`${a}%`}else{var{x:d,y:h}=this.GetPixelsFromPercentage(80,10);({x:d,y:h}=this.GetPercentageFromPixels(d-10,h-10)),s.style.left=`${d}%`,s.style.top=`${h}%`,({x:d,y:h}=this.GetPixelsFromPercentage(20,30)),({x:d,y:h}=this.GetPercentageFromPixels(d-10,h-10)),n.style.left=`${d}%`,n.style.top=`${h}%`}this.UpdateBarcodeSize(),o.style.display="",s.style.display="",n.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?n`
+`;customElements.define("student-barcode",class extends e{static get styles(){return[i,r,l,s,x]}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(t,e){return{x:(t-this.offsetLeft)/this.clientWidth*100,y:(e-this.offsetTop)/this.clientHeight*100}}GetPixelsFromPercentage(t,e){return{x:this.clientWidth*t/100+this.offsetLeft,y:this.clientHeight*e/100+this.offsetTop}}async RequestBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("info"),r=this.shadowRoot.getElementById("barcode-canv");o.style.display="",r.style.display="none",s.style.display="none",n.style.display="none";var l=new Promise((o=>{var r=0;this.addEventListener("pointerdown",(l=>{if(1==++r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);t=d,e=h,s.style.left=`${d}%`,s.style.top=`${h}%`,s.style.display=""}else if(2==r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);i=d,a=h,n.style.left=`${d}%`,n.style.top=`${h}%`,n.style.display="",this.removeEventListener("pointerdown",this),o()}}))}));await l,localStorage.setItem("Barcode Size",`${t} ${e} ${i} ${a}`),o.style.display="none",r.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv"),r=parseFloat(s.style.left.replace("%","")),l=parseFloat(s.style.top.replace("%","")),d=parseFloat(n.style.left.replace("%","")),h=parseFloat(n.style.top.replace("%",""));r>d?(t=r,e=d):(t=d,e=r),l>h?(i=l,a=h):(i=h,a=l),o.style.top=`${a}%`,o.style.left=`${e}%`,o.style.width=t-e+"%",o.style.height=i-a+"%",JsBarcode(o,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv");o.imageSmoothingEnabled=!1;var r=localStorage.getItem("Barcode Size");if(r){var[t,i,e,a]=r.split(" ");s.style.left=`${t}%`,s.style.top=`${i}%`,n.style.left=`${e}%`,n.style.top=`${a}%`}else{var{x:l,y:d}=this.GetPixelsFromPercentage(80,10);({x:l,y:d}=this.GetPercentageFromPixels(l-10,d-10)),s.style.left=`${l}%`,s.style.top=`${d}%`,({x:l,y:d}=this.GetPixelsFromPercentage(20,30)),({x:l,y:d}=this.GetPercentageFromPixels(l-10,d-10)),n.style.left=`${l}%`,n.style.top=`${d}%`}this.UpdateBarcodeSize(),o.style.display="",s.style.display="",n.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?a`
             <p id="info" style="display: none;">Tap in two places to form the barcode</p>
             
             <div>
@@ -221,13 +206,13 @@ import{Z as t,w as e,i,h as a,t as s,T as n,c as o,A as r,a as l,f as d,b as h,s
             <img draggable="false" @mouseover="${this.ShowDescription}" @mouseout="${this.HideDescription}" id="description" src="images/info.svg" />
         
             <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
-        `:n`<loading-element style="width: 80%"></loading-element>`}});
+        `:a`<loading-element style="width: 80%"></loading-element>`}});
 /**
  * @license
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(t){if(t===r)return this.Vt=void 0,this.vt=t;if(t===e)return t;if("string"!=typeof t)throw Error(this.constructor.directiveName+"() called with a non-string value");if(t===this.vt)return this.Vt;this.vt=t;const i=[t];return i.raw=i,this.Vt={_$litType$:this.constructor.resultType,strings:i,values:[]}}}P.directiveName="unsafeHTML",P.resultType=1;const O=u(P),j=i`
+class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(t){if(t===o)return this.Vt=void 0,this.vt=t;if(t===m)return t;if("string"!=typeof t)throw Error(this.constructor.directiveName+"() called with a non-string value");if(t===this.vt)return this.Vt;this.vt=t;const e=[t];return e.raw=e,this.Vt={_$litType$:this.constructor.resultType,strings:e,values:[]}}}w.directiveName="unsafeHTML",w.resultType=1;const $=c(w),S=t`
     :host {
         position: relative;
         margin-top: 2vmin;
@@ -278,7 +263,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
 
         cursor: pointer;
     }
-`,z=i`
+`,k=t`
     :host {
         box-sizing: border-box;
 
@@ -340,20 +325,20 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
     .line-left {
         margin-left: 10px;
     }
-`;customElements.define("announcement-item",class extends a{static get styles(){return[s,h,l,j]}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return n`
+`;customElements.define("announcement-item",class extends e{static get styles(){return[i,p,r,S]}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return a`
             <p class="title" @click="${this.toggle}">${this.title}</p>
             <p class="sub">For ${this.displayYears} ${this.time?"| At "+this.time+" ":""}| By ${this.author}</p>
             <blockquote id="content" class="content ${this.collapsed?"collapsed":"expanded"}">
-                ${O(this.content)}
+                ${$(this.content)}
             </blockquote>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
-        `}}),customElements.define("school-announcements",class extends a{static get styles(){return[s,c,d,o,z]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.hasAttribute("data"))return n`<loading-element style="width: 80%; margin: auto;"></loading-element>`;if(0==this.data.notices.length)return n`
+        `}}),customElements.define("school-announcements",class extends e{static get styles(){return[i,g,l,s,k]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.hasAttribute("data"))return a`<loading-element style="width: 80%; margin: auto;"></loading-element>`;if(0==this.data.notices.length)return a`
                 <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
                     <div class="line-right"></div>
                     <p>Nothing For Today</p>
                     <div class="line-left"></div>
                 </div>
-            `;var t=[];return t=(t="all"!=this.filter&&""!=this.filter?this.data.notices.filter((t=>t.years.includes(this.filter))):this.data.notices).sort(((t,e)=>e.relativeWeight-t.relativeWeight)),n`
+            `;var t=[];return t=(t="all"!=this.filter&&""!=this.filter?this.data.notices.filter((t=>t.years.includes(this.filter))):this.data.notices).sort(((t,e)=>e.relativeWeight-t.relativeWeight)),a`
             <div class="header">
                 <select id="filter" @input="${this.updateFilter}">
                     <option value="all">All</option>
@@ -367,11 +352,11 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
                 </select>
             </div>
             <div class="announcements">
-                ${0==t.length?n`
+                ${0==t.length?a`
                         <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
                             <p>Nothing For This Filter</p>
                         </div>
-                    `:k(t,(t=>t.title),(t=>n`
+                    `:n(t,(t=>t.title),(t=>a`
                         <announcement-item title="${t.title}"
                                            content="${t.content}"
                                            displayYears="${t.displayYears}"
@@ -380,7 +365,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
                         </announcement-item>
                     `))}
             </div>
-        `}});const I=i`
+        `}});const E=t`
     :host {
         position: absolute;
         background-image: url(images/popup.svg);
@@ -438,7 +423,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
             margin-top: 1.7vmax;
         }
     }
-`,T=i`
+`,N=t`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
@@ -476,7 +461,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
             margin-top: 0.5vmax;
         }
     }
-`,A=i`
+`,B=t`
     :host {
         display: inline-flex;
         flex-direction: column;
@@ -504,7 +489,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
     .highlighted {
         color: var(--text2);
     }
-`,F=i`
+`,C=t`
     :host {
         display: flex;
         align-items: flex-end;
@@ -536,7 +521,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
             margin-top: 0.5vmax;
         }
     }
-`,D=i`
+`,I=t`
     :host {
         margin: auto;
         padding: 4vmin;
@@ -546,27 +531,27 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
     timetable-row + timetable-row {
         border-top: solid grey 1px;
     }
-`;class J extends a{static get styles(){return[s,T]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),J.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>J.highlight(this.name))),this.addEventListener("mouseleave",(()=>J.highlight("")))}render(){var t=J.highlighted==this.name&&this.name,e=this.nextElementSibling,i=e?.nextElementSibling,a=e?.getAttribute("name")==this.name||i?.getAttribute("name")==this.name;return n`
+`;class O extends e{static get styles(){return[i,N]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),O.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>O.highlight(this.name))),this.addEventListener("mouseleave",(()=>O.highlight("")))}render(){var t=O.highlighted==this.name&&this.name,e=this.nextElementSibling,i=e?.nextElementSibling,s=e?.getAttribute("name")==this.name||i?.getAttribute("name")==this.name;return a`
             <div>
                 <p class="${t?"highlighted":""}">
                     ${this.name}
                 </p>
-                ${t?a?n`
+                ${t?s?a`
                             <room-popup style="top: ${this.offsetTop-1.5*this.clientHeight-.5}px"
                                         room="${this.room}"
                                         class="reversed"
-                                        @mouseover=${()=>J.highlight("")}>
+                                        @mouseover=${()=>O.highlight("")}>
                             </room-popup>
-                        `:n`
+                        `:a`
                             <room-popup style="top: ${this.offsetTop+this.clientHeight+.5}px"
                                         room="${this.room}"
-                                        @mouseover=${()=>J.highlight("")}>
+                                        @mouseover=${()=>O.highlight("")}>
                             </room-popup>
-                        `:r}
+                        `:o}
             </div>
-        `}}customElements.define("room-popup",class extends a{static get styles(){return I}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return n`
+        `}}customElements.define("room-popup",class extends e{static get styles(){return E}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return a`
             <p>${this.room}</p>
-        `}}),customElements.define("timetable-period",J),customElements.define("timetable-day",class extends a{static get styles(){return[s,A]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return n`
+        `}}),customElements.define("timetable-period",O),customElements.define("timetable-day",class extends e{static get styles(){return[i,B]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return a`
             <p class="name ${this.day==this.name?"highlighted":""}">${this.name}</p>
             
             <timetable-period name="${this.data[1]?.title}"
@@ -588,7 +573,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
             <timetable-period name="${this.data[5]?.title}"
                               room="${this.data[5]?.room}">
             </timetable-period>
-        `}}),customElements.define("timetable-row",class extends a{static get styles(){return[s,F]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return n`
+        `}}),customElements.define("timetable-row",class extends e{static get styles(){return[i,C]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return a`
             <div class="period-nums">
                 <p>1</p>
                 <p>2</p>
@@ -621,7 +606,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
                            data="${JSON.stringify(this.day5.periods)}"
                            day="${this.day}">
             </timetable-day>
-        `}}),customElements.define("full-timetable",class extends a{static get styles(){return[o,D]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.hasAttribute("data")?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),n`
+        `}}),customElements.define("full-timetable",class extends e{static get styles(){return[s,I]}static get properties(){return{data:{type:Object},day:{type:String}}}constructor(){super(),this.data={days:{}},this.day=""}render(){return this.hasAttribute("data")?(this.day=this.day.slice(0,3).toUpperCase()+" "+this.day.slice(-1),a`
             <timetable-row week="A"
                            day1="${JSON.stringify(this.data.days[1])}"
                            day2="${JSON.stringify(this.data.days[2])}"
@@ -648,11 +633,11 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
                            day5="${JSON.stringify(this.data.days[15])}"
                            day="${this.day}">
             </timetable-row>
-        `):n`<loading-element style="width: 80%; margin: auto;"></loading-element>`}});const H=i`
+        `):a`<loading-element style="width: 80%; margin: auto;"></loading-element>`}});const R=t`
 
-`;customElements.define("pages-marketplace",class extends a{static get styles(){return[d,o,H]}static get properties(){return{data:{type:Object}}}constructor(){super(),this.data={}}render(){return n`
+`;customElements.define("pages-marketplace",class extends e{static get styles(){return[l,s,R]}static get properties(){return{data:{type:Object}}}constructor(){super(),this.data={}}render(){return a`
             <div></div>
-        `}});const M=i`
+        `}});const z=t`
     :host {
         position: relative;
 
@@ -729,7 +714,7 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
         border-radius: 2vmin;
         box-shadow: var(--shadow);
     }
-`;customElements.define("user-settings",class extends a{static get styles(){return[s,l,m,p,d,o,M]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){var t=window.getHash();if(t.includes("dark")){t.pop(t.indexOf("dark")),location.hash=t.join("-");var e=await this.preferenceCache;await e.put("Dark",new Response("false"))}else t.push("dark"),location.hash=t.join("-");window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}async SetColour(){var t=document.getElementsByTagName("html")[0].style,e=this.shadowRoot.getElementById("hue").value;t.setProperty("--main-hue",e),t.setProperty("--hue-rotate",parseFloat(e)-200+"deg"),await(await this.preferenceCache).put("Hue",new Response(e))}ResetColour(){this.shadowRoot.getElementById("hue").value="200",this.SetColour()}createRenderRoot(){const t=super.createRenderRoot();return t.addEventListener("click",(t=>{var e=this.shadowRoot;t.target!=e.getElementById("description")&&(e.getElementById("descriptionContent").style.display="none")})),t}updated(){caches.open(window.METADATA_CACHE).then((async t=>{var e=await t.match("Metadata");if(e){var i=JSON.parse(await e.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${i.version}`}})),window.getHue().then((t=>{this.shadowRoot.getElementById("hue").value=t.hue}))}constructor(){super(),this.preferenceCache=caches.open(window.PREFERENCE_CACHE)}render(){var t=window.getHash().includes("dark"),e=t?"images/sun.svg":"images/moon.svg";return n`
+`;customElements.define("user-settings",class extends e{static get styles(){return[i,r,y,u,l,s,z]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){window.isDark()?localStorage.setItem("Dark","false"):localStorage.setItem("Dark","true"),window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}SetColour(){var t=document.getElementsByTagName("html")[0].style,e=this.shadowRoot.getElementById("hue").value;t.setProperty("--main-hue",e),t.setProperty("--hue-rotate",parseFloat(e)-200+"deg")}SaveColour(){localStorage.setItem("Hue",this.shadowRoot.getElementById("hue").value)}ResetColour(){this.shadowRoot.getElementById("hue").value="200",this.SetColour(),this.SaveColour()}createRenderRoot(){const t=super.createRenderRoot();return t.addEventListener("click",(t=>{var e=this.shadowRoot;t.target!=e.getElementById("description")&&(e.getElementById("descriptionContent").style.display="none")})),t}updated(){caches.open(window.METADATA_CACHE).then((async t=>{var e=await t.match("Metadata");if(e){var i=JSON.parse(await e.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${i.version}`}})),this.shadowRoot.getElementById("hue").value=window.getHue().hue}render(){var t=window.isDark(),e=t?"images/sun.svg":"images/moon.svg";return a`
             <div id="background">
                 <loading-element></loading-element>
                 <img draggable="false" id="backgroundimg" src="${t?"images/logo-dark.svg":"images/logo.svg"}" />
@@ -749,5 +734,5 @@ class P extends y{constructor(t){if(super(t),this.vt=r,t.type!==g)throw Error(th
 
             <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}"/>            
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @mouseup="${this.SaveColour}"/>            
         `}});

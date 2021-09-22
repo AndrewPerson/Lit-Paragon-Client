@@ -26,7 +26,7 @@ main > p {
     filter: blur(1vmin) opacity(0.3);
 }
 
-#backgroundimg {
+#background-img {
     position: absolute;
     filter: hue-rotate(var(--hue-rotate));
     height: 70vmin;

@@ -17,14 +17,14 @@
 
     <base href="/">
 
-    <link href="assets/app-6a6e6919.css" rel="stylesheet">
-    <link href="assets/login-c8a33c48.css" rel="stylesheet">
+    <link href="assets/app-98886f33.css" rel="stylesheet">
+    <link href="assets/login-d56be36a.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
 </head>
 
 <body>
-    <script src="assets/init-2776622b.js"></script>
+    <script src="assets/init-9f2e42f5.js"></script>
 
     <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
     <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
@@ -34,11 +34,9 @@
     <button class="button" onclick="login()">Login</button>
 
     <script>
-        window.isDark(dark => {
-            if (dark) {
-                document.getElementById("logo").src = "images/logo-dark.svg";
-            }
-        });
+        if (window.isDark()) {
+            document.getElementById("logo").src = "images/logo-dark.svg";
+        }
 
         const CLIENT_ID = "Paragon_Tools";
 

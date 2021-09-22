@@ -45,6 +45,7 @@ html, body {
 
 body {
     display: flex;
+    flex-direction: column;
     align-content: stretch;
     justify-content: stretch;
     background-color: var(--surface1);

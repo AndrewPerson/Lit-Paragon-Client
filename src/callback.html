@@ -35,11 +35,9 @@
     <p class="important">Logging in...</p>
 
     <script>
-        window.isDark(dark => {
-            if (dark) {
-                document.getElementById("logo").src = "images/logo-dark.svg";
-            }
-        });
+        if (window.isDark()) {
+            document.getElementById("logo").src = "images/logo-dark.svg";
+        }
 
         async function Token(code) {
             var tokenResponse = await fetch(window.SERVER_ENDPOINT + "/auth", {

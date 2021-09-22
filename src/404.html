@@ -29,7 +29,7 @@
     <script type="module" src="elements/main-elements.js"></script>
 </head>
 
-<body class="laptop-screen">
+<body>
     <script src="js/init.js"></script>
 
     <nav-bar></nav-bar>
@@ -39,18 +39,16 @@
     
         <div id="background">
             <loading-element></loading-element>
-            <img draggable="false" id="backgroundimg" src="images/logo.svg" />
+            <img draggable="false" id="background-img" src="images/logo.svg" />
         </div>
     </main>
 
     <script>
         document.getElementById("location").textContent = location.pathname.substring(1);
 
-        window.isDark(dark => {
-            if (dark) {
-                document.getElementById("backgroundimg").src = "images/logo-dark.svg";
-            }
-        });
+        if (window.isDark()) {
+            document.getElementById("background-img").src = "images/logo-dark.svg";
+        }
     </script>
 
     <script src="js/pages.js"></script>

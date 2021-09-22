@@ -13,6 +13,12 @@ export const fullContainerCss = css`
         flex: 1;
         margin: 2vh 2%;
     }
+
+    @media (max-aspect-ratio: 1/1) {
+        :host {
+            max-height: calc(96vh - 12vw);
+        }
+    }
 `;
 
 export const imgCss = css`
