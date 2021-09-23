@@ -1,4 +1,4 @@
-import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d as h,w as m,e as c,g as p,j as g,k as y,l as u}from"./main-elements-7d3b734e.js";const v=t`
+import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d as h,w as m,e as c,g as p,j as g,k as y,l as u}from"./main-elements-9e473c62.js";const v=t`
     :host {
         display: flex;
         align-items: center;
@@ -663,12 +663,12 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
     #backgroundimg {
         position: absolute;
         filter: hue-rotate(var(--hue-rotate));
-        height: 75%;
+        height: 70vmin;
         transform: translateX(5vmin);
     }
 
     loading-element {
-        width: 95%;
+        width: 90vmin;
     }
 
     button {
@@ -734,5 +734,5 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
 
             <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @mouseup="${this.SaveColour}"/>            
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>            
         `}});

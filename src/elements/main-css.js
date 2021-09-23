@@ -55,16 +55,13 @@ export const navMenuCss = css`
         top: 0;
         left: 0;
 
-        overflow: hidden;
+        overflow-x: hidden;
+        overflow-y: auto;
 
         box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
     
         scrollbar-width: thin;
-        scrollbar-color: var(--text3) transparent;
-    }
-
-    :host(:hover) {
-        overflow-y: auto;
+        scrollbar-color: transparent transparent;
     }
 
     @media (max-aspect-ratio: 1/1) {
@@ -80,10 +77,9 @@ export const navMenuCss = css`
 
             bottom: 0;
             left: 0;
-        }
 
-        :host(:hover) {
             overflow-x: auto;
+            overflow-y: hidden;
         }
 
         .end {
@@ -91,9 +87,19 @@ export const navMenuCss = css`
         }
     }
 
+    :host(:hover), :host(.hover) {
+        scrollbar-color: var(--text3) transparent;
+    }
+
     :host::-webkit-scrollbar {
         width: 1vmin;
         height: 1vmin;
+        display: none;
+    }
+
+    :host(:hover)::-webkit-scrollbar,
+    :host(.hover)::-webkit-scrollbar {
+        display: unset;
     }
 
     :host::-webkit-scrollbar-thumb {

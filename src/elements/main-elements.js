@@ -128,6 +128,20 @@ export class Navbar extends LitElement {
         this.order = [0, 1, 2, 3, 4, 6, 7, 8, 9, 10, 5];
     }
 
+    createRenderRoot() {
+        var root = super.createRenderRoot();
+
+        root.addEventListener("pointerdown", () => {
+            this.classList.add("hover");
+        });
+
+        root.addEventListener("pointerup", () => {
+            this.classList.remove("hover");
+        });
+
+        return root;
+    }
+
     render() {
         return repeat(this.order, key => key, (key, index) => {
             var result;

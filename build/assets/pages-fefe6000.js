@@ -75,7 +75,8 @@ function UpdatePage() {
                 DisplayExtension(page);
             }
             else {
-                location.hash = "dailytimetable"
+                location.hash = "dailytimetable";
+                DisplayPage("dailytimetable");
             }
         }
         else {
@@ -85,6 +86,7 @@ function UpdatePage() {
                 }
                 else {
                     location.hash = "dailytimetable";
+                    DisplayPage("dailytimetable");
                 }
             });
         }

@@ -26,12 +26,12 @@ export const settingsCss = css`
     #backgroundimg {
         position: absolute;
         filter: hue-rotate(var(--hue-rotate));
-        height: 75%;
+        height: 70vmin;
         transform: translateX(5vmin);
     }
 
     loading-element {
-        width: 95%;
+        width: 90vmin;
     }
 
     button {

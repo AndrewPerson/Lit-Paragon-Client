@@ -103,7 +103,7 @@ export class UserSettings extends LitElement {
 
             <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @mouseup="${this.SaveColour}"/>            
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>            
         `;
     }
 }

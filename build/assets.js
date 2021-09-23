@@ -11,7 +11,7 @@ self.assets = [
 	"/assets/main-5ab0affc.js",
 	"/assets/manifest.json",
 	"/assets/navbar-81be9bdd.css",
-	"/assets/pages-b811cbac.js",
+	"/assets/pages-fefe6000.js",
 	"/assets/rings-e3566255.svg",
 	"/callback",
 	"/icons/128.webp",
@@ -42,6 +42,6 @@ self.assets = [
 	"/images/toggle.svg",
 	"/index",
 	"/login",
-	"/main-elements-7d3b734e.js",
+	"/main-elements-9e473c62.js",
 	"/main-elements.js",
 ];
