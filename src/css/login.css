@@ -3,6 +3,10 @@ body {
     align-items: center;
 }
 
+p {
+    color: var(--text1);
+}
+
 p, button {
     margin-bottom: 3vmin;
     margin-top: 3vmin;
