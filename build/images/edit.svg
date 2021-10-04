@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="65px" height="65px" viewBox="0 0 65 65" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Pencil" transform="matrix(0.7071076 0.70710665 -0.70710665 0.7071076 29.698471 1.4142141)">
-    <path d="M21 0L0 2.86104e-06L0 28" transform="matrix(0.7071068 -0.7071059 0.7071059 0.7071068 0 18.738268)" id="New-shape" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />
-    <path d="M21 0L0 2.86104e-06L0 28" transform="matrix(-0.707105 -0.7071077 -0.7071077 0.707105 47.56128 18.906837)" id="New-shape-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />
-    <path d="M0 26.6667L5 40L10 26.6667L10 0L0 0L0 26.6667Z" transform="matrix(0.9999996 -4.21464E-08 4.21464E-08 0.9999996 18.7383 4.9787224E-07)" id="New-shape" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />
-    <path d="M0 1L10 1" transform="matrix(0.9999996 -4.21464E-08 4.21464E-08 0.9999996 18.738293 25.499908)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" stroke-linecap="square" />
+<svg width="220px" height="220px" viewBox="0 0 220 220" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <g id="edit" transform="translate(5 5)">
+    <g id="Pencil">
+      <path d="M131.363 0L0 1.77163e-05L0 174.222" id="New-shape" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
+      <path d="M175.151 0L175.151 130.666L0 130.666" transform="translate(34.478153 79.33375)" id="New-shape-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
+      <path d="M36.8602 117.327L0 197.989L81.0923 161.325L199.045 43.9976L154.813 0L36.8602 117.327L36.8602 117.327L36.8602 117.327Z" transform="translate(10.954626 4.9591064E-05)" id="New-shape#1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
+      <path d="M0 0L44.2324 43.9976" transform="translate(48.55238 116.59353)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="square" />
+    </g>
   </g>
 </svg>

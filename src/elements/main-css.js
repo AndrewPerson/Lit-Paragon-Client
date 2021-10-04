@@ -5,6 +5,7 @@ export const navItemCss = css`
         display: inline-block;
         width: fit-content;
         height: fit-content;
+        position: relative;
     }
 
     :host(:hover) {
@@ -19,21 +20,45 @@ export const navItemCss = css`
         border-radius: 2vmin;
     }
 
+    :host-context([editing])::after {
+        position: absolute;
+        top: calc(50% - 1vmin);
+        left: 10%;
+
+        background-image: url(./images/drag.svg);
+        background-size: contain;
+        background-repeat: no-repeat;
+
+        content: "";
+
+        height: 2vmin;
+        width: 2vmin;
+    }
+
+    @media (max-aspect-ratio: 1/1) {
+        :host-context([editing])::after {
+            transform: rotate(90deg);
+            top: 10%;
+            left: calc(50% - 1vmin);
+        }
+    }
+
     button {
         display: flex;
 
         width: 12vmin;
         height: 12vmin;
 
-        padding: 0px;
+        padding: 0;
 
         background-color: transparent;
         border: none;
     }
 
-    img {
+    ::slotted(img) {
         margin: 3.3vmin;
         width: 5.4vmin;
+        filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     }
 `;
 
@@ -50,6 +75,7 @@ export const navMenuCss = css`
         background-color: var(--surface3);
 
         width: 12vmin;
+        height: 88vmin;
 
         position: sticky;
         top: 0;
@@ -72,18 +98,16 @@ export const navMenuCss = css`
 
             order: 100;
 
-            width: 100%;
-            height: 12vw;
+            width: 88%;
+            height: 12vmin;
+
+            margin-left: 12%;
 
             bottom: 0;
             left: 0;
 
             overflow-x: auto;
             overflow-y: hidden;
-        }
-
-        .end {
-            order: -1 !important;
         }
     }
 
@@ -111,26 +135,21 @@ export const navMenuCss = css`
     }
 
     .end {
-        order: 100000;
-
-        position: sticky;
-        left: 0px;
-        bottom: 0px;
-
-        justify-self: flex-end;
-        flex: 1;
+        position: fixed;
+        left: 0;
+        bottom: 0;
 
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
 
         height: fit-content;
-    }
 
-    .end > * {
-        border-radius: 2vmin;
-        background-color: var(--surface3);
         box-shadow: var(--shadow);
+
+        background-color: var(--surface3);
+
+        z-index: -1;
     }
 `;
 

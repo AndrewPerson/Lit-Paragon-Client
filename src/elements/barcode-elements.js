@@ -25,10 +25,6 @@ export class StudentBarcode extends LitElement {
         return { x: (x - this.offsetLeft) / this.clientWidth * 100, y: (y - this.offsetTop) / this.clientHeight * 100 };
     }
 
-    GetPixelsFromPercentage(x, y) {
-        return { x: this.clientWidth * x / 100 + this.offsetLeft, y: this.clientHeight * y / 100 + this.offsetTop };
-    }
-
     async RequestBarcodeSize() {
         var point1 = this.shadowRoot.getElementById("point1");
         var point2 = this.shadowRoot.getElementById("point2");
@@ -50,7 +46,7 @@ export class StudentBarcode extends LitElement {
                 clicks++;
 
                 if (clicks == 1) {
-                    var { x, y } = this.GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
+                    var { x, y } = this.GetPercentageFromPixels(event.clientX, event.clientY);
 
                     x1 = x;
                     y1 = y;
@@ -60,7 +56,7 @@ export class StudentBarcode extends LitElement {
                     point1.style.display = "";
                 }
                 else if (clicks == 2) {
-                    var { x, y } = this.GetPercentageFromPixels(event.clientX - 10, event.clientY - 10);
+                    var { x, y } = this.GetPercentageFromPixels(event.clientX, event.clientY);
 
                     x2 = x;
                     y2 = y;
@@ -156,17 +152,11 @@ export class StudentBarcode extends LitElement {
             point2.style.top = `${y2}%`;
         }
         else {
-            var { x, y } = this.GetPixelsFromPercentage(80, 10);
-            ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
+            point1.style.left = "80%";
+            point1.style.top = "10%";
 
-            point1.style.left = `${x}%`;
-            point1.style.top = `${y}%`;
-
-            ({ x, y } = this.GetPixelsFromPercentage(20, 30));
-            ({ x, y } = this.GetPercentageFromPixels(x - 10, y - 10));
-
-            point2.style.left = `${x}%`;
-            point2.style.top = `${y}%`;
+            point2.style.left = "20%";
+            point2.style.top = "30%";
         }
 
         this.UpdateBarcodeSize();

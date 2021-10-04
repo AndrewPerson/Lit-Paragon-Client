@@ -1,4 +1,4 @@
-import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d as h,w as m,e as c,g as p,j as g,k as y,l as u}from"./main-elements-9e473c62.js";const v=t`
+import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d as h,w as m,e as c,g as p,j as g,k as y,l as u}from"./main-elements-8e583bf5.js";const v=t`
     :host {
         display: flex;
         align-items: center;
@@ -90,15 +90,15 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
     .line-right, .line-left {
         display: inline-block;
         flex: 1;
-        border-bottom: 1px solid gray;
+        border-bottom: 0.2vmin solid gray;
     }
 
     .line-right {
-        margin-right: 10px;
+        margin-right: 2vmin;
     }
 
     .line-left {
-        margin-left: 10px;
+        margin-left: 2vmin;
     }
 `;customElements.define("bell-item",class extends e{static get styles(){return[i,v]}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return a`
             <p class="start">${this.name}</p>
@@ -110,7 +110,7 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
             </div>
             
             <p class="end ${i}">${this.room}</p>
-        `}}),customElements.define("daily-timetable",class extends e{static get styles(){return[i,s,b]}static get properties(){return{data:{type:Object}}}getDate(t){var e=new Date(this.data.date),i=t.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return e.setHours(a),e.setMinutes(s),e}getNextBell(){if(null!=this.data&&null!=this.data){var t=new Date;for(var e in this.data.bells){var i=this.data.bells[e],a=this.getDate(i);if(a>=t)return{bell:i,time:Math.round((a-t)/1e3)}}}}secondsToString(t){var e=t%60,i=(t-e)/60%60,a=((t-e)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),e<10&&(e="0"+e);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+e}updateCountdown(){if(this.hasAttribute("data")){var t=this.getNextBell();if(t){if(t.bell.bell in this.data.timetable.timetable.periods&&"R"!=t.bell.bell){var e=this.data.timetable.timetable.periods[t.bell.bell];this.nextBell=this.getClassName(e)}else this.nextBell=t.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(t.time)}else this.gettingNextDay||(this.gettingNextDay=!0,this.data=null,this.update(),LoginIfNeeded().then((t=>{UpdateResourcesIfNeeded(t,!0).then((t=>{t&&location.reload()}))})))}}getClassName(t){var e=this.data.timetable.subjects[`${t.year}${t.title}`].title;return this.formatClassName(e)}formatClassName(t){return t.split(" ").filter((t=>isNaN(t)&&t.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]},this.gettingNextDay=!1}firstUpdated(){this.updateCountdown(),this.update()}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?a`
+        `}}),customElements.define("daily-timetable",class extends e{static get styles(){return[i,s,b]}static get properties(){return{data:{type:Object}}}getDate(t){var e=new Date(this.data.date),i=t.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return e.setHours(a),e.setMinutes(s),e}getNextBell(){if(null!=this.data&&null!=this.data){var t=new Date;for(var e in this.data.bells){var i=this.data.bells[e],a=this.getDate(i);if(a>=t)return{bell:i,time:Math.round((a-t)/1e3)}}}}secondsToString(t){var e=t%60,i=(t-e)/60%60,a=((t-e)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),e<10&&(e="0"+e);var s="";return"00"!==a&&(s+=a+":"),s+=i+":"+e}updateCountdown(){if(this.hasAttribute("data")){var t=this.getNextBell();if(!t&&this.hasAttribute("data")&&this.data)this.gettingNextDay||(this.gettingNextDay=!0,caches.open(window.RESOURCE_CACHE).then((async t=>{var e=await t.match("next-dailytimetable");if(e){await t.put("dailytimetable",e);var i=await e.text();await t.delete("next-dailytimetable"),this.setAttribute("data",i)}else{this.removeAttribute("data"),this.data=null,this.requestUpdate();var a=await LoginIfNeeded();await UpdateResourcesIfNeeded(a,!0)&&location.reload()}})));else{if(t.bell.bell in this.data.timetable.timetable.periods&&"R"!=t.bell.bell){var e=this.data.timetable.timetable.periods[t.bell.bell];this.nextBell=this.getClassName(e)}else this.nextBell=t.bell.bellDisplay;this.timeUntilNextBell=this.secondsToString(t.time)}}}getClassName(t){var e=this.data.timetable.subjects[`${t.year}${t.title}`].title;return this.formatClassName(e)}formatClassName(t){return t.split(" ").filter((t=>isNaN(t)&&t.length>1)).join(" ")}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]},this.gettingNextDay=!1}firstUpdated(){this.updateCountdown(),this.update()}render(){return this.hasAttribute("data")&&null!=this.data&&null!=this.data?a`
             <p>${this.nextBell}</p>
             <p>in</p>
 
@@ -131,7 +131,7 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
                                 </payload-bell-item>`}return"Transition"==t.bell||"End of Day"==t.bell?o:a`<bell-item name="${t.bellDisplay}" time="${t.time}"></bell-item>`}))}
         `:a`
                 <loading-element style="width: 80%"></loading-element>
-            `}});const x=t`
+            `}});const w=t`
     :host {
         position: relative;
 
@@ -142,13 +142,13 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
     canvas {
         background-color: white;
         filter: contrast(5);
-        transform: translate(10px, 10px);
-        box-shadow: var(--shadow);
     }
 
     #point1, #point2 {
-        filter: none;
-        width: 20px;
+        filter: hue-rotate(var(--hue-rotate));
+        width: var(--font-size);
+        height: var(--font-size);
+        transform: translate(calc(var(--font-size) / -2), calc(var(--font-size) / -2));
     }
 
     canvas, #point1, #point2 {
@@ -180,17 +180,17 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
 
     #edit {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 8vmin;
-        height: 8vmin;
+        top: 1vmin;
+        right: 1vmin;
+        width: 4vmin;
+        height: 4vmin;
         display: flex;
         align-items: center;
         justify-content: center;
         background-color: transparent;
         border: none;
     }
-`;customElements.define("student-barcode",class extends e{static get styles(){return[i,r,l,s,x]}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(t,e){return{x:(t-this.offsetLeft)/this.clientWidth*100,y:(e-this.offsetTop)/this.clientHeight*100}}GetPixelsFromPercentage(t,e){return{x:this.clientWidth*t/100+this.offsetLeft,y:this.clientHeight*e/100+this.offsetTop}}async RequestBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("info"),r=this.shadowRoot.getElementById("barcode-canv");o.style.display="",r.style.display="none",s.style.display="none",n.style.display="none";var l=new Promise((o=>{var r=0;this.addEventListener("pointerdown",(l=>{if(1==++r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);t=d,e=h,s.style.left=`${d}%`,s.style.top=`${h}%`,s.style.display=""}else if(2==r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX-10,l.clientY-10);i=d,a=h,n.style.left=`${d}%`,n.style.top=`${h}%`,n.style.display="",this.removeEventListener("pointerdown",this),o()}}))}));await l,localStorage.setItem("Barcode Size",`${t} ${e} ${i} ${a}`),o.style.display="none",r.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv"),r=parseFloat(s.style.left.replace("%","")),l=parseFloat(s.style.top.replace("%","")),d=parseFloat(n.style.left.replace("%","")),h=parseFloat(n.style.top.replace("%",""));r>d?(t=r,e=d):(t=d,e=r),l>h?(i=l,a=h):(i=h,a=l),o.style.top=`${a}%`,o.style.left=`${e}%`,o.style.width=t-e+"%",o.style.height=i-a+"%",JsBarcode(o,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv");o.imageSmoothingEnabled=!1;var r=localStorage.getItem("Barcode Size");if(r){var[t,i,e,a]=r.split(" ");s.style.left=`${t}%`,s.style.top=`${i}%`,n.style.left=`${e}%`,n.style.top=`${a}%`}else{var{x:l,y:d}=this.GetPixelsFromPercentage(80,10);({x:l,y:d}=this.GetPercentageFromPixels(l-10,d-10)),s.style.left=`${l}%`,s.style.top=`${d}%`,({x:l,y:d}=this.GetPixelsFromPercentage(20,30)),({x:l,y:d}=this.GetPercentageFromPixels(l-10,d-10)),n.style.left=`${l}%`,n.style.top=`${d}%`}this.UpdateBarcodeSize(),o.style.display="",s.style.display="",n.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?a`
+`;customElements.define("student-barcode",class extends e{static get styles(){return[i,r,l,s,w]}static get properties(){return{data:{type:Object}}}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display=""}HideDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="none"}GetPercentageFromPixels(t,e){return{x:(t-this.offsetLeft)/this.clientWidth*100,y:(e-this.offsetTop)/this.clientHeight*100}}async RequestBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("info"),r=this.shadowRoot.getElementById("barcode-canv");o.style.display="",r.style.display="none",s.style.display="none",n.style.display="none";var l=new Promise((o=>{var r=0;this.addEventListener("pointerdown",(l=>{if(1==++r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX,l.clientY);t=d,e=h,s.style.left=`${d}%`,s.style.top=`${h}%`,s.style.display=""}else if(2==r){var{x:d,y:h}=this.GetPercentageFromPixels(l.clientX,l.clientY);i=d,a=h,n.style.left=`${d}%`,n.style.top=`${h}%`,n.style.display="",this.removeEventListener("pointerdown",this),o()}}))}));await l,localStorage.setItem("Barcode Size",`${t} ${e} ${i} ${a}`),o.style.display="none",r.style.display="",this.UpdateBarcodeSize()}UpdateBarcodeSize(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv"),r=parseFloat(s.style.left.replace("%","")),l=parseFloat(s.style.top.replace("%","")),d=parseFloat(n.style.left.replace("%","")),h=parseFloat(n.style.top.replace("%",""));r>d?(t=r,e=d):(t=d,e=r),l>h?(i=l,a=h):(i=h,a=l),o.style.top=`${a}%`,o.style.left=`${e}%`,o.style.width=t-e+"%",o.style.height=i-a+"%",JsBarcode(o,this.data.studentId,{displayValue:!1,margin:0})}async CreateBarcode(){var t,e,i,a,s=this.shadowRoot.getElementById("point1"),n=this.shadowRoot.getElementById("point2"),o=this.shadowRoot.getElementById("barcode-canv");o.imageSmoothingEnabled=!1;var r=localStorage.getItem("Barcode Size");if(r){var[t,i,e,a]=r.split(" ");s.style.left=`${t}%`,s.style.top=`${i}%`,n.style.left=`${e}%`,n.style.top=`${a}%`}else s.style.left="80%",s.style.top="10%",n.style.left="20%",n.style.top="30%";this.UpdateBarcodeSize(),o.style.display="",s.style.display="",n.style.display=""}constructor(){super(),this.data={studentId:""},window.updateBarcode=()=>{this.CreateBarcode()}}updated(){this.CreateBarcode()}render(){return this.hasAttribute("data")?a`
             <p id="info" style="display: none;">Tap in two places to form the barcode</p>
             
             <div>
@@ -212,7 +212,7 @@ import{i as t,h as e,t as i,T as a,c as s,a as n,A as o,b as r,f as l,s as d,d a
  * Copyright 2017 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */
-class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(t){if(t===o)return this.Vt=void 0,this.vt=t;if(t===m)return t;if("string"!=typeof t)throw Error(this.constructor.directiveName+"() called with a non-string value");if(t===this.vt)return this.Vt;this.vt=t;const e=[t];return e.raw=e,this.Vt={_$litType$:this.constructor.resultType,strings:e,values:[]}}}w.directiveName="unsafeHTML",w.resultType=1;const $=c(w),S=t`
+class x extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(t){if(t===o)return this.Vt=void 0,this.vt=t;if(t===m)return t;if("string"!=typeof t)throw Error(this.constructor.directiveName+"() called with a non-string value");if(t===this.vt)return this.Vt;this.vt=t;const e=[t];return e.raw=e,this.Vt={_$litType$:this.constructor.resultType,strings:e,values:[]}}}x.directiveName="unsafeHTML",x.resultType=1;const $=c(x),S=t`
     :host {
         position: relative;
         margin-top: 2vmin;
@@ -263,7 +263,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
 
         cursor: pointer;
     }
-`,k=t`
+`,E=t`
     :host {
         box-sizing: border-box;
 
@@ -315,15 +315,15 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
     .line-right, .line-left {
         display: inline-block;
         flex: 1;
-        border-bottom: 1px solid gray;
+        border-bottom: 0.2vmin solid gray;
     }
 
     .line-right {
-        margin-right: 10px;
+        margin-right: 2vmin;
     }
 
     .line-left {
-        margin-left: 10px;
+        margin-left: 2vmin;
     }
 `;customElements.define("announcement-item",class extends e{static get styles(){return[i,p,r,S]}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return a`
             <p class="title" @click="${this.toggle}">${this.title}</p>
@@ -332,7 +332,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
                 ${$(this.content)}
             </blockquote>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
-        `}}),customElements.define("school-announcements",class extends e{static get styles(){return[i,g,l,s,k]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.hasAttribute("data"))return a`<loading-element style="width: 80%; margin: auto;"></loading-element>`;if(0==this.data.notices.length)return a`
+        `}}),customElements.define("school-announcements",class extends e{static get styles(){return[i,g,l,s,E]}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.hasAttribute("data"))return a`<loading-element style="width: 80%; margin: auto;"></loading-element>`;if(0==this.data.notices.length)return a`
                 <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
                     <div class="line-right"></div>
                     <p>Nothing For Today</p>
@@ -365,7 +365,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
                         </announcement-item>
                     `))}
             </div>
-        `}});const E=t`
+        `}});const N=t`
     :host {
         position: absolute;
         background-image: url(images/popup.svg);
@@ -423,7 +423,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
             margin-top: 1.7vmax;
         }
     }
-`,N=t`
+`,k=t`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
@@ -461,7 +461,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
             margin-top: 0.5vmax;
         }
     }
-`,B=t`
+`,C=t`
     :host {
         display: inline-flex;
         flex-direction: column;
@@ -483,13 +483,13 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
         font-size: calc(var(--font-size) / 1.2);
         width: calc(var(--font-size) * 3.63);
         color: var(--text3);
-        border-bottom: solid grey 1px;
+        border-bottom: solid grey 0.2vmin;
     }
 
     .highlighted {
         color: var(--text2);
     }
-`,C=t`
+`,B=t`
     :host {
         display: flex;
         align-items: flex-end;
@@ -529,9 +529,9 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
     }
 
     timetable-row + timetable-row {
-        border-top: solid grey 1px;
+        border-top: solid grey 0.2vmin;
     }
-`;class O extends e{static get styles(){return[i,N]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),O.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>O.highlight(this.name))),this.addEventListener("mouseleave",(()=>O.highlight("")))}render(){var t=O.highlighted==this.name&&this.name,e=this.nextElementSibling,i=e?.nextElementSibling,s=e?.getAttribute("name")==this.name||i?.getAttribute("name")==this.name;return a`
+`;class O extends e{static get styles(){return[i,k]}static get properties(){return{name:{type:String},room:{type:String}}}static highlighted="";static instances=[];static highlight(t){this.highlighted=t,this.instances.forEach((t=>t.update()))}constructor(){super(),O.instances.push(this),this.name="",this.room="",this.addEventListener("mouseover",(()=>O.highlight(this.name))),this.addEventListener("mouseleave",(()=>O.highlight("")))}render(){var t=O.highlighted==this.name&&this.name,e=this.nextElementSibling,i=e?.nextElementSibling,s=e?.getAttribute("name")==this.name||i?.getAttribute("name")==this.name;return a`
             <div>
                 <p class="${t?"highlighted":""}">
                     ${this.name}
@@ -549,9 +549,9 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
                             </room-popup>
                         `:o}
             </div>
-        `}}customElements.define("room-popup",class extends e{static get styles(){return E}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return a`
+        `}}customElements.define("room-popup",class extends e{static get styles(){return N}static get properties(){return{room:{type:String}}}constructor(){super(),this.room=""}render(){return a`
             <p>${this.room}</p>
-        `}}),customElements.define("timetable-period",O),customElements.define("timetable-day",class extends e{static get styles(){return[i,B]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return a`
+        `}}),customElements.define("timetable-period",O),customElements.define("timetable-day",class extends e{static get styles(){return[i,C]}static get properties(){return{name:{type:String},data:{type:Object},day:{type:String}}}constructor(){super(),this.name="",this.data={},this.day=""}render(){return a`
             <p class="name ${this.day==this.name?"highlighted":""}">${this.name}</p>
             
             <timetable-period name="${this.data[1]?.title}"
@@ -573,7 +573,7 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
             <timetable-period name="${this.data[5]?.title}"
                               room="${this.data[5]?.room}">
             </timetable-period>
-        `}}),customElements.define("timetable-row",class extends e{static get styles(){return[i,C]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return a`
+        `}}),customElements.define("timetable-row",class extends e{static get styles(){return[i,B]}static get properties(){return{week:{type:String},day1:{type:Object},day2:{type:Object},day3:{type:Object},day4:{type:Object},day5:{type:Object},day:{type:String}}}constructor(){super(),this.week="",this.day1={},this.day2={},this.day3={},this.day4={},this.day5={},this.day=""}render(){return a`
             <div class="period-nums">
                 <p>1</p>
                 <p>2</p>
@@ -639,51 +639,37 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
             <div></div>
         `}});const z=t`
     :host {
-        position: relative;
-
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
+        justify-content: space-evenly;
+
+        position: relative;
+
+        padding-top: 4vmin;
+        padding-bottom: 4vmin;
+
+        margin: auto;
+
+        width: 60vw;
+        max-width: 60vh;
+        min-width: 300px;
+        min-height: 70vh;
+    }
+    
+    @media (max-width: 300px) {
+        :host {
+            width: 100vw;
+            min-width: unset;
+        }
     }
 
-    :host > * {
-        z-index: 1;
+    span {
+        border-bottom: 0.2vmin solid gray;
+        width: 60%;
     }
 
-    #background {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        filter: blur(1vmin) opacity(0.3);
-        z-index: 0;
-    }
-
-    #backgroundimg {
-        position: absolute;
-        filter: hue-rotate(var(--hue-rotate));
-        height: 70vmin;
-        transform: translateX(5vmin);
-    }
-
-    loading-element {
-        width: 90vmin;
-    }
-
-    button {
-        margin-bottom: 2vmin;
-    }
-
-    button > p {
-        margin: 0;
-    }
-
-    input[type=range] {
-        margin-top: 2vmin;
-    }
-
-    .mode {
+    .toggle {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -691,8 +677,9 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
         padding: 1vmin;
     }
 
-    #modeImg {
-        width: calc(var(--font-size) * 2);
+    .toggleImg {
+        width: calc(var(--font-size) * 1.8);
+        padding: calc(var(--font-size) * 0.1);
     }
 
     #description {
@@ -714,25 +701,36 @@ class w extends d{constructor(t){if(super(t),this.vt=o,t.type!==h.CHILD)throw Er
         border-radius: 2vmin;
         box-shadow: var(--shadow);
     }
-`;customElements.define("user-settings",class extends e{static get styles(){return[i,r,y,u,l,s,z]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){window.isDark()?localStorage.setItem("Dark","false"):localStorage.setItem("Dark","true"),window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}SetColour(){var t=document.getElementsByTagName("html")[0].style,e=this.shadowRoot.getElementById("hue").value;t.setProperty("--main-hue",e),t.setProperty("--hue-rotate",parseFloat(e)-200+"deg")}SaveColour(){localStorage.setItem("Hue",this.shadowRoot.getElementById("hue").value)}ResetColour(){this.shadowRoot.getElementById("hue").value="200",this.SetColour(),this.SaveColour()}createRenderRoot(){const t=super.createRenderRoot();return t.addEventListener("click",(t=>{var e=this.shadowRoot;t.target!=e.getElementById("description")&&(e.getElementById("descriptionContent").style.display="none")})),t}updated(){caches.open(window.METADATA_CACHE).then((async t=>{var e=await t.match("Metadata");if(e){var i=JSON.parse(await e.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${i.version}`}})),this.shadowRoot.getElementById("hue").value=window.getHue().hue}render(){var t=window.isDark(),e=t?"images/sun.svg":"images/moon.svg";return a`
-            <div id="background">
-                <loading-element></loading-element>
-                <img draggable="false" id="backgroundimg" src="${t?"images/logo-dark.svg":"images/logo.svg"}" />
-            </div>
-
+`;customElements.define("user-settings",class extends e{static get styles(){return[i,r,y,u,s,z]}ShowDescription(){this.shadowRoot.getElementById("descriptionContent").style.display="unset"}async ToggleDark(){window.isDark()?localStorage.setItem("Dark","false"):localStorage.setItem("Dark","true"),window.UpdateScreenType(),this.requestUpdate()}async Patch(){await caches.delete("Metadata"),await caches.delete("Offline Resources"),(await navigator.serviceWorker.ready).active.postMessage({command:"metadata-fetch"}),location.reload()}SetColour(){var t=document.getElementsByTagName("html")[0].style,e=this.shadowRoot.getElementById("hue").value;t.setProperty("--main-hue",e),t.setProperty("--hue-rotate",parseFloat(e)-200+"deg")}SaveColour(){localStorage.setItem("Hue",this.shadowRoot.getElementById("hue").value)}ResetColour(){this.shadowRoot.getElementById("hue").value="200",this.SetColour(),this.SaveColour()}EditNavbar(){document.getElementById("nav").setAttribute("editing","")}createRenderRoot(){const t=super.createRenderRoot();return t.addEventListener("click",(t=>{var e=this.shadowRoot;t.target!=e.getElementById("description")&&(e.getElementById("descriptionContent").style.display="none")})),t}updated(){caches.open(window.METADATA_CACHE).then((async t=>{var e=await t.match("Metadata");if(e){var i=JSON.parse(await e.text());this.shadowRoot.getElementById("version").textContent=`Paragon v${i.version}`}})),this.shadowRoot.getElementById("hue").value=window.getHue().hue}render(){var t=window.isDark(),e=t?"Dark Mode":"Light Mode",i=t?"images/sun.svg":"images/moon.svg";return a`
             <img draggable="false" @mousedown="${this.ShowDescription}" id="description" src="images/info.svg" />
     
             <p style="display: none;" id="descriptionContent">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
 
+            <p id="version">Paragon v0.0.0</p>
+
             <button @click="${this.Patch}">Fix</button>
+
+            <span></span>
             
-            <button class="mode" @click="${this.ToggleDark}">
-                <img draggable="false" id="modeImg" src="${e}" />
+            <p>Colour</p>
+
+            <button @click="${this.ResetColour}">Reset</button>
+
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>
+
+            <span></span>
+
+            <p>${e}</p>
+
+            <button class="toggle" @click="${this.ToggleDark}">
+                <img draggable="false" id="toggleImg" src="${i}" />
             </button>
             
-            <p id="version">Paragon v0</p>
+            <span></span>
 
-            <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
+            <p>Sidebar</p>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>            
+            <button class="toggle" @click="${this.EditNavbar}">
+                <img class="toggleImg" src="images/edit.svg"/>
+            </button>
         `}});

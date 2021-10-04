@@ -96,14 +96,14 @@ export const dailytimetableCss = css`
     .line-right, .line-left {
         display: inline-block;
         flex: 1;
-        border-bottom: 1px solid gray;
+        border-bottom: 0.2vmin solid gray;
     }
 
     .line-right {
-        margin-right: 10px;
+        margin-right: 2vmin;
     }
 
     .line-left {
-        margin-left: 10px;
+        margin-left: 2vmin;
     }
 `;

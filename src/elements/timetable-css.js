@@ -122,7 +122,7 @@ export const timetableDayCss = css`
         font-size: calc(var(--font-size) / 1.2);
         width: calc(var(--font-size) * 3.63);
         color: var(--text3);
-        border-bottom: solid grey 1px;
+        border-bottom: solid grey 0.2vmin;
     }
 
     .highlighted {
@@ -172,6 +172,6 @@ export const fullTimetableCss = css`
     }
 
     timetable-row + timetable-row {
-        border-top: solid grey 1px;
+        border-top: solid grey 0.2vmin;
     }
 `;

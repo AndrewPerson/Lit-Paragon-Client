@@ -11,13 +11,13 @@ export const barcodeCss = css`
     canvas {
         background-color: white;
         filter: contrast(5);
-        transform: translate(10px, 10px);
-        box-shadow: var(--shadow);
     }
 
     #point1, #point2 {
-        filter: none;
-        width: 20px;
+        filter: hue-rotate(var(--hue-rotate));
+        width: var(--font-size);
+        height: var(--font-size);
+        transform: translate(calc(var(--font-size) / -2), calc(var(--font-size) / -2));
     }
 
     canvas, #point1, #point2 {
@@ -49,10 +49,10 @@ export const barcodeCss = css`
 
     #edit {
         position: absolute;
-        top: 0;
-        right: 0;
-        width: 8vmin;
-        height: 8vmin;
+        top: 1vmin;
+        right: 1vmin;
+        width: 4vmin;
+        height: 4vmin;
         display: flex;
         align-items: center;
         justify-content: center;

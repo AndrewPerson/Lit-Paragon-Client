@@ -150,19 +150,35 @@ export class DailyTimetable extends LitElement {
 
         var nextBell = this.getNextBell();
 
-        if (!nextBell) {
+        if (!nextBell && this.hasAttribute("data") && this.data) {
             if (!this.gettingNextDay) {
                 this.gettingNextDay = true;
 
-                this.data = null;
-                this.update();
-                
-                LoginIfNeeded().then(token => {
-                    UpdateResourcesIfNeeded(token, true).then(succeeded => {
-                        if (succeeded) {
+                caches.open(window.RESOURCE_CACHE).then(async cache => {
+                    var nextTimetableResponse = await cache.match("next-dailytimetable");
+
+                    if (nextTimetableResponse) {
+                        await cache.put("dailytimetable", nextTimetableResponse);
+                        
+                        var text = await nextTimetableResponse.text();
+
+                        await cache.delete("next-dailytimetable");
+
+                        this.setAttribute("data", text);
+                    }
+                    else {
+                        this.removeAttribute("data");
+                        this.data = null;
+
+                        this.requestUpdate();
+
+                        var token = await LoginIfNeeded();
+                        
+                        var succeeded = await UpdateResourcesIfNeeded(token, true);
+                        
+                        if (succeeded)
                             location.reload();
-                        }
-                    });
+                    }
                 });
             }
         }

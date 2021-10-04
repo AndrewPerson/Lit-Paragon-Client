@@ -2,51 +2,37 @@ import { css } from "lit";
 
 export const settingsCss = css`
     :host {
-        position: relative;
-
         display: flex;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
+        justify-content: space-evenly;
+
+        position: relative;
+
+        padding-top: 4vmin;
+        padding-bottom: 4vmin;
+
+        margin: auto;
+
+        width: 60vw;
+        max-width: 60vh;
+        min-width: 300px;
+        min-height: 70vh;
+    }
+    
+    @media (max-width: 300px) {
+        :host {
+            width: 100vw;
+            min-width: unset;
+        }
     }
 
-    :host > * {
-        z-index: 1;
+    span {
+        border-bottom: 0.2vmin solid gray;
+        width: 60%;
     }
 
-    #background {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        position: absolute;
-        filter: blur(1vmin) opacity(0.3);
-        z-index: 0;
-    }
-
-    #backgroundimg {
-        position: absolute;
-        filter: hue-rotate(var(--hue-rotate));
-        height: 70vmin;
-        transform: translateX(5vmin);
-    }
-
-    loading-element {
-        width: 90vmin;
-    }
-
-    button {
-        margin-bottom: 2vmin;
-    }
-
-    button > p {
-        margin: 0;
-    }
-
-    input[type=range] {
-        margin-top: 2vmin;
-    }
-
-    .mode {
+    .toggle {
         display: flex;
         align-items: center;
         justify-content: center;
@@ -54,8 +40,9 @@ export const settingsCss = css`
         padding: 1vmin;
     }
 
-    #modeImg {
-        width: calc(var(--font-size) * 2);
+    .toggleImg {
+        width: calc(var(--font-size) * 1.8);
+        padding: calc(var(--font-size) * 0.1);
     }
 
     #description {

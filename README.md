@@ -12,4 +12,4 @@ Paragon has:
 
 Paragon is built with love. (And [Lit](https://lit.dev).)
 
-The server for Paragon can be found [here](https://github.com/AndrewPerson/Paragon-Server).
+The server for Paragon can be found [here](https://github.com/AndrewPerson/IBM-Paragon-Server).

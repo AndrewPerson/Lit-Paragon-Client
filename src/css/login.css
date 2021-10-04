@@ -51,9 +51,9 @@ button {
 
 button:hover {
     background-color: var(--surface3);
-    color: var(--text1);
+    color: var(--text2);
 }
 
 button:active {
-    color: var(--text3);
+    color: var(--text1);
 }

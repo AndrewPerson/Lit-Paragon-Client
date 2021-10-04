@@ -34,9 +34,12 @@ export const imgCss = css`
 `;
 
 export const textCss = css`
-    :where(h1, h2, h3, h4, h5, h6, p) {
+    :where(h1, h2, h3, h4, h5, h6, p, li) {
         margin: 0;
-        font-weight: 100;
+    }
+
+    :where(*) {
+        font-weight: 200;
         color: var(--text1);
         cursor: default;
 
@@ -44,6 +47,10 @@ export const textCss = css`
         -ms-user-select: none;
         -moz-user-select: none;
         -webkit-user-select: none;
+    }
+
+    :where(b, strong) {
+        font-weight: 600;
     }
 
     :where(a) {
@@ -66,11 +73,15 @@ export const buttonCss = css`
 
     :where(button:hover) {
         background-color: var(--surface3);
-        color: var(--text1);
+        color: var(--text2);
+    }
+
+    :where(button:hover img) {
+        filter: initial hue-rotate(200);
     }
 
     :where(button:active) {
-        color: var(--text3);
+        color: var(--text1);
     }
 `;
 
@@ -78,7 +89,7 @@ export const sliderCss = css`
     :where(input[type=range]) {
         appearance: none;
         width: calc(var(--font-size) * 7);
-        background-color: var(--surface2);
+        background-color: var(--surface1);
         height: calc(var(--font-size) / 1.5);
         box-shadow: var(--shadow);
         border-radius: calc(var(--font-size) / 2.5);
@@ -112,7 +123,7 @@ export const blockQuoteCss = css`
 
 export const selectCss = css`
     :where(select) {
-        border: 1px solid var(--text2);
+        border: 0.2vmin solid var(--text2);
         background-color: var(--surface2);
         color: var(--text2);
 

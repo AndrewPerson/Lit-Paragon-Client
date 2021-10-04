@@ -1,10 +1,10 @@
 import { html, LitElement } from "lit";
 import { settingsCss } from "./settings-css";
-import { textCss, imgCss, buttonCss, sliderCss, fullContainerCss, containerCss } from "./default-css";
+import { textCss, imgCss, buttonCss, sliderCss, containerCss } from "./default-css";
 
 export class UserSettings extends LitElement {
     static get styles() {
-        return [textCss, imgCss, buttonCss, sliderCss, fullContainerCss, containerCss, settingsCss];
+        return [textCss, imgCss, buttonCss, sliderCss, containerCss, settingsCss];
     }
 
     ShowDescription() {
@@ -50,6 +50,10 @@ export class UserSettings extends LitElement {
         this.SaveColour();
     }
 
+    EditNavbar() {
+        document.getElementById("nav").setAttribute("editing", "");
+    }
+
     createRenderRoot() {
         const root = super.createRenderRoot();
 
@@ -80,30 +84,41 @@ export class UserSettings extends LitElement {
     render() {
         var dark = window.isDark();
 
-        var mode = dark ? "images/sun.svg" : "images/moon.svg";
-        var background = dark ? "images/logo-dark.svg" : "images/logo.svg";
+        var mode = dark ? "Dark Mode" : "Light Mode";
+        var modeImg = dark ? "images/sun.svg" : "images/moon.svg";
 
         return html`
-            <div id="background">
-                <loading-element></loading-element>
-                <img draggable="false" id="backgroundimg" src="${background}" />
-            </div>
-
             <img draggable="false" @mousedown="${this.ShowDescription}" id="description" src="images/info.svg" />
     
             <p style="display: none;" id="descriptionContent">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
 
+            <p id="version">Paragon v0.0.0</p>
+
             <button @click="${this.Patch}">Fix</button>
+
+            <span></span>
             
-            <button class="mode" @click="${this.ToggleDark}">
-                <img draggable="false" id="modeImg" src="${mode}" />
+            <p>Colour</p>
+
+            <button @click="${this.ResetColour}">Reset</button>
+
+            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>
+
+            <span></span>
+
+            <p>${mode}</p>
+
+            <button class="toggle" @click="${this.ToggleDark}">
+                <img draggable="false" id="toggleImg" src="${modeImg}" />
             </button>
             
-            <p id="version">Paragon v0</p>
+            <span></span>
 
-            <button style="margin: 2vmin 0 0 0" @click="${this.ResetColour}">Reset Colour</button>
+            <p>Sidebar</p>
 
-            <input type="range" id="hue" min="0" max="359" value="200" @input="${this.SetColour}" @change="${this.SaveColour}"/>            
+            <button class="toggle" @click="${this.EditNavbar}">
+                <img class="toggleImg" src="images/edit.svg"/>
+            </button>
         `;
     }
 }
