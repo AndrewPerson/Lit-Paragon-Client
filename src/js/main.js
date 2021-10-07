@@ -74,7 +74,8 @@ async function UpdateResourcesIfNeeded(token, force) {
     {
         var lastUpdated = new Date(await lastUpdatedResponse.text());
 
-        if (new Date() - lastUpdated >= 3600000) resources = await GetAllResources(token);
+        // 30 minutes
+        if (new Date() - lastUpdated >= 1800000) resources = await GetAllResources(token);
     }
     else resources = await GetAllResources(token);
 
