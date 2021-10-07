@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <link rel="shortcut icon" type="image/webp" href="icons/128.webp" />
-    
+
     <meta property="og:image" content="https://web-paragon.web.app/icons/512.webp">
     <meta property="og:image:alt" content="Paragon is the next generation of Student Portal Alternatives at SBHS">
     <meta property="og:site_name" content="Paragon">
@@ -15,45 +15,41 @@
     <meta property="og:title" content="Paragon">
     <meta property="og:url" content="https://web-paragon.web.app/">
     <meta property="og:description" content="Paragon is the next generation of Student Portal Alternatives at SBHS, with offline functionality, blazingly fast load times and student ID barcode replication.">
-
+    
     <title>Paragon</title>
 
     <base href="/" />
 
     <link href="css/app.css" rel="stylesheet" />
-    <link href="css/navbar.css" rel="stylesheet" />
-    <link href="css/404.css" rel="stylesheet" />
-
+    <link href="css/login.css" rel="stylesheet" />
+    
     <link href="manifest.json" rel="manifest" />
 
-    <script type="module" src="elements/main-elements.js"></script>
 </head>
 
 <body>
     <script src="js/init.js"></script>
+    <img draggable="false" id="logo" src="images/logo.svg" />
+    <img draggable="false" class="logo-rings" src="images/rings.svg" />
 
-    <nav-bar></nav-bar>
-    
-    <main>
-        <p>Uh oh! It looks like <span id="location"></span> isn't in Paragon! Please try somewhere else.</p>
-    
-        <div id="background">
-            <loading-element></loading-element>
-            <img draggable="false" id="background-img" src="images/logo.svg" />
-        </div>
-    </main>
+    <p id="404" class="important">404</p>
+    <p id="message">Unfortunately, we couldn't find  in Paragon.</p>
+
+    <button onclick="location.pathname = ''">Home</button>
 
     <script>
-        document.getElementById("location").textContent = location.pathname.substring(1);
-
         if (window.isDark()) {
-            document.getElementById("background-img").src = "images/logo-dark.svg";
+            document.getElementById("logo").src = "images/logo-dark.svg";
         }
+
+        var path = location.pathname.startsWith("/") ? location.pathname.substring(1) : location.pathname;
+
+        if (path == "404" || path == "404.html") {
+            document.getElementById("404").textContent = "Nice Try";
+            document.getElementById("message").innerHTML = "Guess what? We <i>did</i> find <i>\"404\"</i> in Paragon. You're looking at it!"
+        }
+        else document.getElementById("message").innerHTML = `Unfortunately, we couldn't find <i>"${path}"</i>" in Paragon.`;
     </script>
-
-    <script src="js/pages.js"></script>
-
-    <script src="js/main.js"></script>
 </body>
 
 </html>
