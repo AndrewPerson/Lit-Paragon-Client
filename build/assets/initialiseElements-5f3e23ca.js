@@ -1,9 +1,3 @@
-window.onPageUpdate = () => {
-    if (window.page == "barcode")
-        if (window.updateBarcode instanceof Function)
-            window.updateBarcode();
-}
-
 window.received_data = false;
 
 const ELEMENTS = [

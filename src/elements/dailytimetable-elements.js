@@ -1,7 +1,7 @@
 import { html, nothing, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
-import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable-css";
-import { textCss, containerCss } from "./default-css";
+import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable.css";
+import { textCss, containerCss } from "./default.css";
 
 export class BellItem extends LitElement {
     static get styles() {
@@ -67,7 +67,7 @@ export class PayloadBellItem extends LitElement {
         return html`
             <div>
                 <p class="start">${this.name}</p>
-                <p class="time">at <span class="${timeClass}">${this.time}</span> with <span class="${teacherClass}">${this.teacher}</span></p>
+                <p class="sub">at <span class="sub ${timeClass}">${this.time}</span> with <span class="sub ${teacherClass}">${this.teacher}</span></p>
             </div>
             
             <p class="end ${roomClass}">${this.room}</p>
@@ -212,10 +212,8 @@ export class DailyTimetable extends LitElement {
         this.timeUntilNextBell = "00:00";
 
         setInterval(() => {
-            if (this.data) {
-                this.updateCountdown();
-                this.update();
-            }
+            this.updateCountdown();
+            this.requestUpdate();
         }, 1000);
 
         this.data = {
@@ -232,11 +230,8 @@ export class DailyTimetable extends LitElement {
         };
 
         this.gettingNextDay = false;
-    }
 
-    firstUpdated() {
-        this.updateCountdown();
-        this.update();
+        this.firstRender = true;
     }
 
     render() {
@@ -244,6 +239,11 @@ export class DailyTimetable extends LitElement {
             return html`
                 <loading-element style="width: 80%"></loading-element>
             `;
+        }
+
+        if (this.firstRender) {
+            this.firstRender = false;
+            this.updateCountdown();
         }
 
         return html`

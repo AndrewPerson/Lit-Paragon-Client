@@ -1,17 +1,18 @@
 import { html, LitElement } from "lit";
-import { settingsCss } from "./settings-css";
-import { textCss, imgCss, buttonCss, sliderCss, containerCss } from "./default-css";
+import { settingsCss } from "./settings.css";
+import { textCss, imgCss, buttonCss, sliderCss, containerCss } from "./default.css";
 
 export class UserSettings extends LitElement {
     static get styles() {
         return [textCss, imgCss, buttonCss, sliderCss, containerCss, settingsCss];
     }
 
-    ShowDescription() {
+    ShowDescription(e) {
         this.shadowRoot.getElementById("descriptionContent").style.display = "unset";
+        e.stopPropagation();
     }
 
-    async ToggleDark() {
+    ToggleDark() {
         if (window.isDark())
             localStorage.setItem("Dark", "false");
         else
@@ -50,23 +51,6 @@ export class UserSettings extends LitElement {
         this.SaveColour();
     }
 
-    EditNavbar() {
-        document.getElementById("nav").setAttribute("editing", "");
-    }
-
-    createRenderRoot() {
-        const root = super.createRenderRoot();
-
-        root.addEventListener("click", e => {
-            var currentRoot = this.shadowRoot;
-
-            if (e.target != currentRoot.getElementById("description"))
-                currentRoot.getElementById("descriptionContent").style.display = "none";
-        });
-
-        return root;
-    }
-
     updated() {
         caches.open(window.METADATA_CACHE).then(async metadataCache => {
             var metadataResponse = await metadataCache.match("Metadata");
@@ -81,6 +65,30 @@ export class UserSettings extends LitElement {
         this.shadowRoot.getElementById("hue").value = window.getHue().hue;
     }
 
+    ToggleEditNavbar() {
+        var navbar = document.getElementById("nav");
+
+        if (navbar.hasAttribute("editing")) navbar.removeAttribute("editing");
+        else navbar.setAttribute("editing", "");
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("click", this.HideInfo);
+    }
+
+    constructor() {
+        super();
+
+        this.HideInfo = (() => {
+            if (!this.shadowRoot) return;
+
+            this.shadowRoot.getElementById("descriptionContent").style.display = "none";
+        })
+        .bind(this);
+
+        document.addEventListener("click", this.HideInfo);
+    }
+
     render() {
         var dark = window.isDark();
 
@@ -88,9 +96,9 @@ export class UserSettings extends LitElement {
         var modeImg = dark ? "images/sun.svg" : "images/moon.svg";
 
         return html`
-            <img draggable="false" @mousedown="${this.ShowDescription}" id="description" src="images/info.svg" />
+            <img draggable="false" @click="${this.ShowDescription}" id="description" src="images/info.svg" />
     
-            <p style="display: none;" id="descriptionContent">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
+            <p style="display: none;" id="descriptionContent" @click="${this.ShowDescription}">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
 
             <p id="version">Paragon v0.0.0</p>
 
@@ -109,16 +117,14 @@ export class UserSettings extends LitElement {
             <p>${mode}</p>
 
             <button class="toggle" @click="${this.ToggleDark}">
-                <img draggable="false" id="toggleImg" src="${modeImg}" />
+                <img draggable="false" class="toggleImg" src="${modeImg}" />
             </button>
             
             <span></span>
 
             <p>Sidebar</p>
 
-            <button class="toggle" @click="${this.EditNavbar}">
-                <img class="toggleImg" src="images/edit.svg"/>
-            </button>
+            <button @click="${this.ToggleEditNavbar}">Edit</button>
         `;
     }
 }

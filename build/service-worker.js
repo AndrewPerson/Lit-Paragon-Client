@@ -29,7 +29,7 @@ async function Activate() {
 }
 
 async function Fetch(event) {
-    if (event.request.method === 'GET' && !UPDATING) {
+    if (event.request.method == 'GET' && !UPDATING) {
         const request = event.request;
         const cache = await caches.open(OFFLINE_CACHE);
 
@@ -73,7 +73,8 @@ async function Message(event) {
         if (lastFetchedResponse) {
             var lastFetched = new Date(await lastFetchedResponse.text());
 
-            if (new Date() - lastFetched > 86400000) {
+            // 30 Minutes
+            if (new Date() - lastFetched >= 1800000) {
                 MetadataFetch();
             }
         }

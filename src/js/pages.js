@@ -8,35 +8,36 @@ const PAGES = [
 ];
 
 function RunCallbacks() {
-    //Sometimes the navbar isn't fully initialised
     var navbar = document.getElementById("nav");
+
+    //Sometimes the navbar isn't fully initialised
     if (navbar.updatePage instanceof Function)
         navbar.updatePage();
-
-    if (window.onPageUpdate instanceof Function)
-        window.onPageUpdate();
 }
 
 function DisplayExtension(extension) {
-    
+    var currentPage = document.getElementById(extension);
+
+    if (currentPage) {
+        if (window.received_data) currentPage.classList.remove("hidden");
+    }
+    else {
+        var newPage = document.createElement("iframe");
+        newPage.id = extension;
+
+        var extensions = window.getInstalledExtensions();
+
+        newPage.src = extensions[extension];
+
+        document.getElementById("pages-container").appendChild(newPage);
+    }
+
+    window.page = extension;
 }
 
 function DisplayPage(page) {
-    var currentPage = document.getElementById(page);
-    if (window.received_data) currentPage.classList.remove("hidden");
-
-    var elements = document.getElementById("pages-container").children;
-
-    var i = 0;
-    while (i < elements.length) {
-        if (elements[i].id != page
-         && elements[i].tagName != "SCRIPT"
-         && elements[i].tagName != "NAV-BAR"
-         && elements[i].tagName != "LOGIN-NOTIFICATION")
-            elements[i].classList.add("hidden");
-        
-        i++;
-    }
+    var newPage = document.getElementById(page);
+    if (window.received_data) newPage.classList.remove("hidden");
 
     window.page = page;
 
@@ -69,26 +70,24 @@ function UpdatePage() {
         location.hash = "dailytimetable";
     }
 
+    if (window.page) {
+        var currentPage = document.getElementById(window.page);
+        if (window.received_data) currentPage.classList.add("hidden");
+    }
+
     if (extension) {
-        if (window.extensions) {
-            if (window.extensions.includes(page)) {
-                DisplayExtension(page);
+        if (Object.keys(window.getInstalledExtensions()).includes(page.substring(6))) {
+            DisplayExtension(page);
+        }
+        else {
+            if (window.page) {
+                location.hash = window.page;
+                DisplayPage(window.page);
             }
             else {
                 location.hash = "dailytimetable";
                 DisplayPage("dailytimetable");
             }
-        }
-        else {
-            window.getExtensions().then(() => {
-                if (window.extensions.includes(page)) {
-                    DisplayExtension(page);
-                }
-                else {
-                    location.hash = "dailytimetable";
-                    DisplayPage("dailytimetable");
-                }
-            });
         }
     }
     else {

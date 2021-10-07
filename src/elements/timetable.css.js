@@ -64,6 +64,7 @@ export const timetablePeriodCss = css`
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
+        text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
         border-radius: 1vmin;
 
         animation: appear 0.3s ease-out;

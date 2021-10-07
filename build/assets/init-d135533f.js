@@ -16,14 +16,11 @@ window.getHue = () => {
     return {hue: hue, rotation: hue - 200};
 }
 
-window.extensions = null;
-window.getExtensions = async () => {
-    var cache = await caches.open(window.METADATA_CACHE);
-    var response = await cache.match("/Metadata");
-    var object = JSON.parse(await response.text());
+window.getInstalledExtensions = () => {
+    var json = localStorage.getItem("Installed Pages");
 
-    window.extensions = object.pages;
-};
+    return json ? JSON.parse(json) : {};
+}
 
 UpdateScreenType();
 

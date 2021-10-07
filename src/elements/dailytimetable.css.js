@@ -47,7 +47,7 @@ export const payloadBellCss = css`
         margin-bottom: 1.5vmin;
     }
 
-    .time {
+    .sub {
         font-size: calc(var(--font-size) / 1.8);
     }
 

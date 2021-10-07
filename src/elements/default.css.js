@@ -19,6 +19,23 @@ export const fullContainerCss = css`
             max-height: calc(96vh - 12vw);
         }
     }
+
+    /*
+        104% of 300px.
+        We use 104% because that includes the margin,
+        which is 2% either side.
+    */
+    @media (max-width: 312px) {
+        :host {
+            margin: 2vh calc(50% - 150px);
+        }
+    }
+
+    @media (max-width: 300px) {
+        :host {
+            margin: 2vh 0;
+        }
+    }
 `;
 
 export const imgCss = css`
@@ -39,9 +56,10 @@ export const textCss = css`
     }
 
     :where(*) {
-        font-weight: 200;
+        font-weight: 400;
         color: var(--text1);
         cursor: default;
+        font-size: var(--font-size);
 
         user-select: none;
         -ms-user-select: none;
@@ -56,14 +74,15 @@ export const textCss = css`
     :where(a) {
         color: var(--text2);
         text-decoration: none;
+        cursor: pointer;
     }
 `;
 
 export const buttonCss = css`
     :where(button) {
-        border: none;
-        background-color: var(--surface4);
-        color: var(--text4);
+        border: solid 0.2vmin var(--surface4);
+        background-color: var(--surface2);
+        color: var(--text2);
         padding: 1vmin 2vmin;
         border-radius: calc(var(--font-size) / 2.5);
         max-width: max-content;
@@ -76,12 +95,11 @@ export const buttonCss = css`
         color: var(--text2);
     }
 
-    :where(button:hover img) {
-        filter: initial hue-rotate(200);
-    }
-
     :where(button:active) {
-        color: var(--text1);
+        border: solid 0.2vmin transparent;
+        color: var(--text4);
+        text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+        background-color: var(--surface4);
     }
 `;
 

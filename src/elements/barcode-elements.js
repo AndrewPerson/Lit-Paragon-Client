@@ -1,6 +1,6 @@
 import { html, LitElement } from "lit";
-import { barcodeCss } from "./barcode-css";
-import { textCss, imgCss, fullContainerCss, containerCss } from "./default-css";
+import { barcodeCss } from "./barcode.css";
+import { textCss, imgCss, fullContainerCss, containerCss } from "./default.css";
 
 export class StudentBarcode extends LitElement {
     static get styles() {
@@ -130,13 +130,17 @@ export class StudentBarcode extends LitElement {
         });
     }
 
-    async CreateBarcode() {
+    CreateBarcode() {
+        if (!this.shadowRoot) return;
+
         var x1, x2, y1, y2;
 
         var point1 = this.shadowRoot.getElementById("point1");
         var point2 = this.shadowRoot.getElementById("point2");
         
         var barcode = this.shadowRoot.getElementById("barcode-canv");
+
+        if (!point1 || !point2 || !barcode) return;
 
         barcode.imageSmoothingEnabled = false;
 
@@ -171,10 +175,6 @@ export class StudentBarcode extends LitElement {
 
         this.data = {
             studentId: ""
-        };
-
-        window.updateBarcode = () => {
-            this.CreateBarcode();
         };
     }
 

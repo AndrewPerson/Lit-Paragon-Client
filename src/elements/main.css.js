@@ -3,8 +3,8 @@ import { css } from "lit";
 export const navItemCss = css`
     :host {
         display: inline-block;
-        width: fit-content;
-        height: fit-content;
+        width: 12vmin;
+        height: 12vmin;
         position: relative;
     }
 
@@ -20,27 +20,14 @@ export const navItemCss = css`
         border-radius: 2vmin;
     }
 
-    :host-context([editing])::after {
-        position: absolute;
-        top: calc(50% - 1vmin);
-        left: 10%;
-
-        background-image: url(./images/drag.svg);
-        background-size: contain;
-        background-repeat: no-repeat;
-
-        content: "";
-
-        height: 2vmin;
-        width: 2vmin;
+    #handle {
+        width: 1.5vmin;
+        height: 12vmin;
+        margin-left: 0.75vmin;
     }
 
-    @media (max-aspect-ratio: 1/1) {
-        :host-context([editing])::after {
-            transform: rotate(90deg);
-            top: 10%;
-            left: calc(50% - 1vmin);
-        }
+    #handle:hover {
+        cursor: grab;
     }
 
     button {
@@ -53,6 +40,24 @@ export const navItemCss = css`
 
         background-color: transparent;
         border: none;
+    }
+
+    :host([editing])::before {
+        content: "";
+
+        background-image: url(/images/drag.svg);
+        background-repeat: no-repeat;
+        background-size: contain;
+        filter: hue-rotate(var(--hue-rotate)) invert(var(--img-invert));
+        
+        position: absolute;
+        top: calc(50% - 1vmin);
+        left: 1vmin;
+
+        display: block;
+        
+        width: 2vmin;
+        height: 2vmin;
     }
 
     ::slotted(img) {
@@ -75,19 +80,23 @@ export const navMenuCss = css`
         background-color: var(--surface3);
 
         width: 12vmin;
-        height: 88vmin;
-
-        position: sticky;
-        top: 0;
-        left: 0;
+        height: 88%;
 
         overflow-x: hidden;
         overflow-y: auto;
-
-        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
     
         scrollbar-width: thin;
         scrollbar-color: transparent transparent;
+    }
+
+    .shadow {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: inherit;
+        height: 100%;
+        box-shadow: var(--shadow);
+        z-index: -1;
     }
 
     @media (max-aspect-ratio: 1/1) {
@@ -103,11 +112,15 @@ export const navMenuCss = css`
 
             margin-left: 12%;
 
-            bottom: 0;
-            left: 0;
-
             overflow-x: auto;
             overflow-y: hidden;
+        }
+
+        .shadow {
+            width: 100%;
+            height: inherit;
+            top: unset;
+            bottom: 0;
         }
     }
 
@@ -145,11 +158,7 @@ export const navMenuCss = css`
 
         height: fit-content;
 
-        box-shadow: var(--shadow);
-
         background-color: var(--surface3);
-
-        z-index: -1;
     }
 `;
 

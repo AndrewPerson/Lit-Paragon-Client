@@ -1,6 +1,6 @@
 import { html, LitElement } from "lit";
-import { pagesMarketplaceCss } from "./pages-css";
-import { fullContainerCss, containerCss } from "./default-css";
+import { pagesMarketplaceCss } from "./pages.css";
+import { fullContainerCss, containerCss } from "./default.css";
 
 export class PagesMarketplace extends LitElement {
     static get styles() {

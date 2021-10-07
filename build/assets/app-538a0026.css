@@ -26,13 +26,13 @@
 
 html.dark {
     --text1: hsl(var(--main-hue) 45% 90%);
-    --text2: hsl(var(--main-hue) 90% 60%);
+    --text2: hsl(var(--main-hue) 90% 80%);
     --text3: hsl(var(--main-hue) 10% 30%);
     --text4: hsl(var(--main-hue) 30% 95%);
-    --surface1: hsl(var(--main-hue) 30% 20%);
-    --surface2: hsl(var(--main-hue) 50% 15%);
-    --surface3: hsl(var(--main-hue) 40% 18%);
-    --surface4: hsl(var(--main-hue) 40% 25%);
+    --surface1: hsl(var(--main-hue) 15% 20%);
+    --surface2: hsl(var(--main-hue) 25% 15%);
+    --surface3: hsl(var(--main-hue) 20% 20%);
+    --surface4: hsl(var(--main-hue) 20% 25%);
     --shadow-colour: hsl(var(--main-hue) 10% 10%);
     --img-invert: 100%;
 }

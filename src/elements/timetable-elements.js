@@ -1,6 +1,6 @@
 import { html, LitElement, nothing } from "lit"
-import { roomPopupCss, timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable-css";
-import { textCss, containerCss } from "./default-css";
+import { roomPopupCss, timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable.css";
+import { textCss, containerCss } from "./default.css";
 
 export class RoomPopup extends LitElement {
     static get styles() {
@@ -44,7 +44,7 @@ export class TimetablePeriod extends LitElement {
 
     static highlight(name) {
         this.highlighted = name;
-        this.instances.forEach(instance => instance.update());
+        this.instances.forEach(instance => instance.requestUpdate());
     }
 
     constructor() {
