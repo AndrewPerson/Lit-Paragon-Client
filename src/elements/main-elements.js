@@ -150,6 +150,92 @@ export class Navbar extends LitElement {
         }
     }
 
+    GetNavItem(order) {
+        var page;
+        var title;
+        var icon;
+
+        if (order == 0) {
+            page = "dailytimetable";
+            title = "Daily Timetable";
+            icon = "images/dailytimetable.svg";
+        }
+        else if (order == 1) {
+            page = "barcode";
+            title = "ID Barcode";
+            icon = "images/barcode.svg";
+        }
+        else if (order == 2) {
+            page = "timetable";
+            title = "Timetable";
+            icon = "images/timetable.svg";
+        }
+        else if (order == 3) {
+            page = "announcements";
+            title = "Announcements";
+            icon = "images/announcements.svg";
+        }
+        else if (order == 4) {
+            page = "pages";
+            title = "Pages Marketplace";
+            icon = "images/marketplace.svg";
+        }
+        else if (order == 5) {
+            page = "settings";
+            title = "Settings";
+            icon = "images/settings.svg";
+        }
+        else {
+            page = `(page)${this.pages[order - 6]}`;
+            title = this.titles[order - 6];
+            icon = this.icons[order - 6];
+        }
+        
+        return html`
+            <nav-item order="${order}" ?editing="${this.editing}" page="${page}" title="${title}">
+                <img draggable="false" src="${icon}" />
+            </nav-item>
+        `;
+    }
+
+    ShowShadows() {
+        var container = this.shadowRoot.getElementById("items-container");
+
+        var topShadow = this.shadowRoot.getElementById("top-shadow");
+        var bottomShadow = this.shadowRoot.getElementById("bottom-shadow");
+        var leftShadow = this.shadowRoot.getElementById("left-shadow");
+        var rightShadow = this.shadowRoot.getElementById("right-shadow");
+
+        if (matchMedia("(max-aspect-ratio: 1/1)").matches) {
+            topShadow.style.display = "none";
+            bottomShadow.style.display = "none";
+
+            if (container.scrollLeft == 0)
+                leftShadow.style.display = "none";
+            else
+                leftShadow.style.removeProperty("display");
+
+            if (container.scrollLeft >= container.scrollWidth - container.clientWidth - 1)
+                rightShadow.style.display = "none";
+            else
+                rightShadow.style.removeProperty("display");
+        }
+        else {
+            leftShadow.style.display = "none";
+            rightShadow.style.display = "none";
+
+            if (container.scrollTop == 0)
+                topShadow.style.display = "none";
+            else
+                topShadow.style.removeProperty("display");
+
+            if (container.scrollTop >= container.scrollHeight - container.clientHeight - 1)
+                bottomShadow.style.display = "none";
+            else
+                bottomShadow.style.removeProperty("display");
+        }
+    }
+
     constructor() {
         super();
 
@@ -158,78 +244,47 @@ export class Navbar extends LitElement {
         this.icons = [];
         this.order = [0, 1, 2, 3, 4, 5];
         this.editing = false;
+
+        matchMedia("(max-aspect-ratio: 1/1)").onchange = (() => {
+            this.ShowShadows();
+        }).bind(this);
     }
 
     createRenderRoot() {
         var root = super.createRenderRoot();
 
         root.addEventListener("pointerdown", () => {
-            this.classList.add("hover");
+            this.shadowRoot.getElementById("items-container").classList.add("hover");
         });
 
         root.addEventListener("pointerup", () => {
-            this.classList.remove("hover");
+            this.shadowRoot.getElementById("items-container").classList.remove("hover");
         });
 
         return root;
     }
 
+    updated() {
+        this.shadowRoot.getElementById("items-container").addEventListener("scroll", this.ShowShadows.bind(this));
+    
+        this.ShowShadows();
+    }
+
     render() {
+        var last = this.order.pop();
+
         return html`
-            ${
-                repeat(this.order, key => key, (key, index) => {
-                    var page;
-                    var title;
-                    var icon;
+            <div id="items-container">
+                <div id="top-shadow" style="display: none"></div>
+                <div id="bottom-shadow" style="display: none"></div>
+                <div id="left-shadow" style="display: none"></div>
+                <div id="right-shadow" style="display: none"></div>
 
-                    if (key == 0) {
-                        page = "dailytimetable";
-                        title = "Daily Timetable";
-                        icon = "images/dailytimetable.svg";
-                    }
-                    else if (key == 1) {
-                        page = "barcode";
-                        title = "ID Barcode";
-                        icon = "images/barcode.svg";
-                    }
-                    else if (key == 2) {
-                        page = "timetable";
-                        title = "Timetable";
-                        icon = "images/timetable.svg";
-                    }
-                    else if (key == 3) {
-                        page = "announcements";
-                        title = "Announcements";
-                        icon = "images/announcements.svg";
-                    }
-                    else if (key == 4) {
-                        page = "pages";
-                        title = "Pages Marketplace";
-                        icon = "images/marketplace.svg";
-                    }
-                    else if (key == 5) {
-                        page = "settings";
-                        title = "Settings";
-                        icon = "images/settings.svg";
-                    }
-                    else {
-                        page = `(page)${this.pages[key - 6]}`;
-                        title = this.titles[key - 6];
-                        icon = this.icons[key - 6];
-                    }
-                    
-                    var result = html`
-                        <nav-item order="${key}" ?editing="${this.editing}" page="${page}" title="${title}">
-                            <img draggable="false" src="${icon}" />
-                        </nav-item>
-                    `;
-
-                    if (index == this.order.length - 1) result = html`<div class="end">${result}</div>`;
-
-                    return result;
-                })
-            }
-            <div class="shadow"></div>
+                ${repeat(this.order, key => key, key => this.GetNavItem(key))}
+            </div>
+            <div class="end">
+                ${this.GetNavItem(last)}
+            </div>
         `;
     }
 }

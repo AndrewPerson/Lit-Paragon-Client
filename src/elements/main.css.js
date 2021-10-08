@@ -71,16 +71,34 @@ export const navMenuCss = css`
     :host {
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+
+        flex-shrink: 0;
+
+        background-color: var(--surface3);
+        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) calc(var(--shadow-spread) / 2);
+
+        width: 12vmin;
+        height: 100%;
+
+        overflow: hidden;
+
+        border-radius: 0 2vmin 2vmin 0;
+
+        box-sizing: border-box;
+        padding-bottom: 12vmin;
+    }
+
+    #items-container {
+        display: flex;
+        flex-direction: column;
         align-content: center;
         justify-content: flex-start;
         flex-wrap: nowrap;
         
-        flex-shrink: 0;
-        
-        background-color: var(--surface3);
-
-        width: 12vmin;
-        height: 88%;
+        width: 100%;
+        height: 100%;
 
         overflow-x: hidden;
         overflow-y: auto;
@@ -89,76 +107,109 @@ export const navMenuCss = css`
         scrollbar-color: transparent transparent;
     }
 
-    .shadow {
-        position: fixed;
-        top: 0;
+    .end {
+        position: absolute;
         left: 0;
-        width: inherit;
-        height: 100%;
-        box-shadow: var(--shadow);
-        z-index: -1;
+        bottom: 0;
+    }
+
+    .end > nav-item {
+        border-radius: 0 0 2vmin 0;
     }
 
     @media (max-aspect-ratio: 1/1) {
         :host {
-            flex-direction: row;
-
-            text-align: center;
-
             order: 100;
 
-            width: 88%;
+            width: 100%;
             height: 12vmin;
 
-            margin-left: 12%;
+            border-radius: 2vmin 2vmin 0 0;
+
+            padding-bottom: 0;
+            padding-left: 12%;
+        }
+
+        #items-container {
+            flex-direction: row;
+            align-items: flex-start;
+            justify-content: flex-start;
 
             overflow-x: auto;
             overflow-y: hidden;
         }
 
-        .shadow {
-            width: 100%;
-            height: inherit;
-            top: unset;
-            bottom: 0;
+        .end > nav-item {
+            border-radius: 2vmin 0 0 0;
         }
     }
 
-    :host(:hover), :host(.hover) {
+    #items-container:hover, #items-container.hover {
         scrollbar-color: var(--text3) transparent;
     }
 
-    :host::-webkit-scrollbar {
+    #items-container::-webkit-scrollbar {
         width: 1vmin;
         height: 1vmin;
         display: none;
     }
 
-    :host(:hover)::-webkit-scrollbar,
-    :host(.hover)::-webkit-scrollbar {
+    #items-container:hover::-webkit-scrollbar,
+    #items-container.hover::-webkit-scrollbar {
         display: unset;
     }
 
-    :host::-webkit-scrollbar-thumb {
+    #items-container::-webkit-scrollbar-thumb {
         background-color: var(--text3);
     }
 
-    :host::-webkit-scrollbar-track {
+    #items-container::-webkit-scrollbar-track {
         background-color: transparent;
     }
 
-    .end {
-        position: fixed;
+    #top-shadow,
+    #bottom-shadow,
+    #left-shadow,
+    #right-shadow {
+        position: absolute;
+        background-image: linear-gradient(var(--angle), var(--shadow-colour), transparent);
+        z-index: 98;
+    }
+
+    #top-shadow,
+    #bottom-shadow {
+        width: 12vmin;
+        height: 2vmin;
         left: 0;
+    }
+
+    #top-shadow {
+        border-radius: 0 2vmin 0 0;
+        top: 0;
+        --angle: 180deg;
+    }
+
+    #bottom-shadow {
+        bottom: 12vmin;
+        --angle: 0;
+    }
+
+    #left-shadow,
+    #right-shadow {
+        width: 2vmin;
+        height: 12vmin;
         bottom: 0;
+    }
 
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-end;
+    #left-shadow {
+        left: 12vmin;
+        --angle: 90deg;
+    }
 
-        height: fit-content;
-
-        background-color: var(--surface3);
+    #right-shadow {
+        border-radius: 0 2vmin 0 0;
+        right: 0;
+        --angle: -90deg;
     }
 `;
 

@@ -42,12 +42,12 @@ export const roomPopupCss = css`
     @keyframes appear {
         from {
             filter: opacity(0) hue-rotate(var(--hue-rotate));
-            z-index: 100;
+            z-index: 99;
         }
 
         to {
             filter: opacity(1) hue-rotate(var(--hue-rotate));
-            z-index: 100;
+            z-index: 99;
         }
     }
 
