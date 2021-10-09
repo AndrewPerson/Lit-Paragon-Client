@@ -4,7 +4,7 @@ const ELEMENTS = [
     "dailytimetable",
     "announcements",
     "timetable"
-]
+];
 
 window.onUserData = async () => {
     var promises = [];

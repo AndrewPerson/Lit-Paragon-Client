@@ -192,8 +192,8 @@ export class StudentBarcode extends LitElement {
             
             <div>
                 <canvas style="display: none;" id="barcode-canv"></canvas>
-                <img style="display: none;" id="point1" draggable="false" src="images/circle.svg" />
-                <img style="display: none;" id="point2" draggable="false" src="images/circle.svg" />
+                <div style="display: none;" id="point1" draggable="false" src="images/circle.svg"></div>
+                <div style="display: none;" id="point2" draggable="false" src="images/circle.svg"></div>
             </div>
 
             <button title="Edit" id="edit" @click="${this.RequestBarcodeSize}">

@@ -1,30 +1,6 @@
-import { html, LitElement, nothing } from "lit"
-import { roomPopupCss, timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable.css";
+import { html, LitElement } from "lit"
+import { timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable.css";
 import { textCss, containerCss } from "./default.css";
-
-export class RoomPopup extends LitElement {
-    static get styles() {
-        return roomPopupCss;
-    }
-
-    static get properties() {
-        return {
-            room: {type: String},
-        }
-    }
-
-    constructor() {
-        super();
-
-        this.room = "";
-    }
-
-    render() {
-        return html`
-            <p>${this.room}</p>
-        `;
-    }
-}
 
 export class TimetablePeriod extends LitElement {
     static get styles() {
@@ -62,39 +38,24 @@ export class TimetablePeriod extends LitElement {
 
     render() {
         var highlighted = TimetablePeriod.highlighted == this.name && this.name;
-        var nextSibling = this.nextElementSibling;
-        var nextNextSibling = nextSibling?.nextElementSibling;
 
-        var displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
+        if (highlighted) {
+            var nextSibling = this.nextElementSibling;
+            var nextNextSibling = nextSibling?.nextElementSibling;
 
-        return html`
-            <div>
-                <p class="${highlighted ? 'highlighted' : ''}">
-                    ${this.name}
+            var displayPopupTop = nextSibling?.getAttribute("name") == this.name
+                                || nextNextSibling?.getAttribute("name") == this.name;
+
+            return html`
+                <p class="highlighted">${this.name}</p>
+                <p id="popup"
+                   ?reversed="${displayPopupTop}"
+                   @mouseover=${() => TimetablePeriod.highlight("")}>
+                    ${this.room}
                 </p>
-                ${
-                    highlighted ? (
-                        displayPopupTop ?
-                        html`
-                            <room-popup style="top: ${this.offsetTop - this.clientHeight * 1.5 - 0.5}px"
-                                        room="${this.room}"
-                                        class="reversed"
-                                        @mouseover=${() => TimetablePeriod.highlight("")}>
-                            </room-popup>
-                        `
-                        :
-                        html`
-                            <room-popup style="top: ${this.offsetTop + this.clientHeight + 0.5}px"
-                                        room="${this.room}"
-                                        @mouseover=${() => TimetablePeriod.highlight("")}>
-                            </room-popup>
-                        `
-                    )
-                    :
-                    nothing 
-                }
-            </div>
-        `;
+            `;
+        }
+        else return html`<p>${this.name}</p>`;
     }
 }
 
@@ -279,7 +240,6 @@ export class FullTimetable extends LitElement {
     }
 }
 
-customElements.define("room-popup", RoomPopup);
 customElements.define("timetable-period", TimetablePeriod);
 customElements.define("timetable-day", TimetableDay);
 customElements.define("timetable-row", TimetableRow);

@@ -14,9 +14,10 @@ export const barcodeCss = css`
     }
 
     #point1, #point2 {
-        filter: hue-rotate(var(--hue-rotate));
         width: var(--font-size);
         height: var(--font-size);
+        background-color: var(--surface4);
+        border-radius: 100%;
         transform: translate(calc(var(--font-size) / -2), calc(var(--font-size) / -2));
     }
 

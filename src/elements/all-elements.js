@@ -1,4 +1,5 @@
 import "./main-elements";
+import "./navbar-elements";
 import "./dailytimetable-elements";
 import "./barcode-elements";
 import "./announcement-elements";

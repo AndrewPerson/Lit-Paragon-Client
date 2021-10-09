@@ -1,66 +1,13 @@
-import { css } from "lit"
-
-export const roomPopupCss = css`
-    :host {
-        position: absolute;
-        background-image: url(images/popup.svg);
-        background-size: 100%;
-
-        filter: hue-rotate(var(--hue-rotate));
-
-        animation: appear 0.5s;
-
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    :host(.reversed) {
-        transform: rotate(180deg);
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        :host(.reversed) {
-            transform: translateY(1vmax) rotate(180deg);
-        }
-    }
-
-    :host(.reversed) p {
-        transform: rotate(180deg);
-    }
-
-    p {
-        color: var(--text4);
-        margin: 0;
-        width: 10vmin;
-        height: 3.9vmin;
-        margin-top: 2vmin;
-        text-align: center;
-        line-height: calc(var(--font-size) * 1.5);
-    }
-
-    @keyframes appear {
-        from {
-            filter: opacity(0) hue-rotate(var(--hue-rotate));
-            z-index: 99;
-        }
-
-        to {
-            filter: opacity(1) hue-rotate(var(--hue-rotate));
-            z-index: 99;
-        }
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        p {
-            width: 8vmax;
-            height: 3vmax;
-            margin-top: 1.7vmax;
-        }
-    }
-`;
+import { css } from "lit";
 
 export const timetablePeriodCss = css`
+    :host {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .highlighted {
         background-color: var(--surface4);
         color: var(--text4);
@@ -80,11 +27,6 @@ export const timetablePeriodCss = css`
         }
     }
 
-    div {
-        display: flex;
-        justify-content: center;
-    }
-
     p {
         width: 10vmin;
         height: 3.9vmin;
@@ -92,11 +34,74 @@ export const timetablePeriodCss = css`
         line-height: calc(var(--font-size) * 1.5);
     }
 
+    #popup {
+        position: absolute;
+        top: 4.9vmin;
+
+        color: var(--text4);
+
+        border-radius: 1vmin;
+        background-color: var(--surface4);
+
+        z-index: 99;
+
+        animation: popupAppear 0.3s ease-out;
+    }
+
+    #popup::before {
+        --size: 1vmin;
+
+        content: "";
+
+        position: absolute;
+        left: calc(50% - var(--size));
+        top: calc(-1 * var(--size));
+
+        border-right: var(--size) solid transparent;
+        border-bottom: var(--size) solid var(--surface4);
+        border-left: var(--size) solid transparent;
+    }
+
+    #popup[reversed] {
+        top: -4.9vmin;
+    }
+
+    #popup[reversed]::before {
+        top: unset;
+        bottom: calc(-1 * var(--size));
+
+        transform: rotate(180deg);
+    }
+
+    @keyframes popupAppear {
+        from {
+            filter: opacity(0);
+            z-index: 99;
+        }
+
+        to {
+            filter: opacity(1);
+            z-index: 99;
+        }
+    }
+
     @media (max-aspect-ratio: 3/4) {
         p {
             width: 8vmax;
             height: 3vmax;
             margin-top: 0.5vmax;
+        }
+
+        #popup {
+            top: 4vmax;
+        }
+
+        #popup[reversed] {
+            top: -4vmax;
+        }
+
+        #popup::before, #popup[reversed]::before {
+            --size: 1vmax;
         }
     }
 `;
