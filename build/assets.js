@@ -1,4 +1,5 @@
 self.assets = [
+	"/",
 	"/404",
 	"/all-elements.js",
 	"/assets/app-d68fe008.css",
@@ -39,6 +40,5 @@ self.assets = [
 	"/images/timetable.svg",
 	"/images/timetable.webp",
 	"/images/toggle.svg",
-	"/index",
 	"/login",
 ];
