@@ -3,12 +3,8 @@
     "@rollup/plugin-node-resolve": "^13.0.2",
     "@web/rollup-plugin-copy": "^0.3.0",
     "@web/rollup-plugin-html": "^1.9.0",
-    "firebase": "^9.0.2",
     "lit": "^2.0.0-rc.2",
     "rollup-plugin-terser": "^7.0.2",
     "sortablejs": "^1.14.0"
-  },
-  "devDependencies": {
-    "express": "^4.17.1"
   }
 }
