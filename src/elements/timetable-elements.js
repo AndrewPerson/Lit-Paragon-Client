@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit"
+import { html, nothing, LitElement } from "lit"
 import { timetablePeriodCss, timetableDayCss, timetableRowCss, fullTimetableCss } from "./timetable.css";
 import { textCss, containerCss } from "./default.css";
 
@@ -30,17 +30,17 @@ export class TimetablePeriod extends LitElement {
 
         this.name = "";
         this.room = "";
-
-        this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
-        this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
     }
 
     firstUpdated() {
+        //Just to prevent unnecessary event listeners
         if (this.name) {
             this.tabIndex = 0;
 
+            this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
+            this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
+
             this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("blur", () => TimetablePeriod.highlight(""));
         }
     }
 
@@ -57,8 +57,7 @@ export class TimetablePeriod extends LitElement {
             return html`
                 <p class="highlighted">${this.name}</p>
                 <p id="popup"
-                   ?reversed="${displayPopupTop}"
-                   @mouseover=${() => TimetablePeriod.highlight("")}>
+                   ?reversed="${displayPopupTop}">
                     ${this.room}
                 </p>
             `;
@@ -211,10 +210,12 @@ export class FullTimetable extends LitElement {
     }
 
     render() {
-        if (!this.hasAttribute("data")) {
-            return html`<loading-element style="width: 80%; margin: auto;"></loading-element>`
-        }
+        if (!this.hasAttribute("data"))
+            return nothing;
 
+        if (!this.data)
+            return html`<loading-element style="width: 80%; height: 100%; margin: auto;"></loading-element>`;
+        
         this.day = this.day.slice(0, 3).toUpperCase() + " " + this.day.slice(-1);
 
         return html`

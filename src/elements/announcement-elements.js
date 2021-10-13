@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, nothing, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { announcementItemCss, announcementContainerCss } from "./announcement.css";
@@ -79,9 +79,11 @@ export class SchoolAnnouncements extends LitElement {
     }
 
     render() {
-        if (!this.hasAttribute("data")) {
+        if (!this.hasAttribute("data"))
+            return nothing;
+
+        if (!this.data)
             return html`<loading-element style="width: 80%; margin: auto;"></loading-element>`;
-        }
 
         if (this.data.notices.length == 0) {
             return html`

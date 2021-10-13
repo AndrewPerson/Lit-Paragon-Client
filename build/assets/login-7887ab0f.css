@@ -38,22 +38,24 @@ p, button {
     -webkit-user-select: none;
 }
 
-button {
-    border: none;
-    background-color: var(--surface4);
-    color: var(--text4);
+:where(button) {
+    border: solid 0.2vmin var(--surface4);
+    background-color: var(--surface2);
+    color: var(--text2);
     padding: 1vmin 2vmin;
     border-radius: calc(var(--font-size) / 2.5);
-    max-width: max-content;
     box-shadow: var(--shadow);
     font-size: var(--font-size);
 }
 
-button:hover {
+:where(button:hover) {
     background-color: var(--surface3);
     color: var(--text2);
 }
 
-button:active {
-    color: var(--text1);
+:where(button:active) {
+    border: solid 0.2vmin transparent;
+    color: var(--text4);
+    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    background-color: var(--surface4);
 }

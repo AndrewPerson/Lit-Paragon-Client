@@ -55,7 +55,7 @@ export const navItemCss = css`
     }
 
     ::slotted(img) {
-        margin: 3.3vmin;
+        padding: 3.3vmin;
         width: 5.4vmin;
         filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     }
@@ -123,17 +123,10 @@ export const navMenuCss = css`
 
         #items-container {
             flex-direction: row;
+            justify-content: space-around;
 
             overflow-x: auto;
             overflow-y: hidden;
-        }
-
-        nav-item:first-of-type {
-            margin-left: auto;
-        }
-
-        nav-item:last-of-type {
-            margin-right: auto;
         }
     }
 

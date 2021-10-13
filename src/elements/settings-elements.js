@@ -133,8 +133,8 @@ export class UserSettings extends LitElement {
 
             <p>${mode}</p>
 
-            <button class="toggle" @click="${this.ToggleDark}">
-                <img draggable="false" class="toggleImg" src="${modeImg}" />
+            <button id="toggle" @click="${this.ToggleDark}">
+                <img draggable="false" id="toggleImg" src="${modeImg}" />
             </button>
             
             <span></span>

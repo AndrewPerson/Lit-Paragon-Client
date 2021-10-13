@@ -81,7 +81,7 @@ export class Navbar extends LitElement {
         }
     }
 
-    GetNavItem(order, index) {
+    GetNavItem(order, index, last) {
         var page;
         var title;
         var icon;
@@ -216,6 +216,8 @@ export class Navbar extends LitElement {
 
             ghostClass: "selected",
             dragClass: "drag",
+
+            fallbackOnBody: true,
             
             onEnd: e => {
                 if (window.page == e.item.page) e.item.classList.add("selected");
@@ -248,7 +250,7 @@ export class Navbar extends LitElement {
 
         return html`
             <div id="items-container">
-                ${repeat(this.order, key => key, (key, index) => this.GetNavItem(key, index))}
+                ${repeat(this.order, key => key, (key, index) => this.GetNavItem(key, index, index == this.order.length - 1))}
             
                 <div id="top-shadow" style="display: none"></div>
                 <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>

@@ -135,8 +135,8 @@ export class DailyTimetable extends LitElement {
         }
 
         var formattedString = '';
-        if (hours !== '00') {
-            formattedString += hours + ':';
+        if (hours != '00') {
+            formattedString = hours + ':';
         }
 
         formattedString += minutes + ':' + seconds;
@@ -145,12 +145,12 @@ export class DailyTimetable extends LitElement {
     }
 
     updateCountdown() {
-        if (!this.hasAttribute("data"))
+        if (!this.hasAttribute("data") || !this.data)
             return;
 
         var nextBell = this.getNextBell();
 
-        if (!nextBell && this.hasAttribute("data") && this.data) {
+        if (!nextBell) {
             if (!this.gettingNextDay) {
                 this.gettingNextDay = true;
 
@@ -235,11 +235,11 @@ export class DailyTimetable extends LitElement {
     }
 
     render() {
-        if (!this.hasAttribute("data") || this.data == null || this.data == undefined) {
-            return html`
-                <loading-element style="width: 80%"></loading-element>
-            `;
-        }
+        if (!this.hasAttribute("data"))
+            return nothing;
+
+        if (!this.data)
+            return html`<loading-element style="width: 80%"></loading-element>`;
 
         if (this.firstRender) {
             this.firstRender = false;

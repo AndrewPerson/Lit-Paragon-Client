@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, nothing, LitElement } from "lit";
 import { barcodeCss } from "./barcode.css";
 import { textCss, imgCss, fullContainerCss, containerCss } from "./default.css";
 
@@ -179,14 +179,17 @@ export class StudentBarcode extends LitElement {
     }
 
     updated() {
-        this.CreateBarcode();
+        if (this.hasAttribute("data") && this.data)
+            this.CreateBarcode();
     }
 
     render() {
-        if (!this.hasAttribute("data")) {
+        if (!this.hasAttribute("data"))
+            return nothing;
+
+        if (!this.data)
             return html`<loading-element style="width: 80%"></loading-element>`;
-        }
-                
+        
         return html`
             <button id="description"
                     @mouseover="${this.ShowDescription}"
@@ -198,7 +201,7 @@ export class StudentBarcode extends LitElement {
         
             <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
 
-            <p id="info" style="display: none;">Tap in two places to form the barcode</p>
+            <p id="info" style="display: none;">Tap in two places to form a barcode.</p>
             
             <button title="Edit" id="edit" @click="${this.RequestBarcodeSize}">
                 <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />

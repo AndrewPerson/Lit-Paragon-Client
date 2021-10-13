@@ -19,7 +19,7 @@ function DisplayExtension(extension) {
     var currentPage = document.getElementById(extension);
 
     if (currentPage) {
-        if (window.received_data) currentPage.classList.remove("hidden");
+        currentPage.classList.remove("hidden");
     }
     else {
         var newPage = document.createElement("iframe");
@@ -37,7 +37,7 @@ function DisplayExtension(extension) {
 
 function DisplayPage(page) {
     var newPage = document.getElementById(page);
-    if (window.received_data) newPage.classList.remove("hidden");
+    newPage.classList.remove("hidden");
 
     window.page = page;
 
@@ -72,7 +72,7 @@ function UpdatePage() {
 
     if (window.page) {
         var currentPage = document.getElementById(window.page);
-        if (window.received_data) currentPage.classList.add("hidden");
+        currentPage.classList.add("hidden");
     }
 
     if (extension) {

@@ -36,21 +36,20 @@ export const settingsCss = css`
         width: 60%;
     }
 
-    .toggle {
+    #toggle {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: fit-content;
+
+        width: calc(calc(var(--font-size) * 2) + 2vmin);
+        height: calc(calc(var(--font-size) * 2) + 2vmin);
+
         padding: 1vmin;
     }
 
-    .toggleImg {
-        width: calc(var(--font-size) * 2);
-    }
-
-    .editImg {
-        width: calc(var(--font-size) * 1.8);
-        padding: calc(var(--font-size) * 0.1);
+    #toggleImg {
+        width: 100%;
+        height: 100%;
     }
 
     #description {

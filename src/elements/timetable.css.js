@@ -37,6 +37,12 @@ export const timetablePeriodCss = css`
         line-height: calc(var(--font-size) * 1.5);
     }
 
+    @media (max-aspect-ratio: 3/4) {
+        p {
+            margin-top: 0.5vmax;
+        }
+    }
+
     #popup {
         position: absolute;
         top: calc(var(--font-size) * 2);
@@ -52,6 +58,8 @@ export const timetablePeriodCss = css`
         z-index: 99;
 
         animation: popupAppear 0.3s ease-out;
+
+        pointer-events: none;
     }
 
     #popup::before {
@@ -88,12 +96,6 @@ export const timetablePeriodCss = css`
         to {
             filter: opacity(1);
             z-index: 99;
-        }
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        p {
-            margin-top: 0.5vmax;
         }
     }
 `;
@@ -161,6 +163,14 @@ export const fullTimetableCss = css`
         margin: auto;
         padding: 4vmin;
         max-width: 92%;
+        width: calc(var(--font-size) * 23);
+        height: calc(calc(var(--font-size) * 25.5) + 9vmin);
+    }
+
+    @media (max-aspect-ratio: 3/4) {
+        :host {
+            height: calc(calc(calc(var(--font-size) * 25.5) + 9vmin) + 7.5vmax);
+        }
     }
 
     timetable-row + timetable-row {

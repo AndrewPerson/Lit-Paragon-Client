@@ -85,7 +85,6 @@ export const buttonCss = css`
         color: var(--text2);
         padding: 1vmin 2vmin;
         border-radius: calc(var(--font-size) / 2.5);
-        max-width: max-content;
         box-shadow: var(--shadow);
         font-size: var(--font-size);
     }
@@ -174,8 +173,6 @@ export const selectCss = css`
         padding-right: 6vmin;
 
         border-radius: 1vmin;
-
-        max-width: max-content;
 
         font-size: calc(var(--font-size) / 1.2);
 

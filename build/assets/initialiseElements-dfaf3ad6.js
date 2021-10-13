@@ -1,5 +1,3 @@
-window.received_data = false;
-
 const ELEMENTS = [
     "dailytimetable",
     "announcements",
@@ -7,29 +5,21 @@ const ELEMENTS = [
 ];
 
 window.onUserData = async () => {
-    var promises = [];
-
     ELEMENTS.forEach(element => {
-        promises.push(GetResourceFromCache(element).then(resource => {
+        GetResourceFromCache(element).then(resource => {
             document.getElementById(element).setAttribute("data", resource);
-        }));
+        });
     });
 
-    promises.push(GetResourceFromCache("userinfo").then(resource => {
+    GetResourceFromCache("userinfo").then(resource => {
         document.getElementById("barcode").setAttribute("data", resource);
-    }));
+    });
 
-    promises.push(GetResourceFromCache("dailytimetable").then(resource => {
+    GetResourceFromCache("dailytimetable").then(resource => {
         if (resource) {
             var day = JSON.parse(resource).timetable.timetable.dayname;
 
             document.getElementById("timetable").setAttribute("day", day);
         }
-    }));
-
-    await Promise.all(promises);
-
-    window.received_data = true;
-
-    if (window.page) document.getElementById(window.page).classList.remove("hidden");
+    });
 }

@@ -57,6 +57,7 @@ export const barcodeCss = css`
         padding: 2vmin;
         border-radius: 2vmin;
         box-shadow: var(--shadow);
+        z-index: 98;
     }
 
     #edit {
