@@ -21,7 +21,7 @@ export const fullContainerCss = css`
     }
 
     /*
-        104% of 300px.
+        312px is 104% of 300px.
         We use 104% because that includes the margin,
         which is 2% either side.
     */
@@ -114,11 +114,24 @@ export const sliderCss = css`
     }
 
     :where(input[type=range])::-moz-range-thumb {
+        -webkit-appearance: none;
         background-color: var(--surface4);
         border-radius: 100%;
         width: calc(var(--font-size) / 1.5);
         height: calc(var(--font-size) / 1.5);
         border: none;
+        box-shadow: var(--shadow-colour)
+                    /*
+                        This bit basically changes the direction of
+                        the shadow based on the position of the slider.
+                        Since hue is relative to the position of the
+                        slider, we use that as the position. We then
+                        scale it to be between -1 and 1 and use that
+                        to determine the direction of the shadow.
+                    */
+                    calc(calc(calc(var(--main-hue) - 180) / -180) * var(--shadow-x))
+                    calc(var(--shadow-y) / 2)
+                    calc(var(--shadow-spread) / 2);
     }
 
     :where(input[type=range])::-webkit-slider-thumb {
@@ -128,6 +141,18 @@ export const sliderCss = css`
         width: calc(var(--font-size) / 1.5);
         height: calc(var(--font-size) / 1.5);
         border: none;
+        box-shadow: var(--shadow-colour)
+                    /*
+                        This bit basically changes the direction of
+                        the shadow based on the position of the slider.
+                        Since hue is relative to the position of the
+                        slider, we use that as the position. We then
+                        scale it to be between -1 and 1 and use that
+                        to determine the direction of the shadow.
+                    */
+                    calc(calc(calc(var(--main-hue) - 180) / -180) * var(--shadow-x))
+                    calc(var(--shadow-y) / 2)
+                    calc(var(--shadow-spread) / 2);
     }
 `;
 

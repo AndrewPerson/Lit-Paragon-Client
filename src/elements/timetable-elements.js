@@ -32,8 +32,16 @@ export class TimetablePeriod extends LitElement {
         this.room = "";
 
         this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
-
         this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
+    }
+
+    firstUpdated() {
+        if (this.name) {
+            this.tabIndex = 0;
+
+            this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
+            this.addEventListener("blur", () => TimetablePeriod.highlight(""));
+        }
     }
 
     render() {

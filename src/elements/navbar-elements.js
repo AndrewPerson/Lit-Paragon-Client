@@ -1,23 +1,28 @@
-import { html, LitElement } from "lit";
+import { html, nothing, LitElement } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { navItemCss, navMenuCss } from "./navbar.css";
+import { imgCss } from "./default.css";
 
-import Sortable, { AutoScroll } from 'sortablejs/modular/sortable.core.esm.js';
-Sortable.mount(new AutoScroll());
+import Sortable, { AutoScroll } from "sortablejs/modular/sortable.core.esm.js";
+
+Sortable.mount(AutoScroll);
 
 export class NavItem extends LitElement {
     static get styles() {
-        return navItemCss;
+        return [navItemCss, imgCss];
     }
 
     static get properties() {
         return {
             page: {type: String},
             title: {type: String},
+            editing: {type: Boolean}
         };
     }
 
-    UpdatePage() {
+    UpdatePage(e) {
+        e.preventDefault();
+
         location.hash = this.page;
 
         if (location.pathname != "") location.pathname = "";
@@ -26,25 +31,32 @@ export class NavItem extends LitElement {
         window.UpdateScreenType();
 
         document.getElementById("nav").removeAttribute("editing");
-    }
 
+        return false;
+    }
+    
     constructor() {
         super();
 
         this.page = "";
         this.title = "";
+        this.editing = false;
     }
 
     render() {
+        this.draggable = this.editing;
+
         if (window.page == this.page)
             this.classList.add("selected");
         else
             this.classList.remove("selected");
 
         return html`
-            <button @click="${this.UpdatePage}" title="${this.title}">
+            <a href="#${this.page}" @click="${this.UpdatePage}" title="${this.title}">
                 <slot></slot>
-            </button>
+            </a>
+
+            ${this.editing ? html`<img id="handle" src="images/drag.svg" draggable="false"/>` : nothing}
         `;
     }
 }
@@ -69,49 +81,20 @@ export class Navbar extends LitElement {
         }
     }
 
-    GetNavItem(order) {
+    GetNavItem(order, index) {
         var page;
         var title;
         var icon;
 
-        if (order == 0) {
-            page = "dailytimetable";
-            title = "Daily Timetable";
-            icon = "images/dailytimetable.svg";
-        }
-        else if (order == 1) {
-            page = "barcode";
-            title = "ID Barcode";
-            icon = "images/barcode.svg";
-        }
-        else if (order == 2) {
-            page = "timetable";
-            title = "Timetable";
-            icon = "images/timetable.svg";
-        }
-        else if (order == 3) {
-            page = "announcements";
-            title = "Announcements";
-            icon = "images/announcements.svg";
-        }
-        else if (order == 4) {
-            page = "pages";
-            title = "Pages Marketplace";
-            icon = "images/marketplace.svg";
-        }
-        else if (order == 5) {
-            page = "settings";
-            title = "Settings";
-            icon = "images/settings.svg";
-        }
+        if (order < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[order]);
         else {
-            page = `(page)${this.pages[order - 6]}`;
-            title = this.titles[order - 6];
-            icon = this.icons[order - 6];
+            page = `(page)${this.pages[order - Navbar.defaultPages.length]}`;
+            title = this.titles[order - Navbar.defaultPages.length];
+            icon = this.icons[order - Navbar.defaultPages.length];
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" page="${page}" title="${title}">
+            <nav-item index="${index}" ?editing="${this.editing}" page="${page}" title="${title}">
                 <img draggable="false" src="${icon}" />
             </nav-item>
         `;
@@ -127,7 +110,7 @@ export class Navbar extends LitElement {
         var leftShadow = this.shadowRoot.getElementById("left-shadow");
         var rightShadow = this.shadowRoot.getElementById("right-shadow");
 
-        if (matchMedia("(max-aspect-ratio: 1/1)").matches) {
+        if (window.innerWidth <= window.innerHeight) {
             topShadow.style.display = "none";
             bottomShadow.style.display = "none";
 
@@ -157,6 +140,39 @@ export class Navbar extends LitElement {
         }
     }
 
+    static defaultPages = [
+        {
+            page: "dailytimetable",
+            title: "Daily Timetable",
+            icon: "images/dailytimetable.svg"
+        },
+        {
+            page: "barcode",
+            title: "ID Barcode",
+            icon: "images/barcode.svg"
+        },
+        {
+            page: "timetable",
+            title: "Timetable",
+            icon: "images/timetable.svg"
+        },
+        {
+            page: "announcements",
+            title: "Announcements",
+            icon: "images/announcements.svg"
+        },
+        {
+            page: "pages",
+            title: "Pages Marketplace",
+            icon: "images/marketplace.svg"
+        },
+        {
+            page: "settings",
+            title: "Settings",
+            icon: "images/settings.svg"
+        }
+    ];
+
     constructor() {
         super();
 
@@ -167,6 +183,8 @@ export class Navbar extends LitElement {
         this.order = [0, 1, 2, 3, 4, 5];
 
         this.editing = false;
+
+        this.sortable = null;
 
         matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
@@ -186,37 +204,30 @@ export class Navbar extends LitElement {
     }
 
     firstUpdated() {
-        this.sortable = Sortable.create(this.shadowRoot.getElementById("items-container"), {
+        var container = this.shadowRoot.getElementById("items-container");
+
+        container.addEventListener("scroll", this.ShowShadows.bind(this));
+    
+        this.sortable = new Sortable(container, {
             group: "nav-items",
             sort: true,
             disabled: !this.editing,
-            animation: 150,
-            easing: "cubic-bezier(1, 0, 0, 1)",
-            preventOnFilter: true,
             draggable: "nav-item",
-            dragClass: "drag",
+
             ghostClass: "selected",
-            direction: function() {
-                return matchMedia("(max-aspect-ratio: 1/1)").matches ? "horizontal" : "vertical";
-            },
-            onEnd: (function(e) {
-                var element = e.item;
+            dragClass: "drag",
+            
+            onEnd: e => {
+                if (window.page == e.item.page) e.item.classList.add("selected");
 
-                if (window.page == element.page) element.classList.add("selected");
+                var order = this.order.splice(e.oldIndex, 1)[0];
+                this.order.splice(e.newIndex, 0, order);
 
-                var id = this.order.splice(e.oldIndex, 1)[0];
+                localStorage.setItem("Nav Order", JSON.stringify(this.order));
 
-                this.order.splice(e.newIndex, 0, id);
-
-                var json = JSON.stringify(this.order);
-
-                localStorage.setItem("Nav Order", json);
-            }).bind(this)
+                this.requestUpdate();
+            }
         });
-    }
-
-    updated() {
-        this.shadowRoot.getElementById("items-container").addEventListener("scroll", this.ShowShadows.bind(this));
     }
 
     render() {
@@ -224,25 +235,25 @@ export class Navbar extends LitElement {
 
         if (order)
             this.order = JSON.parse(order);
-        else if (this.pages.length < 6)
+        else if (this.pages.length >= 6)
             this.order = this.pages.map((_, index) => index);
 
-        var vmin = screen.availHeight < screen.availWidth ? screen.availHeight / 100 : screen.availWidth / 2;
+        var mobile = window.innerWidth <= window.innerHeight;
 
-        var scrollable = this.order.length * 12 * vmin > screen.availHeight;
+        var vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
 
-        var mobile = matchMedia("(max-aspect-ratio: 1/1)").matches;
+        var scrollable = this.order.length * 12 * vmin > window.innerHeight;
 
         if (this.sortable) this.sortable.option("disabled", !this.editing);
 
         return html`
             <div id="items-container">
-                ${repeat(this.order, key => key, key => this.GetNavItem(key))}
-
+                ${repeat(this.order, key => key, (key, index) => this.GetNavItem(key, index))}
+            
                 <div id="top-shadow" style="display: none"></div>
                 <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
-                <div id="left-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
-                <div id="right-shadow" style="display: none"></div>
+                <div id="left-shadow" style="display: none"></div>
+                <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
             </div>
         `;
     }

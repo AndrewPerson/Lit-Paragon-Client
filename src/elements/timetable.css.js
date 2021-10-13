@@ -9,10 +9,13 @@ export const timetablePeriodCss = css`
     }
 
     .highlighted {
+        border-radius: 1vmin;
+
         background-color: var(--surface4);
         color: var(--text4);
+
+        box-shadow: var(--shadow);
         text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
-        border-radius: 1vmin;
 
         animation: appear 0.3s ease-out;
     }
@@ -28,20 +31,23 @@ export const timetablePeriodCss = css`
     }
 
     p {
-        width: 10vmin;
-        height: 3.9vmin;
+        width: calc(var(--font-size) * 4);
+        height: calc(var(--font-size) * 1.5);
         text-align: center;
         line-height: calc(var(--font-size) * 1.5);
     }
 
     #popup {
         position: absolute;
-        top: 4.9vmin;
+        top: calc(var(--font-size) * 2);
 
         color: var(--text4);
 
         border-radius: 1vmin;
         background-color: var(--surface4);
+
+        box-shadow: var(--shadow);
+        text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
 
         z-index: 99;
 
@@ -49,21 +55,21 @@ export const timetablePeriodCss = css`
     }
 
     #popup::before {
-        --size: 1vmin;
+        --size: calc(var(--font-size) / 2);
 
         content: "";
 
         position: absolute;
-        left: calc(50% - var(--size));
+        left: calc(50% - calc(var(--size) / 1.5));
         top: calc(-1 * var(--size));
 
-        border-right: var(--size) solid transparent;
+        border-right: calc(var(--size) / 1.5) solid transparent;
         border-bottom: var(--size) solid var(--surface4);
-        border-left: var(--size) solid transparent;
+        border-left: calc(var(--size) / 1.5) solid transparent;
     }
 
     #popup[reversed] {
-        top: -4.9vmin;
+        top: calc(var(--font-size) * -2);
     }
 
     #popup[reversed]::before {
@@ -87,21 +93,7 @@ export const timetablePeriodCss = css`
 
     @media (max-aspect-ratio: 3/4) {
         p {
-            width: 8vmax;
-            height: 3vmax;
             margin-top: 0.5vmax;
-        }
-
-        #popup {
-            top: 4vmax;
-        }
-
-        #popup[reversed] {
-            top: -4vmax;
-        }
-
-        #popup::before, #popup[reversed]::before {
-            --size: 1vmax;
         }
     }
 `;
@@ -112,14 +104,8 @@ export const timetableDayCss = css`
         flex-direction: column;
         align-items: center;
         justify-content: flex-start;
-        width: 12vmin;
+        width: calc(var(--font-size) * 4.5);
         min-width: 0;
-    }
-
-    @media (max-aspect-ratio: 3/4) {
-        :host {
-            width: 9vmax;
-        }
     }
 
     .name {

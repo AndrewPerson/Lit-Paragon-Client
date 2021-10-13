@@ -188,21 +188,27 @@ export class StudentBarcode extends LitElement {
         }
                 
         return html`
+            <button id="description"
+                    @mouseover="${this.ShowDescription}"
+                    @mouseout="${this.HideDescription}"
+                    @focus="${this.ShowDescription}"
+                    @blur="${this.HideDescription}">
+                <img draggable="false" id="descriptionImg" src="images/info.svg" />
+            </button>
+        
+            <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
+
             <p id="info" style="display: none;">Tap in two places to form the barcode</p>
             
+            <button title="Edit" id="edit" @click="${this.RequestBarcodeSize}">
+                <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />
+            </button>
+
             <div>
                 <canvas style="display: none;" id="barcode-canv"></canvas>
                 <div style="display: none;" id="point1" draggable="false" src="images/circle.svg"></div>
                 <div style="display: none;" id="point2" draggable="false" src="images/circle.svg"></div>
             </div>
-
-            <button title="Edit" id="edit" @click="${this.RequestBarcodeSize}">
-                <img draggable="false" style="width: inherit; height: inherit;" src="images/edit.svg" />
-            </button>
-
-            <img draggable="false" @mouseover="${this.ShowDescription}" @mouseout="${this.HideDescription}" id="description" src="images/info.svg" />
-        
-            <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
         `;
     }
 }

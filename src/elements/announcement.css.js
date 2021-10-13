@@ -19,37 +19,47 @@ export const announcementItemCss = css`
         margin-top: 1vmin;
     }
 
-    .title {
+    button {
+        border: none;
+        background: transparent;
+        padding: 0;
+    }
+
+    #title {
         cursor: pointer;
     }
 
-    .sub {
+    #sub {
         font-size: calc(var(--font-size) / 1.5);
+    }
+
+    #toggle {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        width: 100%;
+
+        cursor: pointer;
+    }
+
+    #toggleImg {
+        margin-top: 2vmin;
+
+        width: 4vmin;
+    }
+
+    #toggleImg.flipped {
+        transform: rotate(180deg);
     }
 
     .collapsed {
         display: none;
     }
 
-    .collapsed + .toggle {
-        transform: rotate(180deg);
-    }
-
     .expanded {
         display: block;
         margin-top: 4vmin;
-    }
-
-    .toggle {
-        margin-top: 2vmin;
-
-        position: absolute;
-        top: 0;
-        right: 0;
-
-        width: 4vmin;
-
-        cursor: pointer;
     }
 `;
 

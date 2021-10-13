@@ -39,12 +39,15 @@ export class AnnouncementItem extends LitElement {
 
     render() {
         return html`
-            <p class="title" @click="${this.toggle}">${this.title}</p>
-            <p class="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
-            <blockquote id="content" class="content ${this.collapsed ? 'collapsed' : 'expanded'}">
+            <button @click="${this.toggle}" id="toggle">
+                <p id="title">${this.title}</p>
+                <img id="toggleImg" class="${this.collapsed ? "" : "flipped"}" src="images/toggle.svg" />
+            </button>
+
+            <p id="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
+            <blockquote id="content" class="${this.collapsed ? "collapsed" : "expanded"}">
                 ${unsafeHTML(this.content)}
             </blockquote>
-            <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
         `;
     }
 }

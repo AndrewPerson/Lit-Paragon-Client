@@ -34,7 +34,18 @@ export const barcodeCss = css`
         position: absolute;
         top: 1vmin;
         left: 1vmin;
+
         width: 4vmin;
+        height: 4vmin;
+
+        background: transparent;
+        border: none;
+        padding: 0;
+    }
+
+    #descriptionImg {
+        width: 4vmin;
+        height: 4vmin;
     }
 
     #descriptionContent {

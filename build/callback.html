@@ -17,7 +17,7 @@
 
     <base href="/">
 
-    <link href="assets/app-98ceefce.css" rel="stylesheet">
+    <link href="assets/app-d68fe008.css" rel="stylesheet">
     <link href="assets/login-1689195c.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
@@ -29,7 +29,7 @@
     <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
     <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
 
-    <p class="important">Logging in...</p>
+    <p id="message" class="important">Logging in...</p>
 
     <script>
         if (window.isDark()) {
@@ -66,6 +66,13 @@
             .then(() => {
                 location.href = location.origin;
             });
+        }
+        else {
+            var error = params.get("error");
+
+            if (error) {
+                document.getElementById("message").innerText = `Error: ${error}`;
+            }
         }
     </script>
 

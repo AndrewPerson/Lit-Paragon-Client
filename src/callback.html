@@ -32,7 +32,7 @@
     <img draggable="false" id="logo" src="images/logo.svg" />
     <img draggable="false" class="logo-rings" src="images/rings.svg" />
 
-    <p class="important">Logging in...</p>
+    <p id="message" class="important">Logging in...</p>
 
     <script>
         if (window.isDark()) {
@@ -69,6 +69,13 @@
             .then(() => {
                 location.href = location.origin;
             });
+        }
+        else {
+            var error = params.get("error");
+
+            if (error) {
+                document.getElementById("message").innerText = `Error: ${error}`;
+            }
         }
     </script>
 </body>

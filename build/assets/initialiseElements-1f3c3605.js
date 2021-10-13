@@ -20,9 +20,11 @@ window.onUserData = async () => {
     }));
 
     promises.push(GetResourceFromCache("dailytimetable").then(resource => {
-        var day = JSON.parse(resource).timetable.timetable.dayname;
+        if (resource) {
+            var day = JSON.parse(resource).timetable.timetable.dayname;
 
-        document.getElementById("timetable").setAttribute("day", day);
+            document.getElementById("timetable").setAttribute("day", day);
+        }
     }));
 
     await Promise.all(promises);

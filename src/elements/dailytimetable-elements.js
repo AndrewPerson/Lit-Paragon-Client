@@ -24,8 +24,8 @@ export class BellItem extends LitElement {
 
     render() {
         return html`
-            <p class="start">${this.name}</p>
-            <p class="end">${this.time}</p>
+            <p>${this.name}</p>
+            <p>${this.time}</p>
         `;
     }
 }
@@ -66,11 +66,11 @@ export class PayloadBellItem extends LitElement {
 
         return html`
             <div>
-                <p class="start">${this.name}</p>
+                <p>${this.name}</p>
                 <p class="sub">at <span class="sub ${timeClass}">${this.time}</span> with <span class="sub ${teacherClass}">${this.teacher}</span></p>
             </div>
             
-            <p class="end ${roomClass}">${this.room}</p>
+            <p class="${roomClass}">${this.room}</p>
         `;
     }
 }

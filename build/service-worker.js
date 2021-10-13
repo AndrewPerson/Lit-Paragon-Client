@@ -16,7 +16,7 @@ const VALID_CACHES = [
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
-const METADATA_ENDPOINT = "https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Metadata";
+const METADATA_ENDPOINT = "https://paragon-metadata.professor-smart.workers.dev";
 
 var UPDATING = false;
 
@@ -88,23 +88,7 @@ async function GetLatestMetadata() {
     var text = await request.text();
     var object = JSON.parse(text);
 
-    var pages = object.fields.Pages.mapValue.fields;
-
-    //TODO: Add extension fields later
-    return {
-        version: object.fields.Version.stringValue,
-        pages: Object.keys(pages).map(key => {
-            var page = pages[key].mapValue.fields;
-            
-            return {
-                finished: page.Finished.booleanValue,
-                url: page.Url?.stringValue,
-                description: page.Description?.stringValue,
-                icon: page.Icon?.stringValue,
-                navIcon: page.NavIcon?.stringValue
-            };
-        })
-    };
+    return object;
 }
 
 async function MetadataFetch() {

@@ -14,17 +14,20 @@ export const settingsCss = css`
 
         margin: auto;
 
-        width: 60vw;
-        max-width: 60vh;
-        min-width: 300px;
         min-height: 70vh;
+    }
+
+    @media not all and (max-width: 300px) {
+        :host {
+            width: 60vw;
+            max-width: 60vh;
+            min-width: 300px;
+        }
     }
 
     @media (max-width: 300px) {
         :host {
-            width: 100vw !important;
-            min-width: unset !important;
-            max-width: unset !important;
+            width: 100vw;
         }
     }
 
@@ -52,10 +55,32 @@ export const settingsCss = css`
 
     #description {
         z-index: 1;
+
         position: absolute;
         top: 1vmin;
         left: 1vmin;
+
         width: 4vmin;
+        height: 4vmin;
+
+        padding: 0;
+
+        border: none;
+
+        box-shadow: none;
+    }
+
+    #description:hover {
+        background-color: transparent;
+    }
+
+    #description:active {
+        background-color: transparent;
+    }
+    
+    #descriptionImg {
+        width: 4vmin;
+        height: 4vmin;
     }
 
     #descriptionContent {
@@ -68,29 +93,5 @@ export const settingsCss = css`
         padding: 2vmin;
         border-radius: 2vmin;
         box-shadow: var(--shadow);
-    }
-
-    .exit {
-        position: absolute;
-        top: 1vmin;
-        right: 1vmin;
-
-        width: 3vmin;
-        height: 3vmin;
-
-        padding: 0;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
-        background-color: transparent;
-        border: none;
-        box-shadow: none;
-    }
-
-    .exit > img {
-        width: inherit;
-        height: inherit;
     }
 `;

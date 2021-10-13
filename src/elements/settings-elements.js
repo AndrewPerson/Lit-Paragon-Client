@@ -12,6 +12,17 @@ export class UserSettings extends LitElement {
         e.stopPropagation();
     }
 
+    HideDescriptionBlur(e) {
+        var path = e.composedPath();
+
+        var children = this.shadowRoot.getElementById("descriptionContent").children;
+
+        var last = children[children.length - 1];
+
+        if (path.includes(last))
+            this.HideDescription();
+    }
+
     ToggleDark() {
         if (window.isDark())
             localStorage.setItem("Dark", "false");
@@ -51,6 +62,13 @@ export class UserSettings extends LitElement {
         this.SaveColour();
     }
 
+    ToggleEditNavbar() {
+        var navbar = document.getElementById("nav");
+
+        if (navbar.hasAttribute("editing")) navbar.removeAttribute("editing");
+        else navbar.setAttribute("editing", "");
+    }
+
     updated() {
         caches.open(window.METADATA_CACHE).then(async metadataCache => {
             var metadataResponse = await metadataCache.match("Metadata");
@@ -65,28 +83,21 @@ export class UserSettings extends LitElement {
         this.shadowRoot.getElementById("hue").value = window.getHue().hue;
     }
 
-    ToggleEditNavbar() {
-        var navbar = document.getElementById("nav");
-
-        if (navbar.hasAttribute("editing")) navbar.removeAttribute("editing");
-        else navbar.setAttribute("editing", "");
-    }
-
     disconnectedCallback() {
-        document.removeEventListener("click", this.HideInfo);
+        document.removeEventListener("click", this.HideDescription);
     }
 
     constructor() {
         super();
 
-        this.HideInfo = (() => {
+        this.HideDescription = (() => {
             if (!this.shadowRoot) return;
 
             this.shadowRoot.getElementById("descriptionContent").style.display = "none";
         })
         .bind(this);
 
-        document.addEventListener("click", this.HideInfo);
+        document.addEventListener("click", this.HideDescription);
     }
 
     render() {
@@ -96,9 +107,15 @@ export class UserSettings extends LitElement {
         var modeImg = dark ? "images/sun.svg" : "images/moon.svg";
 
         return html`
-            <img draggable="false" @click="${this.ShowDescription}" id="description" src="images/info.svg" />
+            <button id="description" @click="${this.ShowDescription}" @focus="${this.ShowDescription}">
+                <img draggable="false" id="descriptionImg" src="images/info.svg" />
+            </button>
     
-            <p style="display: none;" id="descriptionContent" @click="${this.ShowDescription}">Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.<br/>The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.</p>
+            <p style="display: none;" id="descriptionContent" @focusout="${this.HideDescriptionBlur}">
+                Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
+                <br/>
+                The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
+            </p>
 
             <p id="version">Paragon v0.0.0</p>
 

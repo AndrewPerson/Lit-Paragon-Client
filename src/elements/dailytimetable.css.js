@@ -4,6 +4,7 @@ export const bellCss = css`
     :host {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         width: 60%;
         margin-top: 0.5vmin;
         margin-bottom: 0.5vmin;
@@ -11,15 +12,6 @@ export const bellCss = css`
 
     :host > * {
         display: inline-block;
-    }
-
-    .start {
-        flex-grow: 4;
-    }
-
-    .end {
-        flex-grow: 1;
-        text-align: end;
     }
 
     .changed {
