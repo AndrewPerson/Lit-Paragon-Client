@@ -213,6 +213,7 @@ export class Navbar extends LitElement {
             sort: true,
             disabled: !this.editing,
             draggable: "nav-item",
+            handle: "#handle",
 
             ghostClass: "selected",
             dragClass: "drag",
