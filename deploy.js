@@ -28,7 +28,7 @@ function getFiles(rootDir, relativeDir) {
 
 rmSync(__dirname.replace('\\', '/') + "/build", { recursive: true, force: true });
 
-exec("rollup -c", (err, stdout, stderr) => {
+exec("npx rollup -c", (err, stdout, stderr) => {
     if (err) {
         console.log(err);
         return;
@@ -36,18 +36,27 @@ exec("rollup -c", (err, stdout, stderr) => {
     
     console.log(`${stdout}\n${stderr}`);
     
-    var js = "self.assets = [\n\t\"/\",\n"
+    exec(`npx svgo -f ${__dirname}/build -r -p 1`, (err, stdout, stderr) => {
+        if (err) {
+            console.log(err);
+            return;
+        }
+        
+        console.log(`${stdout}\n${stderr}`);
 
-    getFiles(__dirname.replace('\\', '/') + "/build", "/").forEach(file => {
-        if (!/(service-worker.*?\.js)|(index)$/g.test(file)) js += `\t"${file}",\n`;
+        var js = "self.assets = [\n\t\"/\",\n"
+
+        getFiles(__dirname.replace('\\', '/') + "/build", "/").forEach(file => {
+            if (!/\/(service-worker.*?\.js)|\/(index)$/g.test(file)) js += `\t"${file}",\n`;
+        });
+
+        js += "];";
+
+        writeFileSync(__dirname.replace('\\', '/') + "/build/assets.js", js);
+
+        if (process.argv[2] != "release") {
+            writeFileSync(__dirname.replace('\\', '/') + "/build/service-worker.js",
+                        readFileSync(__dirname.replace('\\', '/') + "/src/service-worker.debug.js"));
+        }
     });
-
-    js += "];";
-
-    writeFileSync(__dirname.replace('\\', '/') + "/build/assets.js", js);
-
-    if (process.argv[2] != "release") {
-        writeFileSync(__dirname.replace('\\', '/') + "/build/service-worker.js",
-                    readFileSync(__dirname.replace('\\', '/') + "/src/service-worker.debug.js"));
-    }
 });

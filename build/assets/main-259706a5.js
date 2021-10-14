@@ -119,8 +119,7 @@ async function GetAllResources(token) {
         return;
     }
     
-    var text = await resourceResponse.text();
-    var resources = JSON.parse(text);
+    var resources = await resourceResponse.json();
 
     return resources;
 }

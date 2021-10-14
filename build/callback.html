@@ -51,10 +51,8 @@
 
             if (!tokenResponse) location.href = location.origin + "/login";
 
-            var textPromise = tokenResponse.text();
-
             var resourceCache = await caches.open("User Resources");
-            resourceCache.put("Token", new Response(await textPromise));
+            resourceCache.put("Token", tokenResponse);
         }
 
         var params = new URLSearchParams(window.location.search);

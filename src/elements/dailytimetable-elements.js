@@ -158,8 +158,10 @@ export class DailyTimetable extends LitElement {
                     var nextTimetableResponse = await cache.match("next-dailytimetable");
 
                     if (nextTimetableResponse) {
-                        await cache.put("dailytimetable", nextTimetableResponse);
-                        
+                        var cloneResponse = nextTimetableResponse.clone();
+
+                        await cache.put("dailytimetable", cloneResponse);
+
                         var text = await nextTimetableResponse.text();
 
                         await cache.delete("next-dailytimetable");

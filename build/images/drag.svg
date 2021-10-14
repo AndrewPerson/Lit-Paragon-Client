@@ -1,11 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg width="16px" height="26px" viewBox="0 0 16 26" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Group">
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" id="Ellipse" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" transform="translate(10 0)" id="Ellipse-2" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" transform="translate(0 10)" id="Ellipse-3" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" transform="translate(10 10)" id="Ellipse-4" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" transform="translate(0 20)" id="Ellipse-5" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 3C0 1.34315 1.34315 0 3 0C4.65685 0 6 1.34315 6 3C6 4.65685 4.65685 6 3 6C1.34315 6 0 4.65685 0 3Z" transform="translate(10 20)" id="Ellipse-6" fill="#323232" fill-rule="evenodd" stroke="none" />
-  </g>
-</svg>
+<svg width="16" height="26" xmlns="http://www.w3.org/2000/svg"><g fill="#323232" fill-rule="evenodd"><path d="M0 3a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM10 3a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM0 13a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM10 13a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM0 23a3 3 0 1 1 6 0 3 3 0 0 1-6 0ZM10 23a3 3 0 1 1 6 0 3 3 0 0 1-6 0Z"/></g></svg>

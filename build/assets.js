@@ -8,7 +8,7 @@ self.assets = [
 	"/assets/jsbarcode-cf8d2644.js",
 	"/assets/login-7887ab0f.css",
 	"/assets/logo-ddb5fa25.svg",
-	"/assets/main-b4acdbde.js",
+	"/assets/main-259706a5.js",
 	"/assets/manifest.json",
 	"/assets/navbar-211794f0.css",
 	"/assets/pages-81a6267e.js",
