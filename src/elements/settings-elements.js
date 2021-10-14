@@ -74,7 +74,7 @@ export class UserSettings extends LitElement {
             var metadataResponse = await metadataCache.match("Metadata");
 
             if (metadataResponse) {
-                var metadata = JSON.parse(await metadataResponse.text());
+                var metadata = await metadataResponse.json();
             
                 this.shadowRoot.getElementById("version").textContent = `Paragon v${metadata.version}`;
             }

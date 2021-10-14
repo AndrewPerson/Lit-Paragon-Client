@@ -85,10 +85,7 @@ async function Message(event) {
 async function GetLatestMetadata() {
     var request = await fetch(METADATA_ENDPOINT);
 
-    var text = await request.text();
-    var object = JSON.parse(text);
-
-    return object;
+    return await request.json();
 }
 
 async function MetadataFetch() {
@@ -116,8 +113,7 @@ async function DataFetch() {
 
     var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
     
-    var text = await resourceResponse.text();
-    var resources = JSON.parse(text);
+    var resources = await resourceResponse.json();
 
     await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
 
