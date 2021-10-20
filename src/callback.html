@@ -62,7 +62,7 @@
 
         var code = params.get("code");
 
-        if (code) {
+        if (code || location.hostname == "localhost") {
             Token(code)
             .then(() => {
                 location.href = location.origin;
