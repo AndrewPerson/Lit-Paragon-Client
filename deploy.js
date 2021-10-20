@@ -99,7 +99,7 @@ rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
     ]);
 
     if (process.argv[2] == "deploy") {
-        await cmd(config.deploy_md || "firebase deploy");
+        if (config.deployCmd) await cmd(config.deployCmd);
     }
     else {
         await writeFile(__dirname + "/build/service-worker.js",
