@@ -28,7 +28,11 @@ You will need:
 
 1. Download all the code here using whatever method you want. (If you download it as a `zip` file, *don't forget to extract it.*)
 
-2. Run ```npm install```.
+2. Run
+
+```none
+npm install
+```.
 
 ### Editing
 
@@ -37,7 +41,11 @@ TODO Write how to edit config files
 
 ### Previewing
 
-1. Run ```node deploy```.
+1. Run
+
+```none
+node deploy
+```.
 
 2. Display the contents of the `build` folder with whatever dev server you want. (I use [Five Server](https://marketplace.visualstudio.com/items?itemName=yandeu.five-server), which is for VS Code.)
 
@@ -45,4 +53,8 @@ TODO Write how to edit config files
 
 1. Edit `"deployCmd"` in `config.json` to be the command you have to run in order deploy your website to your hosting provider. If you don't have a command or want to do it manually, either remove it or make it blank.
 
-2. Run ```node deploy deploy```.
+2. Run
+
+```none
+    node deploy deploy
+```.
