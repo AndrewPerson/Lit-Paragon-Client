@@ -30,24 +30,22 @@
 
 <body>
     <img draggable="false" id="logo" src="images/logo.svg" />
-    <img draggable="false" class="logo-rings" src="images/rings.svg" />
+    <img draggable="false" id="logo-rings" src="images/rings.svg" />
 
-    <p class="important">Paragon</p>
+    <p id="important">Paragon</p>
 
-    <button class="button" onclick="login()">Login</button>
+    <button onclick="login()">Login</button>
 
     <script>
         if (window.isDark()) {
             document.getElementById("logo").src = "images/logo-dark.svg";
         }
 
-        const CLIENT_ID = "Paragon_Tools";
-
         function login() {
             location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
                             "&scope=all-ro" +
                             "&state=abc" +
-                            `&client_id=${CLIENT_ID}` +
+                            `&client_id=${window.CLIENT_ID}` +
                             `&redirect_uri=${location.origin}/callback`;
         }
     </script>

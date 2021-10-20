@@ -17,19 +17,19 @@
 
     <base href="/">
 
-    <link href="assets/app-d68fe008.css" rel="stylesheet">
-    <link href="assets/login-7887ab0f.css" rel="stylesheet">
+    <link href="assets/app-86f77cfd.css" rel="stylesheet">
+    <link href="assets/login-66a6073e.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
 
-    <script src="assets/init-d135533f.js"></script>
+    <script src="assets/init-e411a539.js"></script>
 </head>
 
 <body>
     <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
-    <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
+    <img draggable="false" id="logo-rings" src="assets/rings-e3566255.svg">
 
-    <p id="message" class="important">Logging in...</p>
+    <p id="message">Logging in...</p>
 
     <script>
         if (window.isDark()) {
@@ -51,7 +51,7 @@
 
             if (!tokenResponse) location.href = location.origin + "/login";
 
-            var resourceCache = await caches.open("User Resources");
+            var resourceCache = await caches.open(window.RESOURCE_CACHE);
             resourceCache.put("Token", tokenResponse);
         }
 
@@ -69,8 +69,18 @@
             var error = params.get("error");
 
             if (error) {
-                document.getElementById("message").innerText = `Error: ${error}`;
+                error.replace("_", " ");
+
+                var words = error.split(" ");
+
+                for (var word of words) {
+                    word = word[0].toUpperCase() + word.substring(1);
+                }
+
+                document.getElementById("message").innerText = `Error: ${words.join(" ")}`;
             }
+            else
+                document.getElementById("message").innerText = "No code available.";
         }
     </script>
 

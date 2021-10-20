@@ -1,6 +1,6 @@
-import {copy} from '@web/rollup-plugin-copy';
-import {nodeResolve} from '@rollup/plugin-node-resolve';
-import {terser} from 'rollup-plugin-terser';
+import { copy } from '@web/rollup-plugin-copy';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import { terser } from 'rollup-plugin-terser';
 import html from '@web/rollup-plugin-html';
 
 export default {

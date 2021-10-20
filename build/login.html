@@ -17,34 +17,32 @@
 
     <base href="/">
 
-    <link href="assets/app-d68fe008.css" rel="stylesheet">
-    <link href="assets/login-7887ab0f.css" rel="stylesheet">
+    <link href="assets/app-86f77cfd.css" rel="stylesheet">
+    <link href="assets/login-66a6073e.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
 
-    <script src="assets/init-d135533f.js"></script>
+    <script src="assets/init-e411a539.js"></script>
 </head>
 
 <body>
     <img draggable="false" id="logo" src="assets/logo-ddb5fa25.svg">
-    <img draggable="false" class="logo-rings" src="assets/rings-e3566255.svg">
+    <img draggable="false" id="logo-rings" src="assets/rings-e3566255.svg">
 
-    <p class="important">Paragon</p>
+    <p id="important">Paragon</p>
 
-    <button class="button" onclick="login()">Login</button>
+    <button onclick="login()">Login</button>
 
     <script>
         if (window.isDark()) {
             document.getElementById("logo").src = "images/logo-dark.svg";
         }
 
-        const CLIENT_ID = "Paragon_Tools";
-
         function login() {
             location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
                             "&scope=all-ro" +
                             "&state=abc" +
-                            `&client_id=${CLIENT_ID}` +
+                            `&client_id=${window.CLIENT_ID}` +
                             `&redirect_uri=${location.origin}/callback`;
         }
     </script>

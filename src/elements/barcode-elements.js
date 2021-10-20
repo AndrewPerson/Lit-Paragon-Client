@@ -195,7 +195,8 @@ export class StudentBarcode extends LitElement {
                     @mouseover="${this.ShowDescription}"
                     @mouseout="${this.HideDescription}"
                     @focus="${this.ShowDescription}"
-                    @blur="${this.HideDescription}">
+                    @blur="${this.HideDescription}"
+                    title="Description">
                 <img draggable="false" id="descriptionImg" src="images/info.svg" />
             </button>
         

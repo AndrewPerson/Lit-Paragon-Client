@@ -26,7 +26,6 @@ export const navItemCss = css`
 
         display: block;
         
-        width: var(--full-size);
         height: var(--full-size);
 
         padding: var(--padding);
@@ -71,6 +70,8 @@ export const navMenuCss = css`
         overflow: hidden;
 
         box-sizing: border-box;
+
+        z-index: 100;
     }
 
     #items-container {
@@ -196,5 +197,26 @@ export const navMenuCss = css`
         border-radius: 0 2vmin 0 0;
         right: 0;
         --angle: -90deg;
+    }
+`;
+
+export const extensionPageCss = css`
+    :host {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #frame {
+        border: none;
+        width: 100%;
+        height: 100%;
+    }
+
+    #loader {
+        width: 80vmin;
+        height: 80vmin;
     }
 `;

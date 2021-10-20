@@ -30,9 +30,9 @@
 
 <body>
     <img draggable="false" id="logo" src="images/logo.svg" />
-    <img draggable="false" class="logo-rings" src="images/rings.svg" />
+    <img draggable="false" id="logo-rings" src="images/rings.svg" />
 
-    <p id="message" class="important">Logging in...</p>
+    <p id="message" id="important">Logging in...</p>
 
     <script>
         if (window.isDark()) {
@@ -54,7 +54,7 @@
 
             if (!tokenResponse) location.href = location.origin + "/login";
 
-            var resourceCache = await caches.open("User Resources");
+            var resourceCache = await caches.open(window.RESOURCE_CACHE);
             resourceCache.put("Token", tokenResponse);
         }
 
@@ -72,8 +72,18 @@
             var error = params.get("error");
 
             if (error) {
-                document.getElementById("message").innerText = `Error: ${error}`;
+                error.replace("_", " ");
+
+                var words = error.split(" ");
+
+                for (var word of words) {
+                    word = word[0].toUpperCase() + word.substring(1);
+                }
+
+                document.getElementById("message").innerText = `Error: ${words.join(" ")}`;
             }
+            else
+                document.getElementById("message").innerText = "No code available.";
         }
     </script>
 </body>

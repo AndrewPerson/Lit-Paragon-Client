@@ -13,7 +13,6 @@ p, button {
 }
 
 #logo {
-    width: 70vmin;
     height: 70vmin;
     filter: blur(1vmin) opacity(0.3) hue-rotate(var(--hue-rotate));
     position: absolute;
@@ -21,7 +20,7 @@ p, button {
     z-index: -1;
 }
 
-.logo-rings {
+#logo-rings {
     width: 90vmin;
     height: 90vmin;
     filter: blur(1vmin) opacity(0.3);
@@ -29,7 +28,7 @@ p, button {
     z-index: -1;
 }
 
-.important {
+#important {
     font-size: calc(var(--font-size) * 1.5);
 
     user-select: none;

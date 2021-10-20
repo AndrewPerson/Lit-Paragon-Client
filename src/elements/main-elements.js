@@ -20,7 +20,7 @@ export class LoginNotification extends LitElement {
     }
 
     async login() {
-        await caches.delete("User Resources");
+        await caches.delete(window.RESOURCE_CACHE);
         location.pathname = "login";
     }
 

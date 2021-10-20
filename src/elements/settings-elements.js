@@ -34,7 +34,7 @@ export class UserSettings extends LitElement {
     }
 
     async Patch() {
-        await caches.delete("Metadata");
+        await caches.delete(window.METADATA_CACHE);
         await caches.delete("Offline Resources");
 
         var serviceWorker = await navigator.serviceWorker.ready;
@@ -107,7 +107,7 @@ export class UserSettings extends LitElement {
         var modeImg = dark ? "images/sun.svg" : "images/moon.svg";
 
         return html`
-            <button id="description" @click="${this.ShowDescription}" @focus="${this.ShowDescription}">
+            <button title="Description" id="description" @click="${this.ShowDescription}" @focus="${this.ShowDescription}">
                 <img draggable="false" id="descriptionImg" src="images/info.svg" />
             </button>
     
@@ -133,7 +133,7 @@ export class UserSettings extends LitElement {
 
             <p>${mode}</p>
 
-            <button id="toggle" @click="${this.ToggleDark}">
+            <button title="Turn on ${dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
                 <img draggable="false" id="toggleImg" src="${modeImg}" />
             </button>
             

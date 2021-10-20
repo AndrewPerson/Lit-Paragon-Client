@@ -158,9 +158,9 @@ export class DailyTimetable extends LitElement {
                     var nextTimetableResponse = await cache.match("next-dailytimetable");
 
                     if (nextTimetableResponse) {
-                        var cloneResponse = nextTimetableResponse.clone();
+                        var clonedResponse = nextTimetableResponse.clone();
 
-                        await cache.put("dailytimetable", cloneResponse);
+                        await cache.put("dailytimetable", clonedResponse);
 
                         var text = await nextTimetableResponse.text();
 
@@ -169,7 +169,7 @@ export class DailyTimetable extends LitElement {
                         this.setAttribute("data", text);
                     }
                     else {
-                        this.removeAttribute("data");
+                        this.setAttribute("data", "null");
                         this.data = null;
 
                         this.requestUpdate();
@@ -178,8 +178,12 @@ export class DailyTimetable extends LitElement {
                         
                         var succeeded = await UpdateResourcesIfNeeded(token, true);
                         
-                        if (succeeded)
-                            location.reload();
+                        if (succeeded) {
+                            var response = await cache.match("dailytimetable");
+                            var clonedResponse = response.clone();
+
+                            this.setAttribute("data", await clonedResponse.text());
+                        }
                     }
                 });
             }

@@ -10,9 +10,9 @@ const OFFLINE_CACHE = 'Offline Resources';
 const METADATA_CACHE = "Metadata";
 const RESOURCE_CACHE = "User Resources";
 const VALID_CACHES = [
-    "Offline Resources",
-    "Metadata",
-    "User Resources"
+    OFFLINE_CACHE,
+    METADATA_CACHE,
+    RESOURCE_CACHE
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";

@@ -15,24 +15,28 @@ function RunCallbacks() {
         navbar.updatePage();
 }
 
-function DisplayExtension(extension) {
-    var currentPage = document.getElementById(extension);
+function DisplayExtension(page) {
+    var extension = page.substring(6);
+
+    var currentPage = document.getElementById(page);
 
     if (currentPage) {
         currentPage.classList.remove("hidden");
     }
     else {
-        var newPage = document.createElement("iframe");
-        newPage.id = extension;
+        var newPage = document.createElement("extension-page");
+        newPage.id = page;
 
         var extensions = window.getInstalledExtensions();
 
-        newPage.src = extensions[extension];
+        newPage.setAttribute("src", extensions[extension].url);
 
         document.getElementById("pages-container").appendChild(newPage);
     }
 
-    window.page = extension;
+    window.page = page;
+
+    RunCallbacks();
 }
 
 function DisplayPage(page) {
@@ -59,7 +63,7 @@ function UpdatePage() {
         }
 
         if (part.startsWith("(page)")) {
-            page = part.substring(11);
+            page = part;
             gotPage = true;
             extension = true;
             break;

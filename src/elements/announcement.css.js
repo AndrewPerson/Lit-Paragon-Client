@@ -27,10 +27,13 @@ export const announcementItemCss = css`
 
     #title {
         cursor: pointer;
+        user-select: text;
     }
 
     #sub {
         font-size: calc(var(--font-size) / 1.5);
+        user-select: text;
+        cursor: auto;
     }
 
     #toggle {
@@ -61,6 +64,11 @@ export const announcementItemCss = css`
         display: block;
         margin-top: 4vmin;
     }
+
+    #content {
+        user-select: text;
+        cursor: auto;
+    }
 `;
 
 export const announcementContainerCss = css`
@@ -76,7 +84,7 @@ export const announcementContainerCss = css`
         min-height: 0;
     }
 
-    .header {
+    #header {
         min-width: 100%;
 
         margin-top: 1vmin;
@@ -87,7 +95,7 @@ export const announcementContainerCss = css`
         justify-content: flex-end;
     }
 
-    .announcements {
+    #announcements {
         margin-top: 2vmin;
 
         display: flex;
@@ -103,13 +111,17 @@ export const announcementContainerCss = css`
         scrollbar-color: var(--surface4) transparent;
     }
 
-    .announcements::-webkit-scrollbar {
+    #announcements::-webkit-scrollbar {
         width: 1vmin;
     }
 
-    .announcements::-webkit-scrollbar-thumb {
+    #announcements::-webkit-scrollbar-thumb {
         background-color: var(--surface4);
         border-radius: 1vmin;
+    }
+
+    #nothing {
+        margin: auto;
     }
 
     .line-right, .line-left {

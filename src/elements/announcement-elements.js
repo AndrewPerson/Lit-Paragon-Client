@@ -107,7 +107,7 @@ export class SchoolAnnouncements extends LitElement {
         filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight);
 
         return html`
-            <div class="header">
+            <div id="header">
                 <select id="filter" @input="${this.updateFilter}">
                     <option value="all">All</option>
                     <option value="Staff">Staff</option>
@@ -119,20 +119,16 @@ export class SchoolAnnouncements extends LitElement {
                     <option value="7">7</option>
                 </select>
             </div>
-            <div class="announcements">
+            <div id="announcements">
+                <p id="nothing" style="${filteredNotices.length == 0 ? "" : "display: none"}">Nothing For This Filter</p>
+                
                 ${
-                    filteredNotices.length == 0 ? html`
-                        <div style="align-self: center; flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
-                            <p>Nothing For This Filter</p>
-                        </div>
-                    `
-                    :
                     repeat(filteredNotices, notice => notice.title, notice => html`
                         <announcement-item title="${notice.title}"
-                                           content="${notice.content}"
-                                           displayYears="${notice.displayYears}"
-                                           author="${notice.authorName}"
-                                           time="${notice.isMeeting ? notice.meetingTime : ''}">
+                                            content="${notice.content}"
+                                            displayYears="${notice.displayYears}"
+                                            author="${notice.authorName}"
+                                            time="${notice.isMeeting ? notice.meetingTime : ''}">
                         </announcement-item>
                     `)
                 }

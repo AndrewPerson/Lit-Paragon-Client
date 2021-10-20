@@ -1,6 +1,6 @@
 import { html, nothing, LitElement } from "lit";
 import { repeat } from "lit/directives/repeat.js";
-import { navItemCss, navMenuCss } from "./navbar.css";
+import { navItemCss, navMenuCss, extensionPageCss } from "./navbar.css";
 import { imgCss } from "./default.css";
 
 import Sortable, { AutoScroll } from "sortablejs/modular/sortable.core.esm.js";
@@ -68,9 +68,6 @@ export class Navbar extends LitElement {
 
     static get properties() {
         return {
-            pages: {type: Array},
-            titles: {type: Array},
-            icons: {type: Array},
             editing: {type: Boolean}
         }
     }
@@ -81,7 +78,7 @@ export class Navbar extends LitElement {
         }
     }
 
-    GetNavItem(order, index, last) {
+    GetNavItem(order, index) {
         var page;
         var title;
         var icon;
@@ -89,7 +86,7 @@ export class Navbar extends LitElement {
         if (order < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[order]);
         else {
             page = `(page)${this.pages[order - Navbar.defaultPages.length]}`;
-            title = this.titles[order - Navbar.defaultPages.length];
+            title = this.pages[order - Navbar.defaultPages.length];
             icon = this.icons[order - Navbar.defaultPages.length];
         }
         
@@ -177,7 +174,6 @@ export class Navbar extends LitElement {
         super();
 
         this.pages = [];
-        this.titles = [];
         this.icons = [];
 
         this.order = [0, 1, 2, 3, 4, 5];
@@ -238,8 +234,11 @@ export class Navbar extends LitElement {
 
         if (order)
             this.order = JSON.parse(order);
-        else if (this.pages.length >= 6)
-            this.order = this.pages.map((_, index) => index);
+
+        var extensions = window.getInstalledExtensions();
+
+        this.pages = Object.keys(extensions);
+        this.icons = this.pages.map(key => extensions[key].icon);
 
         var mobile = window.innerWidth <= window.innerHeight;
 
@@ -251,7 +250,7 @@ export class Navbar extends LitElement {
 
         return html`
             <div id="items-container">
-                ${repeat(this.order, key => key, (key, index) => this.GetNavItem(key, index, index == this.order.length - 1))}
+                ${repeat(this.order, key => key, this.GetNavItem.bind(this))}
             
                 <div id="top-shadow" style="display: none"></div>
                 <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
@@ -262,5 +261,39 @@ export class Navbar extends LitElement {
     }
 }
 
+export class ExtensionPage extends LitElement {
+    static get styles() {
+        return [extensionPageCss];
+    }
+
+    static get properties() {
+        return {
+            src: {type: String}
+        };
+    }
+
+    constructor() {
+        super();
+
+        this.src = "";
+    }
+
+    firstUpdated() {
+        var frame = this.shadowRoot.getElementById("frame")
+        frame.addEventListener("load", () => {
+            this.shadowRoot.getElementById("loader").remove();
+            frame.removeAttribute("style");
+        });
+    }
+
+    render() {
+        return html`
+            <iframe id="frame" src="${this.src}" style="display: none"></iframe>
+            <loading-element id="loader"></loading-element>
+        `;
+    }
+}
+
 customElements.define("nav-item", NavItem);
 customElements.define("nav-bar", Navbar);
+customElements.define("extension-page", ExtensionPage);
