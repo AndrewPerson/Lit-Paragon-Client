@@ -26,7 +26,7 @@ You will need:
 
 ### Setup
 
-1. Download all the code here using whatever method you want. (If you download it as a `zip` file, *don't forget to extract it.*)
+1. Download all the code here using whatever method you want. (If you downloaded it as a `zip` file, *don't forget to extract it.*)
 
 2. Run `npm install`.
 
