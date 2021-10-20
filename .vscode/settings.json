@@ -10,7 +10,7 @@
         "node_modules": true,
         ".vscode": true,
         "package-lock.json": true,
-        "package.json": false,
+        "package.json": true,
         ".firebase": true,
         "build": false,
         "**/*.sketch": true

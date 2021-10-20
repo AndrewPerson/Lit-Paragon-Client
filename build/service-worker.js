@@ -26,6 +26,11 @@ String.raw`{
 }`
 
 const METADATA_CACHE = "Metadata";
+const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
+const METADATA_ENDPOINT = "https://paragon-metadata.professor-smart.workers.dev";
+
+const SERVER_URL = new URL(SERVER_ENDPOINT);
+const METADATA_URL = new URL(METADATA_ENDPOINT);
 
 async function onInstall() {
     self.skipWaiting();
@@ -39,19 +44,19 @@ async function onFetch(event) {
     if (event.request.method == 'GET' || event.request.method == 'POST') {
         const request = event.request;
 
-        if (request.url.startsWith("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/resources")) {
+        var url = new URL(request.url);
+
+        if ((url.hostname == "localhost" || url.hostname == "127.0.0.1") && url.pathname == "/login")
+            return await fetch("/callback");
+
+        if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/resources`)
             return await fetch("https://sbhs-random-data.profsmart.repl.co/all.json");
-        }
         
-        if (request.url.startsWith("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/auth")) {
+        if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/auth`)
             return new Response(token);
-        }
 
-        if (request.url.startsWith("https://paragon-metadata.profsmart.workers.dev")) {
+        if (url.origin == METADATA_URL.origin)
             return new Response(metadata);
-        }
-
-        return fetch(event.request);
     }
 
     return fetch(event.request);

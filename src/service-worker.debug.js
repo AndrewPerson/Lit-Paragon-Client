@@ -46,7 +46,7 @@ async function onFetch(event) {
 
         var url = new URL(request.url);
 
-        if (url.hostname == "localhost" && url.pathname == "/login")
+        if ((url.hostname == "localhost" || url.hostname == "127.0.0.1") && url.pathname == "/login")
             return await fetch("/callback");
 
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/resources`)
