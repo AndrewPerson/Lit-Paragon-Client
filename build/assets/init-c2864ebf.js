@@ -1,7 +1,7 @@
-window.SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
 window.METADATA_CACHE = "Metadata";
 window.RESOURCE_CACHE = "User Resources";
-window.CLIENT_ID = "Paragon_Tools";
+window.SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
+window.CLIENT_ID = "Paragon_tools";
 
 window.getHash = () => {
     return location.hash.replace("#", "").split("-").filter(key => key.trim());

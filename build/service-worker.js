@@ -1,5 +1,5 @@
-self.addEventListener('install', event => event.waitUntil(onInstall(event)));
-self.addEventListener('activate', event => event.waitUntil(onActivate(event)));
+self.addEventListener('install', event => event.waitUntil(onInstall()));
+self.addEventListener('activate', event => event.waitUntil(onActivate()));
 self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 self.addEventListener("message", event => event.waitUntil(onMessage(event)));
 
@@ -13,7 +13,7 @@ String.raw`{
 
 const metadata =
 String.raw`{
-    "version": "Beta",
+    "version": "Local",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -27,11 +27,11 @@ String.raw`{
 
 const METADATA_CACHE = "Metadata";
 
-async function onInstall(event) {
+async function onInstall() {
     self.skipWaiting();
 }
 
-async function onActivate(event) {
+async function onActivate() {
     clients.claim();
 }
 
@@ -47,7 +47,7 @@ async function onFetch(event) {
             return new Response(token);
         }
 
-        if (request.url.startsWith("https://firestore.googleapis.com/v1/projects/web-paragon/databases/(default)/documents/Metadata/Metadata")) {
+        if (request.url.startsWith("https://paragon-metadata.profsmart.workers.dev")) {
             return new Response(metadata);
         }
 
