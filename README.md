@@ -32,7 +32,7 @@ You will need:
 
 ```none
 npm install
-```.
+```
 
 ### Editing
 
@@ -45,7 +45,7 @@ TODO Write how to edit config files
 
 ```none
 node deploy
-```.
+```
 
 2. Display the contents of the `build` folder with whatever dev server you want. (I use [Five Server](https://marketplace.visualstudio.com/items?itemName=yandeu.five-server), which is for VS Code.)
 
@@ -57,4 +57,4 @@ node deploy
 
 ```none
     node deploy deploy
-```.
+```
