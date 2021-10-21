@@ -57,13 +57,13 @@ function UpdatePage() {
     var extension = false;
     for (var part of hash) {
         if (PAGES.includes(part)) {
-            page = part;
+            page = decodeURIComponent(part);
             gotPage = true;
             break;
         }
 
         if (part.startsWith("(page)")) {
-            page = part;
+            page = decodeURIComponent(part);
             gotPage = true;
             extension = true;
             break;

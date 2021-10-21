@@ -65,7 +65,7 @@ export const navMenuCss = css`
         flex-shrink: 0;
 
         background-color: var(--surface3);
-        box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) calc(var(--shadow-spread) / 2);
+        box-shadow: var(--small-shadow);
 
         overflow: hidden;
 
