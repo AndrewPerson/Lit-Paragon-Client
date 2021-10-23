@@ -22,13 +22,4 @@ window.onUserData = async () => {
             document.getElementById("timetable").setAttribute("day", day);
         }
     });
-
-    caches.open(window.METADATA_CACHE).then(async cache => {
-        var metadataResponse = await cache.match("Metadata");
-        if (!metadataResponse) return;
-        
-        var pages = (await metadataResponse.json()).pages;
-
-        document.getElementById("pages").setAttribute("data", JSON.stringify(pages));
-    });
 }

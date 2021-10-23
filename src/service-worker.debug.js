@@ -19,7 +19,7 @@ String.raw`{
             "navIcon": "/nav-icon.svg",
             "url": "https://awardschemepoints.profsmart.repl.co",
             "finished": true,
-            "description": "Displays your award scheme points.",
+            "description": "A simple extension that displays student's award scheme points.",
             "icon": "/icon.svg"
         }
     }

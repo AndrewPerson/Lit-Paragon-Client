@@ -85,7 +85,7 @@ export const buttonCss = css`
         color: var(--text2);
         padding: 1vmin 2vmin;
         border-radius: calc(var(--font-size) / 2.5);
-        box-shadow: var(--small-shadow);
+        box-shadow: var(--shadow);
         font-size: var(--font-size);
     }
 
@@ -108,7 +108,7 @@ export const sliderCss = css`
         width: calc(var(--font-size) * 7);
         background-color: var(--surface1);
         height: calc(var(--font-size) / 1.5);
-        box-shadow: var(--small-shadow);
+        box-shadow: var(--shadow);
         border-radius: calc(var(--font-size) / 2.5);
     }
 
@@ -119,7 +119,7 @@ export const sliderCss = css`
         width: calc(var(--font-size) / 1.5);
         height: calc(var(--font-size) / 1.5);
         border: none;
-        box-shadow: var(--small-shadow);
+        box-shadow: var(--shadow);
     }
 
     :where(input[type=range])::-webkit-slider-thumb {
@@ -129,7 +129,7 @@ export const sliderCss = css`
         width: calc(var(--font-size) / 1.5);
         height: calc(var(--font-size) / 1.5);
         border: none;
-        box-shadow: var(--small-shadow);
+        box-shadow: var(--shadow);
     }
 `;
 
@@ -162,35 +162,5 @@ export const selectCss = css`
 
     :where(option) {
         background-color: var(--surface2);
-    }
-`;
-
-export const searchCss = css`
-    :where(input[type=search]) {
-        border: none;
-        border-bottom: 0.2vmin solid var(--text2);
-        background-color: var(--surface2);
-        color: var(--text1);
-
-        font-size: var(--font-size);
-        font-family: monospace;
-
-        height: calc(var(--font-size) * 2);
-    }
-
-    :where(input[type=search]:focus) {
-        outline: none;
-    }
-
-    :where(input[type=search])::-webkit-input-placeholder {
-        color: var(--text3);
-    }
-
-    :where(input[type=search])::-moz-placeholder {
-        color: var(--text3);
-    }
-
-    :where(input[type=search])::-webkit-search-cancel-button {
-        -webkit-appearance: none;
     }
 `;

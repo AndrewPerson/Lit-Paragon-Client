@@ -18,7 +18,9 @@ window.getHue = () => {
 }
 
 window.getInstalledExtensions = () => {
-    return JSON.parse(localStorage.getItem("Installed Pages") || "{}");
+    var json = localStorage.getItem("Installed Pages");
+
+    return json ? JSON.parse(json) : {};
 }
 
 UpdateScreenType();

@@ -30,11 +30,11 @@ async function Activate() {
 
 async function Fetch(event) {
     if (event.request.method == 'GET' && !UPDATING) {
-        var request = event.request;
-        var cache = await caches.open(OFFLINE_CACHE);
+        const request = event.request;
+        const cache = await caches.open(OFFLINE_CACHE);
 
         let result = await cache.match(request);
-        if (result) return result;
+        if (result instanceof Response) return result;
         else
         {
             var response = await fetch(request);
@@ -109,8 +109,6 @@ async function DataFetch() {
     var resourceCache = await caches.open(RESOURCE_CACHE);
 
     var tokenResponse = await resourceCache.match("Token");
-    if (!tokenResponse) return;
-    
     var token = await tokenResponse.text();
 
     var resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
