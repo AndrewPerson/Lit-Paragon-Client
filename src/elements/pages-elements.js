@@ -1,11 +1,11 @@
 import { html, LitElement } from "lit";
 import { repeat } from "lit/directives/repeat.js";
 import { pagesMarketplaceCss, pageCardCss } from "./pages.css";
-import { textCss, imgCss, buttonCss, searchCss, fullContainerCss, containerCss } from "./default.css";
+import { textCss, buttonCss, searchCss, fullContainerCss, containerCss } from "./default.css";
 
 export class PageCard extends LitElement {
     static get styles() {
-        return [textCss, imgCss, buttonCss, pageCardCss]
+        return [textCss, buttonCss, pageCardCss]
     }
     
     static get properties() {

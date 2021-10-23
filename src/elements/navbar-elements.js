@@ -1,6 +1,6 @@
 import { html, nothing, LitElement } from "lit";
 import { repeat } from "lit/directives/repeat.js";
-import { navItemCss, navMenuCss, extensionPageCss } from "./navbar.css";
+import { navItemCss, navbarCss, extensionPageCss } from "./navbar.css";
 import { imgCss } from "./default.css";
 
 import Sortable, { AutoScroll } from "sortablejs/modular/sortable.core.esm.js";
@@ -63,7 +63,7 @@ export class NavItem extends LitElement {
 
 export class Navbar extends LitElement {
     static get styles() {
-        return navMenuCss;
+        return navbarCss;
     }
 
     static get properties() {
@@ -78,7 +78,7 @@ export class Navbar extends LitElement {
         }
     }
 
-    GetNavItem(order, index) {
+    GetNavItem(order) {
         var page;
         var title;
         var icon;
@@ -241,6 +241,7 @@ export class Navbar extends LitElement {
         this.icons = this.pages.map(key => {
             var url = new URL(extensions[key].url);
             url.pathname = extensions[key].navIcon;
+            url.search = `version=${extensions[key].version}`;
 
             return url.toString();
         });

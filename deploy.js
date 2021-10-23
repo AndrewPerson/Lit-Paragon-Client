@@ -20,7 +20,7 @@ async function getFiles(rootDir, relativeDir) {
     var items = await readdir(rootDir + relativeDir, {withFileTypes: true});
     var files = [];
 
-    items.forEach(async item => {
+    for (var item of items) {
         if (item.isDirectory()) {
             var fileResult = await getFiles(rootDir, relativeDir + item.name + '/');
             fileResult.forEach(file => {
@@ -37,7 +37,7 @@ async function getFiles(rootDir, relativeDir) {
                 files.push(relativeDir + name);
             }
         }
-    });
+    }
 
     return files;
 }

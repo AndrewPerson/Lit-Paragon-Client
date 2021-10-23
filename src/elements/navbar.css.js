@@ -60,7 +60,7 @@ export const navItemCss = css`
     }
 `;
 
-export const navMenuCss = css`
+export const navbarCss = css`
     :host {
         flex-shrink: 0;
 

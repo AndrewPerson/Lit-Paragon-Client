@@ -39,19 +39,16 @@ async function RegisterServiceWorker() {
         if (!tags.includes('metadata-fetch')) {
             try {
                 await serviceWorker.periodicSync.register('metadata-fetch', {
-                    // An interval of one day.
-                    minInterval: 24 * 60 * 60 * 1000,
+                    // An interval of half a day.
+                    minInterval: 12 * 60 * 60 * 1000,
                 });
             } catch (e) {
                 console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-                navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});
             }
         }
     }
-    else {
-        console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-        navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"});
-    }    
+
+    navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"}); 
 }
 
 async function LoginIfNeeded() {
