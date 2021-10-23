@@ -17,7 +17,7 @@
 
     <base href="/">
 
-    <link href="assets/app-86f77cfd.css" rel="stylesheet">
+    <link href="assets/app-ed5f5dd3.css" rel="stylesheet">
     <link href="assets/login-66a6073e.css" rel="stylesheet">
     
     <link href="assets/manifest.json" rel="manifest">
@@ -32,9 +32,8 @@
     <p id="message">Logging in...</p>
 
     <script>
-        if (window.isDark()) {
+        if (window.isDark())
             document.getElementById("logo").src = "images/logo-dark.svg";
-        }
 
         async function Token(code) {
             var tokenResponse = await fetch(window.SERVER_ENDPOINT + "/auth", {
@@ -42,17 +41,14 @@
                 body: code
             });
             
-            if (tokenResponse.status == 403) {
-                window.serversOffline = true;
-            }
-            else if (tokenResponse.status != 200) {
-                location.href = location.origin + "/login";
-            }
+            if (tokenResponse.status != 200) return false;
 
-            if (!tokenResponse) location.href = location.origin + "/login";
+            if (!tokenResponse) return false;
 
             var resourceCache = await caches.open(window.RESOURCE_CACHE);
             resourceCache.put("Token", tokenResponse);
+
+            return true;
         }
 
         var params = new URLSearchParams(window.location.search);
@@ -61,8 +57,8 @@
 
         if (code || location.hostname == "localhost" || location.hostname == "127.0.0.1") {
             Token(code)
-            .then(() => {
-                location.href = location.origin;
+            .then(succeeded => {
+                location.pathname = succeeded ? "" : "login";
             });
         }
         else {

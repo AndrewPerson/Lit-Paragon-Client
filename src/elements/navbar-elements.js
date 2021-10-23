@@ -91,7 +91,7 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item index="${index}" ?editing="${this.editing}" page="${page}" title="${title}">
+            <nav-item ?editing="${this.editing}" page="${page}" title="${title}">
                 <img draggable="false" src="${icon}" />
             </nav-item>
         `;
@@ -238,7 +238,12 @@ export class Navbar extends LitElement {
         var extensions = window.getInstalledExtensions();
 
         this.pages = Object.keys(extensions);
-        this.icons = this.pages.map(key => extensions[key].icon);
+        this.icons = this.pages.map(key => {
+            var url = new URL(extensions[key].url);
+            url.pathname = extensions[key].navIcon;
+
+            return url.toString();
+        });
 
         var mobile = window.innerWidth <= window.innerHeight;
 
@@ -283,6 +288,9 @@ export class ExtensionPage extends LitElement {
         frame.addEventListener("load", () => {
             this.shadowRoot.getElementById("loader").remove();
             frame.removeAttribute("style");
+
+            if (window.gotUserData)
+                frame.contentWindow.postMessage({command: "Ready"}, new URL(this.src).origin);
         });
     }
 
@@ -294,6 +302,7 @@ export class ExtensionPage extends LitElement {
     }
 }
 
+window.Navbar = Navbar;
 customElements.define("nav-item", NavItem);
 customElements.define("nav-bar", Navbar);
 customElements.define("extension-page", ExtensionPage);

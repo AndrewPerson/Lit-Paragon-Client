@@ -99,7 +99,7 @@ rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
     ]);
 
     if (process.argv[2] == "deploy") {
-        if (config.deployCmd) await cmd(config.deployCmd);
+        if (config.deploy_cmd) await cmd(config.deploy_cmd);
     }
     else {
         await writeFile(__dirname + "/build/service-worker.js",

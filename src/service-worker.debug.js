@@ -19,7 +19,7 @@ String.raw`{
             "navIcon": "/nav-icon.svg",
             "url": "https://awardschemepoints.profsmart.repl.co",
             "finished": true,
-            "description": "A simple extension that displays student's award scheme points.",
+            "description": "Displays your award scheme points.",
             "icon": "/icon.svg"
         }
     }
@@ -53,6 +53,9 @@ async function onFetch(event) {
             return await fetch("https://sbhs-random-data.profsmart.repl.co/all.json");
         
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/auth`)
+            return new Response(token);
+
+        if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/refresh`)
             return new Response(token);
 
         if (url.origin == METADATA_URL.origin)

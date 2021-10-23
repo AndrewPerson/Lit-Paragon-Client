@@ -92,7 +92,7 @@ export const announcementContainerCss = css`
 
         display: flex;
         align-items: center;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
 
     #announcements {

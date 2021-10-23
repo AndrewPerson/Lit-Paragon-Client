@@ -2,7 +2,7 @@ import { html, nothing, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 import { announcementItemCss, announcementContainerCss } from "./announcement.css";
-import { textCss, imgCss, blockQuoteCss, selectCss, fullContainerCss, containerCss } from "./default.css";
+import { textCss, imgCss, blockQuoteCss, selectCss, searchCss, fullContainerCss, containerCss } from "./default.css";
 
 export class AnnouncementItem extends LitElement {
     static get styles() {
@@ -54,7 +54,7 @@ export class AnnouncementItem extends LitElement {
 
 export class SchoolAnnouncements extends LitElement {
     static get styles() {
-        return [textCss, selectCss, fullContainerCss, containerCss, announcementContainerCss];
+        return [textCss, selectCss, searchCss, fullContainerCss, containerCss, announcementContainerCss];
     }
 
     static get properties() {
@@ -108,6 +108,8 @@ export class SchoolAnnouncements extends LitElement {
 
         return html`
             <div id="header">
+                <input type="search" id="search" placeholder="Search..." autocomplete="off" @change="${this.Search}"/>
+
                 <select id="filter" @input="${this.updateFilter}">
                     <option value="all">All</option>
                     <option value="Staff">Staff</option>
