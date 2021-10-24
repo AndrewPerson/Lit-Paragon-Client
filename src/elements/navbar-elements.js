@@ -289,15 +289,12 @@ export class ExtensionPage extends LitElement {
         frame.addEventListener("load", () => {
             this.shadowRoot.getElementById("loader").remove();
             frame.removeAttribute("style");
-
-            if (window.gotUserData)
-                frame.contentWindow.postMessage({command: "Ready"}, new URL(this.src).origin);
         });
     }
 
     render() {
         return html`
-            <iframe id="frame" src="${this.src}" style="display: none"></iframe>
+            <iframe sandbox="allow-scripts allow-same-origin" id="frame" src="${this.src}" style="display: none"></iframe>
             <loading-element id="loader"></loading-element>
         `;
     }
