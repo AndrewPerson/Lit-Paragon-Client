@@ -174,7 +174,7 @@ export class DailyTimetable extends LitElement {
 
                         this.requestUpdate();
 
-                        var token = await LoginIfNeeded();
+                        var token = await GetToken();
                         
                         var succeeded = await UpdateResourcesIfNeeded(token, true);
                         

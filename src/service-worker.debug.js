@@ -20,7 +20,8 @@ String.raw`{
             "url": "https://awardschemepoints.profsmart.repl.co",
             "finished": true,
             "description": "Displays your award scheme points.",
-            "icon": "/icon.svg"
+            "icon": "/icon.svg",
+            "version": "0.0.1"
         }
     }
 }`

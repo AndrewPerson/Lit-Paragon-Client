@@ -93,6 +93,7 @@ rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
         replaceConfigVar("offline_cache", true, false),
         replaceConfigVar("metadata_cache", true, true),
         replaceConfigVar("resource_cache", true, false),
+        replaceConfigVar("extension_cache", true, false),
         replaceConfigVar("server_endpoint", true, true),
         replaceConfigVar("metadata_endpoint", true, false),
         replaceConfigVar("client_id", false, true)

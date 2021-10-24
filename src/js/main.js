@@ -7,7 +7,7 @@ async function Load() {
     if (location.origin != "https://web-paragon.web.app")
         await RegisterServiceWorker();
 
-    var token = await LoginIfNeeded();
+    var token = await GetToken();
 
     if (await UpdateResourcesIfNeeded(token)) {
         if (window.onUserData instanceof Function)
@@ -51,7 +51,7 @@ async function RegisterServiceWorker() {
     navigator.serviceWorker.controller.postMessage({command: "metadata-fetch"}); 
 }
 
-async function LoginIfNeeded() {
+async function GetToken() {
     var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
     var token = await resourceCache.match("Token");

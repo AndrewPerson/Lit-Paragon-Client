@@ -48,14 +48,6 @@ window.onUserData = async () => {
             e.source.postMessage(result, origin);
         });
     });
-
-    var frames = window.frames;
-    for (var i = 0; i < frames.length; i++) {
-        var frame = frames[i];
-
-        if (origins.includes(frame.origin))
-            frame.postMessage({command: "Ready"}, frame.origin);
-    }
 }
 
 async function handleMessage(command, data) {
@@ -64,11 +56,12 @@ async function handleMessage(command, data) {
         return {command: "Data", data: resource};
     }
     else if (command == "Get Token") {
-        var token = await LoginIfNeeded();
-        return {command: "Token", data: token};
+        var token = JSON.parse(await GetToken());
+        return {command: "Token", token: token.access_token};
     }
     else if (command == "Refresh Token") {
-        var token = await LoginIfNeeded();
+        var token = JSON.parse(await GetToken());
+        //TODO Change this to just use the default resources api to also refresh the token.
         var tokenResponse = await fetch(`${window.SERVER_ENDPOINT}/refresh`, {
             method: "POST",
             body: token
@@ -81,18 +74,14 @@ async function handleMessage(command, data) {
 
             return {
                 command: "Refreshed Token",
-                data: {
-                    token: await tokenResponse.text(),
-                    succeeded: true
-                }
+                token: JSON.parse(await tokenResponse.text()).access_token,
+                succeeded: true
             };
         }
         else return {
             command: "Refreshed Token",
-            data: {
-                token: token,
-                succeeded: false
-            }
+            token: token.access_token,
+            succeeded: false
         };
     }
 }

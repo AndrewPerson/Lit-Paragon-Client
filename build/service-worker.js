@@ -9,10 +9,12 @@ self.addEventListener('message', event => event.waitUntil(Message(event)));
 const OFFLINE_CACHE = 'Offline Resources';
 const METADATA_CACHE = "Metadata";
 const RESOURCE_CACHE = "User Resources";
+const EXTENSION_CACHE = "Extension Resources";
 const VALID_CACHES = [
     OFFLINE_CACHE,
     METADATA_CACHE,
-    RESOURCE_CACHE
+    RESOURCE_CACHE,
+    EXTENSION_CACHE
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
@@ -31,10 +33,38 @@ async function Activate() {
 async function Fetch(event) {
     if (event.request.method == 'GET' && !UPDATING) {
         var request = event.request;
+        var url = new URL(request.url);
+
+        if (url.searchParams.has("cache-version")) {
+            var cachedResource = await cache.match(request);
+
+            if (cachedResource) return cachedResource;
+            else {
+                var cachePromise = caches.open(EXTENSION_CACHE);
+                var responsePromise = fetch(request);
+
+                var [cache, response] = await Promise.all([cachePromise, responsePromise]);
+
+                cache.put(request, response.clone()).then(async () => {
+                    var keys = await cache.keys();
+
+                    for (var key of keys) {
+                        var keyUrl = new URL(key.url);
+                        if (keyUrl.origin == url.origin
+                            && keyUrl.pathname == url.pathname
+                            && keyUrl.search != url.search)
+                            cache.delete(key);
+                    }
+                });
+
+                return response;
+            }
+        }
+
         var cache = await caches.open(OFFLINE_CACHE);
 
-        let result = await cache.match(request);
-        if (result) return result;
+        var cachedResource = await cache.match(request);
+        if (cachedResource) return cachedResource;
         else
         {
             var response = await fetch(request);
@@ -43,10 +73,10 @@ async function Fetch(event) {
                 var cachedResponse = response.clone();
 
                 if (self.assets.includes(cachedResponse.url.replace(location.origin, ""))) {
-                    var keys = await cache.keys();
-
-                    if (!keys.includes(cachedResponse.url))
-                        await cache.put(cachedResponse.url, cachedResponse);
+                    cache.keys().then(keys => {
+                        if (!keys.includes(cachedResponse.url))
+                            cache.put(cachedResponse.url, cachedResponse);
+                    });
                 }
             }
 
