@@ -46,13 +46,13 @@ export const announcementItemCss = css`
         cursor: pointer;
     }
 
-    #toggleImg {
+    #toggle > img {
         margin-top: 2vmin;
 
         width: 4vmin;
     }
 
-    #toggleImg.flipped {
+    #toggle > img.flipped {
         transform: rotate(180deg);
     }
 
@@ -61,7 +61,6 @@ export const announcementItemCss = css`
     }
 
     .expanded {
-        display: block;
         margin-top: 4vmin;
     }
 

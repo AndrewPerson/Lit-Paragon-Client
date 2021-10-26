@@ -22,7 +22,6 @@ export default {
                 "service-worker.js"
             ],
             exclude: [
-                "images/logo-with-rings.svg",
                 "images/*.sketch"
             ]
         })

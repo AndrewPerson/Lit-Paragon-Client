@@ -108,7 +108,7 @@ export class UserSettings extends LitElement {
 
         return html`
             <button title="Description" id="description" @click="${this.ShowDescription}" @focus="${this.ShowDescription}">
-                <img draggable="false" id="descriptionImg" src="images/info.svg" />
+                <img draggable="false" src="images/info.svg" />
             </button>
     
             <p style="display: none;" id="descriptionContent" @focusout="${this.HideDescriptionBlur}">
@@ -134,7 +134,7 @@ export class UserSettings extends LitElement {
             <p>${mode}</p>
 
             <button title="Turn on ${dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
-                <img draggable="false" id="toggleImg" src="${modeImg}" />
+                <img draggable="false" src="${modeImg}" />
             </button>
             
             <span></span>

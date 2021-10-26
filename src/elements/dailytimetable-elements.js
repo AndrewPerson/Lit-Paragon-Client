@@ -1,7 +1,7 @@
 import { html, nothing, LitElement } from "lit";
 import { repeat } from 'lit/directives/repeat.js';
-import { bellCss, payloadBellCss, dailytimetableCss } from "./dailytimetable.css";
-import { textCss, containerCss } from "./default.css";
+import { bellCss, payloadBellCss, dailytimetableCss, fullscreenDailytimetableCss } from "./dailytimetable.css";
+import { textCss, imgCss, containerCss } from "./default.css";
 
 export class BellItem extends LitElement {
     static get styles() {
@@ -77,7 +77,7 @@ export class PayloadBellItem extends LitElement {
 
 export class DailyTimetable extends LitElement {
     static get styles() {
-        return [textCss, containerCss, dailytimetableCss];
+        return [textCss, imgCss, containerCss, dailytimetableCss];
     }
 
     static get properties() {
@@ -189,12 +189,38 @@ export class DailyTimetable extends LitElement {
             }
         }
         else {
-            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R") {
-                var period = this.data.timetable.timetable.periods[nextBell.bell.bell];
+            var periods = this.data.timetable.timetable.periods;
+            var bellName = nextBell.bell.bell;
+
+            if (bellName in periods && bellName != "R") {
+                var period = periods[bellName];
                 this.nextBell = this.getClassName(period);
+                
+                var classVariations = this.data.classVariations;
+                if (bellName in classVariations) {
+                    this.nextTeacherChanged = true;
+                    this.nextTeacher = classVariations[bellName].type == "nocover" ? "No one" : classVariations[bellName].casualSurname;
+                }
+                else {
+                    this.nextTeacherChanged = false;
+                    this.nextTeacher = period.fullTeacher;
+                }
+
+                var roomVariations = this.data.roomVariations;
+                if (bellName in roomVariations) {
+                    this.nextRoomChanged = true;
+                    this.nextRoom = roomVariations[bellName].roomTo;
+                }
+                else {
+                    this.nextRoomChanged = false;
+                    this.nextRoom = period.room;
+                }
             }
-            else
+            else {
                 this.nextBell = nextBell.bell.bellDisplay;
+                this.nextTeacher = null;
+                this.nextRoom = null;
+            }
 
             this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
@@ -209,6 +235,13 @@ export class DailyTimetable extends LitElement {
         return name.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
     }
 
+    ToggleFullScreen() {
+        this.fullscreen = !this.fullscreen;
+
+        if (this.fullscreen) this.fullscreenElement.style.removeProperty("display");
+        else this.fullscreenElement.style.display = "none";
+    }
+
     static gettingNextDay = false;
 
     constructor() {
@@ -216,6 +249,14 @@ export class DailyTimetable extends LitElement {
 
         this.nextBell = "Nothing";
         this.timeUntilNextBell = "00:00";
+
+        this.nextTeacher = "";
+        this.nextTeacherChanged = false;
+        this.nextRoom = "";
+        this.nextRoomChanged = false;
+
+        this.fullscreen = false;
+        this.fullscreenElement = document.querySelector("fullscreen-dailytimetable");
 
         setInterval(() => {
             this.updateCountdown();
@@ -252,7 +293,23 @@ export class DailyTimetable extends LitElement {
             this.updateCountdown();
         }
 
+        this.fullscreenElement.setAttribute("bell", this.nextBell);
+        this.fullscreenElement.setAttribute("time", this.timeUntilNextBell);
+        this.fullscreenElement.setAttribute("teacher", this.nextTeacher);
+
+        if (this.nextTeacherChanged) this.fullscreenElement.setAttribute("teacherChanged", "");
+        else this.fullscreenElement.removeAttribute("teacherChanged");
+
+        this.fullscreenElement.setAttribute("room", this.nextRoom);
+        
+        if (this.nextRoomChanged) this.fullscreenElement.setAttribute("roomChanged", "");
+        else this.fullscreenElement.removeAttribute("roomChanged");
+
         return html`
+            <button id="fullscreen" title="Full Screen" @click="${this.ToggleFullScreen}">
+                <img src="images/fullscreen.svg" />
+            </button>
+
             <p>${this.nextBell}</p>
             <p>in</p>
 
@@ -319,6 +376,66 @@ export class DailyTimetable extends LitElement {
     }
 }
 
+export class FullscreenDailytimetable extends LitElement {
+    static get styles() {
+        return [textCss, imgCss, fullscreenDailytimetableCss];
+    }
+
+    static get properties() {
+        return {
+            bell: {type: String},
+            time: {type: String},
+            teacher: {type: String},
+            teacherChanged: {type: Boolean},
+            room: {type: String},
+            roomChanged: {type: Boolean}
+        };
+    }
+
+    Close() {
+        this.style.display = "none";
+    }
+
+    constructor() {
+        super();
+
+        this.bell = "Nothing";
+        this.time = "00:00";
+        this.teacher = "";
+        this.teacherChanged = false;
+        this.room = "";
+        this.roomChanged = false;
+    }
+
+    render() {
+        if (this.teacher == "null") this.teacher = null;
+        if (this.room == "null") this.room = null;
+
+        return html`
+            <img id="logo" src="images/logo${window.isDark() ? "-dark" : ""}.svg"/>
+            <img id="rings" src="images/rings.svg"/>
+
+            <button id="close" @click="${this.Close}">
+                <img src="images/cross.svg" />
+            </button>
+
+            <p id="time">${this.time} until</p>
+            <p id="bell">${this.bell}</p>
+            <p id="details" style="${this.teacher && this.room ? "" : "display: none"}">
+                with
+                <span class="${this.teacherChanged ? "changed" : ""}">
+                    ${this.teacher}
+                </span>
+                at
+                <span class="${this.roomChanged ? "changed" : ""}">
+                    ${this.room}
+                </span>
+            </p>
+        `;
+    }
+}
+
 customElements.define("bell-item", BellItem);
 customElements.define("payload-bell-item", PayloadBellItem);
 customElements.define('daily-timetable', DailyTimetable);
+customElements.define("fullscreen-dailytimetable", FullscreenDailytimetable);

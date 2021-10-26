@@ -47,7 +47,7 @@ export const navItemCss = css`
     }
 
     a {
-        display: flex;
+        display: block;
 
         width: 12vmin;
         height: 12vmin;

@@ -76,7 +76,7 @@ catch (e) {}
 rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
     await cmd("npx rollup -c");
     
-    await cmd(`npx svgo -f ${__dirname}/build -r -p ${config.svg_precision || 1}`);
+    if (process.argv[2] == "deploy") await cmd(`npx svgo -f ${__dirname}/build -r -p ${config.svg_precision || 1}`);
 
     var js = "self.assets = [\n\t\"/\",\n";
 

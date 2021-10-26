@@ -3,12 +3,14 @@ self.addEventListener('activate', event => event.waitUntil(onActivate()));
 self.addEventListener('fetch', event => event.respondWith(onFetch(event)));
 self.addEventListener("message", event => event.waitUntil(onMessage(event)));
 
+var termination = new Date();
+termination.setHours(termination.getHours() + 24 * 90);
 const token =
 String.raw`{
     "access_token": "",
     "refresh_token": "",
     "expiry": "2021-07-28T06:21:22.3968863",
-    "termination": "2021-10-26T05:21:22.3968885"
+    "termination": "${termination.toISOString()}"
 }`;
 
 const metadata =

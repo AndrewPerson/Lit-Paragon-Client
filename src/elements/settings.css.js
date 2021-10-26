@@ -14,20 +14,16 @@ export const settingsCss = css`
 
         margin: auto;
 
-        min-height: 70vh;
-    }
-
-    @media not all and (max-width: 300px) {
-        :host {
-            width: 60vw;
-            max-width: 60vh;
-            min-width: 300px;
-        }
+        width: 60vw;
+        max-width: 60vh;
+        min-width: 300px;
+        min-height: 70%;
     }
 
     @media (max-width: 300px) {
         :host {
             width: 100vw;
+            min-width: unset;
         }
     }
 
@@ -37,17 +33,13 @@ export const settingsCss = css`
     }
 
     #toggle {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-
         width: calc(calc(var(--font-size) * 2) + 2vmin);
         height: calc(calc(var(--font-size) * 2) + 2vmin);
 
         padding: 1vmin;
     }
 
-    #toggleImg {
+    #toggle > img {
         width: 100%;
         height: 100%;
     }
@@ -77,9 +69,9 @@ export const settingsCss = css`
         background-color: transparent;
     }
     
-    #descriptionImg {
-        width: 4vmin;
-        height: 4vmin;
+    #description > img {
+        width: inherit;
+        height: inherit;
     }
 
     #descriptionContent {

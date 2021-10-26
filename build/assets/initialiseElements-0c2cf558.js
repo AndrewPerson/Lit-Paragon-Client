@@ -55,33 +55,27 @@ async function handleMessage(command, data) {
         var resource = await GetResourceFromCache(data);
         return {command: "Data", data: resource};
     }
-    else if (command == "Get Token") {
+    
+    if (command == "Get Token") {
         var token = JSON.parse(await GetToken());
         return {command: "Token", token: token.access_token};
     }
-    else if (command == "Refresh Token") {
-        var token = JSON.parse(await GetToken());
-        //TODO Change this to just use the default resources api to also refresh the token.
-        var tokenResponse = await fetch(`${window.SERVER_ENDPOINT}/refresh`, {
-            method: "POST",
-            body: token
-        });
 
-        if (tokenResponse.status == 200) {
-            var clonedResponse = tokenResponse.clone();
-            var cache = await caches.open(window.RESOURCE_CACHE);
-            await cache.put("Token", clonedResponse);
+    if (command == "Refresh Token") {
+        var token = await GetToken();
+        
+        //This also updates the token.
+        //No matter what we do, it will always require at least one Cloud Function invocation.
+        //Might as well update the resources while we're at it.
+        var succeeded = await UpdateResourcesIfNeeded(token, true);
 
-            return {
-                command: "Refreshed Token",
-                token: JSON.parse(await tokenResponse.text()).access_token,
-                succeeded: true
-            };
-        }
-        else return {
+        if (succeeded)
+            token = await GetToken();
+
+        return {
             command: "Refreshed Token",
-            token: token.access_token,
-            succeeded: false
+            token: JSON.parse(token).access_token,
+            succeeded: succeeded
         };
     }
 }

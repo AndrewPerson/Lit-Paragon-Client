@@ -11,13 +11,7 @@ export const containerCss = css`
 export const fullContainerCss = css`
     :host {
         flex: 1;
-        margin: 2vh 2%;
-    }
-
-    @media (max-aspect-ratio: 1/1) {
-        :host {
-            max-height: calc(96vh - 12vw);
-        }
+        margin: 2%;
     }
 
     /*
@@ -27,13 +21,13 @@ export const fullContainerCss = css`
     */
     @media (max-width: 312px) {
         :host {
-            margin: 2vh calc(50% - 150px);
+            margin: 2% calc(50% - 150px);
         }
     }
 
     @media (max-width: 300px) {
         :host {
-            margin: 2vh 0;
+            margin: 2% 0;
         }
     }
 `;

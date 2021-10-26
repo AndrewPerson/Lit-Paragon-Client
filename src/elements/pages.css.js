@@ -10,6 +10,7 @@ export const pageCardCss = css`
         min-width: calc(var(--font-size) * 11.5);
         padding: 1.5vmin;
     }
+
     #header {
         display: flex;
         align-items: center;
@@ -17,6 +18,7 @@ export const pageCardCss = css`
         column-gap: 1.5vmin;
         width: 100%;
     }
+    
     #icon {
         width: 10vmin;
         min-width: 10vmin;
@@ -27,10 +29,12 @@ export const pageCardCss = css`
         border-radius: 100%;
         box-shadow: var(--small-shadow);
     }
+
     #icon > img {
         width: 100%;
         height: 100%;
     }
+
     #description {
         padding: 1.5vmin;
         padding-right: 0;
@@ -42,12 +46,14 @@ export const pagesMarketplaceCss = css`
     :host {
         padding: 2vmin;
     }
+
     #header {
         display: flex;
         align-items: flex-start;
         justify-content: flex-start;
         margin-bottom: 3vmin;
     }
+
     #pages {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(calc(var(--font-size) * 15), 1fr));

@@ -27,11 +27,11 @@ export const loadingElementCss = css`
 export const loginNotificationCss = css`
     :host {
         position: absolute;
-        top: 1vh;
-        right: 1vw;
+        top: 1%;
+        right: 1%;
         min-width: min-content;
         width: 40vmin;
-        padding: 2vh 2vw;
+        padding: 2%;
         z-index: 100;
     }
 

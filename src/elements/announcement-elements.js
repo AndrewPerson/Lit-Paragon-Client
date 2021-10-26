@@ -41,7 +41,7 @@ export class AnnouncementItem extends LitElement {
         return html`
             <button @click="${this.toggle}" id="toggle">
                 <p id="title">${this.title}</p>
-                <img id="toggleImg" class="${this.collapsed ? "" : "flipped"}" src="images/toggle.svg" />
+                <img class="${this.collapsed ? "" : "flipped"}" src="images/toggle.svg" />
             </button>
 
             <p id="sub">For ${this.displayYears} ${this.time ? "| At " + this.time + " " : ""}| By ${this.author}</p>
@@ -104,7 +104,7 @@ export class SchoolAnnouncements extends LitElement {
             filteredNotices = this.data.notices;
         }
 
-        filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight);
+        filteredNotices = filteredNotices.sort((a, b) => b.relativeWeight - a.relativeWeight + b.meeting - a.meeting);
 
         return html`
             <div id="header">
@@ -127,10 +127,10 @@ export class SchoolAnnouncements extends LitElement {
                 ${
                     repeat(filteredNotices, notice => notice.title, notice => html`
                         <announcement-item title="${notice.title}"
-                                            content="${notice.content}"
-                                            displayYears="${notice.displayYears}"
-                                            author="${notice.authorName}"
-                                            time="${notice.isMeeting ? notice.meetingTime : ''}">
+                                           content="${notice.content}"
+                                           displayYears="${notice.displayYears}"
+                                           author="${notice.authorName}"
+                                           time="${notice.isMeeting ? notice.meetingTime : ''}">
                         </announcement-item>
                     `)
                 }

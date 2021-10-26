@@ -67,23 +67,24 @@ async function UpdateResourcesIfNeeded(token, force) {
     var lastUpdatedResponse = await resourceCache.match("Last Updated");
     
     var resources;
-    if (lastUpdatedResponse && !force)
+    if (lastUpdatedResponse)
     {
         var lastUpdated = new Date(await lastUpdatedResponse.text());
 
         // 30 minutes
         if (new Date() - lastUpdated >= 1800000) resources = await GetAllResources(token);
+        else if (force) resources = await GetAllResources(token);
     }
     else resources = await GetAllResources(token);
 
     if (resources) {
         var resourceCache = await caches.open(window.RESOURCE_CACHE);
 
-        await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
+        var promises = [
+            resourceCache.put("Last Updated", new Response(new Date().toISOString())),
+            resourceCache.put("Token", new Response(JSON.stringify(resources.token)))
+        ];
 
-        await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
-
-        var promises = [];
         for (var resource in resources.result) {
             promises.push(resourceCache.put(resource, new Response(JSON.stringify(resources.result[resource]))));
         }
@@ -106,6 +107,7 @@ async function GetAllResources(token) {
 
     if (!resourceResponse) location.href = location.origin + "/login";
 
+    //TODO Check if this can be removed
     if (resourceResponse.status == 403) {
         window.serversOffline = true;
         return;

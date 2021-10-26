@@ -43,9 +43,9 @@ export const barcodeCss = css`
         padding: 0;
     }
 
-    #descriptionImg {
-        width: 4vmin;
-        height: 4vmin;
+    #description > img {
+        width: inherit;
+        height: inherit;
     }
 
     #descriptionContent {
@@ -64,12 +64,12 @@ export const barcodeCss = css`
         position: absolute;
         top: 1vmin;
         right: 1vmin;
+
         width: 4vmin;
         height: 4vmin;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        
         background-color: transparent;
         border: none;
+        padding: 0;
     }
 `;

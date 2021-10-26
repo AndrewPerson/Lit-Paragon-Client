@@ -197,7 +197,7 @@ export class StudentBarcode extends LitElement {
                     @focus="${this.ShowDescription}"
                     @blur="${this.HideDescription}"
                     title="Description">
-                <img draggable="false" id="descriptionImg" src="images/info.svg" />
+                <img draggable="false" src="images/info.svg" />
             </button>
         
             <p style="display: none;" id="descriptionContent">You can use this barcode to scan in at the school scanners instead of your student card.</p>
