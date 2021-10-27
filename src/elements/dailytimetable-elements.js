@@ -147,35 +147,20 @@ export class DailyTimetable extends LitElement {
                 DailyTimetable.gettingNextDay = true;
 
                 caches.open("User Resources").then(async cache => {
-                    var nextTimetableResponse = await cache.match("next-dailytimetable");
+                    this.setAttribute("data", "null");
+                    this.data = null;
 
-                    if (nextTimetableResponse) {
-                        var clonedResponse = nextTimetableResponse.clone();
+                    this.requestUpdate();
 
-                        await cache.put("dailytimetable", clonedResponse);
+                    var token = await LoginIfNeeded();
+                    
+                    var succeeded = await UpdateResourcesIfNeeded(token, true);
+                    
+                    if (succeeded) {
+                        var response = await cache.match("dailytimetable");
+                        var clonedResponse = response.clone();
 
-                        var text = await nextTimetableResponse.text();
-
-                        await cache.delete("next-dailytimetable");
-
-                        this.setAttribute("data", text);
-                    }
-                    else {
-                        this.setAttribute("data", "null");
-                        this.data = null;
-
-                        this.requestUpdate();
-
-                        var token = await LoginIfNeeded();
-                        
-                        var succeeded = await UpdateResourcesIfNeeded(token, true);
-                        
-                        if (succeeded) {
-                            var response = await cache.match("dailytimetable");
-                            var clonedResponse = response.clone();
-
-                            this.setAttribute("data", await clonedResponse.text());
-                        }
+                        this.setAttribute("data", await clonedResponse.text());
                     }
                 });
             }
@@ -198,7 +183,7 @@ export class DailyTimetable extends LitElement {
         this.nextBell = "Nothing";
         this.timeUntilNextBell = "00:00";
 
-        setInterval(() => {
+        this.countdownId = setInterval(() => {
             if (this.data) {
                 this.updateCountdown();
                 this.update();
@@ -226,7 +211,14 @@ export class DailyTimetable extends LitElement {
             `;
         }
 
-        this.updateCountdown();
+        if (this.data.status != "OK") {
+            clearInterval(this.countdownId);
+            return html`
+                <p>
+                    There is an error with the school servers.
+                </p>
+            `;
+        }
 
         return html`
             <p>${this.nextBell}</p>
