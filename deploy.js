@@ -28,7 +28,7 @@ function getFiles(rootDir, relativeDir) {
 
 rmSync(__dirname.replace('\\', '/') + "/build", { recursive: true, force: true });
 
-exec("rollup -c", (err, stdout, stderr) => {
+exec("npx rollup -c", (err, stdout, stderr) => {
     if (err) {
         console.log(err);
         return;
