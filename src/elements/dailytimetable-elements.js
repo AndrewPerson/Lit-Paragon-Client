@@ -258,7 +258,7 @@ export class DailyTimetable extends LitElement {
         this.fullscreen = false;
         this.fullscreenElement = document.querySelector("fullscreen-dailytimetable");
 
-        setInterval(() => {
+        this.countdownId = setInterval(() => {
             this.updateCountdown();
             this.requestUpdate();
         }, 1000);
@@ -287,6 +287,13 @@ export class DailyTimetable extends LitElement {
 
         if (!this.data)
             return html`<loading-element style="width: 80%"></loading-element>`;
+
+        if (this.data.status != "OK") {
+            clearInterval(this.countdownId);
+            return html`
+                <p>There was an error with the school servers.</p>
+            `;
+        }
 
         if (this.firstRender) {
             this.firstRender = false;
