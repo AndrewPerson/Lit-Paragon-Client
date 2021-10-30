@@ -67,6 +67,8 @@ async function replaceConfigVar(key, includeServiceWorker = true, includeInit = 
     }
 }
 
+var start = Date.now();
+
 var config = {};
 try {
     config = require("./config.json");
@@ -106,4 +108,8 @@ rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
         await writeFile(__dirname + "/build/service-worker.js",
                         await readFile(__dirname + "/src/service-worker.debug.js"));
     }
+
+    var end = Date.now();
+
+    console.log(`${process.argv[2] == "deploy" ? "Deploying" : "Generating preview assets"} took ${(end - start)/1000} seconds`);
 });
