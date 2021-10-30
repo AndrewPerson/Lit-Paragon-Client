@@ -1,1 +1,9 @@
-<svg width="221" height="221" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#323232" stroke-width="10" stroke-linecap="round"><path d="M45 215H5v-40" stroke-linejoin="round"/><path d="m135 85 80-80M85 135 5 215"/><path d="M175 5h40v40" stroke-linejoin="round"/></g></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="221px" height="221px" viewBox="0 0 221 221" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <g id="Fullscreen" transform="translate(5 5)">
+    <path d="M0 0L40 0L40 40" transform="matrix(-1 2.2967631E-06 -2.2967631E-06 -1 40.00009 209.99995)" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M0 80L80 0" transform="translate(130.00003 0)" id="Arrow" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
+    <path d="M80 0L0 80" transform="translate(3.0517578E-05 130)" id="Arrow-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
+    <path d="M0 0L40 0L40 40" transform="translate(170.00003 0)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

@@ -52,4 +52,5 @@ body {
     background-color: var(--surface1);
     margin: 0;
     font-size: var(--font-size);
+    overflow: hidden;
 }

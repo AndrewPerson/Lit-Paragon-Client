@@ -137,11 +137,12 @@ export const fullscreenDailytimetableCss = css`
 
         z-index: 101;
 
-        background-color: var(--surface2);
+        background-color: var(--surface1);
     }
 
     #logo {
-        height: 70vmin;
+        width: auto;
+        height: 70vmax;
         filter: blur(1vmin) opacity(0.2) hue-rotate(var(--hue-rotate));
         position: absolute;
         transform: translateX(5vmin);
@@ -149,8 +150,8 @@ export const fullscreenDailytimetableCss = css`
     }
 
     #rings {
-        width: 90vmin;
-        height: 90vmin;
+        width: 90vmax;
+        height: 90vmax;
         filter: blur(1vmin) opacity(0.2);
         position: absolute;
         z-index: -1;

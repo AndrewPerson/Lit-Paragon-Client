@@ -7,6 +7,7 @@ export const navItemCss = css`
         height: 12vmin;
         position: relative;
         border-radius: 2vmin;
+        overflow: hidden;
     }
 
     :host(:hover:not(:host([editing]))) {

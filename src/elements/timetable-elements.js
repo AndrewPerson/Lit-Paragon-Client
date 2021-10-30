@@ -20,7 +20,8 @@ export class TimetablePeriod extends LitElement {
 
     static highlight(name) {
         this.highlighted = name;
-        this.instances.forEach(instance => instance.requestUpdate());
+
+        for (var instance of this.instances) instance.requestUpdate();
     }
 
     constructor() {
@@ -37,10 +38,11 @@ export class TimetablePeriod extends LitElement {
         if (this.name) {
             this.tabIndex = 0;
 
-            this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
+            this.addEventListener("pointerover", () => TimetablePeriod.highlight(this.name));
+            this.addEventListener("pointerleave", () => TimetablePeriod.highlight(""));
 
             this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
+            this.addEventListener("blur", () => TimetablePeriod.highlight(""));
         }
     }
 
@@ -197,6 +199,10 @@ export class FullTimetable extends LitElement {
         }
     }
 
+    clearHighlight() {
+        TimetablePeriod.highlight("");
+    }
+
     constructor() {
         super();
 
@@ -207,6 +213,13 @@ export class FullTimetable extends LitElement {
         };
 
         this.day = "";
+
+        this.addEventListener("pointerover", e => e.stopPropagation());
+        document.addEventListener("pointerover", this.clearHighlight);
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("pointerover", this.clearHighlight);
     }
 
     render() {
