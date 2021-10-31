@@ -118,7 +118,7 @@ export class PagesMarketplace extends LitElement {
                 ${repeat(Object.keys(this.data), key => key, title => {
                         var url = new URL(this.data[title].url);
                         url.pathname = this.data[title].icon;
-                        url.search = `version=${this.data[title].version}`;
+                        url.search = `cache-version=${this.data[title].version}`;
                         
                         return html`
                             <page-card title="${title}"

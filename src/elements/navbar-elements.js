@@ -241,7 +241,7 @@ export class Navbar extends LitElement {
         this.icons = this.pages.map(key => {
             var url = new URL(extensions[key].url);
             url.pathname = extensions[key].navIcon;
-            url.search = `version=${extensions[key].version}`;
+            url.search = `cache-version=${extensions[key].version}`;
 
             return url.toString();
         });
