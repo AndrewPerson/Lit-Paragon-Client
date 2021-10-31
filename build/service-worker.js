@@ -36,14 +36,13 @@ async function Fetch(event) {
         var url = new URL(request.url);
 
         if (url.searchParams.has("cache-version")) {
+            var cache = await caches.open(EXTENSION_CACHE);
+
             var cachedResource = await cache.match(request);
 
             if (cachedResource) return cachedResource;
             else {
-                var cachePromise = caches.open(EXTENSION_CACHE);
-                var responsePromise = fetch(request);
-
-                var [cache, response] = await Promise.all([cachePromise, responsePromise]);
+                var response =  await fetch(request);
 
                 cache.put(request, response.clone()).then(async () => {
                     var keys = await cache.keys();
