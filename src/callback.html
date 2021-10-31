@@ -61,8 +61,7 @@
         if (code || location.hostname == "localhost" || location.hostname == "127.0.0.1") {
             Token(code)
             .then(succeeded => {
-                location.search = "";
-                location.pathname = succeeded ? "" : "login";
+                location.href = `${location.origin}/${succeeded ? "" : "login"}`;
             });
         }
         else {
