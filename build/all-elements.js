@@ -233,11 +233,11 @@ var K,Q,tt,et,it,nt;null===(v=(m=globalThis).litHtmlPlatformSupport)||void 0===v
     }
 `;customElements.define("loading-element",class extends ot{static get styles(){return at}render(){return R`
             <img draggable="false" class="spinner" src="images/rings.svg" />
-        `}}),customElements.define("login-notification",class extends ot{static get styles(){return[st,ht,ct,rt]}async login(){await caches.delete(window.RESOURCE_CACHE),location.pathname="login"}constructor(){super()}render(){return R`
+        `}}),customElements.define("login-notification",class extends ot{static get styles(){return[st,ht,ct,rt]}async Login(){await caches.delete(window.RESOURCE_CACHE),location.href=`https://student.sbhs.net.au/api/authorize?response_type=code&scope=all-ro&state=abc&client_id=${window.CLIENT_ID}&redirect_uri=${location.origin}/callback`}constructor(){super()}render(){return R`
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
-                <button @click=${this.login}>
+                <button @click=${this.Login}>
                     Login
                 </button>
                 <button @click=${()=>this.remove()} class="dismiss">

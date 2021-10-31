@@ -31,14 +31,14 @@
 
     <p id="important">Paragon</p>
 
-    <button onclick="login()">Login</button>
+    <button onclick="Login()">Login</button>
 
     <script>
         if (window.isDark()) {
             document.getElementById("logo").src = "images/logo-dark.svg";
         }
 
-        function login() {
+        function Login() {
             location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
                             "&scope=all-ro" +
                             "&state=abc" +

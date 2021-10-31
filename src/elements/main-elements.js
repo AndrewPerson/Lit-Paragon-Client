@@ -19,9 +19,14 @@ export class LoginNotification extends LitElement {
         return [containerCss, textCss, buttonCss, loginNotificationCss];
     }
 
-    async login() {
+    async Login() {
         await caches.delete(window.RESOURCE_CACHE);
-        location.pathname = "login";
+        
+        location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
+                        "&scope=all-ro" +
+                        "&state=abc" +
+                        `&client_id=${window.CLIENT_ID}` +
+                        `&redirect_uri=${location.origin}/callback`;
     }
 
     constructor() {
@@ -33,7 +38,7 @@ export class LoginNotification extends LitElement {
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
-                <button @click=${this.login}>
+                <button @click=${this.Login}>
                     Login
                 </button>
                 <button @click=${() => this.remove()} class="dismiss">

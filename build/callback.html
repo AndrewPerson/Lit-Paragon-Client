@@ -31,9 +31,19 @@
 
     <p id="message">Logging in...</p>
 
+    <button id="login" style="display: none" onclick="Login()">Login Again</button>
+
     <script>
         if (window.isDark())
             document.getElementById("logo").src = "images/logo-dark.svg";
+
+        function Login() {
+            location.href = "https://student.sbhs.net.au/api/authorize?response_type=code" +
+                            "&scope=all-ro" +
+                            "&state=abc" +
+                            `&client_id=${window.CLIENT_ID}` +
+                            `&redirect_uri=${location.origin}/callback`;
+        }
 
         async function Token(code) {
             var tokenResponse = await fetch(window.SERVER_ENDPOINT + "/auth", {
@@ -78,6 +88,8 @@
             }
             else
                 document.getElementById("message").innerText = "No code available.";
+        
+            document.getElementById("login").removeAttribute("login");
         }
     </script>
 
