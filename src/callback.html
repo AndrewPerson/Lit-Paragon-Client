@@ -68,7 +68,7 @@
             var error = params.get("error");
 
             if (error) {
-                error.replace("_", " ");
+                error = error.replace("_", " ");
 
                 var words = error.split(" ");
 
