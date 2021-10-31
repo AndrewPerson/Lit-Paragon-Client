@@ -59,7 +59,7 @@ async function replaceVar(file, key, value) {
 
     await replace({
         files: `src/${file}`,
-        from: new RegExp(`${key} *= *".*"`),
+        from: new RegExp(`${key} *= *("|\`|').*("|\`|')`),
         to: `${key} = "${value}"`
     });
 }
@@ -139,7 +139,7 @@ replaceConstants(config.constants, config.filesWithConstants).then(async () => {
 
     var files = await getFiles(__dirname + "/build", "/");
     files.forEach(file => {
-        if (!/\/(service-worker.*?\.js)|\/(index)$/g.test(file)) js += `\t"${file}",\n`;
+        if (!/\/(service-worker.*?\.js)|\/(index)$|(metadata)/g.test(file)) js += `\t"${file}",\n`;
     });
 
     js += "];";

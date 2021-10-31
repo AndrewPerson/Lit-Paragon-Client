@@ -6,7 +6,7 @@ self.addEventListener('fetch', event => event.respondWith(Fetch(event)));
 self.addEventListener('periodicsync', event => event.waitUntil(PeriodicSync(event)));
 self.addEventListener('message', event => event.waitUntil(Message(event)));
 
-const OFFLINE_CACHE = 'Offline Resources';
+const OFFLINE_CACHE = "Offline Resources";
 const METADATA_CACHE = "Metadata";
 const RESOURCE_CACHE = "User Resources";
 const EXTENSION_CACHE = "Extension Resources";
@@ -18,7 +18,7 @@ const VALID_CACHES = [
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
-const METADATA_ENDPOINT = `${location.origin}/metadata`;
+const METADATA_ENDPOINT = OFFLINE_CACHE = "Offline Resources"${location.origin}/metadataMETADATA_ENDPOINT = "https://paragon-metadata.professor-smart.workers.dev";
 
 var UPDATING = false;
 
