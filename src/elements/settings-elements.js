@@ -34,8 +34,10 @@ export class UserSettings extends LitElement {
     }
 
     async Patch() {
-        await caches.delete(window.METADATA_CACHE);
-        await caches.delete("Offline Resources");
+        var keys = await caches.keys();
+        await Promise.all(keys.map(key => caches.delete(key)));
+
+        localStorage.clear();
 
         var serviceWorker = await navigator.serviceWorker.ready;
         serviceWorker.active.postMessage({command: 'metadata-fetch'});

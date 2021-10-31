@@ -1,11 +1,56 @@
 {
-    "deploy_cmd": "firebase deploy --only hosting:beta-paragon",
-    "svg_precision": 1,
-    "offline_cache": "Offline Resources",
-    "metadata_cache": "Metadata",
-    "resource_cache": "User Resources",
-    "extension_cache": "Extension Resources",
-    "server_endpoint": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
-    "metadata_endpoint": "https://paragon-metadata.professor-smart.workers.dev",
-    "client_id": "Paragon_Tools"
+    "metadata": {
+        "version": "2.0.1",
+        "pages": {
+            "Award Scheme Points": {
+                "navIcon": "/nav-icon.svg",
+                "url": "https://awardschemepoints.profsmart.repl.co",
+                "description": "Displays your award scheme points.",
+                "icon": "/icon.svg",
+                "version": "0.0.1"
+            }
+        }
+    },
+    "build": {
+        "deploy_cmd": "firebase deploy --only hosting:beta-paragon",
+        "svg_precision": 1
+    },
+    "constants": {
+        "caches": {
+            "constants": {
+                "offline": "Offline Resources",
+                "metadata": "Metadata",
+                "resource": "User Resources",
+                "extension": "Extension Resources"
+            },
+            "suffix": "_cache"
+        },
+        "endpoints": {
+            "constants": {
+                "server": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
+                "metadata": "{location}/metadata"
+            },
+            "suffix": "_endpoint"
+        },
+        "oauth2": {
+            "constants": {
+                "client_id": "Paragon_Tools"
+            }
+        }
+    },
+    "filesWithConstants": {
+        "js/init.js": {
+            "caches": ["metadata"],
+            "endpoints": ["server"],
+            "oauth2": ["client_id"]
+        },
+        "service-worker.js": {
+            "caches": ["offline", "metadata", "resource", "extension"],
+            "endpoints": ["server", "metadata"]
+        },
+        "service-worker.debug.js": {
+            "caches": ["metadata"],
+            "endpoints": ["server", "metadata"]
+        }
+    }
 }

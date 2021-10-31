@@ -30,7 +30,7 @@ String.raw`{
 
 const METADATA_CACHE = "Metadata";
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
-const METADATA_ENDPOINT = "https://paragon-metadata.professor-smart.workers.dev";
+const METADATA_ENDPOINT = `${location.origin}/metadata`;
 
 const SERVER_URL = new URL(SERVER_ENDPOINT);
 const METADATA_URL = new URL(METADATA_ENDPOINT);
@@ -49,7 +49,7 @@ async function onFetch(event) {
 
         var url = new URL(request.url);
 
-        if ((url.hostname == "localhost" || url.hostname == "127.0.0.1") && url.pathname == "/login")
+        if (url.hostname == location.hostname && url.pathname == "/login")
             return await fetch("/callback");
 
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/resources`)
@@ -61,7 +61,7 @@ async function onFetch(event) {
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/refresh`)
             return new Response(token);
 
-        if (url.origin == METADATA_URL.origin)
+        if (url.origin == METADATA_URL.origin && url.pathname == METADATA_URL.pathname)
             return new Response(metadata);
     }
 

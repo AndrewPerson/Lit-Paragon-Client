@@ -12,8 +12,7 @@ export class PageCard extends LitElement {
         return {
             title: {type: String},
             image: {type: String},
-            description: {type: String},
-            url: {type: String}
+            description: {type: String}
         };
     }
 
@@ -74,15 +73,12 @@ export class PageCard extends LitElement {
     }
 
     render() {
-        var imgUrl = new URL(this.url);
-        imgUrl.pathname = this.image;
-
         var installed = Object.keys(window.getInstalledExtensions()).includes(this.title);
 
         return html`
             <div id="header">
                 <div id="icon">
-                    <img draggable="false" src="${imgUrl.toString()}"/>
+                    <img draggable="false" src="${this.image}"/>
                 </div>
                 <p id="title">${this.title}</p>
             </div>
@@ -119,13 +115,19 @@ export class PagesMarketplace extends LitElement {
                 <input type="search" id="search" placeholder="Search..." autocomplete="off" @change="${this.Search}"/>
             </div>
             <div id="pages">
-                ${repeat(Object.keys(this.data), key => key, title => html`
-                    <page-card title="${title}"
-                               image="${this.data[title].icon}"
-                               description="${this.data[title].description}"
-                               url="${this.data[title].url}">
-                    </page-card>
-                `)}
+                ${repeat(Object.keys(this.data), key => key, title => {
+                        var url = new URL(this.data[title].url);
+                        url.pathname = this.data[title].icon;
+                        url.search = `version=${this.data[title].version}`;
+                        
+                        return html`
+                            <page-card title="${title}"
+                                    image="${url.toString()}"
+                                    description="${this.data[title].description}">
+                            </page-card>
+                        `;
+                    }
+                )}
             </div>
         `;
     }

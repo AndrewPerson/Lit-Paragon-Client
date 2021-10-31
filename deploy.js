@@ -43,28 +43,61 @@ async function getFiles(rootDir, relativeDir) {
 }
 
 async function replaceVar(file, key, value) {
+    if (value.includes("{location}")) {
+        var parts = value.split("{location}");
+
+        var newValue = parts.join("${location.origin}");
+        
+        await replace({
+            files: `src/${file}`,
+            from: new RegExp(`${key} *= *".*"`),
+            to: `${key} = \`${newValue}\``
+        });
+
+        return;
+    }
+
     await replace({
-        files: `build/${file}`,
+        files: `src/${file}`,
         from: new RegExp(`${key} *= *".*"`),
         to: `${key} = "${value}"`
     });
 }
 
-async function replaceConfigVar(key, includeServiceWorker = true, includeInit = true) {
-    if (!(key in config)) return;
+async function replaceConstants(constants, files) {
+    for (var file in files) {
+        var constantTypes = files[file];
+        for (var constantType in files[file]) {
+            if (!(constantType in constants)) {
+                console.log(`Skipping constant category ${constantType} because it doesn't exist.`);
+                continue;
+            }
 
-    if (includeServiceWorker && includeInit) {
-        await Promise.all([
-            replaceVar("assets/init*.js", key.toUpperCase(), config[key]),
-            replaceVar("service-worker.js", key.toUpperCase(), config[key])
-        ]);
+            var constantNames = constantTypes[constantType];
+            for (var constant of constantNames) {
+                if (!(constant in constants[constantType].constants)) {
+                    console.log(`Skipping constant ${constant} because it doesn't exist in constant category ${constantType}.`);
+                    continue;
+                }
+
+                await replaceVar(file,
+                                 `${constant}${constants[constantType].suffix}`.toUpperCase(),
+                                 constants[constantType].constants[constant]);
+            }
+        }
     }
-    else if (includeInit) {
-        await replaceVar("assets/init*.js", key.toUpperCase(), config[key]);
+}
+
+function scaffold(template, object) {
+    for (var key in template) {
+        if (!(key in object) ||
+            (template[key] != null && template[key] != undefined && typeof object[key] !== typeof template[key]) ||
+            Array.isArray(object[key]) != Array.isArray(template[key])) object[key] = template[key];
+
+        if (!Array.isArray(template[key]) && template[key] != null && typeof template[key] === "object" && Object.keys(template[key]).length != 0) object[key] = scaffold(template[key], object[key]);
     }
-    else if (includeServiceWorker) {
-        await replaceVar("service-worker.js", key.toUpperCase(), config[key]);
-    }
+
+    return object;
 }
 
 var start = Date.now();
@@ -75,10 +108,32 @@ try {
 }
 catch (e) {}
 
-rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
+config = scaffold({
+    metadata: {
+        version: "0.0.0",
+        pages: {}
+    },
+    build: {
+        deploy_cmd: null,
+        svg_precision: 1
+    },
+    constants: {},
+    filesWithConstants: {}
+}, config);
+
+for (var constant in config.constants) {
+    config.constants[constant] = scaffold({
+        constants: {},
+        suffix: ""
+    }, config.constants[constant]);
+}
+
+replaceConstants(config.constants, config.filesWithConstants).then(async () => {
+    await rm(__dirname + "/build", { recursive: true, force: true });
+    
     await cmd("npx rollup -c");
     
-    if (process.argv[2] == "deploy") await cmd(`npx svgo -f ${__dirname}/build -r -p ${config.svg_precision || 1}`);
+    if (process.argv[2] == "deploy") await cmd(`npx svgo -f ${__dirname}/build -r -p ${config.build.svg_precision || 1}`);
 
     var js = "self.assets = [\n\t\"/\",\n";
 
@@ -91,18 +146,13 @@ rm(__dirname + "/build", { recursive: true, force: true }).then(async () => {
 
     await writeFile(__dirname + "/build/assets.js", js);
 
-    await Promise.all([
-        replaceConfigVar("offline_cache", true, false),
-        replaceConfigVar("metadata_cache", true, true),
-        replaceConfigVar("resource_cache", true, false),
-        replaceConfigVar("extension_cache", true, false),
-        replaceConfigVar("server_endpoint", true, true),
-        replaceConfigVar("metadata_endpoint", true, false),
-        replaceConfigVar("client_id", false, true)
-    ]);
+    await writeFile(__dirname + "/build/metadata", JSON.stringify({
+        version: config.metadata.version,
+        pages: config.metadata.pages
+    }));
 
     if (process.argv[2] == "deploy") {
-        if (config.deploy_cmd) await cmd(config.deploy_cmd);
+        if (config.build.deploy_cmd) await cmd(config.build.deploy_cmd);
     }
     else {
         await writeFile(__dirname + "/build/service-worker.js",

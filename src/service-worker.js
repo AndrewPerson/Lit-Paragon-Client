@@ -18,7 +18,7 @@ const VALID_CACHES = [
 ];
 
 const SERVER_ENDPOINT = "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default";
-const METADATA_ENDPOINT = "https://paragon-metadata.professor-smart.workers.dev";
+const METADATA_ENDPOINT = `${location.origin}/metadata`;
 
 var UPDATING = false;
 
