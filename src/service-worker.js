@@ -62,7 +62,7 @@ async function Fetch(event) {
 
         var cache = await caches.open(OFFLINE_CACHE);
 
-        var cachedResource = await cache.match(request);
+        var cachedResource = await cache.match(url.origin + url.pathname);
         if (cachedResource) return cachedResource;
         else
         {

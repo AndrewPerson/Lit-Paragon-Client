@@ -74,7 +74,7 @@
                     formattedError += word[0].toUpperCase() + word.substring(1) + " ";
                 }
 
-                document.getElementById("message").innerText = `Error: ${formattedError.substring(1)}`;
+                document.getElementById("message").innerText = `Error: ${formattedError.substring(0, formattedError.length - 1)}`;
             }
             else
                 document.getElementById("message").innerText = "No code available.";
