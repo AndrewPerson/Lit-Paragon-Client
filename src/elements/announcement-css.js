@@ -70,7 +70,6 @@ export const announcementContainerCss = css`
         display: flex;
         flex-direction: column;
         margin: auto;
-        flex: 0.96;
         width: 96%;
         height: 96vh;
         padding: 2vmin;

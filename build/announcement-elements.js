@@ -77,7 +77,6 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
         display: flex;
         flex-direction: column;
         margin: auto;
-        flex: 0.96;
         width: 96%;
         height: 96vh;
         padding: 2vmin;

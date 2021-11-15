@@ -3,10 +3,6 @@ const RESOURCE_CACHE = "User Resources";
 async function Load() {
     UpdateScreenType();
 
-    window.addEventListener("resize", Debounce(() => {
-        UpdateScreenType();
-    }, 250));
-
     RedirectToProperWebsiteIfNeeded();
 
     if (location.origin != "https://web-paragon.web.app")
@@ -34,16 +30,6 @@ function RedirectToProperWebsiteIfNeeded() {
 }
 
 function UpdateScreenType() {
-    var screenClass = "mobile-screen";
-    var oppScreenClass = "laptop-screen";
-
-    if (innerWidth >= innerHeight) {
-        screenClass = "laptop-screen";
-        oppScreenClass = "mobile-screen";
-    }
-
-    UpdateClasses(document.getElementsByTagName("body"), screenClass, oppScreenClass);
-
     var dark = location.hash == "#dark";
 
     if (dark)
@@ -180,20 +166,5 @@ async function GetResourceFromCache(resource) {
     
     return await resourceResponse.text();
 }
-
-function Debounce(func, wait, immediate) {
-	var timeout;
-	return function() {
-		var context = this, args = arguments;
-		var later = function() {
-			timeout = null;
-			if (!immediate) func.apply(context, args);
-		};
-		var callNow = immediate && !timeout;
-		clearTimeout(timeout);
-		timeout = setTimeout(later, wait);
-		if (callNow) func.apply(context, args);
-	};
-};
 
 Load();

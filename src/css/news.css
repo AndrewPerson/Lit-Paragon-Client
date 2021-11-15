@@ -1,5 +1,7 @@
-.mobile-screen main {
-    max-height: calc(96vh - 16vw) !important;
+@media (max-aspect-ratio: 1/1) {
+    main {
+        max-height: calc(100vh - 16vw) !important;
+    }
 }
 
 main {
@@ -16,7 +18,7 @@ main {
 
 #container {
     width: 100%;
-    height: 100%;
+    height: inherit;
     padding-right: 1vmin;
     box-sizing: border-box;
     display: flex;
