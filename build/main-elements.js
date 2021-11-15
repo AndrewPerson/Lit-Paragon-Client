@@ -33,7 +33,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
         -webkit-user-select: none;
     }
 `,s=t`
-    :host :last-child {
+    nav-item:last-of-type {
         position: absolute;
         left: 0;
         bottom: 0;
@@ -126,12 +126,12 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
             <nav-item link="/barcode" title="ID Barcode" icon="barcode"></nav-item>
             <nav-item link="/timetable" title="Timetable"></nav-item>
             <nav-item link="/announcements" title="Announcements"></nav-item>
-            <nav-item link="/extensions" title="Extensions"></nav-item>
+            <nav-item link="/news" title="News"></nav-item>
 
             <nav-item link="/settings" title="Settings"></nav-item>
         `}}class c extends e{static get styles(){return o}static get properties(){return{width:{type:String},height:{type:String}}}constructor(){super(),this.width="0",this.height="0"}render(){return i`
             <img draggable="false" class="spinner" src="images/rings.svg" />
-        `}}class d extends e{static get styles(){return r}async login(){await caches.delete("User Resources"),location.pathname="login"}constructor(){super()}render(){return i`
+        `}}class m extends e{static get styles(){return r}async login(){await caches.delete("User Resources"),location.pathname="login"}constructor(){super()}render(){return i`
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
@@ -142,4 +142,4 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
                     Dismiss
                 </button>
             </div>
-        `}}customElements.define("nav-item",a),customElements.define("nav-bar",l),customElements.define("loading-element",c),customElements.define("login-notification",d);export{c as LoadingElement,d as LoginNotification,a as NavItem,l as Navbar};
+        `}}customElements.define("nav-item",a),customElements.define("nav-bar",l),customElements.define("loading-element",c),customElements.define("login-notification",m);export{c as LoadingElement,m as LoginNotification,a as NavItem,l as Navbar};

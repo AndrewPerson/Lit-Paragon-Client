@@ -16,14 +16,33 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
         margin-bottom: 2vmin;
     }
 
+    * {
+        margin: 1vmin 0;
+        color: var(--text1);
+    }
+
     p {
-        margin: 0;
         margin-top: 1vmin;
         color: var(--text1);
     }
 
+    blockquote {
+        border-left: calc(var(--font-size) / 2) solid var(--surface4);
+        margin: 0;
+        padding-left: calc(var(--font-size) / 4 * 3);
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        border-bottom: 0.1vmin solid var(--text1);
+        font-weight: normal;
+        margin-top: 5vmin;
+        padding-bottom: 1vmin;
+    }
+
     .title {
         cursor: pointer;
+        margin-top: 0;
+        padding-right: 4vmin;
     }
 
     .sub {
@@ -46,7 +65,7 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
     .toggle {
         margin-top: 2vmin;
         position: absolute;
-        top: 0;
+        top: -1vmin;
         right: 0;
         width: 4vmin;
         cursor: pointer;
@@ -85,8 +104,11 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
         display: flex;
         flex-direction: column;
         flex: 1;
-        overflow-y: scroll;
+        overflow-y: auto;
         padding-right: 1vmin;
+        
+        scrollbar-width: thin;
+        scrollbar-color: var(--surface4) transparent;
     }
 
     .announcements::-webkit-scrollbar {
@@ -127,13 +149,13 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
         background-color: var(--surface2);
     }
 `;class d extends n{static get styles(){return l}static get properties(){return{title:{type:String},content:{type:String},displayYears:{type:String},author:{type:String},time:{type:String}}}toggle(){this.collapsed=!this.collapsed,this.update()}constructor(){super(),this.title="",this.content="",this.displayYears="",this.author="",this.time=null,this.collapsed=!0}render(){return r`
-            <p class="title" @click="${this.toggle}">${this.title}</p>
-            <p class="sub">For ${this.displayYears} ${this.time?"| At "+this.time+" ":""}| By ${this.author}</p>
-            <div id="content" class="content ${this.collapsed?"collapsed":"expanded"}">
+            <h3 class="title" @click="${this.toggle}">${this.title}</h3>
+            <p class="sub">${this.displayYears?`For ${this.displayYears} ${this.time?"| At "+this.time+" ":""}| By ${this.author}`:""}</p>
+            <blockquote id="content" class="content ${this.collapsed?"collapsed":"expanded"}">
                 ${a(this.content)}
-            </div>
+            </blockquote>
             <img @click="${this.toggle}" class="toggle" src="images/toggle.svg" />
-        `}}class p extends n{static get styles(){return c}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.data)return r`<loading-element style="width: 80%"></loading-element>`;if(0==this.data.notices.length)return r`
+        `}}class h extends n{static get styles(){return c}static get properties(){return{data:{type:Object}}}updateFilter(t){this.filter=t.target.value,this.update()}constructor(){super(),this.data={notices:[]},this.filter="all"}render(){if(!this.data)return r`<loading-element style="width: 80%"></loading-element>`;if(0==this.data.notices.length)return r`
                 <div class="header" style="min-width: unset; width: 80%; margin: 0 auto;">
                     <div class="line-right"></div>
                     <p>Nothing For Today</p>
@@ -166,4 +188,4 @@ class s extends class{constructor(t){}T(t,e,i){this.Σdt=t,this.M=e,this.Σct=i}
                             </announcement-item>
                         `))}
             </div>
-        `}}customElements.define("announcement-item",d),customElements.define("announcement-container",p);export{p as AnnouncementContainer,d as AnnouncementItem};
+        `}}customElements.define("announcement-item",d),customElements.define("announcement-container",h);export{h as AnnouncementContainer,d as AnnouncementItem};

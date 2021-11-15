@@ -14,16 +14,16 @@
     <meta property="og:description" content="Paragon is the next generation of Student Portal Alternatives at SBHS, with offline functionality, blazingly fast load times and student ID barcode replication.">
     
     <title>Paragon</title>
-
+    
     <base href="/">
 
     <link href="assets/app-44cc30c0.css" rel="stylesheet">
     <link href="assets/navbar-dc971bb4.css" rel="stylesheet">
-    
-    <link href="assets/extensions-04008533.css" rel="stylesheet">
+    <link href="assets/news-fee0f8bc.css" rel="stylesheet">
 
     <link href="assets/manifest.json" rel="manifest">
 
+    
     
 </head>
 
@@ -33,11 +33,31 @@
     <nav-bar></nav-bar>
 
     <main>
-        <p>Extensions are coming early 2022!</p>
+        <div id="container">
+            <loading-element style="margin: auto; width: 80vmin;" id="loading"></loading-element>
+        </div>
     </main>
 
-    
+    <script>
+        async function run() {
+            var newsResponse = await fetch("https://paragon-news.profsmart.repl.co/news");
 
+            document.getElementById("loading").remove();
 
+            var newsData = JSON.parse(await newsResponse.text());
 
-<script type="module" src="./main-elements.js"></script><script type="module" src="./inline-module-960e17a3142d9c5984597582438dae3d.js"></script></body></html>
+            var container = document.getElementById("container");
+
+            for (let title in newsData) {
+                var item = document.createElement("announcement-item");
+                item.setAttribute("title", title);
+                item.setAttribute("content", newsData[title].html);
+
+                container.appendChild(item);
+            }
+        }
+
+        run();
+    </script>
+
+<script type="module" src="./main-elements.js"></script><script type="module" src="./announcement-elements.js"></script></body></html>

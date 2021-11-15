@@ -37,7 +37,7 @@ export const navItemCss = css`
 `;
 
 export const navMenuCss = css`
-    :host :last-child {
+    nav-item:last-of-type {
         position: absolute;
         left: 0;
         bottom: 0;

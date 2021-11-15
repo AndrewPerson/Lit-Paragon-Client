@@ -63,6 +63,12 @@
                 location.href = location.origin + "/dailytimetable";
             });
         }
+        else if (location.hostname != "web-paragon.web.app") {
+            Token(code)
+            .then(() => {
+                location.href = location.origin + "/dailytimetable";
+            });
+        }
     </script>
 </body>
 
