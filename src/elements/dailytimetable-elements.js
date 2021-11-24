@@ -36,7 +36,6 @@ export class PayloadBellItem extends LitElement {
     static get properties() {
         return {
             time: {type: String},
-            timeChanged: {type: Boolean},
             name: {type: String},
             room: {type: String},
             roomChanged: {type: Boolean},
@@ -49,7 +48,6 @@ export class PayloadBellItem extends LitElement {
         super();
 
         this.time = "";
-        this.timeChanged = false;
         this.name = "";
         this.room = "";
         this.roomChanged = false;
@@ -58,14 +56,13 @@ export class PayloadBellItem extends LitElement {
     }
 
     render() {
-        var timeClass = this.timeChanged ? "changed" : "";
         var teacherClass = this.teacherChanged ? "changed" : "";
         var roomClass = this.roomChanged ? "changed" : "";
 
         return html`
             <div>
                 <p class="start">${this.name}</p>
-                <p class="time">at <span class="${timeClass}">${this.time}</span> with <span class="${teacherClass}">${this.teacher}</span></p>
+                <p class="time">at ${this.time} with <span class="${teacherClass}">${this.teacher}</span></p>
             </div>
             
             <p class="end ${roomClass}">${this.room}</p>
@@ -80,7 +77,23 @@ export class DailyTimetable extends LitElement {
 
     static get properties() {
         return {
-            data: {type: Object}
+            data: {
+                type: Object,
+                converter: (value, type) => {
+                    var data = JSON.parse(value);
+
+                    if (!data.timetable.timetable.periods["0"]) {
+                        for (var i = 0; i < data.bells.length; i++) {
+                            if (data.bells[i].period == "0") {
+                                data.bells.splice(i, 1);
+                                break;
+                            }
+                        }
+                    }
+
+                    return data;
+                }
+            }
         }
     }
 
@@ -130,7 +143,7 @@ export class DailyTimetable extends LitElement {
         }
 
         var formattedString = '';
-        if (hours !== '00') {
+        if (hours != '00') {
             formattedString += hours + ':';
         }
 
@@ -166,7 +179,7 @@ export class DailyTimetable extends LitElement {
             }
         }
         else {
-            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "R")
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "RC")
                 this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
             else
                 this.nextBell = nextBell.bell.bellDisplay;
@@ -211,7 +224,7 @@ export class DailyTimetable extends LitElement {
             `;
         }
 
-        if (this.data.status != "OK") {
+        if (this.data.status != "OK" || !this.data.timetable || !this.data.timetable.timetable) {
             clearInterval(this.countdownId);
             return html`
                 <p>
@@ -235,7 +248,7 @@ export class DailyTimetable extends LitElement {
                     var period = this.data.timetable.timetable.periods[bell.bell];
 
                     if (period) {
-                        if (bell.bell == "R")
+                        if (bell.bell == "RC")
                             return nothing;
                         else {
                             var room = period.room;
@@ -258,18 +271,18 @@ export class DailyTimetable extends LitElement {
 
                                 if (period.year == variation.year) {
                                     teacherChanged = true;
-                                    teacher = variation.casualSurname;
+
+                                    teacher = variation.casualSurname || `${variation.casual[3]} ${variation.casual[0]}${variation.casual.substring(1, 3).toLowerCase()}`;
                                 }
                             }
 
                             var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
 
-                            title = title.split(" ").filter(value => isNaN(value)).join(" ");
+                            title = title.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
 
                             return html`
                                 <payload-bell-item name="${title}"
                                                    time="${bell.time}"
-                                                   ?timechanged="${bell.reason != ""}"
                                                    room="${room}"
                                                    ?roomChanged="${roomChanged}"
                                                    teacher="${teacher == "" ? "No one" : teacher}"
@@ -279,7 +292,7 @@ export class DailyTimetable extends LitElement {
                     
                     }
                     else {
-                        if (bell.bell == "Transition" || bell.bell == "End of Day")
+                        if (bell.bell == "EoD")
                             return nothing;
                         else
                             return html`<bell-item name="${bell.bellDisplay}" time="${bell.time}"></bell-item>`;

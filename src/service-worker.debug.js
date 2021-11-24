@@ -51,8 +51,9 @@ async function onFetch(event) {
             return await fetch("/callback");
 
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/resource`)
-            return await fetch("https://sbhs-random-data.profsmart.repl.co/all.json");
-        
+            //return await fetch("https://sbhs-random-data.profsmart.repl.co/all.json");
+            return await fetch("http://localhost:8080/all.json");
+
         if (url.origin == SERVER_URL.origin && url.pathname == `${SERVER_URL.pathname}/auth`)
             return new Response(token);
 
