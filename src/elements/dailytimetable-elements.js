@@ -82,8 +82,8 @@ export class DailyTimetable extends LitElement {
                 converter: value => {
                     var data = JSON.parse(value);
 
-                    if (!data.timetable.timetable.periods["0"]) {
-                        for (var i = 0; i < data.bells.length; i++) {
+                    if (!data?.timetable?.timetable?.periods?.["0"]) {
+                        for (var i = 0; i < data?.bells?.length; i++) {
                             if (data.bells[i].period == "0") {
                                 data.bells.splice(i, 1);
                                 break;
