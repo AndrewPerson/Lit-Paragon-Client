@@ -59,17 +59,24 @@ export class TimetablePeriod extends LitElement {
         this.name = "";
         this.room = "";
 
-        this.addEventListener("mouseover", () => TimetablePeriod.highlight(this.name));
+        this.addEventListener("mouseover", () => {
+            if (this.name && this.room)
+                TimetablePeriod.highlight(this.name)
+        });
 
         this.addEventListener("mouseleave", () => TimetablePeriod.highlight(""));
     }
 
     render() {
-        var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+        if (!this.name || !this.room)
+            return html`<p></p>`;
+
+        var highlighted = TimetablePeriod.highlighted == this.name;
+
         var nextSibling = this.nextElementSibling;
         var nextNextSibling = nextSibling?.nextElementSibling;
 
-        var displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
+        var displayPopupTop = nextSibling?.name == this.name || nextNextSibling?.name == this.name;
 
         return html`
             <div>
