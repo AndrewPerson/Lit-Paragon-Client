@@ -13,7 +13,7 @@ self.assets = [
 	"/assets/login-ce543d2c.css",
 	"/assets/logo-ddb5fa25.svg",
 	"/assets/logo-with-rings-87a5cfc9.svg",
-	"/assets/main-93ea2c20.js",
+	"/assets/main-a52dfe53.js",
 	"/assets/manifest.json",
 	"/assets/moon-43569251.svg",
 	"/assets/navbar-3b4c4cc2.css",

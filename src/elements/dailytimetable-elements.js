@@ -79,7 +79,7 @@ export class DailyTimetable extends LitElement {
         return {
             data: {
                 type: Object,
-                converter: (value, type) => {
+                converter: value => {
                     var data = JSON.parse(value);
 
                     if (!data.timetable.timetable.periods["0"]) {
@@ -204,6 +204,7 @@ export class DailyTimetable extends LitElement {
         }, 1000);
 
         this.data = {
+            status: "",
             date: "",
             bells: [],
             timetable: {
@@ -215,6 +216,13 @@ export class DailyTimetable extends LitElement {
             roomVariations: [],
             classVariations: []
         };
+    }
+
+    firstUpdated() {
+        if (this.data) {
+            this.updateCountdown();
+            this.update();
+        }
     }
 
     render() {
@@ -245,58 +253,53 @@ export class DailyTimetable extends LitElement {
 
             ${
                 this.data.bells.map(bell => {
+                    if (bell.bell == "RC" || bell.bell == "EoD")
+                        return nothing;
+                    
                     var period = this.data.timetable.timetable.periods[bell.bell];
 
                     if (period) {
-                        if (bell.bell == "RC")
-                            return nothing;
-                        else {
-                            var room = period.room;
-                            var roomChanged = false;
+                        var room = period.room;
+                        var roomChanged = false;
 
-                            if (bell.bell in this.data.roomVariations) {
-                                var variation = this.data.roomVariations[bell.bell];
+                        if (bell.bell in this.data.roomVariations) {
+                            var variation = this.data.roomVariations[bell.bell];
 
-                                if (period.year == variation.year) {
-                                    roomChanged = true;
-                                    room = variation.roomTo;
-                                }
+                            if (period.year == variation.year) {
+                                roomChanged = true;
+                                room = variation.roomTo;
                             }
-                            
-                            var teacher = period.fullTeacher;
-                            var teacherChanged = false;
-
-                            if (bell.bell in this.data.classVariations) {
-                                var variation = this.data.classVariations[bell.bell];
-
-                                if (period.year == variation.year) {
-                                    teacherChanged = true;
-
-                                    teacher = variation.casualSurname || `${variation.casual[3]} ${variation.casual[0]}${variation.casual.substring(1, 3).toLowerCase()}`;
-                                }
-                            }
-
-                            var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
-
-                            title = title.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
-
-                            return html`
-                                <payload-bell-item name="${title}"
-                                                   time="${bell.time}"
-                                                   room="${room}"
-                                                   ?roomChanged="${roomChanged}"
-                                                   teacher="${teacher == "" ? "No one" : teacher}"
-                                                   ?teacherChanged="${teacherChanged}">
-                                </payload-bell-item>`;
                         }
+                        
+                        var teacher = period.fullTeacher;
+                        var teacherChanged = false;
+
+                        if (bell.bell in this.data.classVariations) {
+                            var variation = this.data.classVariations[bell.bell];
+
+                            if (period.year == variation.year) {
+                                teacherChanged = true;
+
+                                teacher = variation.casualSurname || `${variation.casual[3]} ${variation.casual[0]}${variation.casual.substring(1, 3).toLowerCase()}`;
+                            }
+                        }
+
+                        var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
+
+                        title = title.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
+
+                        return html`
+                            <payload-bell-item name="${title}"
+                                                time="${bell.time}"
+                                                room="${room}"
+                                                ?roomChanged="${roomChanged}"
+                                                teacher="${teacher == "" ? "No one" : teacher}"
+                                                ?teacherChanged="${teacherChanged}">
+                            </payload-bell-item>`;
                     
                     }
-                    else {
-                        if (bell.bell == "EoD")
-                            return nothing;
-                        else
-                            return html`<bell-item name="${bell.bellDisplay}" time="${bell.time}"></bell-item>`;
-                    }
+                    else
+                        return html`<bell-item name="${bell.bellDisplay}" time="${bell.time}"></bell-item>`;
                 })
             }
         `;

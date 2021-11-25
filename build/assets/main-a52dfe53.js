@@ -5,7 +5,7 @@ async function Load() {
 
     RedirectToProperWebsiteIfNeeded();
 
-    if (location.origin != "https://web-paragon.web.app")
+    if (location.origin != "https://web-paragon.web.app" && !navigator.serviceWorker.controller)
         await RegisterServiceWorker();
 
     if (location.pathname != "login" && location.pathname != "callback") {

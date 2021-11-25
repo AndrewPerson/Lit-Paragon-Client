@@ -32,7 +32,12 @@ export class TimetablePeriod extends LitElement {
 
     static get properties() {
         return {
-            name: {type: String},
+            name: {
+                type: String,
+                converter: name => {
+                    return name?.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
+                }
+            },
             room: {type: String}
         }
     }
