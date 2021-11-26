@@ -50,7 +50,7 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-97c1479f.js";const s=e`
     p {
         color: var(--text1);
     }
-`,l=e`
+`,n=e`
     :host {
         display: flex;
         flex-direction: column;
@@ -114,7 +114,7 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-97c1479f.js";const s=e`
     .line-left {
         margin-left: 10px;
     }
-`;class n extends t{static get styles(){return s}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return i`
+`;class l extends t{static get styles(){return s}static get properties(){return{name:{type:String},time:{type:String}}}constructor(){super(),this.name="",this.time="00:00"}render(){return i`
             <p class="start">${this.name}</p>
             <p class="end">${this.time}</p>
         `}}class o extends t{static get styles(){return[s,r]}static get properties(){return{time:{type:String},name:{type:String},room:{type:String},roomChanged:{type:Boolean},teacher:{type:String},teacherChanged:{type:Boolean}}}constructor(){super(),this.time="",this.name="",this.room="",this.roomChanged=!1,this.teacher="",this.teacherChanged=!1}render(){var e=this.teacherChanged?"changed":"",t=this.roomChanged?"changed":"";return i`
@@ -124,22 +124,22 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-97c1479f.js";const s=e`
             </div>
             
             <p class="end ${t}">${this.room}</p>
-        `}}class d extends t{static get styles(){return l}static get properties(){return{data:{type:Object,converter:e=>{var t=JSON.parse(e);if(!t?.timetable?.timetable?.periods?.[0])for(var i=0;i<t?.bells?.length;i++)if("0"==t.bells[i].period){t.bells.splice(i,1);break}return t}}}}getDate(e){var t=new Date(this.data.date),i=e.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return t.setHours(a),t.setMinutes(s),t}getNextBell(){var e=new Date;for(var t in this.data.bells){var i=this.data.bells[t],a=this.getDate(i);if(a>=e)return{bell:i,time:Math.round((a-e)/1e3)}}}secondsToString(e){var t=e%60,i=(e-t)/60%60,a=((e-t)/60-i)/60;a<10&&(a="0"+a),i<10&&(i="0"+i),t<10&&(t="0"+t);var s="";return"00"!=a&&(s+=a+":"),s+=i+":"+t}updateCountdown(){var e=this.getNextBell();e?(e.bell.bell in this.data.timetable.timetable.periods&&"RC"!=e.bell.bell?this.nextBell=this.data.timetable.timetable.periods[e.bell.bell].title:this.nextBell=e.bell.bellDisplay,this.timeUntilNextBell=this.secondsToString(e.time)):d.gettingNextDay||(d.gettingNextDay=!0,caches.open("User Resources").then((async e=>{this.setAttribute("data","null"),this.data=null,this.requestUpdate();var t=await LoginIfNeeded();if(await UpdateResourcesIfNeeded(t,!0)){var i=(await e.match("dailytimetable")).clone();this.setAttribute("data",await i.text())}})))}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.timeUntilNextBell="00:00",this.countdownId=setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={status:"",date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]}}firstUpdated(){this.data&&(this.updateCountdown(),this.update())}render(){return this.data?"OK"==this.data.status&&this.data.timetable&&this.data.timetable.timetable?i`
+        `}}class h extends t{static get styles(){return n}static get properties(){return{data:{type:Object,converter:e=>{var t=JSON.parse(e);if(!t?.timetable?.timetable?.periods?.[0])for(var i=0;i<t?.bells?.length;i++)if("0"==t.bells[i].period){t.bells.splice(i,1);break}return t}}}}getDate(e){var t=new Date(this.data.date),i=e.time.split(":"),a=Number.parseInt(i[0]),s=Number.parseInt(i[1]);return t.setHours(a),t.setMinutes(s),t}getNextBell(){var e=new Date;for(var t in this.data.bells){var i=this.data.bells[t],a=this.getDate(i);if(a>=e)return{bell:i,time:a}}}getEnglishTime(e){var t=new Date,i=e-t;if(t.getMonth()>e.getMonth()&&t.getDate()>e.getDate())return{descriptor:"in",descriptor:t.getMonth()-e.getMonth()+t.getMonth()-e.getMonth()==1?" Month":" Months"};if(i>864e5){var a=Math.round(i/864e5);return{descriptor:"is",time:1==a?"Tomorrow":a+" Days"}}var s=Math.floor(i/36e5).toString(),r=Math.floor(i%36e5/6e4).toString(),n=Math.floor(i%36e5%6e4/1e3).toString();return s.length<2&&(s="0"+s),r.length<2&&(r="0"+r),n.length<2&&(n="0"+n),"00"==s&&"00"==r?{descriptor:"in",time:n+n==1?" Second":" Seconds"}:"00"==s?{descriptor:"in",time:`${r}:${n}`}:{descriptor:"in",time:`${s}:${r}:${n}`}}updateCountdown(){var e=this.getNextBell();e?(e.bell.bell in this.data.timetable.timetable.periods&&"RC"!=e.bell.bell?this.nextBell=this.data.timetable.timetable.periods[e.bell.bell].title:this.nextBell=e.bell.bellDisplay,this.bellTime=this.getEnglishTime(e.time)):h.gettingNextDay||(h.gettingNextDay=!0,this.setAttribute("data","null"),LoginIfNeeded().then((async e=>{if(await UpdateResourcesIfNeeded(e,force=!0)){var t=await caches.open("User Resources"),i=(await t.match("dailytimetable")).clone();this.setAttribute("data",await i.text())}})))}static gettingNextDay=!1;constructor(){super(),this.nextBell="Nothing",this.bellTime={descriptor:"is",time:"Now"},this.countdownId=setInterval((()=>{this.data&&(this.updateCountdown(),this.update())}),1e3),this.data={status:"",date:"",bells:[],timetable:{timetable:{periods:{}},subjects:{}},roomVariations:[],classVariations:[]}}firstUpdated(){this.data&&(this.updateCountdown(),this.update())}render(){return this.data?"OK"==this.data.status&&this.data.timetable&&this.data.timetable.timetable?i`
             <p>${this.nextBell}</p>
-            <p>in</p>
+            <p>${this.bellTime.descriptor}</p>
 
             <div class="timer-container">
                 <span class="line-right"></span>
-                <p id="timer">${this.timeUntilNextBell}</p>
+                <p id="timer">${this.bellTime.time}</p>
                 <span class="line-left"></span>
             </div>
 
-            ${this.data.bells.map((e=>{if("RC"==e.bell||"EoD"==e.bell)return a;var t=this.data.timetable.timetable.periods[e.bell];if(t){var s=t.room,r=!1;if(e.bell in this.data.roomVariations){var l=this.data.roomVariations[e.bell];t.year==l.year&&(r=!0,s=l.roomTo)}var n=t.fullTeacher,o=!1;if(e.bell in this.data.classVariations){l=this.data.classVariations[e.bell];t.year==l.year&&(o=!0,n=l.casualSurname||`${l.casual[3]} ${l.casual[0]}${l.casual.substring(1,3).toLowerCase()}`)}var d=this.data.timetable.subjects[`${t.year}${t.title}`].title;return d=d.split(" ").filter((e=>isNaN(e)&&e.length>1)).join(" "),i`
-                            <payload-bell-item name="${d}"
+            ${this.data.bells.map((e=>{if("RC"==e.bell||"EoD"==e.bell)return a;var t=this.data.timetable.timetable.periods[e.bell];if(t){var s=t.room,r=!1;if(e.bell in this.data.roomVariations){var n=this.data.roomVariations[e.bell];t.year==n.year&&(r=!0,s=n.roomTo)}var l=t.fullTeacher,o=!1;if(e.bell in this.data.classVariations)"novariation"!=(n=this.data.classVariations[e.bell]).type&&t.year==n.year&&(o=!0,l=n.casualSurname?n.casualSurname:n.casual?n.casual[n.casual.length-1].toUpperCase()+" "+n.casual[0].toUpperCase()+n.casual.substring(1,n.casual.length-1).toLowerCase():"Unknown");var h=this.data.timetable.subjects[`${t.year}${t.title}`].title;return h=h.split(" ").filter((e=>isNaN(e)&&e.length>1)).join(" "),i`
+                            <payload-bell-item name="${h}"
                                                 time="${e.time}"
                                                 room="${s}"
                                                 ?roomChanged="${r}"
-                                                teacher="${""==n?"No one":n}"
+                                                teacher="${""==l?"No one":l}"
                                                 ?teacherChanged="${o}">
                             </payload-bell-item>`}return i`<bell-item name="${e.bellDisplay}" time="${e.time}"></bell-item>`}))}
         `:(clearInterval(this.countdownId),i`
@@ -148,4 +148,4 @@ import{i as e,h as t,T as i,A as a}from"./lit-element-97c1479f.js";const s=e`
                 </p>
             `):i`
                 <loading-element style="width: 80%"></loading-element>
-            `}}customElements.define("bell-item",n),customElements.define("payload-bell-item",o),customElements.define("daily-timetable",d);export{n as BellItem,d as DailyTimetable,o as PayloadBellItem};
+            `}}customElements.define("bell-item",l),customElements.define("payload-bell-item",o),customElements.define("daily-timetable",h);export{l as BellItem,h as DailyTimetable,o as PayloadBellItem};

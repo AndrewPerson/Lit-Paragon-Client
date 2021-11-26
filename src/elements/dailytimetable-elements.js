@@ -120,56 +120,96 @@ export class DailyTimetable extends LitElement {
             var bellTime = this.getDate(bell);
 
             if (bellTime >= now) {
-                return {bell: bell, time: Math.round((bellTime - now) / 1000)};
+                return {bell: bell, time: bellTime};
             }
         }
 
         return undefined;
     }
 
-    secondsToString(time) {
-        var seconds = time % 60;
-        var minutes = ((time - seconds) / 60) % 60;
-        var hours = ((time - seconds) / 60 - minutes) / 60;
+    getEnglishTime(time) {
+        var now = new Date();
 
-        if (hours < 10) {
-            hours = '0' + hours;
-        }
-        if (minutes < 10) {
-            minutes = '0' + minutes;
-        }
-        if (seconds < 10) {
-            seconds = '0' + seconds;
-        }
+        var distance = time - now;
 
-        var formattedString = '';
-        if (hours != '00') {
-            formattedString += hours + ':';
+        if (now.getMonth() > time.getMonth() && now.getDate() > time.getDate())
+            return {
+                descriptor: "in",
+                descriptor: now.getMonth() - time.getMonth() +
+                            now.getMonth() - time.getMonth() == 1 ?
+                            " Month" :
+                            " Months"
+            };
+        //Length of one day in ms
+        else if (distance > 86400000) {
+            var days = Math.round(distance / 86400000);
+
+            return {
+                descriptor: "is",
+                time: days == 1 ?
+                      "Tomorrow" :
+                      days + " Days"
+            };
         }
+        else {
+            var hours = Math.floor(distance / 3600000).toString();
+            var minutes = Math.floor((distance % 3600000) / 60000).toString();
+            var seconds = Math.floor(((distance % 3600000) % 60000) / 1000).toString();
 
-        formattedString += minutes + ':' + seconds;
+            if (hours.length < 2)
+                hours = "0" + hours;
 
-        return formattedString
+            if (minutes.length < 2)
+                minutes = "0" + minutes;
+
+            if (seconds.length < 2)
+                seconds = "0" + seconds;
+
+            if (hours == "00" && minutes == "00")
+                return {
+                    descriptor: "in",
+                    time: seconds +
+                          seconds == 1 ?
+                          " Second" :
+                          " Seconds"
+                };
+            
+            if (hours == "00")
+                return {
+                    descriptor: "in",
+                    time: `${minutes}:${seconds}`
+                };
+
+            return {
+                descriptor: "in",
+                time: `${hours}:${minutes}:${seconds}`
+            }
+        }
     }
 
     updateCountdown() {
         var nextBell = this.getNextBell();
 
-        if (!nextBell) {
+        if (nextBell) {
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "RC")
+                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
+            else
+                this.nextBell = nextBell.bell.bellDisplay;
+
+            this.bellTime = this.getEnglishTime(nextBell.time);
+        }
+        else {
             if (!DailyTimetable.gettingNextDay) {
                 DailyTimetable.gettingNextDay = true;
 
-                caches.open("User Resources").then(async cache => {
-                    this.setAttribute("data", "null");
-                    this.data = null;
+                this.setAttribute("data", "null");
 
-                    this.requestUpdate();
+                LoginIfNeeded().then(async token => {
+                    var succeeded = await UpdateResourcesIfNeeded(token, force=true);
 
-                    var token = await LoginIfNeeded();
-                    
-                    var succeeded = await UpdateResourcesIfNeeded(token, true);
-                    
                     if (succeeded) {
+                        var cache = await caches.open("User Resources");
+
                         var response = await cache.match("dailytimetable");
                         var clonedResponse = response.clone();
 
@@ -177,14 +217,6 @@ export class DailyTimetable extends LitElement {
                     }
                 });
             }
-        }
-        else {
-            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "RC")
-                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
-            else
-                this.nextBell = nextBell.bell.bellDisplay;
-
-            this.timeUntilNextBell = this.secondsToString(nextBell.time);
         }
     }
 
@@ -194,7 +226,10 @@ export class DailyTimetable extends LitElement {
         super();
 
         this.nextBell = "Nothing";
-        this.timeUntilNextBell = "00:00";
+        this.bellTime = {
+            descriptor: "is",
+            time: "Now"
+        };
 
         this.countdownId = setInterval(() => {
             if (this.data) {
@@ -243,11 +278,11 @@ export class DailyTimetable extends LitElement {
 
         return html`
             <p>${this.nextBell}</p>
-            <p>in</p>
+            <p>${this.bellTime.descriptor}</p>
 
             <div class="timer-container">
                 <span class="line-right"></span>
-                <p id="timer">${this.timeUntilNextBell}</p>
+                <p id="timer">${this.bellTime.time}</p>
                 <span class="line-left"></span>
             </div>
 
@@ -277,10 +312,22 @@ export class DailyTimetable extends LitElement {
                         if (bell.bell in this.data.classVariations) {
                             var variation = this.data.classVariations[bell.bell];
 
-                            if (period.year == variation.year) {
-                                teacherChanged = true;
+                            if (variation.type != "novariation") {
+                                if (period.year == variation.year) {
+                                    teacherChanged = true;
 
-                                teacher = variation.casualSurname || `${variation.casual[3]} ${variation.casual[0]}${variation.casual.substring(1, 3).toLowerCase()}`;
+                                    if (variation.casualSurname)
+                                        teacher = variation.casualSurname;
+                                    else {
+                                        if (variation.casual) {
+                                            teacher = variation.casual[variation.casual.length - 1].toUpperCase() + " "
+                                                    + variation.casual[0].toUpperCase()
+                                                    + variation.casual.substring(1, variation.casual.length - 1).toLowerCase();
+                                        }
+                                        else
+                                            teacher = "Unknown";
+                                    }
+                                }
                             }
                         }
 
