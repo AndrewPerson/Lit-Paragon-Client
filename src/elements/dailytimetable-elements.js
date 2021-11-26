@@ -144,11 +144,15 @@ export class DailyTimetable extends LitElement {
         else if (distance > 86400000) {
             var days = Math.round(distance / 86400000);
 
+            if (days == 1)
+                return {
+                    descriptor: "is",
+                    time: "Tomorrow"
+                };
+
             return {
-                descriptor: "is",
-                time: days == 1 ?
-                      "Tomorrow" :
-                      days + " Days"
+                descriptor: "in",
+                time: days + " Days"
             };
         }
         else {
