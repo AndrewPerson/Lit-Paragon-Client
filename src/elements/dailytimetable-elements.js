@@ -317,7 +317,8 @@ export class DailyTimetable extends LitElement {
                                         if (variation.casual) {
                                             teacher = variation.casual[variation.casual.length - 1].toUpperCase() + " "
                                                     + variation.casual[0].toUpperCase()
-                                                    + variation.casual.substring(1, variation.casual.length - 1).toLowerCase();
+                                                    + variation.casual.substring(1, variation.casual.length - 1).toLowerCase()
+                                                    + ".";
                                         }
                                         else
                                             teacher = "Unknown";
