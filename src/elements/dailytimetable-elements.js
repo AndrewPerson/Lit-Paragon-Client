@@ -65,7 +65,7 @@ export class PayloadBellItem extends LitElement {
                 <p class="time">at ${this.time} with <span class="${teacherClass}">${this.teacher}</span></p>
             </div>
             
-            <p class="end ${roomClass}">${this.room}</p>
+            <p class="end ${roomClass}">${isNaN(this.room) ? "Unknown" : this.room}</p>
         `;
     }
 }
@@ -136,9 +136,9 @@ export class DailyTimetable extends LitElement {
             return {
                 descriptor: "in",
                 descriptor: now.getMonth() - time.getMonth() +
-                            now.getMonth() - time.getMonth() == 1 ?
+                            (now.getMonth() - time.getMonth() == 1 ?
                             " Month" :
-                            " Months"
+                            " Months")
             };
         //Length of one day in ms
         else if (distance > 86400000) {
@@ -168,15 +168,6 @@ export class DailyTimetable extends LitElement {
 
             if (seconds.length < 2)
                 seconds = "0" + seconds;
-
-            if (hours == "00" && minutes == "00")
-                return {
-                    descriptor: "in",
-                    time: seconds +
-                          seconds == 1 ?
-                          " Second" :
-                          " Seconds"
-                };
             
             if (hours == "00")
                 return {
