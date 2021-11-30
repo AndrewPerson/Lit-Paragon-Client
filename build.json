@@ -1,0 +1,19 @@
+{
+    "files": [
+        "js/site.ts"
+    ],
+    "env": {
+        "default": {
+            "constants": [
+                "DEVELOPMENT"
+            ],
+            "minify": false
+        },
+        "release": {
+            "constants": [
+
+            ],
+            "minify": true
+        }
+    }
+}

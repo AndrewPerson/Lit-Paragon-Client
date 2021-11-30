@@ -1,0 +1,56 @@
+html {
+    --main-hue: 200;
+    --hue-rotate: 0deg;
+    --text1: hsl(var(--main-hue) 100% 10%);
+    --text2: hsl(var(--main-hue) 90% 40%);
+    --text3: hsl(var(--main-hue) 10% 70%);
+    --text4: hsl(var(--main-hue) 50% 95%);
+    --surface1: hsl(calc(var(--main-hue) + 200) 50% 97%);
+    --surface2: hsl(var(--main-hue) 100% 99%);
+    --surface3: hsl(var(--main-hue) 90% 97%);
+    --surface4: hsl(var(--main-hue) 90% 80%);
+    --shadow-x: 0.8vmin;
+    --shadow-y: 0.8vmin;
+    --shadow-spread: 2vmin;
+    --shadow-colour: hsl(var(--main-hue) 10% 80%);
+    --shadow: var(--shadow-colour) var(--shadow-x) var(--shadow-y) var(--shadow-spread);
+    --small-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) calc(var(--shadow-spread) / 2);
+    --img-invert: 0;
+    --font-size: 2.6vmin;
+}
+
+@media (max-aspect-ratio: 3/4) {
+    html {
+        --font-size: 2vmax;
+    }
+}
+
+html.dark {
+    --text1: hsl(var(--main-hue) 15% 90%);
+    --text2: hsl(var(--main-hue) 80% 80%);
+    --text3: hsl(var(--main-hue) 10% 30%);
+    --text4: hsl(var(--main-hue) 30% 95%);
+    --surface1: hsl(var(--main-hue) 20% 10%);
+    --surface2: hsl(var(--main-hue) 20% 15%);
+    --surface3: hsl(var(--main-hue) 15% 15%);
+    --surface4: hsl(var(--main-hue) 40% 25%);
+    --shadow-colour: hsl(var(--main-hue) 50% 5%);
+    --img-invert: 100%;
+}
+
+html, body {
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    align-content: stretch;
+    justify-content: stretch;
+    background-color: var(--surface1);
+    margin: 0;
+    font-size: var(--font-size);
+    overflow: hidden;
+}

@@ -1,0 +1,58 @@
+:host {
+    display: inline-block;
+    width: 12vmin;
+    height: 12vmin;
+    position: relative;
+    border-radius: 2vmin;
+    overflow: hidden;
+}
+
+:host(:hover:not(:host([editing]))) {
+    background-color: var(--surface2);
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+}
+
+#handle {
+    --size: 2vmin;
+    --padding: 2vmin;
+
+    --full-size: calc(calc(var(--padding) * 2) + var(--size));
+
+    position: absolute;
+    top: calc(50% - calc(var(--full-size) / 2));
+    left: calc(calc(calc(3.3vmin - var(--size)) / 2) - var(--padding));
+
+    display: block;
+    
+    height: var(--full-size);
+
+    padding: var(--padding);
+
+    box-sizing: border-box;
+
+    cursor: move;
+}
+
+:host(.selected) {
+    background-color: var(--surface4) !important;
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+}
+
+:host(.drag) {
+    background-color: var(--surface4) !important;
+    border-radius: 2vmin !important;
+    box-shadow: none !important;
+}
+
+a {
+    display: block;
+
+    width: 12vmin;
+    height: 12vmin;
+}
+
+::slotted(img) {
+    padding: 3.3vmin;
+    width: 5.4vmin;
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+}
