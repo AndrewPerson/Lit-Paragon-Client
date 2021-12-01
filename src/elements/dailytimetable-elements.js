@@ -186,8 +186,11 @@ export class DailyTimetable extends LitElement {
         var nextBell = this.getNextBell();
 
         if (nextBell) {
-            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "RC")
-                this.nextBell = this.data.timetable.timetable.periods[nextBell.bell.bell].title;
+            if (nextBell.bell.bell in this.data.timetable.timetable.periods && nextBell.bell.bell != "RC") {
+                var period = this.data.timetable.timetable.periods[nextBell.bell.bell];
+                var subject = this.data.timetable.subjects[`${period.year}${period.title}`];
+                this.nextBell = subject.title.split(" ").filter(value => isNaN(value) && (value.length > 1 || value.toUpperCase() == value.toLowerCase())).join(" ");
+            }
             else
                 this.nextBell = nextBell.bell.bellDisplay;
 
@@ -329,7 +332,7 @@ export class DailyTimetable extends LitElement {
 
                         var title = this.data.timetable.subjects[`${period.year}${period.title}`].title;
 
-                        title = title.split(" ").filter(value => isNaN(value) && value.length > 1).join(" ");
+                        title = title.split(" ").filter(value => isNaN(value) && (value.length > 1 || value.toUpperCase() == value.toLowerCase())).join(" ");
 
                         return html`
                             <payload-bell-item name="${title}"
