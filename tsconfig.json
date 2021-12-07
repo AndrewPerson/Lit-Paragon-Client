@@ -1,9 +1,11 @@
 {
+    "include": ["site/**/*.ts"],
+    "exclude": ["node_modules/**/*.*"],
     "compilerOptions": {
         "experimentalDecorators": true,
-        "noImplicitAny": true,
-        "noImplicitReturns": true,
+        "strict": true,
         "target": "es6",
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "skipLibCheck": true
     }
 }

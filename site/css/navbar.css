@@ -1,0 +1,24 @@
+@media not all and (max-aspect-ratio: 1/1) {
+    body {
+        flex-direction: row;
+    }
+}
+
+@media (max-aspect-ratio: 1/1) {
+    body {
+        flex-direction: column;
+    }
+}
+
+main {
+    display: flex;
+    align-items: stretch;
+    justify-content: stretch;
+
+    width: 100%;
+    height: 100%;
+}
+
+.hidden {
+    display: none;
+}

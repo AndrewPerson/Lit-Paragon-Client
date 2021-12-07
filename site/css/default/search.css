@@ -1,0 +1,29 @@
+:where(input[type=search]) {
+    border: none;
+    border-bottom: 0.2vmin solid var(--text2);
+    border-radius: 0;
+
+    background-color: var(--surface2);
+    color: var(--text1);
+
+    font-size: var(--font-size);
+    font-family: monospace;
+
+    height: calc(var(--font-size) * 2);
+}
+
+:where(input[type=search]:focus) {
+    outline: none;
+}
+
+:where(input[type=search])::-webkit-input-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-moz-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}

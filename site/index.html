@@ -25,17 +25,20 @@
     
     <link href="manifest.json" rel="manifest" />
 
-    <script src="dist/site.js"></script>
+    <script src="dist/init.js"></script>
 </head>
 
 <body>
     <nav-bar></nav-bar>
 
     <main>
-        <student-barcode class="hidden"></student-barcode>
+        <student-barcode id="barcode" class="hidden"></student-barcode>
     </main>
+    
+    <script defer src="dist/site.js"></script>
+    <script defer src="dist/elements.js"></script>
 
-    <script async src="js/jsbarcode.js" onload="document.getElementById('barcode').requestUpdate()"></script>
+    <script async src="js/jsbarcode.js" onload="document.getElementById('barcode')?.requestUpdate?.()"></script>
 </body>
 
 </html>

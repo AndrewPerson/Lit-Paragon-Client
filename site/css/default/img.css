@@ -1,0 +1,9 @@
+:where(img, svg) {
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}

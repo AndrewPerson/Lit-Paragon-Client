@@ -1,0 +1,44 @@
+:host {
+    position: relative;
+}
+
+#point1,
+#point2 {
+    --size: 3vmin;
+
+    position: absolute;
+
+    width: var(--size);
+    height: var(--size);
+
+    background-color: var(--surface4);
+    border-radius: calc(var(--size) / 2);
+
+    transform: translate(-50%, -50%);
+
+    z-index: 1;
+
+    cursor: move;
+}
+
+#barcodeDisplay {
+    position: absolute;
+
+    box-sizing: border-box;
+
+    filter: contrast(5);
+}
+
+#barcodeDisplay.outline {
+    border: solid 1vmin var(--text1);
+}
+
+info-popup {
+    margin-top: 1vmin;
+    margin-left: 1vmin;
+    width: 5vmin;
+    height: 5vmin;
+    --max-width: 30vmax;
+    --offset: 7vmin;
+    z-index: 2;
+}

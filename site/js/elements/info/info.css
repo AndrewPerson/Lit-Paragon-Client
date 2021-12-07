@@ -1,0 +1,30 @@
+:host {
+    position: relative;
+    display: block;
+}
+
+button {
+    all: unset;
+    width: inherit;
+    height: inherit;
+}
+
+svg {
+    width: inherit;
+    height: inherit;
+}
+
+slot {
+    position: absolute;
+    display: block;
+    top: var(--offset);
+    width: var(--max-width);
+
+    background-color: var(--surface2);
+
+    border-radius: 2vmin;
+    box-shadow: var(--shadow);
+    padding: 2vmin;
+
+    z-index: inherit;
+}

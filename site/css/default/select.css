@@ -1,0 +1,21 @@
+:where(select) {
+    border: 0.2vmin solid var(--text2);
+    background-color: var(--surface2);
+    color: var(--text2);
+
+    padding: 1vmin 0;
+    padding-right: 6vmin;
+
+    border-radius: 1vmin;
+
+    font-size: calc(var(--font-size) / 1.2);
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+:where(option) {
+    background-color: var(--surface2);
+}

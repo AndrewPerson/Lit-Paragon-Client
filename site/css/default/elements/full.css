@@ -1,0 +1,21 @@
+:host {
+    flex: 1;
+    margin: 1%;
+}
+
+/*
+    306px is 102% of 300px.
+    We use 102% because that includes the margin,
+    which is 1% either side.
+*/
+@media (max-width: 306px) {
+    :host {
+        margin: 1% calc(50% - 150px);
+    }
+}
+
+@media (max-width: 300px) {
+    :host {
+        margin: 1% 0;
+    }
+}

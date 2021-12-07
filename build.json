@@ -1,19 +1,55 @@
 {
     "files": [
-        "js/site.ts"
+        "js/init.ts",
+        "js/elements.ts",
+        "js/site.ts",
+        "js/service-worker/service-worker.js"
     ],
+    "metadata": {
+
+    },
     "env": {
+        "shared": {
+            "vars": {
+                "REQUIRED_FEATURES": [
+                    "navigator.serviceWorker",
+                    "ShadowRoot",
+                    "customElements"
+                ],
+                "FILE_CACHE": "Offline Resources",
+                "RESOURCE_CACHE": "User Resources",
+                "METADATA_CACHE": "Metadata",
+                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default"
+            }
+        },
         "default": {
             "constants": [
                 "DEVELOPMENT"
             ],
-            "minify": false
+            "js": {
+                "minify": false
+            },
+            "svg": {
+                "minify": false
+            },
+            "vars": {
+                "METADATA_ENDPOINT": "http://localhost:5555/metadata"
+            }
         },
         "release": {
             "constants": [
 
             ],
-            "minify": true
+            "js": {
+                "minify": true
+            },
+            "svg": {
+                "minify": true,
+                "floatPrecision": 1
+            },
+            "vars": {
+                "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata"
+            }
         }
     }
 }
