@@ -743,9 +743,9 @@
     static GetInstalledExtensions() {
       return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
     }
-    static SetDark(dark2) {
-      this.dark = dark2;
-      document.documentElement.classList.toggle("dark", dark2);
+    static SetDark(dark) {
+      this.dark = dark;
+      document.documentElement.classList.toggle("dark", dark);
     }
     static SetColour(hue) {
       document.documentElement.style.setProperty("--main-hue", hue);
@@ -757,6 +757,7 @@
     extension: false
   };
   Site.dark = false;
+  Site.hue = "200";
   Site.pageElement = null;
   Site.resourceCallbacks = {};
   if (location.hash)
@@ -764,8 +765,8 @@
       page: location.hash.substring(1),
       extension: location.hash.indexOf("extension-") == 1
     });
-  var dark = localStorage.getItem("Dark") == "true";
-  Site.SetDark(dark);
+  Site.dark = localStorage.getItem("Dark") == "true";
+  Site.hue = localStorage.getItem("Hue") || "200";
 
   // site/css/default/text.css
   var styles = r`:where(h1, h2, h3, h4, h5, h6, p, li) {
@@ -814,16 +815,8 @@
 `;
   var img_default = styles2;
 
-  // site/css/default/elements/element.css
-  var styles3 = r`:host {
-    box-shadow: var(--shadow);
-    background-color: var(--surface2);
-    border-radius: 2vmin;
-}`;
-  var element_default = styles3;
-
   // site/css/default/elements/full.css
-  var styles4 = r`:host {
+  var styles3 = r`:host {
     flex: 1;
     margin: 1%;
 }
@@ -844,7 +837,15 @@
         margin: 1% 0;
     }
 }`;
-  var full_default = styles4;
+  var full_default = styles3;
+
+  // site/css/default/elements/element.css
+  var styles4 = r`:host {
+    box-shadow: var(--shadow);
+    background-color: var(--surface2);
+    border-radius: 2vmin;
+}`;
+  var element_default = styles4;
 
   // site/js/elements/barcode/barcode.css
   var styles5 = r`:host {
@@ -897,9 +898,6 @@ info-popup {
   var StudentBarcode = class extends s4 {
     constructor() {
       super();
-      this.barcode = null;
-      this.point1 = null;
-      this.point2 = null;
       this.draggedElement = null;
       this.dragging = false;
       this.studentId = "";
@@ -953,10 +951,17 @@ info-popup {
       this.barcode.style.height = `${maxY - minY}%`;
     }
     RenderBarcode() {
+      var _a, _b, _c, _d;
       if (this.draggedElement != null)
         return;
       if (this.barcode == null)
         return;
+      localStorage.setItem("Barcode Points", JSON.stringify([
+        (_a = this.point1) == null ? void 0 : _a.style.left,
+        (_b = this.point1) == null ? void 0 : _b.style.top,
+        (_c = this.point2) == null ? void 0 : _c.style.left,
+        (_d = this.point2) == null ? void 0 : _d.style.top
+      ]));
       try {
         JsBarcode(this.barcode, this.studentId, {
           displayValue: false,
@@ -966,16 +971,21 @@ info-popup {
       }
     }
     updated() {
+      this.SetBarcodePosition();
       this.RenderBarcode();
     }
     render() {
       if (this.loading)
         return p`<loading-indicator></loading-indicator>`;
+      var storedPoints = localStorage.getItem("Barcode Points");
+      var points = ["20%", "20%", "80%", "40%"];
+      if (storedPoints)
+        points = JSON.parse(storedPoints);
       return p`
             <info-popup>Use this barcode to scan in instead of your Student Card.</info-popup>
 
-            <div id="point1" style="top: 20%; left: 20%;" @pointerdown="${this.StartDrag}" @pointermove="${(e8) => e8.stopPropagation()}"></div>
-            <div id="point2" style="top: 40%; left: 80%;" @pointerdown="${this.StartDrag}" @pointermove="${(e8) => e8.stopPropagation()}"></div>
+            <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}" @pointermove="${(e8) => e8.stopPropagation()}"></div>
+            <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}" @pointermove="${(e8) => e8.stopPropagation()}"></div>
 
             <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;
@@ -1010,8 +1020,6 @@ info-popup {
     constructor() {
       super(...arguments);
       this.src = "";
-      this.frame = null;
-      this.loader = null;
     }
     firstUpdated() {
       var _a;
@@ -1112,7 +1120,9 @@ slot {
     position: absolute;
     display: block;
     top: var(--offset);
-    width: var(--max-width);
+    
+    width: max-content;
+    max-width: var(--max-width);
 
     background-color: var(--surface2);
 
@@ -1121,6 +1131,14 @@ slot {
     padding: 2vmin;
 
     z-index: inherit;
+
+    box-sizing: border-box;
+}
+
+.background {
+    position: absolute;
+    width: var(--max-width);
+    height: 100%;
 }`;
   var info_default = styles7;
 
@@ -1129,25 +1147,31 @@ slot {
 
   // site/js/elements/info/info.ts
   var Info = class extends s4 {
-    constructor() {
-      super(...arguments);
-      this.info = null;
-    }
     ShowPopup() {
-      var _a;
+      var _a, _b;
       (_a = this.info) == null ? void 0 : _a.style.removeProperty("display");
+      (_b = this.background) == null ? void 0 : _b.style.removeProperty("display");
     }
     HidePopup() {
       if (this.info != null)
         this.info.style.display = "none";
+      if (this.background != null)
+        this.background.style.display = "none";
+    }
+    constructor() {
+      super();
+      this.addEventListener("pointerover", this.ShowPopup);
+      this.addEventListener("pointerout", this.HidePopup);
     }
     render() {
       return p`
-            <button @pointerover=${this.ShowPopup} @pointerleave=${this.HidePopup}>
+            <button @click="${this.ShowPopup}">
                 ${o7(info_default2)}
             </button>
 
             <slot style="display: none"></slot>
+
+            <div class="background" style="display: none"></div>
         `;
     }
   };
@@ -1155,6 +1179,9 @@ slot {
   __decorateClass([
     i4("slot", true)
   ], Info.prototype, "info", 2);
+  __decorateClass([
+    i4(".background", true)
+  ], Info.prototype, "background", 2);
   Info = __decorateClass([
     n5("info-popup")
   ], Info);
@@ -1606,13 +1633,13 @@ slot {
     return null;
   }
   var R_SPACE = /\s+/g;
-  function toggleClass(el, name, state) {
+  function toggleClass(el, name, state2) {
     if (el && name) {
       if (el.classList) {
-        el.classList[state ? "add" : "remove"](name);
+        el.classList[state2 ? "add" : "remove"](name);
       } else {
         var className = (" " + el.className + " ").replace(R_SPACE, " ").replace(" " + name + " ", " ");
-        el.className = (className + (state ? " " + name : "")).replace(R_SPACE, " ");
+        el.className = (className + (state2 ? " " + name : "")).replace(R_SPACE, " ");
       }
     }
   }
@@ -1889,8 +1916,8 @@ slot {
           child.fromRect = fromRect;
         });
       },
-      addAnimationState: function addAnimationState(state) {
-        animationStates.push(state);
+      addAnimationState: function addAnimationState(state2) {
+        animationStates.push(state2);
       },
       removeAnimationState: function removeAnimationState(target) {
         animationStates.splice(indexOfObject(animationStates, {
@@ -1906,8 +1933,8 @@ slot {
           return;
         }
         var animating = false, animationTime = 0;
-        animationStates.forEach(function(state) {
-          var time = 0, target = state.target, fromRect = target.fromRect, toRect = getRect(target), prevFromRect = target.prevFromRect, prevToRect = target.prevToRect, animatingRect = state.rect, targetMatrix = matrix(target, true);
+        animationStates.forEach(function(state2) {
+          var time = 0, target = state2.target, fromRect = target.fromRect, toRect = getRect(target), prevFromRect = target.prevFromRect, prevToRect = target.prevToRect, animatingRect = state2.rect, targetMatrix = matrix(target, true);
           if (targetMatrix) {
             toRect.top -= targetMatrix.f;
             toRect.left -= targetMatrix.e;
@@ -3737,11 +3764,6 @@ a {
     constructor() {
       super();
       this.editing = false;
-      this.itemsContainer = null;
-      this.topShadow = null;
-      this.bottomShadow = null;
-      this.leftShadow = null;
-      this.rightShadow = null;
       this.pages = [];
       this.icons = [];
       this.order = [0, 1, 2, 3, 4, 5];
@@ -3919,6 +3941,206 @@ a {
   Navbar = __decorateClass([
     n5("nav-bar")
   ], Navbar);
+
+  // site/css/default/button.css
+  var styles11 = r`:where(button) {
+    border: solid 0.2vmin var(--surface4);
+    background-color: var(--surface2);
+    color: var(--text2);
+    padding: 1vmin 2vmin;
+    border-radius: calc(var(--font-size) / 2.5);
+    box-shadow: var(--small-shadow);
+    font-size: var(--font-size);
+}
+
+:where(button:hover) {
+    background-color: var(--surface3);
+    color: var(--text2);
+}
+
+:where(button:active) {
+    border: solid 0.2vmin transparent;
+    color: var(--text4);
+    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    background-color: var(--surface4);
+}`;
+  var button_default = styles11;
+
+  // site/css/default/range.css
+  var styles12 = r`:where(input[type=range]) {
+    appearance: none;
+    width: calc(var(--font-size) * 7);
+    background-color: var(--surface1);
+    height: calc(var(--font-size) / 1.5);
+    box-shadow: var(--small-shadow);
+    border-radius: calc(var(--font-size) / 2.5);
+}
+
+:where(input[type=range])::-moz-range-thumb {
+    -webkit-appearance: none;
+    background-color: var(--surface4);
+    border-radius: 100%;
+    width: calc(var(--font-size) / 1.5);
+    height: calc(var(--font-size) / 1.5);
+    border: none;
+    box-shadow: var(--small-shadow);
+}
+
+:where(input[type=range])::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    background-color: var(--surface4);
+    border-radius: 100%;
+    width: calc(var(--font-size) / 1.5);
+    height: calc(var(--font-size) / 1.5);
+    border: none;
+    box-shadow: var(--small-shadow);
+}`;
+  var range_default = styles12;
+
+  // site/css/default/elements/card.css
+  var styles13 = r`:host {
+    padding: 2vmin;
+
+    margin: auto;
+
+    width: 60vh;
+    min-width: 300px;
+    height: 80%;
+}
+
+@media (max-width: 300px) {
+    :host {
+        width: 100vw;
+        min-width: unset;
+    }
+}`;
+  var card_default = styles13;
+
+  // site/js/elements/settings/settings.css
+  var styles14 = r`:host {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vmin;
+}
+
+span {
+    width: 80%;
+    border-bottom: 0.2vmin solid var(--text3);
+}
+
+#toggle {
+    padding: 1vmin;
+    width: 8vmin;
+    height: 8vmin;
+}
+
+info-popup {
+    position: absolute;
+    top: 3vmin;
+    left: 3vmin;
+    width: 5vmin;
+    height: 5vmin;
+    --max-width: 30vmax;
+    --offset: 7vmin;
+    z-index: 2;
+}`;
+  var settings_default = styles14;
+
+  // site/images/sun.svg
+  var sun_default = '<?xml version="1.0" encoding="utf-8"?>\r\n<svg width="33px" height="33px" viewBox="0 0 33 33" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">\r\n  <defs>\r\n    <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" />\r\n    <clipPath id="mask_1">\r\n      <use xlink:href="#path_1" />\r\n    </clipPath>\r\n  </defs>\r\n  <g id="sun" transform="translate(1.000001 1)">\r\n    <g id="Group">\r\n      <g id="Ellipse" transform="translate(5.774308 5.5712147)">\r\n        <g id="Mask-group">\r\n          <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="none" />\r\n          <g clip-path="url(#mask_1)">\r\n            <g id="Group">\r\n              <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />\r\n            </g>\r\n          </g>\r\n        </g>\r\n      </g>\r\n      <path d="M0 4.05179L0 0" transform="translate(15.705684 0)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M0 2.86505L2.80902 0" transform="translate(24.218447 4.0517807)" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M0 2.86505L2.80902 0" transform="translate(3.9866457 24.079388)" id="Line-8" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M0 0L2.80902 2.86505" transform="translate(23.91343 24.010275)" id="Line-4" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M0 0L7.57704e-06 4.0518" transform="translate(15.790706 26.948204)" id="Line-5" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M0 0L3.97255 0" transform="translate(27.027449 16.207167)" id="Line-3" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M3.97255 3.86409e-06L0 0" transform="translate(0 15.599411)" id="Line-6" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n      <path d="M2.80902 2.86506L0 0" transform="translate(3.9725513 4.051792)" id="Line-7" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />\r\n    </g>\r\n  </g>\r\n</svg>';
+
+  // site/images/moon.svg
+  var moon_default = '<?xml version="1.0" encoding="utf-8"?>\r\n<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">\r\n  <defs>\r\n    <path d="M8.34615 6.55769C8.34615 4.27591 8.68224 1.96656 9.53846 0C3.84296 2.47925 0 8.29548 0 14.9038C0 23.7932 7.20676 31 16.0962 31C22.7045 31 28.5207 27.157 31 21.4615C29.0334 22.3178 26.7241 22.6538 24.4423 22.6538C15.5529 22.6538 8.34615 15.4471 8.34615 6.55769L8.34615 6.55769L8.34615 6.55769Z" transform="translate(0.5 0.5)" id="path_1" />\r\n    <clipPath id="mask_1">\r\n      <use xlink:href="#path_1" />\r\n    </clipPath>\r\n  </defs>\r\n  <path d="M8.34615 6.55769C8.34615 4.27591 8.68224 1.96656 9.53846 0C3.84296 2.47925 0 8.29548 0 14.9038C0 23.7932 7.20676 31 16.0962 31C22.7045 31 28.5207 27.157 31 21.4615C29.0334 22.3178 26.7241 22.6538 24.4423 22.6538C15.5529 22.6538 8.34615 15.4471 8.34615 6.55769L8.34615 6.55769L8.34615 6.55769Z" transform="translate(0.5 0.5)" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" />\r\n</svg>';
+
+  // site/js/elements/settings/settings.ts
+  var Settings = class extends s4 {
+    Patch() {
+    }
+    ResetColour() {
+      if (this.hueInput)
+        this.hueInput.value = "200";
+      Site.SetColour("200");
+      localStorage.setItem("Hue", "200");
+    }
+    SetColour(e8) {
+      if (!e8.target)
+        return;
+      Site.SetColour(e8.target.value);
+    }
+    SaveColour(e8) {
+      localStorage.setItem("Hue", e8.target.value);
+    }
+    ToggleDark() {
+      localStorage.setItem("Dark", (!Site.dark).toString());
+      Site.SetDark(!Site.dark);
+      this.requestUpdate();
+    }
+    ToggleEditNavbar() {
+      var navbar = document.querySelector("nav-bar");
+      if (navbar) {
+        navbar.toggleAttribute("editing");
+      }
+    }
+    updated() {
+      caches.open("Metadata").then((cache) => __async(this, null, function* () {
+        if (this.versionDisplay) {
+          var metadataResponse = yield cache.match("Metadata");
+          if (metadataResponse) {
+            var metadata = yield metadataResponse.json();
+            this.versionDisplay.textContent = `Paragon v${metadata.version}`;
+          }
+        }
+      }));
+    }
+    render() {
+      return p`
+            <info-popup>
+                Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
+                <br/>
+                The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
+            </info-popup>
+
+            <p id="version">Paragon v0.0.0</p>
+
+            <button @click="${this.Patch}">Fix</button>
+
+            <span></span>
+            
+            <p>Colour</p>
+
+            <button @click="${this.ResetColour}">Reset</button>
+
+            <input type="range" id="hue" min="0" max="359" value="${Site.hue}" @input="${this.SetColour}" @change="${this.SaveColour}"/>
+
+            <span></span>
+
+            <p>${Site.dark ? "Dark" : "Light"} Mode</p>
+
+            <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
+                ${o7(Site.dark ? sun_default : moon_default)}
+            </button>
+            
+            <span></span>
+
+            <p>Sidebar</p>
+
+            <button @click="${this.ToggleEditNavbar}">Edit</button>
+        `;
+    }
+  };
+  Settings.styles = [text_default, img_default, button_default, range_default, card_default, element_default, settings_default];
+  __decorateClass([
+    i4("#hue", true)
+  ], Settings.prototype, "hueInput", 2);
+  __decorateClass([
+    i4("#version", true)
+  ], Settings.prototype, "versionDisplay", 2);
+  Settings = __decorateClass([
+    n5("user-settings")
+  ], Settings);
 })();
 /**
  * @license

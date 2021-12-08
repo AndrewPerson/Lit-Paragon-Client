@@ -13,10 +13,10 @@ export class ExtensionPage extends LitElement {
     src: string = "";
 
     @query("iframe", true)
-    frame: HTMLIFrameElement | null = null;
+    frame: HTMLIFrameElement | null;
 
     @query("loading-indicator", true)
-    loader: LoadingIndicator | null = null;
+    loader: LoadingIndicator | null;
 
     firstUpdated() {
         this.frame?.addEventListener("load", () => {

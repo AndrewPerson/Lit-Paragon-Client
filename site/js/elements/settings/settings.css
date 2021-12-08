@@ -1,0 +1,30 @@
+:host {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3vmin;
+}
+
+span {
+    width: 80%;
+    border-bottom: 0.2vmin solid var(--text3);
+}
+
+#toggle {
+    padding: 1vmin;
+    width: 8vmin;
+    height: 8vmin;
+}
+
+info-popup {
+    position: absolute;
+    top: 3vmin;
+    left: 3vmin;
+    width: 5vmin;
+    height: 5vmin;
+    --max-width: 30vmax;
+    --offset: 7vmin;
+    z-index: 2;
+}

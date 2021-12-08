@@ -97,9 +97,9 @@
     static GetInstalledExtensions() {
       return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
     }
-    static SetDark(dark2) {
-      this.dark = dark2;
-      document.documentElement.classList.toggle("dark", dark2);
+    static SetDark(dark) {
+      this.dark = dark;
+      document.documentElement.classList.toggle("dark", dark);
     }
     static SetColour(hue) {
       document.documentElement.style.setProperty("--main-hue", hue);
@@ -111,6 +111,7 @@
     extension: false
   };
   Site.dark = false;
+  Site.hue = "200";
   Site.pageElement = null;
   Site.resourceCallbacks = {};
   if (location.hash)
@@ -118,6 +119,6 @@
       page: location.hash.substring(1),
       extension: location.hash.indexOf("extension-") == 1
     });
-  var dark = localStorage.getItem("Dark") == "true";
-  Site.SetDark(dark);
+  Site.dark = localStorage.getItem("Dark") == "true";
+  Site.hue = localStorage.getItem("Hue") || "200";
 })();

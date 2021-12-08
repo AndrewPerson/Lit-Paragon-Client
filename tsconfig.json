@@ -1,11 +1,11 @@
 {
-    "include": ["site/**/*.ts"],
-    "exclude": ["node_modules/**/*.*"],
+    "include": ["site/js/**/*.ts"],
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
         "target": "es6",
         "moduleResolution": "node",
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "strictPropertyInitialization": false
     }
 }

@@ -15,23 +15,37 @@ export class Info extends LitElement {
     static styles = [imgCss, infoCss];
 
     @query("slot", true)
-    info: HTMLElement | null = null;
+    info: HTMLElement | null;
+
+    @query(".background", true)
+    background: HTMLDivElement | null;
 
     ShowPopup() {
         this.info?.style.removeProperty("display");
+        this.background?.style.removeProperty("display");
     }
 
     HidePopup() {
         if (this.info != null) this.info.style.display = "none";
+        if (this.background != null) this.background.style.display = "none";
+    }
+
+    constructor() {
+        super();
+
+        this.addEventListener("pointerover", this.ShowPopup);
+        this.addEventListener("pointerout", this.HidePopup);
     }
 
     render() {
         return html`
-            <button @pointerover=${this.ShowPopup} @pointerleave=${this.HidePopup}>
+            <button @click="${this.ShowPopup}">
                 ${unsafeSVG(infoSvg)}
             </button>
 
             <slot style="display: none"></slot>
+
+            <div class="background" style="display: none"></div>
         `;
     }
 }

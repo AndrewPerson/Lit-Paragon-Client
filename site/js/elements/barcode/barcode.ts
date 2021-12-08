@@ -8,9 +8,9 @@ import textCss from "default/text.css";
 //@ts-ignore
 import imgCss from "default/img.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
-//@ts-ignore
 import fullElementCss from "default/elements/full.css";
+//@ts-ignore
+import elementCss from "default/elements/element.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
 
@@ -24,13 +24,13 @@ export class StudentBarcode extends LitElement {
     static styles = [elementCss, fullElementCss, textCss, imgCss, barcodeCss];
 
     @query("#barcodeDisplay")
-    barcode: HTMLCanvasElement | null = null;
+    private barcode: HTMLCanvasElement | null;
 
     @query("#point1")
-    point1: HTMLElement | null = null;
+    point1: HTMLElement | null;
 
     @query("#point2")
-    point2: HTMLElement | null = null;
+    point2: HTMLElement | null;
 
     draggedElement: HTMLElement | null = null;
 
@@ -103,6 +103,14 @@ export class StudentBarcode extends LitElement {
         if (this.draggedElement != null) return;
         if (this.barcode == null) return;
 
+        localStorage.setItem("Barcode Points",
+                             JSON.stringify([
+                                 this.point1?.style.left,
+                                 this.point1?.style.top,
+                                 this.point2?.style.left,
+                                 this.point2?.style.top
+                             ]));
+
         try {
             JsBarcode(this.barcode, this.studentId, {
                 displayValue: false,
@@ -122,21 +130,32 @@ export class StudentBarcode extends LitElement {
             this.studentId = resource.studentId;
             this.loading = false;
         });
+
+        Site.ListenForDark(dark => {
+            this.barcode?.classList.toggle("outline", dark);
+        });
     }
 
     updated() {
+        this.SetBarcodePosition();
         this.RenderBarcode();
     }
 
     render() {
         if (this.loading)
-            return html`<loading-indicator></loading-indicator>`
+            return html`<loading-indicator></loading-indicator>`;
+
+        var storedPoints = localStorage.getItem("Barcode Points");
+
+        var points: string[] = ["20%", "20%", "80%", "40%"];
+
+        if (storedPoints) points = JSON.parse(storedPoints);
 
         return html`
             <info-popup>Use this barcode to scan in instead of your Student Card.</info-popup>
 
-            <div id="point1" style="top: 20%; left: 20%;" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
-            <div id="point2" style="top: 40%; left: 80%;" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
+            <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
+            <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
 
             <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;

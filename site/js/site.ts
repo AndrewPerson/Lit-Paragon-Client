@@ -2,6 +2,8 @@ import { ExtensionPage } from "./elements/extensions/extensions";
 import { Navbar } from "./elements/navbar/navbar";
 
 export declare const RESOURCE_CACHE: string;
+export declare const SERVER_ENDPOINT: string;
+declare const MAX_REFRESH_FREQUENCY: number;
 
 type Extension = {
     url: string,
@@ -18,9 +20,25 @@ export type Page = {
     extension: boolean
 };
 
-type Callbacks = {
-    [index:string]: ((resource: any) => any)[]
+type ResourceCallbacks = {
+    [index: string]: ((resource: any) => any)[]
 };
+
+type ResourceResult = {
+    result: {
+        [index: string]: any
+    },
+    token: Token
+};
+
+export type Token = {
+    access_token: string,
+    refresh_token: string,
+    expiry: Date,
+    termination: Date
+};
+
+type DarkCallback = (dark: boolean) => any;
 
 export class Site {
     static page: Page = {
@@ -29,10 +47,12 @@ export class Site {
     };
 
     static dark: boolean = false;
+    static hue: string = "200";
 
     private static pageElement: HTMLElement | null = null;
 
-    private static resourceCallbacks: Callbacks = {};
+    private static resourceCallbacks: ResourceCallbacks = {};
+    private static darkCallbacks: DarkCallback[] = [];
 
     //#region Navigation
     static NavigateTo(page: Page): void {
@@ -74,6 +94,34 @@ export class Site {
     //#endregion
 
     //#region Resources
+    static async GetToken(): Promise<{valid: boolean, token: Token | null}> {
+        var cache = await caches.open(RESOURCE_CACHE);
+        var tokenResponse = await cache.match("Token");
+
+        if (!tokenResponse) {
+            location.href = `${location.origin}/login`;
+            return {
+                valid: false,
+                token: null
+            };
+        }
+
+        var token: Token = await tokenResponse.json();
+
+        if (new Date() > token.termination) {
+            this.ShowLoginPopup();
+            return {
+                valid: false,
+                token: null
+            };
+        }
+
+        return {
+            valid: true,
+            token: token
+        };
+    }
+
     static async SetResources(resources: {name: string, resource: string}[]) {
         var cache = await caches.open(RESOURCE_CACHE);
 
@@ -117,10 +165,46 @@ export class Site {
                 callback(resource);
         }
     }
+
+    static async FetchResources(): Promise<boolean> {
+        var { valid, token } = await this.GetToken();
+
+        if (!valid) return false;
+
+        var serverUrl = new URL(SERVER_ENDPOINT);
+        serverUrl.searchParams.append("token", JSON.stringify(token));
+
+        var resourceResponse = await fetch(serverUrl.toString());
+
+        //TODO Add more granular error handling
+        if (!resourceResponse.ok) {
+            this.ShowLoginPopup();
+            return false;
+        }
+
+        var resourceResult: ResourceResult = await resourceResponse.json();
+
+        var cache = await caches.open(RESOURCE_CACHE);
+        
+        await cache.put("Token", new Response(resourceResult.token as any));
+        
+        var putPromises = [];
+        for (var key of Object.keys(resourceResult.result)) {
+            putPromises.push(cache.put(key, new Response(resourceResult.result[key])));
+        }
+
+        await Promise.all(putPromises);
+
+        return true;
+    }
     //#endregion
 
     static GetInstalledExtensions(): Extensions {
         return JSON.parse(localStorage.getItem("Installed Extensions") as string) || {};
+    }
+
+    static ShowLoginPopup() {
+        document.body.appendChild(document.createElement("login-popup"));
     }
 
     //#region Theming
@@ -128,6 +212,14 @@ export class Site {
         this.dark = dark;
 
         document.documentElement.classList.toggle("dark", dark);
+
+        for (var callback of this.darkCallbacks) {
+            callback(dark);
+        }
+    }
+
+    static ListenForDark(callback: DarkCallback) {
+        this.darkCallbacks.push(callback);
     }
 
     static SetColour(hue: string): void {
@@ -143,5 +235,19 @@ if (location.hash)
         extension: location.hash.indexOf("extension-") == 1
     });
 
-var dark: boolean = localStorage.getItem("Dark") == "true";
-Site.SetDark(dark);
+Site.dark = localStorage.getItem("Dark") == "true";
+Site.hue = localStorage.getItem("Hue") || "200";
+
+//This is to stop people who refresh a lot from spamming the server with requests.
+//Session Storage is persisted through reloads, but is cleared once the tab is closed.
+var lastReloadedText = sessionStorage.getItem("Last Reloaded");
+
+if (lastReloadedText) {
+    var lastReloaded = new Date(lastReloadedText);
+
+    if ((new Date() as any - (lastReloaded as any)) > MAX_REFRESH_FREQUENCY) {
+        Site.FetchResources();
+        sessionStorage.setItem("Last Refreshed", new Date().toISOString());
+    }
+}
+else Site.FetchResources();

@@ -26,15 +26,15 @@ html {
 }
 
 html.dark {
-    --text1: hsl(var(--main-hue) 15% 90%);
-    --text2: hsl(var(--main-hue) 80% 80%);
+    --text1: hsl(var(--main-hue) 100% 90%);
+    --text2: hsl(var(--main-hue) 90% 60%);
     --text3: hsl(var(--main-hue) 10% 30%);
     --text4: hsl(var(--main-hue) 30% 95%);
-    --surface1: hsl(var(--main-hue) 20% 10%);
-    --surface2: hsl(var(--main-hue) 20% 15%);
-    --surface3: hsl(var(--main-hue) 15% 15%);
-    --surface4: hsl(var(--main-hue) 40% 25%);
-    --shadow-colour: hsl(var(--main-hue) 50% 5%);
+    --surface1: hsl(var(--main-hue) 30% 20%);
+    --surface2: hsl(var(--main-hue) 40% 20%);
+    --surface3: hsl(var(--main-hue) 20% 18%);
+    --surface4: hsl(var(--main-hue) 50% 30%);
+    --shadow-colour: hsl(var(--main-hue) 10% 10%);
     --img-invert: 100%;
 }
 

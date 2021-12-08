@@ -18,7 +18,9 @@ slot {
     position: absolute;
     display: block;
     top: var(--offset);
-    width: var(--max-width);
+    
+    width: max-content;
+    max-width: var(--max-width);
 
     background-color: var(--surface2);
 
@@ -27,4 +29,12 @@ slot {
     padding: 2vmin;
 
     z-index: inherit;
+
+    box-sizing: border-box;
+}
+
+.background {
+    position: absolute;
+    width: var(--max-width);
+    height: 100%;
 }

@@ -62,19 +62,19 @@ export class Navbar extends LitElement {
     editing: boolean = false;
 
     @query("#items-container", true)
-    itemsContainer: HTMLDivElement | null = null;
+    itemsContainer: HTMLDivElement | null;
 
     @query("#top-shadow", true)
-    topShadow: HTMLDivElement | null = null;
+    topShadow: HTMLDivElement | null;
 
     @query("#bottom-shadow", true)
-    bottomShadow: HTMLDivElement | null = null;
+    bottomShadow: HTMLDivElement | null;
 
     @query("#left-shadow", true)
-    leftShadow: HTMLDivElement | null = null;
+    leftShadow: HTMLDivElement | null;
 
     @query("#right-shadow", true)
-    rightShadow: HTMLDivElement | null = null;
+    rightShadow: HTMLDivElement | null;
 
     pages: string[] = [];
     icons: string[] = [];
