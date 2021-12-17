@@ -132,14 +132,17 @@ export class DailyTimetable extends LitElement {
 
         var distance = time - now;
 
-        if (now.getMonth() > time.getMonth() && now.getDate() > time.getDate())
+        if (now.getMonth() > time.getMonth() && now.getDate() > time.getDate()) {
+            var difference = (time.getMonth() < now.getMonth() ? time.getMonth() + 12 : time.getMonth()) - now.getMonth();
+
             return {
                 descriptor: "in",
-                descriptor: now.getMonth() - time.getMonth() +
-                            (now.getMonth() - time.getMonth() == 1 ?
-                            " Month" :
-                            " Months")
+                time: difference +
+                      (difference == 1 ?
+                      " Month" :
+                      " Months")
             };
+        }
         //Length of one day in ms
         else if (distance > 86400000) {
             var days = Math.round(distance / 86400000);
