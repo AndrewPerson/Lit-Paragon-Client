@@ -982,6 +982,9 @@ info-popup {
         this.barcode?.classList.toggle("outline", dark);
       });
     }
+    set userInfo(value) {
+      this.studentId = value.studentId;
+    }
     StartDrag(e8) {
       e8.preventDefault();
       this.draggedElement = e8.target;
@@ -1034,7 +1037,7 @@ info-popup {
         this.point2?.style.top
       ]));
       try {
-        JsBarcode(this.barcode, this.userInfo.studentId.toString(), {
+        JsBarcode(this.barcode, this.studentId, {
           displayValue: false,
           margin: 0
         });
@@ -4263,12 +4266,11 @@ info-popup {
     if (lastReloadedText) {
       var lastReloaded = new Date(lastReloadedText);
       if (new Date().getTime() - lastReloaded.getTime() > "3600") {
-        await Site.FetchResources();
+        Site.FetchResources().then(resourceNotification.remove);
         sessionStorage.setItem("Last Refreshed", new Date().toISOString());
       }
     } else
-      await Site.FetchResources();
-    resourceNotification.remove();
+      Site.FetchResources().then(resourceNotification.remove);
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
     if (registration)
       await registration.update();

@@ -982,6 +982,9 @@ info-popup {
         this.barcode?.classList.toggle("outline", dark);
       });
     }
+    set userInfo(value) {
+      this.studentId = value.studentId;
+    }
     StartDrag(e8) {
       e8.preventDefault();
       this.draggedElement = e8.target;
@@ -1034,7 +1037,7 @@ info-popup {
         this.point2?.style.top
       ]));
       try {
-        JsBarcode(this.barcode, this.userInfo.studentId.toString(), {
+        JsBarcode(this.barcode, this.studentId, {
           displayValue: false,
           margin: 0
         });
