@@ -27,8 +27,8 @@ export class ExtensionPage extends LitElement {
 
     render() {
         return html`
-            <iframe sandbox="allow-scripts allow-same-origin" src="${this.src}" style="display: none"></iframe>
-            <loading-indicator></loading-indicator>
+        <iframe sandbox="allow-scripts allow-same-origin" src="${this.src}" style="display: none"></iframe>
+        <loading-indicator></loading-indicator>
         `;
     }
 }

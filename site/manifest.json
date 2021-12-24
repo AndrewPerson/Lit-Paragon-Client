@@ -1,7 +1,7 @@
 {
     "name": "Paragon",
     "short_name": "Paragon",
-    "start_url": "../#dailytimetable",
+    "start_url": "./#dailytimetable",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
@@ -9,19 +9,19 @@
     "orientation": "any",
     "icons": [
         {
-            "src": "../icons/512.webp",
+            "src": "./icons/512.webp",
             "sizes": "512x512"
         },
         {
-            "src": "../icons/256.webp",
+            "src": "./icons/256.webp",
             "sizes": "256x256"
         },
         {
-            "src": "../icons/128.webp",
+            "src": "./icons/128.webp",
             "sizes": "128x128"
         },
         {
-            "src": "../icons/64.webp",
+            "src": "./icons/64.webp",
             "sizes": "64x64"
         }
     ],
@@ -31,10 +31,10 @@
             "name": "Daily Timetable",
             "short_name": "Day Timetable",
             "description": "Your timetable for the day",
-            "url": "../#dailytimetable",
+            "url": "./#dailytimetable",
             "icons": [
                 {
-                    "src": "../images/dailytimetable.webp",
+                    "src": "./images/dailytimetable.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -43,10 +43,10 @@
             "name": "ID Barcode",
             "short_name": "Barcode",
             "description": "Your Student ID Barcode",
-            "url": "../#barcode",
+            "url": "./#barcode",
             "icons": [
                 {
-                    "src": "../images/barcode.webp",
+                    "src": "./images/barcode.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -55,10 +55,10 @@
             "name": "Announcements",
             "short_name": "Announcements",
             "description": "School announcements",
-            "url": "../#announcements",
+            "url": "./#announcements",
             "icons": [
                 {
-                    "src": "../images/announcements.webp",
+                    "src": "./images/announcements.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -67,10 +67,10 @@
             "name": "Timetable",
             "short_name": "Timetable",
             "description": "Your timetable",
-            "url": "../#timetable",
+            "url": "./#timetable",
             "icons": [
                 {
-                    "src": "../images/timetable.webp",
+                    "src": "./images/timetable.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -79,10 +79,10 @@
             "name": "Pages Marketplace",
             "short_name": "Pages",
             "description": "New pages to extend Paragon",
-            "url": "../#pages",
+            "url": "./#pages",
             "icons": [
                 {
-                    "src": "../images/marketplace.webp",
+                    "src": "./images/marketplace.webp",
                     "sizes": "200x200"
                 }
             ]
@@ -91,10 +91,10 @@
             "name": "Settings",
             "short_name": "Settings",
             "description": "Settings for Paragon",
-            "url": "../#settings",
+            "url": "./#settings",
             "icons": [
                 {
-                    "src": "../images/settings.webp",
+                    "src": "./images/settings.webp",
                     "sizes": "200x200"
                 }
             ]

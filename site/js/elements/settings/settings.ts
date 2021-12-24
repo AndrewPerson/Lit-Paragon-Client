@@ -86,37 +86,37 @@ export class Settings extends LitElement {
 
     render() {
         return html`
-            <info-popup>
-                Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
-                <br/>
-                The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
-            </info-popup>
+        <info-popup>
+            Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
+            <br>
+            The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
+        </info-popup>
 
-            <p id="version">Paragon v0.0.0</p>
+        <p id="version">Paragon v0.0.0</p>
 
-            <button @click="${this.Patch}">Fix</button>
+        <button @click="${this.Patch}">Fix</button>
 
-            <span></span>
-            
-            <p>Colour</p>
+        <span></span>
+        
+        <p>Colour</p>
 
-            <button @click="${this.ResetColour}">Reset</button>
+        <button @click="${this.ResetColour}">Reset</button>
 
-            <input type="range" id="hue" min="0" max="359" value="${Site.hue}" @input="${this.SetColour}" @change="${this.SaveColour}"/>
+        <input type="range" id="hue" min="0" max="359" value="${Site.hue}" @input="${this.SetColour}" @change="${this.SaveColour}">
 
-            <span></span>
+        <span></span>
 
-            <p>${Site.dark ? "Dark" : "Light"} Mode</p>
+        <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-            <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
-                ${unsafeSVG(Site.dark ? sunSvg : moonSvg)}
-            </button>
-            
-            <span></span>
+        <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
+            ${unsafeSVG(Site.dark ? sunSvg : moonSvg)}
+        </button>
+        
+        <span></span>
 
-            <p>Sidebar</p>
+        <p>Sidebar</p>
 
-            <button @click="${this.ToggleEditNavbar}">Edit</button>
+        <button @click="${this.ToggleEditNavbar}">Edit</button>
         `;
     }
 }

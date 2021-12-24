@@ -11,7 +11,7 @@ self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", e => e.respondWith(onFetch(e)));
 self.addEventListener("message", e => e.waitUntil(onMessage(e)));
 
-const token = ``;
+const token = `{}`;
 
 const metadata = `{
     "version": "Development",

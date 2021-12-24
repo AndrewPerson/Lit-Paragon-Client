@@ -1,0 +1,23 @@
+:host {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5vmin;
+
+    background-color: var(--surface2);
+    padding: 1.5vmin;
+    border-radius: 1.5vmin;
+    box-shadow: var(--small-shadow);
+}
+
+button {
+    all: unset;
+    width: 2vmin;
+    height: 2vmin;
+}
+
+svg {
+    width: inherit;
+    height: inherit;
+}

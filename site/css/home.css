@@ -4,12 +4,6 @@
     }
 }
 
-@media (max-aspect-ratio: 1/1) {
-    body {
-        flex-direction: column;
-    }
-}
-
 main {
     display: flex;
     align-items: stretch;
@@ -21,4 +15,11 @@ main {
 
 .hidden {
     display: none;
+}
+
+inline-notification {
+    position: absolute;
+    top: 1vmin;
+    right: 1vmin;
+    z-index: 100;
 }

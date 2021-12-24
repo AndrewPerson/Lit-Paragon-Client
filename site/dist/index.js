@@ -11,6 +11,152 @@
     return result;
   };
 
+  // site/js/site.ts
+  var Site = class {
+    static NavigateTo(page) {
+      if (page.extension) {
+        var extensions = this.GetInstalledExtensions();
+        if (Object.keys(extensions).indexOf(page.page) != -1) {
+          var newPage = document.getElementById(`extension-${page.page}`);
+          if (newPage)
+            this.SetPage(page, newPage);
+          else {
+            var extensionPage = document.createElement("extension-page");
+            extensionPage.src = extensions[page.page].url;
+            extensionPage.id = `extension-${page.page}`;
+            document.getElementById("pages-container")?.appendChild(extensionPage);
+          }
+        }
+      } else
+        this.SetPage(page, document.getElementById(page.page));
+    }
+    static SetPage(page, element) {
+      if (element) {
+        if (this.pageElement != null)
+          this.pageElement.classList.add("hidden");
+        element.classList.remove("hidden");
+        this.pageElement = element;
+        this.page = page;
+        location.hash = page.extension ? `extension-${page.page}` : page.page;
+        var navbar = document.querySelector("nav-bar");
+        navbar.removeAttribute("editing");
+        navbar.requestUpdate?.();
+      }
+    }
+    static async GetToken() {
+      var cache = await caches.open("User Resources");
+      var tokenResponse = await cache.match("Token");
+      if (!tokenResponse) {
+        location.href = `${location.origin}/login`;
+        return {
+          valid: false,
+          token: null
+        };
+      }
+      var token = await tokenResponse.json();
+      if (new Date() > token.termination) {
+        this.ShowLoginPopup();
+        return {
+          valid: false,
+          token: null
+        };
+      }
+      return {
+        valid: true,
+        token
+      };
+    }
+    static async SetResources(resources) {
+      var cache = await caches.open("User Resources");
+      var promises = [];
+      resources.forEach((resourceGroup) => {
+        var name = resourceGroup.name;
+        var resource = resourceGroup.resource;
+        promises.push(cache.put(name, new Response(resource)).then(() => {
+          if (name in this.resourceCallbacks)
+            for (var callback of this.resourceCallbacks[name])
+              callback(JSON.parse(resource));
+        }));
+      });
+      await Promise.all(promises);
+    }
+    static async SetResource(name, resource) {
+      var cache = await caches.open("User Resources");
+      await cache.put(name, new Response(resource));
+      if (name in this.resourceCallbacks)
+        for (var callback of this.resourceCallbacks[name])
+          callback(JSON.parse(resource));
+    }
+    static async GetResource(name, callback) {
+      if (name in this.resourceCallbacks)
+        this.resourceCallbacks[name].push(callback);
+      else
+        this.resourceCallbacks[name] = [callback];
+      var cache = await caches.open("User Resources");
+      var response = await cache.match(name);
+      if (response) {
+        var resource = await response.json();
+        callback(resource);
+      } else
+        callback(void 0);
+    }
+    static async FetchResources() {
+      var { valid, token } = await this.GetToken();
+      if (!valid)
+        return false;
+      var serverUrl = new URL("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/resources");
+      serverUrl.searchParams.append("token", JSON.stringify(token));
+      var resourceResponse = await fetch(serverUrl.toString());
+      if (!resourceResponse.ok) {
+        this.ShowLoginPopup();
+        return false;
+      }
+      var resourceResult = await resourceResponse.json();
+      var cache = await caches.open("User Resources");
+      await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
+      await this.SetResources(Object.keys(resourceResult.result).map((key) => {
+        return {
+          name: key,
+          resource: JSON.stringify(resourceResult.result[key])
+        };
+      }));
+      return true;
+    }
+    static GetInstalledExtensions() {
+      return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
+    }
+    static ShowLoginPopup() {
+      var notification = document.createElement("inline-notification");
+      var content = document.createElement("p");
+      content.innerHTML = `You need to <a>login</a> to see the latest information.`;
+      notification.appendChild(content);
+      document.body.appendChild(notification);
+    }
+    static SetDark(dark) {
+      this.dark = dark;
+      document.documentElement.classList.toggle("dark", dark);
+      for (var callback of this.darkCallbacks) {
+        callback(dark);
+      }
+    }
+    static ListenForDark(callback) {
+      this.darkCallbacks.push(callback);
+    }
+    static SetColour(hue) {
+      document.documentElement.style.setProperty("--main-hue", hue);
+      document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+    }
+  };
+  Site.page = {
+    page: "dailytimetable",
+    extension: false
+  };
+  Site.dark = false;
+  Site.hue = "200";
+  Site.pageElement = null;
+  Site.resourceCallbacks = {};
+  Site.darkCallbacks = [];
+
   // node_modules/@lit/reactive-element/css-tag.js
   var t = window.ShadowRoot && (window.ShadyCSS === void 0 || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
   var e = Symbol();
@@ -645,152 +791,6 @@
       return t6;
     } });
   }
-
-  // site/js/site.ts
-  var Site = class {
-    static NavigateTo(page) {
-      if (page.extension) {
-        var extensions = this.GetInstalledExtensions();
-        if (Object.keys(extensions).indexOf(page.page) != -1) {
-          var newPage = document.getElementById(`extension-${page.page}`);
-          if (newPage)
-            this.SetPage(page, newPage);
-          else {
-            var extensionPage = document.createElement("extension-page");
-            extensionPage.src = extensions[page.page].url;
-            extensionPage.id = `extension-${page.page}`;
-            document.getElementById("pages-container")?.appendChild(extensionPage);
-          }
-        }
-      } else
-        this.SetPage(page, document.getElementById(page.page));
-    }
-    static SetPage(page, element) {
-      if (element) {
-        if (this.pageElement != null)
-          this.pageElement.classList.add("hidden");
-        element.classList.remove("hidden");
-        this.pageElement = element;
-        this.page = page;
-        location.hash = page.extension ? `extension-${page.page}` : page.page;
-        var navbar = document.querySelector("nav-bar");
-        navbar.removeAttribute("editing");
-        navbar.requestUpdate?.();
-      }
-    }
-    static async GetToken() {
-      var cache = await caches.open("User Resources");
-      var tokenResponse = await cache.match("Token");
-      if (!tokenResponse) {
-        location.href = `${location.origin}/login`;
-        return {
-          valid: false,
-          token: null
-        };
-      }
-      var token = await tokenResponse.json();
-      if (new Date() > token.termination) {
-        this.ShowLoginPopup();
-        return {
-          valid: false,
-          token: null
-        };
-      }
-      return {
-        valid: true,
-        token
-      };
-    }
-    static async SetResources(resources) {
-      var cache = await caches.open("User Resources");
-      var promises = [];
-      resources.forEach((resourceGroup) => {
-        var name = resourceGroup.name;
-        var resource = resourceGroup.resource;
-        promises.push(cache.put(name, new Response(resource)).then(() => {
-          if (name in this.resourceCallbacks)
-            for (var callback of this.resourceCallbacks[name])
-              callback(JSON.parse(resource));
-        }));
-      });
-      await Promise.all(promises);
-    }
-    static async SetResource(name, resource) {
-      var cache = await caches.open("User Resources");
-      await cache.put(name, new Response(resource));
-      if (name in this.resourceCallbacks)
-        for (var callback of this.resourceCallbacks[name])
-          callback(JSON.parse(resource));
-    }
-    static async GetResource(name, callback) {
-      if (name in this.resourceCallbacks)
-        this.resourceCallbacks[name].push(callback);
-      else
-        this.resourceCallbacks[name] = [callback];
-      var cache = await caches.open("User Resources");
-      var response = await cache.match(name);
-      if (response) {
-        var resource = await response.json();
-        callback(resource);
-      } else
-        callback(void 0);
-    }
-    static async FetchResources() {
-      var { valid, token } = await this.GetToken();
-      if (!valid)
-        return false;
-      var serverUrl = new URL("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/resources");
-      serverUrl.searchParams.append("token", JSON.stringify(token));
-      var resourceResponse = await fetch(serverUrl.toString());
-      if (!resourceResponse.ok) {
-        this.ShowLoginPopup();
-        return false;
-      }
-      var resourceResult = await resourceResponse.json();
-      var cache = await caches.open("User Resources");
-      await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
-      await this.SetResources(Object.keys(resourceResult.result).map((key) => {
-        return {
-          name: key,
-          resource: JSON.stringify(resourceResult.result[key])
-        };
-      }));
-      return true;
-    }
-    static GetInstalledExtensions() {
-      return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
-    }
-    static ShowLoginPopup() {
-      var notification = document.createElement("inline-notification");
-      var content = document.createElement("p");
-      content.innerHTML = `You need to <a>login</a> to see the latest information.`;
-      notification.appendChild(content);
-      document.body.appendChild(notification);
-    }
-    static SetDark(dark) {
-      this.dark = dark;
-      document.documentElement.classList.toggle("dark", dark);
-      for (var callback of this.darkCallbacks) {
-        callback(dark);
-      }
-    }
-    static ListenForDark(callback) {
-      this.darkCallbacks.push(callback);
-    }
-    static SetColour(hue) {
-      document.documentElement.style.setProperty("--main-hue", hue);
-      document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
-    }
-  };
-  Site.page = {
-    page: "dailytimetable",
-    extension: false
-  };
-  Site.dark = false;
-  Site.hue = "200";
-  Site.pageElement = null;
-  Site.resourceCallbacks = {};
-  Site.darkCallbacks = [];
 
   // site/js/elements/page/page.ts
   var Page = class extends s4 {
@@ -4240,6 +4240,64 @@ info-popup {
   Settings = __decorateClass([
     n5("user-settings")
   ], Settings);
+
+  // site/js/index.ts
+  Main();
+  async function Main() {
+    if (location.hash)
+      Site.NavigateTo({
+        page: location.hash.substring(1),
+        extension: location.hash.indexOf("extension-") == 1
+      });
+    Site.dark = localStorage.getItem("Dark") == "true";
+    Site.hue = localStorage.getItem("Hue") || "200";
+    var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
+    if (registration)
+      await registration.update();
+    else
+      await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+        scope: "/"
+      });
+    var lastReloadedText = sessionStorage.getItem("Last Reloaded");
+    var resourceNotification = ShowResourceNotification();
+    if (lastReloadedText) {
+      var lastReloaded = new Date(lastReloadedText);
+      if (new Date().getTime() - lastReloaded.getTime() > "3600") {
+        await Site.FetchResources();
+        sessionStorage.setItem("Last Refreshed", new Date().toISOString());
+      }
+    } else
+      await Site.FetchResources();
+    resourceNotification.remove();
+    var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
+    if (registration)
+      await registration.update();
+    else
+      await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+        scope: "/"
+      });
+    var serviceWorker = await navigator.serviceWorker.ready;
+    if (serviceWorker.periodicSync) {
+      var tags = await serviceWorker.periodicSync.getTags();
+      if (!tags.includes("metadata-fetch")) {
+        try {
+          await serviceWorker.periodicSync.register("metadata-fetch", {
+            minInterval: "2592000000"
+          });
+        } catch (e8) {
+          console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
+        }
+      }
+    } else
+      console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
+    navigator.serviceWorker.controller?.postMessage({ command: "metadata-fetch" });
+  }
+  function ShowResourceNotification() {
+    var notification = document.createElement("inline-notification");
+    notification.appendChild(document.createTextNode("Updating resources..."));
+    document.body.appendChild(notification);
+    return notification;
+  }
 })();
 /**
  * @license

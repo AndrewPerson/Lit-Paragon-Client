@@ -36,5 +36,7 @@ slot {
 .background {
     position: absolute;
     width: var(--max-width);
-    height: 100%;
+    height: 200%;
+    top: 0;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
 }

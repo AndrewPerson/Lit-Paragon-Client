@@ -7,7 +7,7 @@ const config = require("./build.json");
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile } from "fs/promises";
+import { writeFile, readFile } from "fs/promises";
 
 import { exec } from "child_process";
 
@@ -16,7 +16,6 @@ import { build } from "esbuild";
 import clear from "esbuild-plugin-clear";
 import conditionalBuild from "esbuild-plugin-conditional-build";
 import svg from "esbuild-plugin-svg";
-import { litCssPlugin } from "esbuild-plugin-lit-css";
 
 function transformVars(vars) {
     for (var key of Object.keys(vars)) {
@@ -68,14 +67,20 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
 
 var tsPromise = new Promise(res => {
-    exec("npx tsc --noEmit", res);
+    exec("npx tsc --noEmit", (err, stdout, stderr) => {
+        console.log(stdout);
+        console.log(stderr);
+        console.log(err ?? "");
+        res();
+    });
 });
 
 var buildPromise = build({
     entryPoints: config.files.map(file => `site/${file}`),
-    bundle: true,
     outdir: "site/dist",
+    bundle: true,
     minify: env.js.minify,
+    target: "es2020",
     define: transformVars(env.vars),
     plugins: [
         clear("./site/dist"),
@@ -106,7 +111,19 @@ var buildPromise = build({
                 floatPrecision: env.svg.floatPrecision
             }
         }),
-        litCssPlugin()
+        {
+            name: "lit-css",
+            setup(build) {
+                build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
+                    var textContent = await readFile(args.path, "utf8");
+
+                    return {
+                        loader: "js",
+                        contents: `import {css} from "lit"; export default css\`${textContent}\`;`
+                    }
+                });
+            }
+        }
     ]
 })
 .catch(() => {

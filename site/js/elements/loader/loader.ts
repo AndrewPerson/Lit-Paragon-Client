@@ -10,7 +10,7 @@ export class LoadingIndicator extends LitElement {
 
     render() {
         return html`
-            <img draggable="false" class="spinner" src="images/rings.svg" />
+        <img draggable="false" class="spinner" src="images/rings.svg">
         `;
     }
 }

@@ -1,9 +1,9 @@
 import { ExtensionPage } from "./elements/extensions/extensions";
 import { Navbar } from "./elements/navbar/navbar";
+import { InlineNotification } from "./elements/notification/notification";
 
-export declare const RESOURCE_CACHE: string;
-export declare const SERVER_ENDPOINT: string;
-declare const MAX_REFRESH_FREQUENCY: number;
+declare const RESOURCE_CACHE: string;
+declare const SERVER_ENDPOINT: string;
 
 type Extension = {
     url: string,
@@ -132,8 +132,9 @@ export class Site {
             var resource = resourceGroup.resource;
 
             promises.push(cache.put(name, new Response(resource)).then(() => {
-                for (var callback of this.resourceCallbacks[name])
-                    callback(resource);
+                if (name in this.resourceCallbacks)
+                    for (var callback of this.resourceCallbacks[name])
+                        callback(JSON.parse(resource));
             }));
         });
 
@@ -144,10 +145,9 @@ export class Site {
         var cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
 
-        if (name in this.resourceCallbacks) {
+        if (name in this.resourceCallbacks)
             for (var callback of this.resourceCallbacks[name])
-                callback(resource);
-        }
+                callback(JSON.parse(resource));
     }
 
     static async GetResource(name: string, callback: (resource: any) => any): Promise<void> {
@@ -161,9 +161,9 @@ export class Site {
 
         if (response) {
             var resource = await response.json();
-            if (resource !== undefined && resource !== null)
-                callback(resource);
+            callback(resource);
         }
+        else callback(undefined);
     }
 
     static async FetchResources(): Promise<boolean> {
@@ -171,7 +171,7 @@ export class Site {
 
         if (!valid) return false;
 
-        var serverUrl = new URL(SERVER_ENDPOINT);
+        var serverUrl = new URL(SERVER_ENDPOINT + "/resources");
         serverUrl.searchParams.append("token", JSON.stringify(token));
 
         var resourceResponse = await fetch(serverUrl.toString());
@@ -186,14 +186,14 @@ export class Site {
 
         var cache = await caches.open(RESOURCE_CACHE);
         
-        await cache.put("Token", new Response(resourceResult.token as any));
-        
-        var putPromises = [];
-        for (var key of Object.keys(resourceResult.result)) {
-            putPromises.push(cache.put(key, new Response(resourceResult.result[key])));
-        }
+        await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
 
-        await Promise.all(putPromises);
+        await this.SetResources(Object.keys(resourceResult.result).map(key => {
+            return {
+                name: key,
+                resource: JSON.stringify(resourceResult.result[key])
+            };
+        }));
 
         return true;
     }
@@ -204,7 +204,14 @@ export class Site {
     }
 
     static ShowLoginPopup() {
-        document.body.appendChild(document.createElement("login-popup"));
+        var notification = document.createElement("inline-notification") as InlineNotification;
+
+        var content = document.createElement("p");
+        content.innerHTML = `You need to <a>login</a> to see the latest information.`
+
+        notification.appendChild(content);
+
+        document.body.appendChild(notification);
     }
 
     //#region Theming
@@ -228,26 +235,3 @@ export class Site {
     }
     //#endregion
 }
-
-if (location.hash)
-    Site.NavigateTo({
-        page: location.hash.substring(1),
-        extension: location.hash.indexOf("extension-") == 1
-    });
-
-Site.dark = localStorage.getItem("Dark") == "true";
-Site.hue = localStorage.getItem("Hue") || "200";
-
-//This is to stop people who refresh a lot from spamming the server with requests.
-//Session Storage is persisted through reloads, but is cleared once the tab is closed.
-var lastReloadedText = sessionStorage.getItem("Last Reloaded");
-
-if (lastReloadedText) {
-    var lastReloaded = new Date(lastReloadedText);
-
-    if ((new Date() as any - (lastReloaded as any)) > MAX_REFRESH_FREQUENCY) {
-        Site.FetchResources();
-        sessionStorage.setItem("Last Refreshed", new Date().toISOString());
-    }
-}
-else Site.FetchResources();

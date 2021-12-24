@@ -1,4 +1,4 @@
-:where(button) {
+:where(button, a.button) {
     border: solid 0.2vmin var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);
@@ -8,12 +8,12 @@
     font-size: var(--font-size);
 }
 
-:where(button:hover) {
+:where(button:hover, a.button:hover) {
     background-color: var(--surface3);
     color: var(--text2);
 }
 
-:where(button:active) {
+:where(button:active, a.button:active) {
     border: solid 0.2vmin transparent;
     color: var(--text4);
     text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);

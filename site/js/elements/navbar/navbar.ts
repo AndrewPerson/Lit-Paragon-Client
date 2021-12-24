@@ -103,7 +103,7 @@ export class Navbar extends LitElement {
         
         return html`
             <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}">
-                <img draggable="false" src="${icon}" />
+                <img draggable="false" src="${icon}">
             </nav-item>
         `;
     }).bind(this);
@@ -219,14 +219,14 @@ export class Navbar extends LitElement {
         if (this.sortable != null) this.sortable.option("disabled", !this.editing);
 
         return html`
-            <div id="items-container">
-                ${repeat(this.order, (key: number) => key, this.GetNavItem)}
-            
-                <div id="top-shadow" style="display: none"></div>
-                <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
-                <div id="left-shadow" style="display: none"></div>
-                <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
-            </div>
+        <div id="items-container">
+            ${repeat(this.order, (key: number) => key, this.GetNavItem)}
+        
+            <div id="top-shadow" style="display: none"></div>
+            <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
+            <div id="left-shadow" style="display: none"></div>
+            <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
+        </div>
         `;
     }
 }

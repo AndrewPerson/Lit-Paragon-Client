@@ -39,13 +39,13 @@ export class Info extends LitElement {
 
     render() {
         return html`
-            <button @click="${this.ShowPopup}">
-                ${unsafeSVG(infoSvg)}
-            </button>
+        <button @click="${this.ShowPopup}">
+            ${unsafeSVG(infoSvg)}
+        </button>
 
-            <slot style="display: none"></slot>
+        <slot style="display: none"></slot>
 
-            <div class="background" style="display: none"></div>
+        <div class="background" style="display: none"></div>
         `;
     }
 }

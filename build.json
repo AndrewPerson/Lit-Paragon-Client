@@ -2,7 +2,10 @@
     "files": [
         "js/init.ts",
         "js/elements.ts",
-        "js/site.ts",
+        "js/index.ts",
+        "js/callback.ts",
+        "js/login.ts",
+        "js/unsupported.ts",
         "js/service-worker/service-worker.js"
     ],
     "metadata": {
@@ -19,7 +22,6 @@
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
-                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
                 "BACKGROUND_SYNC_INTERVAL": "2592000000",
                 "MAX_REFRESH_FREQUENCY": "3600"
             }
@@ -35,7 +37,9 @@
                 "minify": false
             },
             "vars": {
-                "METADATA_ENDPOINT": "http://localhost:5555/metadata"
+                "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
+                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
+                "CLIENT_ID": "Paragon_Tools"
             }
         },
         "release": {
@@ -50,7 +54,9 @@
                 "floatPrecision": 1
             },
             "vars": {
-                "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata"
+                "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata",
+                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
+                "CLIENT_ID": "paragon"
             }
         }
     }

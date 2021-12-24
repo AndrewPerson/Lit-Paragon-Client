@@ -12,6 +12,8 @@
     },
     "explorerExclude.backup": null,
     "cSpell.words": [
-        "sortablejs"
+        "esbuild",
+        "sortablejs",
+        "vars"
     ]
 }

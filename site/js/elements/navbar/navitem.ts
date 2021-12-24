@@ -50,11 +50,11 @@ export class NavItem extends LitElement {
             this.classList.remove("selected");
 
         return html`
-            <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
-                <slot></slot>
-            </a>
+        <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
+            <slot></slot>
+        </a>
 
-            ${this.editing ? html`<img id="handle" src="images/drag.svg" draggable="false"/>` : nothing}
+        ${this.editing ? html`<img id="handle" src="images/drag.svg" draggable="false">` : nothing}
         `;
     }
 }

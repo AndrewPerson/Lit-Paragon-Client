@@ -1,5 +1,7 @@
-import { LitElement, html } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
+import { Page } from "../page/page";
+
+import { html } from "lit";
+import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site";
 
@@ -20,7 +22,7 @@ declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
 }) => void;
 
 @customElement("student-barcode")
-export class StudentBarcode extends LitElement {
+export class StudentBarcode extends Page {
     static styles = [elementCss, fullElementCss, textCss, imgCss, barcodeCss];
 
     @query("#barcodeDisplay")
@@ -36,11 +38,22 @@ export class StudentBarcode extends LitElement {
 
     dragging: boolean = false;
 
-    @state()
-    studentId: string = "";
+    userInfo: {
+        studentId: number
+    };
 
-    @state()
-    loading: boolean = true;
+    constructor() {
+        super();
+
+        this.addEventListener("pointermove", this.DragPoint);
+        this.addEventListener("pointerup", this.EndDrag);
+
+        this.AddResource("userinfo", "userInfo");
+
+        Site.ListenForDark(dark => {
+            this.barcode?.classList.toggle("outline", dark);
+        });
+    }
 
     StartDrag(e: PointerEvent) {
         e.preventDefault();
@@ -112,7 +125,7 @@ export class StudentBarcode extends LitElement {
                              ]));
 
         try {
-            JsBarcode(this.barcode, this.studentId, {
+            JsBarcode(this.barcode, this.userInfo.studentId.toString(), {
                 displayValue: false,
                 margin: 0
             });
@@ -120,31 +133,12 @@ export class StudentBarcode extends LitElement {
         catch(e) {}
     }
 
-    constructor() {
-        super();
-
-        this.addEventListener("pointermove", this.DragPoint);
-        this.addEventListener("pointerup", this.EndDrag);
-
-        Site.GetResource("userinfo", resource => {
-            this.studentId = resource.studentId;
-            this.loading = false;
-        });
-
-        Site.ListenForDark(dark => {
-            this.barcode?.classList.toggle("outline", dark);
-        });
-    }
-
     updated() {
         this.SetBarcodePosition();
         this.RenderBarcode();
     }
 
-    render() {
-        if (this.loading)
-            return html`<loading-indicator></loading-indicator>`;
-
+    renderPage() {
         var storedPoints = localStorage.getItem("Barcode Points");
 
         var points: string[] = ["20%", "20%", "80%", "40%"];
@@ -152,12 +146,12 @@ export class StudentBarcode extends LitElement {
         if (storedPoints) points = JSON.parse(storedPoints);
 
         return html`
-            <info-popup>Use this barcode to scan in instead of your Student Card.</info-popup>
+        <info-popup>Use this barcode to scan in instead of your Student Card.</info-popup>
 
-            <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
-            <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
+        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
+        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
 
-            <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;
     }
 }
