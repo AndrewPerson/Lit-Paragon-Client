@@ -38,9 +38,11 @@ export class StudentBarcode extends Page {
 
     dragging: boolean = false;
 
-    userInfo: {
-        studentId: number
-    };
+    set userInfo(value: {studentId: string}) {
+        this.studentId = value.studentId
+    }
+
+    studentId: string;
 
     constructor() {
         super();
@@ -125,7 +127,7 @@ export class StudentBarcode extends Page {
                              ]));
 
         try {
-            JsBarcode(this.barcode, this.userInfo.studentId.toString(), {
+            JsBarcode(this.barcode, this.studentId, {
                 displayValue: false,
                 margin: 0
             });

@@ -39,13 +39,11 @@ async function Main() {
         var lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
-            await Site.FetchResources();
+            Site.FetchResources().then(resourceNotification.remove);
             sessionStorage.setItem("Last Refreshed", new Date().toISOString());
         }
     }
-    else await Site.FetchResources();
-
-    resourceNotification.remove();
+    else Site.FetchResources().then(resourceNotification.remove);
 
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
