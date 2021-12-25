@@ -1,3 +1,8 @@
+a.button {
+    text-decoration: none;
+    cursor: default;
+}
+
 :where(button, a.button) {
     border: solid 0.2vmin var(--surface4);
     background-color: var(--surface2);

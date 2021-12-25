@@ -1,0 +1,41 @@
+:host {
+    display: block;
+}
+
+details, summary {
+    --user-select: text;
+    cursor: text;
+}
+
+summary {
+    position: relative;
+
+    list-style: none;
+
+    margin-bottom: 1vmin;
+}
+
+summary::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: block;
+    width: calc(var(--font-size) * 1.5);
+    height: calc(var(--font-size) * 1.5);
+
+    margin-left: auto;
+    
+    background-image: url(images/toggle.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-y: center;
+
+    transform: rotate(180deg);
+}
+
+details[open] > summary::after {
+    transform: none;
+}

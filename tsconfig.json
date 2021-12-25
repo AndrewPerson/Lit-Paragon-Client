@@ -3,7 +3,7 @@
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
-        "target": "es6",
+        "target": "es2020",
         "moduleResolution": "node",
         "skipLibCheck": true,
         "strictPropertyInitialization": false

@@ -1,0 +1,36 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+
+    box-sizing: border-box;
+    padding: 1vmin;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface4) transparent;
+}
+
+.content::-webkit-scrollbar-track {
+    background-color: transparent;
+
+    width: 1vmin;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: var(--surface4);
+    border-radius: 1vmin;
+}
+
+announcement-post {
+    margin-bottom: 3vmin;
+}

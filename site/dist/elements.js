@@ -1007,10 +1007,50 @@
   var o6 = e5(e7);
 
   // site/js/elements/announcements/post.css
-  var post_default = r``;
+  var post_default = r`:host {
+    display: block;
+}
+
+details, summary {
+    --user-select: text;
+    cursor: text;
+}
+
+summary {
+    position: relative;
+
+    list-style: none;
+
+    margin-bottom: 1vmin;
+}
+
+summary::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: block;
+    width: calc(var(--font-size) * 1.5);
+    height: calc(var(--font-size) * 1.5);
+
+    margin-left: auto;
+    
+    background-image: url(images/toggle.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-y: center;
+
+    transform: rotate(180deg);
+}
+
+details[open] > summary::after {
+    transform: none;
+}`;
 
   // site/css/default/text.css
-  var text_default = r`:where(h1, h2, h3, h4, h5, h6, p, li) {
+  var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
 }
 
@@ -1020,10 +1060,30 @@
     cursor: default;
     font-size: var(--font-size);
 
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
+    user-select: var(--user-select, none);
+    -ms-user-select: var(--user-select, none);
+    -moz-user-select: var(--user-select, none);
+    -webkit-user-select: var(--user-select, none);
+}
+
+:where(h1) {
+    font-size: calc(var(--font-size) * 1.6);
+}
+
+:where(h2) {
+    font-size: calc(var(--font-size) * 1.5);
+}
+
+:where(h3) {
+    font-size: calc(var(--font-size) * 1.4);
+}
+
+:where(h4) {
+    font-size: calc(var(--font-size) * 1.3);
+}
+
+:where(h5) {
+    font-size: calc(var(--font-size) * 1.2);
 }
 
 :where(b, strong) {
@@ -1052,7 +1112,7 @@
       return p`
         <details>
             <summary>
-                ${this.title}
+                <h3>${this.title}</h3>
             </summary>
 
             ${o6(this.content)}
@@ -1100,6 +1160,37 @@
     -webkit-user-select: none;
 }
 `;
+
+  // site/css/default/search.css
+  var search_default = r`:where(input[type=search]) {
+    border: none;
+    border-bottom: 0.2vmin solid var(--text2);
+    border-radius: 0;
+
+    background-color: var(--surface2);
+    color: var(--text1);
+
+    font-size: var(--font-size);
+    font-family: monospace;
+
+    height: calc(var(--font-size) * 2);
+}
+
+:where(input[type=search]:focus) {
+    outline: none;
+}
+
+:where(input[type=search])::-webkit-input-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-moz-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}`;
 
   // site/css/default/select.css
   var select_default = r`:where(select) {
@@ -1155,29 +1246,82 @@
 }`;
 
   // site/js/elements/announcements/announcements.css
-  var announcements_default = r``;
+  var announcements_default = r`:host {
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+
+    box-sizing: border-box;
+    padding: 1vmin;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content {
+    flex: 1;
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface4) transparent;
+}
+
+.content::-webkit-scrollbar-track {
+    background-color: transparent;
+
+    width: 1vmin;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: var(--surface4);
+    border-radius: 1vmin;
+}
+
+announcement-post {
+    margin-bottom: 3vmin;
+}`;
 
   // site/js/elements/announcements/announcements.ts
   var SchoolAnnouncements = class extends Page {
     constructor() {
       super();
+      this.yearFilter = "all";
       this.AddResource("announcements", "announcements");
     }
     renderPage() {
+      var filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement) => announcement.years.includes(this.yearFilter));
       return p`
-        <div class="header"></div>
+        <div class="header">
+            <input type="search" placeholder="Filter...">
+
+            <select @input="${(e8) => this.yearFilter = e8.target.value}">
+                <option value="all">All</option>
+                <option value="12">Year 12</option>
+                <option value="11">Year 11</option>
+                <option value="10">Year 10</option>
+                <option value="9">Year 9</option>
+                <option value="8">Year 8</option>
+                <option value="7">Year 7</option>
+            </select>
+        </div>
+
         <div class="content">
-            ${c3(this.announcements.notices, (notice) => p`
+            ${c3(filteredAnnouncements, (notice) => p`
             <announcement-post title="${notice.title}" content="${notice.content}"></announcement-post>
             `)}
         </div>
         `;
     }
   };
-  SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, select_default, announcements_default];
+  SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
   __decorateClass([
     t3()
   ], SchoolAnnouncements.prototype, "announcements", 2);
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements.prototype, "yearFilter", 2);
   SchoolAnnouncements = __decorateClass([
     n5("school-announcements")
   ], SchoolAnnouncements);
@@ -4296,7 +4440,12 @@ a {
   ], Navbar);
 
   // site/css/default/button.css
-  var button_default = r`:where(button, a.button) {
+  var button_default = r`a.button {
+    text-decoration: none;
+    cursor: default;
+}
+
+:where(button, a.button) {
     border: solid 0.2vmin var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);

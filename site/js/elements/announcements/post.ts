@@ -39,7 +39,7 @@ export class AnnouncementPost extends LitElement {
         return html`
         <details>
             <summary>
-                ${this.title}
+                <h3>${this.title}</h3>
             </summary>
 
             ${unsafeHTML(this.content)}

@@ -1,4 +1,4 @@
-:where(h1, h2, h3, h4, h5, h6, p, li) {
+:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
 }
 
@@ -8,10 +8,30 @@
     cursor: default;
     font-size: var(--font-size);
 
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
+    user-select: var(--user-select, none);
+    -ms-user-select: var(--user-select, none);
+    -moz-user-select: var(--user-select, none);
+    -webkit-user-select: var(--user-select, none);
+}
+
+:where(h1) {
+    font-size: calc(var(--font-size) * 1.6);
+}
+
+:where(h2) {
+    font-size: calc(var(--font-size) * 1.5);
+}
+
+:where(h3) {
+    font-size: calc(var(--font-size) * 1.4);
+}
+
+:where(h4) {
+    font-size: calc(var(--font-size) * 1.3);
+}
+
+:where(h5) {
+    font-size: calc(var(--font-size) * 1.2);
 }
 
 :where(b, strong) {
