@@ -1,6 +1,5 @@
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
-import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 
 import { Site } from "../../site";
 
@@ -109,7 +108,7 @@ export class Settings extends LitElement {
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
         <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
-            ${unsafeSVG(Site.dark ? sunSvg : moonSvg)}
+            ${Site.dark ? sunSvg : moonSvg}
         </button>
         
         <span></span>

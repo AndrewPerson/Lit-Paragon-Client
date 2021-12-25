@@ -1,6 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement } from "lit/decorators.js";
-import { unsafeSVG } from "lit/directives/unsafe-svg.js";
+import { customElement, property } from "lit/decorators.js";
 
 //@ts-ignore
 import notificationCss from "./notification.css";
@@ -14,12 +13,18 @@ import crossSvg from "cross.svg";
 export class InlineNotification extends LitElement {
     static styles = [imgCss, notificationCss];
 
+    @property({ type: Boolean })
+    loader: boolean;
+
     render() {
         return html`
         <slot></slot>
-        <button @click="${this.remove}" title="Close">
-            ${unsafeSVG(crossSvg)}
-        </button>
+        ${this.loader ? html`
+        <loading-indicator class="indicator"></loading-indicator>` :
+        html`
+        <button class="indicator"  @click="${this.remove}" title="Close">
+            ${crossSvg}
+        </button>`}
         `;
     }
 }

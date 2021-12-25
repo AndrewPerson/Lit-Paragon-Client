@@ -1,7 +1,7 @@
 :host {
     position: relative;
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     gap: 1.5vmin;
 
@@ -11,10 +11,21 @@
     box-shadow: var(--small-shadow);
 }
 
-button {
+button.indicator {
+    --scale: 0.95;
+}
+
+loading-indicator {
+    --scale: 1.1;
+}
+
+.indicator {
     all: unset;
-    width: 2vmin;
-    height: 2vmin;
+
+    display: flex;
+
+    width: calc(var(--font-size) * var(--scale));
+    height: calc(var(--font-size) * var(--scale));
 }
 
 svg {

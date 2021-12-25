@@ -43,7 +43,7 @@
       }
       var token = await tokenResponse.json();
       if (new Date() > token.termination) {
-        this.ShowLoginPopup();
+        this.ShowLoginNotification();
         return {
           valid: false,
           token: null
@@ -92,11 +92,11 @@
       var { valid, token } = await this.GetToken();
       if (!valid)
         return false;
-      var serverUrl = new URL("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/resources");
+      var serverUrl = new URL("https://sbhs-random-data.profsmart.repl.co/resources");
       serverUrl.searchParams.append("token", JSON.stringify(token));
       var resourceResponse = await fetch(serverUrl.toString());
       if (!resourceResponse.ok) {
-        this.ShowLoginPopup();
+        this.ShowLoginNotification();
         return false;
       }
       var resourceResult = await resourceResponse.json();
@@ -113,12 +113,20 @@
     static GetInstalledExtensions() {
       return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
     }
-    static ShowLoginPopup() {
+    static ShowNotification(content, loader = false) {
       var notification = document.createElement("inline-notification");
+      if (typeof content === "string")
+        notification.innerText = content;
+      else
+        notification.appendChild(content);
+      notification.loader = loader;
+      document.getElementById("notification-area")?.appendChild(notification);
+      return notification;
+    }
+    static ShowLoginNotification() {
       var content = document.createElement("p");
       content.innerHTML = `You need to <a>login</a> to see the latest information.`;
-      notification.appendChild(content);
-      document.body.appendChild(notification);
+      this.ShowNotification(content);
     }
     static SetDark(dark) {
       this.dark = dark;
@@ -139,8 +147,8 @@
     page: "dailytimetable",
     extension: false
   };
-  Site.dark = false;
-  Site.hue = "200";
+  Site.dark = localStorage.getItem("Dark") == "true";
+  Site.hue = localStorage.getItem("Hue") || "200";
   Site.pageElement = null;
   Site.resourceCallbacks = {};
   Site.darkCallbacks = [];
@@ -149,7 +157,7 @@
   if (Site.dark)
     document.getElementById("logo-p").src = "images/logo-dark.svg";
   async function Token(code2) {
-    var tokenResponse = await fetch("https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default/auth", {
+    var tokenResponse = await fetch("https://sbhs-random-data.profsmart.repl.co/auth", {
       method: "POST",
       body: code2
     });

@@ -46,8 +46,8 @@ export class Site {
         extension: false
     };
 
-    static dark: boolean = false;
-    static hue: string = "200";
+    static dark: boolean = localStorage.getItem("Dark") == "true";
+    static hue: string = localStorage.getItem("Hue") || "200";
 
     private static pageElement: HTMLElement | null = null;
 
@@ -109,7 +109,7 @@ export class Site {
         var token: Token = await tokenResponse.json();
 
         if (new Date() > token.termination) {
-            this.ShowLoginPopup();
+            this.ShowLoginNotification();
             return {
                 valid: false,
                 token: null
@@ -178,7 +178,7 @@ export class Site {
 
         //TODO Add more granular error handling
         if (!resourceResponse.ok) {
-            this.ShowLoginPopup();
+            this.ShowLoginNotification();
             return false;
         }
 
@@ -203,15 +203,24 @@ export class Site {
         return JSON.parse(localStorage.getItem("Installed Extensions") as string) || {};
     }
 
-    static ShowLoginPopup() {
+    static ShowNotification(content: HTMLElement | string, loader: boolean = false) {
         var notification = document.createElement("inline-notification") as InlineNotification;
 
+        if (typeof content === "string") notification.innerText = content;
+        else notification.appendChild(content);
+
+        notification.loader = loader;
+
+        document.getElementById("notification-area")?.appendChild(notification);
+
+        return notification;
+    }
+
+    static ShowLoginNotification() {
         var content = document.createElement("p");
         content.innerHTML = `You need to <a>login</a> to see the latest information.`
 
-        notification.appendChild(content);
-
-        document.body.appendChild(notification);
+        this.ShowNotification(content);
     }
 
     //#region Theming

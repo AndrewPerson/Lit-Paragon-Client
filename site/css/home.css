@@ -17,9 +17,15 @@ main {
     display: none;
 }
 
-inline-notification {
+#notification-area {
     position: absolute;
     top: 1vmin;
     right: 1vmin;
+
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 1vmin;
+
     z-index: 100;
 }

@@ -17,24 +17,26 @@ export class Page extends LitElement {
     private _unreceivedResources: number = 0;
     private _uncompletedResources: number = 0;
 
-    AddResource(resource: string, property: string) {
+    AddResource(resourceName: string, property: string) {
         this._unreceivedResources++;
         this._uncompletedResources++;
 
         var received = false;
         var completed = false;
 
-        Site.GetResource(resource, (resource: any) => {
-            this[property] = resource;
-
+        Site.GetResource(resourceName, (resource: any) => {
             if (!received) {
                 this._unreceivedResources--;
                 received = true;
             }
 
-            if (resource !== null && resource !== undefined && !completed) {
-                this._uncompletedResources--;
-                completed = true;
+            if (resource !== null && resource !== undefined) {
+                if (!completed) {
+                    this._uncompletedResources--;
+                    completed = true;
+                }
+
+                this[property] = resource;
             }
 
             if (this._uncompletedResources == 0)

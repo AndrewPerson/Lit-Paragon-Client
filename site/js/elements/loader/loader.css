@@ -5,8 +5,9 @@
     justify-content: center;
 }
 
-.spinner {
+svg {
     width: inherit;
+    height: auto;
     animation: 3s infinite spin;
 }
 

@@ -11,11 +11,12 @@ import { writeFile, readFile } from "fs/promises";
 
 import { exec } from "child_process";
 
+import { optimize } from 'svgo';
+
 import { build } from "esbuild";
 
 import clear from "esbuild-plugin-clear";
 import conditionalBuild from "esbuild-plugin-conditional-build";
-import svg from "esbuild-plugin-svg";
 
 function transformVars(vars) {
     for (var key of Object.keys(vars)) {
@@ -105,12 +106,25 @@ var buildPromise = build({
             }
         },
         conditionalBuild(env.constants),
-        svg({
-            minify: env.svg.minify,
-            minifyOptions: {
-                floatPrecision: env.svg.floatPrecision
+        {
+            name: "lit-svg",
+            setup(build) {        
+                build.onLoad({ filter: /\.svg$/ }, async args => {
+                    let contents = await readFile(args.path, 'utf8');
+        
+                    if (env.svg.floatPrecision)
+                        contents = optimize(contents, {
+                            path: args.path,
+                            floatPrecision: env.svg.floatPrecision,
+                        }).data;
+        
+                    return {
+                        loader: "js",
+                        contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
+                    };
+                });
             }
-        }),
+        },
         {
             name: "lit-css",
             setup(build) {

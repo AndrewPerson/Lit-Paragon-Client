@@ -1,6 +1,5 @@
 import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators.js";
-import { unsafeSVG } from 'lit/directives/unsafe-svg.js';
 
 //@ts-ignore
 import infoCss from "./info.css";
@@ -40,7 +39,7 @@ export class Info extends LitElement {
     render() {
         return html`
         <button @click="${this.ShowPopup}">
-            ${unsafeSVG(infoSvg)}
+            ${infoSvg}
         </button>
 
         <slot style="display: none"></slot>

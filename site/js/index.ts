@@ -10,13 +10,10 @@ Main();
 
 async function Main() {
     if (location.hash)
-    Site.NavigateTo({
-        page: location.hash.substring(1),
-        extension: location.hash.indexOf("extension-") == 1
-    });
-
-    Site.dark = localStorage.getItem("Dark") == "true";
-    Site.hue = localStorage.getItem("Hue") || "200";
+        Site.NavigateTo({
+            page: location.hash.substring(1),
+            extension: location.hash.indexOf("extension-") == 1
+        });
 
     //#if DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -39,11 +36,13 @@ async function Main() {
         var lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
-            Site.FetchResources().then(resourceNotification.remove);
+            //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
+            Site.FetchResources().then(() => resourceNotification.remove());
             sessionStorage.setItem("Last Refreshed", new Date().toISOString());
         }
     }
-    else Site.FetchResources().then(resourceNotification.remove);
+    //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
+    else Site.FetchResources().then(() => resourceNotification.remove());
 
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -83,11 +82,5 @@ async function Main() {
 }
 
 function ShowResourceNotification() {
-    var notification = document.createElement("inline-notification");
-
-    notification.appendChild(document.createTextNode("Updating resources..."));
-
-    document.body.appendChild(notification);
-
-    return notification;
+    return Site.ShowNotification("Updating resources...", true);
 }

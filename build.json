@@ -9,7 +9,17 @@
         "js/service-worker/service-worker.js"
     ],
     "metadata": {
-
+        "version": "Development",
+        "pages": {
+            "Award Scheme Points": {
+                "navIcon": "/nav-icon.svg",
+                "url": "https://awardschemepoints.profsmart.repl.co",
+                "finished": true,
+                "description": "Displays your award scheme points.",
+                "icon": "/icon.svg",
+                "version": "0.0.1"
+            }
+        }
     },
     "env": {
         "shared": {
@@ -34,11 +44,10 @@
                 "minify": false
             },
             "svg": {
-                "minify": false
             },
             "vars": {
                 "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
-                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
+                "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "Paragon_Tools"
             }
         },
@@ -50,7 +59,6 @@
                 "minify": true
             },
             "svg": {
-                "minify": true,
                 "floatPrecision": 1
             },
             "vars": {

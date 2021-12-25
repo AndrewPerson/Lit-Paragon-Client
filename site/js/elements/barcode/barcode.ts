@@ -39,7 +39,8 @@ export class StudentBarcode extends Page {
     dragging: boolean = false;
 
     set userInfo(value: {studentId: string}) {
-        this.studentId = value.studentId
+        this.studentId = value.studentId;
+        this.requestUpdate();
     }
 
     studentId: string;
