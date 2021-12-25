@@ -220,7 +220,7 @@ export class Navbar extends LitElement {
 
         return html`
         <div id="items-container">
-            ${repeat(this.order, (key: number) => key, this.GetNavItem)}
+            ${repeat(this.order, this.GetNavItem)}
         
             <div id="top-shadow" style="display: none"></div>
             <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>

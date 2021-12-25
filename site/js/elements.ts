@@ -1,3 +1,4 @@
+import "./elements/announcements/announcements";
 import "./elements/barcode/barcode";
 import "./elements/extensions/extensions";
 import "./elements/info/info";
