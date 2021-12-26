@@ -16,7 +16,7 @@
   async function onMessage(e) {
     if (e.data.command == "metadata-fetch") {
       var metadataCache = await caches.open("Metadata");
-      await metadataCache.put("Metadata", await fetch("http://127.0.0.1:5555/metadata"));
+      await metadataCache.put(`${location.origin}/Metadata`, await fetch("http://127.0.0.1:5555/metadata"));
     }
   }
 })();

@@ -62,19 +62,19 @@ export class Navbar extends LitElement {
     editing: boolean = false;
 
     @query("#items-container", true)
-    itemsContainer: HTMLDivElement | null;
+    itemsContainer: HTMLDivElement;
 
     @query("#top-shadow", true)
-    topShadow: HTMLDivElement | null;
+    topShadow: HTMLDivElement;
 
     @query("#bottom-shadow", true)
-    bottomShadow: HTMLDivElement | null;
+    bottomShadow: HTMLDivElement;
 
     @query("#left-shadow", true)
-    leftShadow: HTMLDivElement | null;
+    leftShadow: HTMLDivElement;
 
     @query("#right-shadow", true)
-    rightShadow: HTMLDivElement | null;
+    rightShadow: HTMLDivElement;
 
     pages: string[] = [];
     icons: string[] = [];
@@ -111,9 +111,7 @@ export class Navbar extends LitElement {
     ShowShadows(): void {
         //This function can be called before the element is fully initialised.
         //This stops it from running if that happens.
-        if (!this.shadowRoot || !this.topShadow
-            || !this.bottomShadow || !this.leftShadow
-            || !this.rightShadow || !this.itemsContainer) return;
+        if (!this.shadowRoot) return;
 
         if (window.innerWidth <= window.innerHeight) {
             this.topShadow.style.display = "none";
@@ -149,18 +147,18 @@ export class Navbar extends LitElement {
         var root = super.createRenderRoot();
 
         root.addEventListener("pointerdown", () => {
-            this.itemsContainer?.classList.add("hover");
+            this.itemsContainer.classList.add("hover");
         });
 
         root.addEventListener("pointerup", () => {
-            this.itemsContainer?.classList.remove("hover");
+            this.itemsContainer.classList.remove("hover");
         });
 
         return root;
     }
 
     firstUpdated() {
-        this.itemsContainer?.addEventListener("scroll", this.ShowShadows.bind(this));
+        this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
     
         this.sortable = new Sortable(this.itemsContainer, {
             group: "nav-items",

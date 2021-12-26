@@ -14,19 +14,19 @@ export class Info extends LitElement {
     static styles = [imgCss, infoCss];
 
     @query("slot", true)
-    info: HTMLElement | null;
+    info: HTMLElement;
 
     @query(".background", true)
-    background: HTMLDivElement | null;
+    background: HTMLDivElement;
 
     ShowPopup() {
-        this.info?.style.removeProperty("display");
-        this.background?.style.removeProperty("display");
+        this.info.style.removeProperty("display");
+        this.background.style.removeProperty("display");
     }
 
     HidePopup() {
-        if (this.info != null) this.info.style.display = "none";
-        if (this.background != null) this.background.style.display = "none";
+        this.info.style.display = "none";
+        this.background.style.display = "none";
     }
 
     constructor() {

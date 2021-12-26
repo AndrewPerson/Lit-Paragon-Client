@@ -15,6 +15,10 @@ summary {
     margin-bottom: 1vmin;
 }
 
+summary > * {
+    cursor: pointer;
+}
+
 summary::after {
     content: "";
 
@@ -33,9 +37,17 @@ summary::after {
     background-repeat: no-repeat;
     background-position-y: center;
 
+    cursor: pointer;
+
     transform: rotate(180deg);
+
+    transition: 0.3s;
 }
 
 details[open] > summary::after {
     transform: none;
+}
+
+.info {
+    font-size: calc(var(--font-size) * 0.7);
 }

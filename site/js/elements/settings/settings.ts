@@ -30,17 +30,31 @@ export class Settings extends LitElement {
     static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, elementCss, settingsCss];
 
     @query("#hue", true)
-    hueInput: HTMLInputElement | null;
+    hueInput: HTMLInputElement;
 
-    @query("#version", true)
-    versionDisplay: HTMLParagraphElement | null;
+    @state()
+    version: string = "0.0.0";
+
+    constructor() {
+        super();
+
+        caches.open("Metadata").then(async cache => {
+            var metadataResponse = await cache.match("Metadata");
+
+            if (metadataResponse) {
+                var metadata = await metadataResponse.json();
+
+                this.version = metadata.version;
+            }
+        });
+    }
 
     Patch() {
         //TODO
     }
 
     ResetColour() {
-        if (this.hueInput) this.hueInput.value = "200";
+        this.hueInput.value = "200";
         Site.SetColour("200");
         localStorage.setItem("Hue", "200");
     }
@@ -70,19 +84,6 @@ export class Settings extends LitElement {
         }
     }
 
-    updated() {
-        caches.open("Metadata").then(async cache => {
-            if (this.versionDisplay) {
-                var metadataResponse = await cache.match("Metadata");
-                if (metadataResponse) {
-                    var metadata = await metadataResponse.json();
-
-                    this.versionDisplay.textContent = `Paragon v${metadata.version}`;
-                }
-            }
-        });
-    }
-
     render() {
         return html`
         <info-popup>
@@ -91,7 +92,7 @@ export class Settings extends LitElement {
             The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
         </info-popup>
 
-        <p id="version">Paragon v0.0.0</p>
+        <p id="version">Paragon v${this.version}</p>
 
         <button @click="${this.Patch}">Fix</button>
 

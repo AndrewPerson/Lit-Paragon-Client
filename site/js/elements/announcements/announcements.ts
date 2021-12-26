@@ -29,6 +29,14 @@ export type Announcement = {
     title: string,
     content: string,
     years: string[],
+    relativeWeight: number,
+    isMeeting: number,
+    meetingDate: string | null,
+    //TODO Check all possible types
+    meetingTimeParsed: string | undefined,
+    meetingTime: string,
+    displayYears: string,
+    authorName: string
 }
 
 @customElement("school-announcements")
@@ -41,6 +49,9 @@ export class SchoolAnnouncements extends Page {
     @state()
     yearFilter: string = "all";
 
+    @state()
+    searchFilter: string = "";
+
     constructor() {
         super();
 
@@ -49,13 +60,17 @@ export class SchoolAnnouncements extends Page {
 
     renderPage() {
         var filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement: Announcement) => announcement.years.includes(this.yearFilter));
+        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement: Announcement) =>
+                                                                                                                announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
+                                                                                                                announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
 
         return html`
         <div class="header">
-            <input type="search" placeholder="Search...">
+            <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
 
             <select @input="${(e: InputEvent) => this.yearFilter = (e.target as HTMLSelectElement).value}">
                 <option value="all">All</option>
+                <option value="Staff">Staff</option>
                 <option value="12">Year 12</option>
                 <option value="11">Year 11</option>
                 <option value="10">Year 10</option>
@@ -66,8 +81,13 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <div class="content">
-            ${repeat(filteredAnnouncements, (notice: Announcement) => html`
-            <announcement-post title="${notice.title}" content="${notice.content}"></announcement-post>
+            ${repeat(filteredAnnouncements, (announcement: Announcement) => html`
+            <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
+                               years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
+                               ${announcement.meetingTime === null ? "" :
+                               `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
+                               ` (${announcement.meetingTimeParsed})`}"`}
+                               weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
             `)}
         </div>
         `;

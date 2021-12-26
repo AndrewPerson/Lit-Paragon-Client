@@ -94,7 +94,7 @@ export class StudentBarcode extends Page {
     }
 
     SetBarcodePosition() {
-        if (this.barcode == null) return;
+        if (this.barcode === null) return;
 
         var x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
         var y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
@@ -117,23 +117,20 @@ export class StudentBarcode extends Page {
 
     RenderBarcode() {
         if (this.draggedElement != null) return;
-        if (this.barcode == null) return;
+        if (this.barcode === null || this.point1 === null || this.point2 === null) return;
 
         localStorage.setItem("Barcode Points",
                              JSON.stringify([
-                                 this.point1?.style.left,
-                                 this.point1?.style.top,
-                                 this.point2?.style.left,
-                                 this.point2?.style.top
+                                 this.point1.style.left,
+                                 this.point1.style.top,
+                                 this.point2.style.left,
+                                 this.point2.style.top
                              ]));
 
-        try {
-            JsBarcode(this.barcode, this.studentId, {
-                displayValue: false,
-                margin: 0
-            });
-        }
-        catch(e) {}
+        JsBarcode(this.barcode, this.studentId, {
+            displayValue: false,
+            margin: 0
+        });
     }
 
     updated() {

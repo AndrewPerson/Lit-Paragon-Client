@@ -31,6 +31,6 @@ async function onMessage(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
         var metadataCache = await caches.open(METADATA_CACHE);
         
-        await metadataCache.put("Metadata", await fetch(METADATA_ENDPOINT));
+        await metadataCache.put(`${location.origin}/Metadata`, await fetch(METADATA_ENDPOINT));
     }
 }

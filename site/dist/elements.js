@@ -1024,6 +1024,10 @@ summary {
     margin-bottom: 1vmin;
 }
 
+summary > * {
+    cursor: pointer;
+}
+
 summary::after {
     content: "";
 
@@ -1042,11 +1046,19 @@ summary::after {
     background-repeat: no-repeat;
     background-position-y: center;
 
+    cursor: pointer;
+
     transform: rotate(180deg);
+
+    transition: 0.3s;
 }
 
 details[open] > summary::after {
     transform: none;
+}
+
+.info {
+    font-size: calc(var(--font-size) * 0.7);
 }`;
 
   // site/css/default/text.css
@@ -1113,6 +1125,7 @@ details[open] > summary::after {
         <details>
             <summary>
                 <h3>${this.title}</h3>
+                <p class="info">By ${this.author} | For ${this.years}${this.meetingTime === void 0 ? "" : ` | At ${this.meetingTime}`}</p>
             </summary>
 
             ${o6(this.content)}
@@ -1136,9 +1149,6 @@ details[open] > summary::after {
   __decorateClass([
     e4()
   ], AnnouncementPost.prototype, "meetingTime", 2);
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "meetingLocation", 2);
   __decorateClass([
     e4()
   ], AnnouncementPost.prototype, "content", 2);
@@ -1288,16 +1298,19 @@ announcement-post {
     constructor() {
       super();
       this.yearFilter = "all";
+      this.searchFilter = "";
       this.AddResource("announcements", "announcements");
     }
     renderPage() {
       var filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement) => announcement.years.includes(this.yearFilter));
+      filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement) => announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) || announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
       return p`
         <div class="header">
-            <input type="search" placeholder="Filter...">
+            <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
 
             <select @input="${(e8) => this.yearFilter = e8.target.value}">
                 <option value="all">All</option>
+                <option value="Staff">Staff</option>
                 <option value="12">Year 12</option>
                 <option value="11">Year 11</option>
                 <option value="10">Year 10</option>
@@ -1308,8 +1321,11 @@ announcement-post {
         </div>
 
         <div class="content">
-            ${c3(filteredAnnouncements, (notice) => p`
-            <announcement-post title="${notice.title}" content="${notice.content}"></announcement-post>
+            ${c3(filteredAnnouncements, (announcement) => p`
+            <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
+                               years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
+                               ${announcement.meetingTime === null ? "" : `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === void 0 ? "" : ` (${announcement.meetingTimeParsed})`}"`}
+                               weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
             `)}
         </div>
         `;
@@ -1322,6 +1338,9 @@ announcement-post {
   __decorateClass([
     t3()
   ], SchoolAnnouncements.prototype, "yearFilter", 2);
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements.prototype, "searchFilter", 2);
   SchoolAnnouncements = __decorateClass([
     n5("school-announcements")
   ], SchoolAnnouncements);
@@ -1414,7 +1433,7 @@ info-popup {
       this.RenderBarcode();
     }
     SetBarcodePosition() {
-      if (this.barcode == null)
+      if (this.barcode === null)
         return;
       var x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
       var y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
@@ -1432,21 +1451,18 @@ info-popup {
     RenderBarcode() {
       if (this.draggedElement != null)
         return;
-      if (this.barcode == null)
+      if (this.barcode === null || this.point1 === null || this.point2 === null)
         return;
       localStorage.setItem("Barcode Points", JSON.stringify([
-        this.point1?.style.left,
-        this.point1?.style.top,
-        this.point2?.style.left,
-        this.point2?.style.top
+        this.point1.style.left,
+        this.point1.style.top,
+        this.point2.style.left,
+        this.point2.style.top
       ]));
-      try {
-        JsBarcode(this.barcode, this.studentId, {
-          displayValue: false,
-          margin: 0
-        });
-      } catch (e8) {
-      }
+      JsBarcode(this.barcode, this.studentId, {
+        displayValue: false,
+        margin: 0
+      });
     }
     updated() {
       this.SetBarcodePosition();
@@ -1491,14 +1507,14 @@ info-popup {
       this.src = "";
     }
     firstUpdated() {
-      this.frame?.addEventListener("load", () => {
-        this.loader?.remove();
-        this.frame?.removeAttribute("style");
+      this.frame.addEventListener("load", () => {
+        this.loader.remove();
+        this.frame.removeAttribute("style");
       });
     }
     render() {
       return p`
-        <iframe sandbox="allow-scripts allow-same-origin" src="${this.src}" style="display: none"></iframe>
+        <iframe sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" src="${this.src}" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }
@@ -1575,14 +1591,12 @@ slot {
   // site/js/elements/info/info.ts
   var Info = class extends s4 {
     ShowPopup() {
-      this.info?.style.removeProperty("display");
-      this.background?.style.removeProperty("display");
+      this.info.style.removeProperty("display");
+      this.background.style.removeProperty("display");
     }
     HidePopup() {
-      if (this.info != null)
-        this.info.style.display = "none";
-      if (this.background != null)
-        this.background.style.display = "none";
+      this.info.style.display = "none";
+      this.background.style.display = "none";
     }
     constructor() {
       super();
@@ -2134,13 +2148,13 @@ svg {
     return null;
   }
   var R_SPACE = /\s+/g;
-  function toggleClass(el, name, state2) {
+  function toggleClass(el, name, state) {
     if (el && name) {
       if (el.classList) {
-        el.classList[state2 ? "add" : "remove"](name);
+        el.classList[state ? "add" : "remove"](name);
       } else {
         var className = (" " + el.className + " ").replace(R_SPACE, " ").replace(" " + name + " ", " ");
-        el.className = (className + (state2 ? " " + name : "")).replace(R_SPACE, " ");
+        el.className = (className + (state ? " " + name : "")).replace(R_SPACE, " ");
       }
     }
   }
@@ -2417,8 +2431,8 @@ svg {
           child.fromRect = fromRect;
         });
       },
-      addAnimationState: function addAnimationState(state2) {
-        animationStates.push(state2);
+      addAnimationState: function addAnimationState(state) {
+        animationStates.push(state);
       },
       removeAnimationState: function removeAnimationState(target) {
         animationStates.splice(indexOfObject(animationStates, {
@@ -2434,8 +2448,8 @@ svg {
           return;
         }
         var animating = false, animationTime = 0;
-        animationStates.forEach(function(state2) {
-          var time = 0, target = state2.target, fromRect = target.fromRect, toRect = getRect(target), prevFromRect = target.prevFromRect, prevToRect = target.prevToRect, animatingRect = state2.rect, targetMatrix = matrix(target, true);
+        animationStates.forEach(function(state) {
+          var time = 0, target = state.target, fromRect = target.fromRect, toRect = getRect(target), prevFromRect = target.prevFromRect, prevToRect = target.prevToRect, animatingRect = state.rect, targetMatrix = matrix(target, true);
           if (targetMatrix) {
             toRect.top -= targetMatrix.f;
             toRect.left -= targetMatrix.e;
@@ -4291,7 +4305,7 @@ a {
       matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
     ShowShadows() {
-      if (!this.shadowRoot || !this.topShadow || !this.bottomShadow || !this.leftShadow || !this.rightShadow || !this.itemsContainer)
+      if (!this.shadowRoot)
         return;
       if (window.innerWidth <= window.innerHeight) {
         this.topShadow.style.display = "none";
@@ -4320,15 +4334,15 @@ a {
     createRenderRoot() {
       var root = super.createRenderRoot();
       root.addEventListener("pointerdown", () => {
-        this.itemsContainer?.classList.add("hover");
+        this.itemsContainer.classList.add("hover");
       });
       root.addEventListener("pointerup", () => {
-        this.itemsContainer?.classList.remove("hover");
+        this.itemsContainer.classList.remove("hover");
       });
       return root;
     }
     firstUpdated() {
-      this.itemsContainer?.addEventListener("scroll", this.ShowShadows.bind(this));
+      this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
       this.sortable = new sortable_core_esm_default(this.itemsContainer, {
         group: "nav-items",
         sort: true,
@@ -4599,11 +4613,21 @@ info-popup {
 
   // site/js/elements/settings/settings.ts
   var Settings = class extends s4 {
+    constructor() {
+      super();
+      this.version = "0.0.0";
+      caches.open("Metadata").then(async (cache) => {
+        var metadataResponse = await cache.match("Metadata");
+        if (metadataResponse) {
+          var metadata = await metadataResponse.json();
+          this.version = metadata.version;
+        }
+      });
+    }
     Patch() {
     }
     ResetColour() {
-      if (this.hueInput)
-        this.hueInput.value = "200";
+      this.hueInput.value = "200";
       Site.SetColour("200");
       localStorage.setItem("Hue", "200");
     }
@@ -4626,17 +4650,6 @@ info-popup {
         navbar.toggleAttribute("editing");
       }
     }
-    updated() {
-      caches.open("Metadata").then(async (cache) => {
-        if (this.versionDisplay) {
-          var metadataResponse = await cache.match("Metadata");
-          if (metadataResponse) {
-            var metadata = await metadataResponse.json();
-            this.versionDisplay.textContent = `Paragon v${metadata.version}`;
-          }
-        }
-      });
-    }
     render() {
       return p`
         <info-popup>
@@ -4645,7 +4658,7 @@ info-popup {
             The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
         </info-popup>
 
-        <p id="version">Paragon v0.0.0</p>
+        <p id="version">Paragon v${this.version}</p>
 
         <button @click="${this.Patch}">Fix</button>
 
@@ -4678,8 +4691,8 @@ info-popup {
     i4("#hue", true)
   ], Settings.prototype, "hueInput", 2);
   __decorateClass([
-    i4("#version", true)
-  ], Settings.prototype, "versionDisplay", 2);
+    t3()
+  ], Settings.prototype, "version", 2);
   Settings = __decorateClass([
     n5("user-settings")
   ], Settings);

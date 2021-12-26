@@ -13,21 +13,21 @@ export class ExtensionPage extends LitElement {
     src: string = "";
 
     @query("iframe", true)
-    frame: HTMLIFrameElement | null;
+    frame: HTMLIFrameElement;
 
     @query("loading-indicator", true)
-    loader: LoadingIndicator | null;
+    loader: LoadingIndicator;
 
     firstUpdated() {
-        this.frame?.addEventListener("load", () => {
-            this.loader?.remove();
-            this.frame?.removeAttribute("style");
+        this.frame.addEventListener("load", () => {
+            this.loader.remove();
+            this.frame.removeAttribute("style");
         });
     }
 
     render() {
         return html`
-        <iframe sandbox="allow-scripts allow-same-origin" src="${this.src}" style="display: none"></iframe>
+        <iframe sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" src="${this.src}" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }
