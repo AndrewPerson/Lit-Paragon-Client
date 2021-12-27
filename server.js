@@ -7,19 +7,13 @@ import { readFile } from "fs/promises";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Create web server instance.
 WebDevServer.Server.CreateNew()
-// Required.
 .SetDocumentRoot(path.resolve(dirname, "site"))
-// Optional, 8000 by default.
 .SetPort(5555)
-// Optional, '127.0.0.1' by default.
-.SetHostname('127.0.0.1')
-// Optional, custom place to log any unhandled errors.
-.SetErrorHandler(async function (err, code, req, res) {
+.SetHostname("127.0.0.1")
+.SetErrorHandler(async err => {
     console.error(err);
 })
-// Optional, to prepend any execution before `web-dev-server` module execution.
 .AddPreHandler(async function (req, res, event) {
     switch (req.GetPath()) {
         case "/dist/service-worker/service-worker.js":
@@ -46,7 +40,6 @@ WebDevServer.Server.CreateNew()
             break;
     }
 })
-// Callback param is optional. called after server has been started or after error occurred.
 .Start(function (success, err) {
     if (!success) return console.error(err);
     console.log("Server is running.");

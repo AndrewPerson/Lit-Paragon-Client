@@ -11,7 +11,7 @@ import { writeFile, readFile } from "fs/promises";
 
 import { exec } from "child_process";
 
-import { optimize } from 'svgo';
+import { optimize } from "svgo";
 
 import { build } from "esbuild";
 
@@ -37,7 +37,7 @@ function merge() {
     function merger(obj) {
         for (let prop in obj) {
             if (obj.hasOwnProperty(prop)) {
-                if (Object.prototype.toString.call(obj[prop]) === '[object Object]') {
+                if (Object.prototype.toString.call(obj[prop]) === "[object Object]") {
                     // if the property is a nested object
                     target[prop] = merge(target[prop], obj[prop]);
                 } else {
@@ -110,7 +110,7 @@ var buildPromise = build({
             name: "lit-svg",
             setup(build) {        
                 build.onLoad({ filter: /\.svg$/ }, async args => {
-                    let contents = await readFile(args.path, 'utf8');
+                    let contents = await readFile(args.path, "utf8");
         
                     if (env.svg.floatPrecision)
                         contents = optimize(contents, {

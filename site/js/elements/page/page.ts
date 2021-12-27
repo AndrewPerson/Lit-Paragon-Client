@@ -9,7 +9,7 @@ export enum PageState {
 }
 
 export class Page extends LitElement {
-    [key: string]: any;
+    [index: string]: any;
 
     @state()
     private _state: PageState = PageState.Waiting;

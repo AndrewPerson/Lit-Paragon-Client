@@ -62,10 +62,10 @@ async function Main() {
         //@ts-ignore
         var tags = await serviceWorker.periodicSync.getTags();
 
-        if (!tags.includes('metadata-fetch')) {
+        if (!tags.includes("metadata-fetch")) {
             try {
                 //@ts-ignore
-                await serviceWorker.periodicSync.register('metadata-fetch', {
+                await serviceWorker.periodicSync.register("metadata-fetch", {
                     // An interval of half a day.
                     minInterval: BACKGROUND_SYNC_INTERVAL,
                 });

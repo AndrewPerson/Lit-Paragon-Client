@@ -4,6 +4,8 @@ import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
+import { Announcements, Announcement } from "./types";
+
 import "./post";
 
 //@ts-ignore
@@ -20,24 +22,6 @@ import fullElementCss from "default/elements/full.css";
 import elementCss from "default/elements/element.css";
 //@ts-ignore
 import announcementCss from "./announcements.css";
-
-export type Announcements = {
-    notices: Announcement[]
-}
-
-export type Announcement = {
-    title: string,
-    content: string,
-    years: string[],
-    relativeWeight: number,
-    isMeeting: number,
-    meetingDate: string | null,
-    //TODO Check all possible types
-    meetingTimeParsed: string | undefined,
-    meetingTime: string,
-    displayYears: string,
-    authorName: string
-}
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {

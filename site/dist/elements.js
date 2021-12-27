@@ -1848,6 +1848,120 @@ svg {
     n5("inline-notification")
   ], InlineNotification);
 
+  // site/js/elements/navbar/navitem.css
+  var navitem_default = r`:host {
+    display: inline-block;
+    width: 12vmin;
+    height: 12vmin;
+    position: relative;
+    border-radius: 2vmin;
+    overflow: hidden;
+}
+
+:host(:hover:not(:host([editing]))) {
+    background-color: var(--surface2);
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+}
+
+#handle {
+    --size: 2vmin;
+    --padding: 2vmin;
+
+    --full-size: calc(calc(var(--padding) * 2) + var(--size));
+
+    position: absolute;
+    top: calc(50% - calc(var(--full-size) / 2));
+    left: calc(calc(calc(3.3vmin - var(--size)) / 2) - var(--padding));
+
+    display: block;
+    
+    height: var(--full-size);
+
+    padding: var(--padding);
+
+    box-sizing: border-box;
+
+    cursor: move;
+}
+
+:host(.selected) {
+    background-color: var(--surface4) !important;
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+}
+
+:host(.drag) {
+    background-color: var(--surface4) !important;
+    border-radius: 2vmin !important;
+    box-shadow: none !important;
+}
+
+a {
+    display: flex;
+    flex-direction: column;
+
+    width: 12vmin;
+    height: 12vmin;
+}
+
+::slotted(img) {
+    width: 5.4vmin;
+    margin: auto;
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+    cursor: pointer;
+}`;
+
+  // site/js/elements/navbar/navitem.ts
+  var NavItem = class extends s4 {
+    constructor() {
+      super(...arguments);
+      this.pageName = "";
+      this.extension = false;
+      this.title = "";
+      this.editing = false;
+    }
+    get page() {
+      return {
+        page: this.pageName,
+        extension: this.extension
+      };
+    }
+    UpdatePage(e8) {
+      e8.preventDefault();
+      Site.NavigateTo(this.page);
+      return false;
+    }
+    render() {
+      this.draggable = this.editing;
+      if (Site.page.page == this.page.page && Site.page.extension == this.page.extension)
+        this.classList.add("selected");
+      else
+        this.classList.remove("selected");
+      return p`
+        <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
+            <slot></slot>
+        </a>
+
+        ${this.editing ? p`<img id="handle" src="images/drag.svg" draggable="false">` : T}
+        `;
+    }
+  };
+  NavItem.styles = [text_default, img_default, navitem_default];
+  __decorateClass([
+    e4({ type: String })
+  ], NavItem.prototype, "pageName", 2);
+  __decorateClass([
+    e4({ type: Boolean })
+  ], NavItem.prototype, "extension", 2);
+  __decorateClass([
+    e4({ type: String })
+  ], NavItem.prototype, "title", 2);
+  __decorateClass([
+    e4({ type: Boolean })
+  ], NavItem.prototype, "editing", 2);
+  NavItem = __decorateClass([
+    n5("nav-item")
+  ], NavItem);
+
   // site/js/elements/navbar/navbar.css
   var navbar_default = r`:host {
     flex-shrink: 0;
@@ -4159,120 +4273,6 @@ svg {
   });
   var sortable_core_esm_default = Sortable;
 
-  // site/js/elements/navbar/navitem.css
-  var navitem_default = r`:host {
-    display: inline-block;
-    width: 12vmin;
-    height: 12vmin;
-    position: relative;
-    border-radius: 2vmin;
-    overflow: hidden;
-}
-
-:host(:hover:not(:host([editing]))) {
-    background-color: var(--surface2);
-    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
-}
-
-#handle {
-    --size: 2vmin;
-    --padding: 2vmin;
-
-    --full-size: calc(calc(var(--padding) * 2) + var(--size));
-
-    position: absolute;
-    top: calc(50% - calc(var(--full-size) / 2));
-    left: calc(calc(calc(3.3vmin - var(--size)) / 2) - var(--padding));
-
-    display: block;
-    
-    height: var(--full-size);
-
-    padding: var(--padding);
-
-    box-sizing: border-box;
-
-    cursor: move;
-}
-
-:host(.selected) {
-    background-color: var(--surface4) !important;
-    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
-}
-
-:host(.drag) {
-    background-color: var(--surface4) !important;
-    border-radius: 2vmin !important;
-    box-shadow: none !important;
-}
-
-a {
-    display: flex;
-    flex-direction: column;
-
-    width: 12vmin;
-    height: 12vmin;
-}
-
-::slotted(img) {
-    width: 5.4vmin;
-    margin: auto;
-    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
-    cursor: pointer;
-}`;
-
-  // site/js/elements/navbar/navitem.ts
-  var NavItem = class extends s4 {
-    constructor() {
-      super(...arguments);
-      this.pageName = "";
-      this.extension = false;
-      this.title = "";
-      this.editing = false;
-    }
-    get page() {
-      return {
-        page: this.pageName,
-        extension: this.extension
-      };
-    }
-    UpdatePage(e8) {
-      e8.preventDefault();
-      Site.NavigateTo(this.page);
-      return false;
-    }
-    render() {
-      this.draggable = this.editing;
-      if (Site.page.page == this.page.page && Site.page.extension == this.page.extension)
-        this.classList.add("selected");
-      else
-        this.classList.remove("selected");
-      return p`
-        <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
-            <slot></slot>
-        </a>
-
-        ${this.editing ? p`<img id="handle" src="images/drag.svg" draggable="false">` : T}
-        `;
-    }
-  };
-  NavItem.styles = [text_default, img_default, navitem_default];
-  __decorateClass([
-    e4({ type: String })
-  ], NavItem.prototype, "pageName", 2);
-  __decorateClass([
-    e4({ type: Boolean })
-  ], NavItem.prototype, "extension", 2);
-  __decorateClass([
-    e4({ type: String })
-  ], NavItem.prototype, "title", 2);
-  __decorateClass([
-    e4({ type: Boolean })
-  ], NavItem.prototype, "editing", 2);
-  NavItem = __decorateClass([
-    n5("nav-item")
-  ], NavItem);
-
   // site/js/elements/navbar/navbar.ts
   sortable_core_esm_default.mount(AutoScrollPlugin);
   var Navbar = class extends s4 {
@@ -4696,6 +4696,391 @@ info-popup {
   Settings = __decorateClass([
     n5("user-settings")
   ], Settings);
+
+  // site/js/elements/timetable/timetable-period.css
+  var timetable_period_default = r`:host {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.highlighted {
+    border-radius: 1vmin;
+
+    background-color: var(--surface4);
+    color: var(--text4);
+
+    box-shadow: var(--shadow);
+    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+
+    animation: appear 0.3s ease-out;
+}
+
+@keyframes appear {
+    from {
+        filter: opacity(0);
+    }
+
+    to {
+        filter: opacity(1);
+    }
+}
+
+p {
+    width: calc(var(--font-size) * 4);
+    height: calc(var(--font-size) * 1.5);
+    text-align: center;
+    line-height: calc(var(--font-size) * 1.5);
+}
+
+@media (max-aspect-ratio: 3/4) {
+    p {
+        margin-top: 0.5vmax;
+    }
+}
+
+#popup {
+    position: absolute;
+    top: calc(var(--font-size) * 2);
+
+    color: var(--text4);
+
+    border-radius: 1vmin;
+    background-color: var(--surface4);
+
+    box-shadow: var(--shadow);
+    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+
+    z-index: 99;
+
+    animation: popupAppear 0.3s ease-out;
+
+    pointer-events: none;
+}
+
+#popup::before {
+    --size: calc(var(--font-size) / 2);
+
+    content: "";
+
+    position: absolute;
+    left: calc(50% - calc(var(--size) / 1.5));
+    top: calc(-1 * var(--size));
+
+    border-right: calc(var(--size) / 1.5) solid transparent;
+    border-bottom: var(--size) solid var(--surface4);
+    border-left: calc(var(--size) / 1.5) solid transparent;
+}
+
+#popup[reversed] {
+    top: calc(var(--font-size) * -2);
+}
+
+#popup[reversed]::before {
+    top: unset;
+    bottom: calc(-1 * var(--size));
+
+    transform: rotate(180deg);
+}
+
+@keyframes popupAppear {
+    from {
+        filter: opacity(0);
+        z-index: 99;
+    }
+
+    to {
+        filter: opacity(1);
+        z-index: 99;
+    }
+}`;
+
+  // site/js/elements/timetable/timetable-period.ts
+  var TimetablePeriod = class extends s4 {
+    static highlight(name) {
+      this.highlighted = name;
+      for (var instance of this.instances)
+        instance.requestUpdate();
+    }
+    constructor() {
+      super();
+      TimetablePeriod.instances.push(this);
+    }
+    firstUpdated() {
+      if (this.name) {
+        this.tabIndex = 0;
+        this.addEventListener("pointerover", () => TimetablePeriod.highlight(this.name));
+        this.addEventListener("pointerleave", () => TimetablePeriod.highlight(""));
+        this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
+        this.addEventListener("blur", () => TimetablePeriod.highlight(""));
+      }
+    }
+    render() {
+      var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+      if (highlighted) {
+        var nextSibling = this.nextElementSibling;
+        var nextNextSibling = nextSibling?.nextElementSibling;
+        var displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
+        return p`
+                <p class="highlighted">${this.name}</p>
+                <p id="popup"
+                   ?reversed="${displayPopupTop}">
+                    ${this.room}
+                </p>
+            `;
+      } else
+        return p`<p>${this.name}</p>`;
+    }
+  };
+  TimetablePeriod.styles = [text_default, timetable_period_default];
+  TimetablePeriod.instances = [];
+  __decorateClass([
+    e4()
+  ], TimetablePeriod.prototype, "name", 2);
+  __decorateClass([
+    e4()
+  ], TimetablePeriod.prototype, "room", 2);
+  TimetablePeriod = __decorateClass([
+    n5("timetable-period")
+  ], TimetablePeriod);
+
+  // site/js/elements/timetable/timetable-day.css
+  var timetable_day_default = r`:host {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: calc(var(--font-size) * 4.5);
+    min-width: 0;
+}
+
+.name {
+    margin-bottom: 1vmin;
+    text-align: center;
+    font-size: calc(var(--font-size) / 1.2);
+    width: calc(var(--font-size) * 3.63);
+    color: var(--text3);
+    border-bottom: solid grey 0.2vmin;
+}
+
+.highlighted {
+    color: var(--text2);
+}`;
+
+  // site/js/elements/timetable/timetable-day.ts
+  var TimetableDay = class extends s4 {
+    render() {
+      return p`
+            <p class="name ${this.day == this.name ? "highlighted" : ""}">${this.name}</p>
+            
+            <timetable-period name="${this.periods["1"]?.title}"
+                              room="${this.periods["1"]?.room}">
+            </timetable-period>
+            <timetable-period name="${this.periods["2"]?.title}"
+                              room="${this.periods["2"]?.room}">
+            </timetable-period>
+            <timetable-period name="${this.periods["3"]?.title}"
+                              room="${this.periods["3"]?.room}">
+            </timetable-period>
+            <timetable-period name="${this.periods["4"]?.title}"
+                              room="${this.periods["4"]?.room}">
+            </timetable-period>
+            <timetable-period name="${this.periods["5"]?.title}"
+                              room="${this.periods["5"]?.room}">
+            </timetable-period>
+        `;
+    }
+  };
+  TimetableDay.styles = [text_default, timetable_day_default];
+  __decorateClass([
+    e4()
+  ], TimetableDay.prototype, "name", 2);
+  __decorateClass([
+    e4({ type: Array })
+  ], TimetableDay.prototype, "periods", 2);
+  __decorateClass([
+    e4()
+  ], TimetableDay.prototype, "day", 2);
+  TimetableDay = __decorateClass([
+    n5("timetable-day")
+  ], TimetableDay);
+
+  // site/js/elements/timetable/timetable-row.css
+  var timetable_row_default = r`:host {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-around;
+    padding-top: 1vmin;
+    margin-bottom: 1vmin;
+}
+
+.period-nums {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.period-nums > p {
+    color: var(--text3);
+    height: 3.9vmin;
+    line-height: calc(var(--font-size) * 1.5);
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+@media (max-aspect-ratio: 3/4) {
+    .period-nums > p {
+        height: 3vmax;
+        margin-top: 0.5vmax;
+    }
+}`;
+
+  // site/js/elements/timetable/timetable-row.ts
+  var TimetableRow = class extends s4 {
+    render() {
+      return p`
+            <div class="period-nums">
+                <p>1</p>
+                <p>2</p>
+                <p>3</p>
+                <p>4</p>
+                <p>5</p>
+            </div>
+
+            <timetable-day name="MON ${this.week}"
+                           .periods="${this.day1.periods}"
+                           day="${this.day}">
+            </timetable-day>
+
+            <timetable-day name="TUE ${this.week}"
+                           .periods="${this.day2.periods}"
+                           day="${this.day}">
+            </timetable-day>
+
+            <timetable-day name="WED ${this.week}"
+                           .periods="${this.day3.periods}"
+                           day="${this.day}">
+            </timetable-day>
+
+            <timetable-day name="THU ${this.week}"
+                           .periods="${this.day4.periods}"
+                           day="${this.day}">
+            </timetable-day>
+
+            <timetable-day name="FRI ${this.week}"
+                           .periods="${this.day5.periods}"
+                           day="${this.day}">
+            </timetable-day>
+        `;
+    }
+  };
+  TimetableRow.styles = [text_default, timetable_row_default];
+  __decorateClass([
+    e4()
+  ], TimetableRow.prototype, "week", 2);
+  __decorateClass([
+    e4({ type: Object })
+  ], TimetableRow.prototype, "day1", 2);
+  __decorateClass([
+    e4({ type: Object })
+  ], TimetableRow.prototype, "day2", 2);
+  __decorateClass([
+    e4({ type: Object })
+  ], TimetableRow.prototype, "day3", 2);
+  __decorateClass([
+    e4({ type: Object })
+  ], TimetableRow.prototype, "day4", 2);
+  __decorateClass([
+    e4({ type: Object })
+  ], TimetableRow.prototype, "day5", 2);
+  __decorateClass([
+    e4()
+  ], TimetableRow.prototype, "day", 2);
+  TimetableRow = __decorateClass([
+    n5("timetable-row")
+  ], TimetableRow);
+
+  // site/js/elements/timetable/timetable.css
+  var timetable_default = r`:host {
+    margin: auto;
+    padding: 4vmin;
+    max-width: 92%;
+    width: calc(var(--font-size) * 23);
+    height: calc(calc(var(--font-size) * 25.5) + 9vmin);
+}
+
+@media (max-aspect-ratio: 3/4) {
+    :host {
+        height: calc(calc(calc(var(--font-size) * 25.5) + 9vmin) + 7.5vmax);
+    }
+}
+
+timetable-row + timetable-row {
+    border-top: solid grey 0.2vmin;
+}`;
+
+  // site/js/elements/timetable/timetable.ts
+  var FullTimetable = class extends Page {
+    set dailyTimetable(value) {
+      this._day = value.timetable.timetable.dayname;
+    }
+    clearHighlight() {
+      TimetablePeriod.highlight("");
+    }
+    constructor() {
+      super();
+      this.AddResource("timetable", "timetable");
+      this.AddResource("dailytimetable", "dailyTimetable");
+      this.addEventListener("pointerover", (e8) => e8.stopPropagation());
+      document.addEventListener("pointerover", this.clearHighlight);
+    }
+    disconnectedCallback() {
+      document.removeEventListener("pointerover", this.clearHighlight);
+    }
+    renderPage() {
+      this._day = this._day.slice(0, 3).toUpperCase() + " " + this._day.slice(-1);
+      return p`
+            <timetable-row week="A"
+                           .day1="${this.timetable.days["1"]}"
+                           .day2="${this.timetable.days["2"]}"
+                           .day3="${this.timetable.days["3"]}"
+                           .day4="${this.timetable.days["4"]}"
+                           .day5="${this.timetable.days["5"]}"
+                           day="${this._day}">
+            </timetable-row>
+            <timetable-row week="B"
+                           .day1="${this.timetable.days["6"]}"
+                           .day2="${this.timetable.days["7"]}"
+                           .day3="${this.timetable.days["8"]}"
+                           .day4="${this.timetable.days["9"]}"
+                           .day5="${this.timetable.days["10"]}"
+                           day="${this._day}">
+            </timetable-row>
+            <timetable-row week="C"
+                           .day1="${this.timetable.days["11"]}"
+                           .day2="${this.timetable.days["12"]}"
+                           .day3="${this.timetable.days["13"]}"
+                           .day4="${this.timetable.days["14"]}"
+                           .day5="${this.timetable.days["15"]}"
+                           day="${this._day}">
+            </timetable-row>
+        `;
+    }
+  };
+  FullTimetable.styles = [element_default, timetable_default];
+  __decorateClass([
+    t3()
+  ], FullTimetable.prototype, "timetable", 2);
+  __decorateClass([
+    t3()
+  ], FullTimetable.prototype, "_day", 2);
+  FullTimetable = __decorateClass([
+    n5("full-timetable")
+  ], FullTimetable);
 })();
 /**
  * @license

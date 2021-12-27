@@ -2,24 +2,19 @@ import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
+import { Site } from "../../site";
+
+import { NavbarSortableEvent } from "./types";
+
+import "./navitem";
+import { NavItem } from "./navitem";
+
 //@ts-ignore
 import navbarCss from "./navbar.css";
 
 //@ts-ignore
 import Sortable, { AutoScroll } from "sortablejs/modular/sortable.core.esm.js";
 Sortable.mount(AutoScroll);
-
-import { Site } from "../../site";
-
-import "./navitem";
-import { NavItem } from "./navitem";
-
-type HTML = TemplateResult<1>;
-type NavbarSortableEvent = {
-    item: NavItem,
-    oldIndex: number | undefined,
-    newIndex: number | undefined
-};
 
 @customElement("nav-bar")
 export class Navbar extends LitElement {
@@ -87,7 +82,7 @@ export class Navbar extends LitElement {
         matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
 
-    GetNavItem: (order: number) => HTML = ((order: number): HTML => {
+    GetNavItem: (order: number) => TemplateResult<1> = ((order: number) => {
         var page: string;
         var title: string;
         var icon: string;
