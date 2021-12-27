@@ -6,5 +6,11 @@ export type DailyTimetable = {
         subjects: {
 
         }
+    },
+    roomVariations: {
+
+    },
+    classVariations: {
+    
     }
 }
