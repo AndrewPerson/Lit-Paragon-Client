@@ -60,7 +60,7 @@ const sharedEnv = config.env["shared"] || {};
 //Order matters here so values specified in the specified env override those in the sharedEnv
 const env = merge(sharedEnv, specifiedEnv);
 
-writeFile(path.resolve(__dirname, "site/metadata"), JSON.stringify(config.metadata));
+writeFile(path.resolve(__dirname, "site/metadata"), JSON.stringify(config.metadata), () => {});
 
 var tsPromise = new Promise(res => {
     exec("npx tsc --noEmit", (err, stdout, stderr) => {
