@@ -1,0 +1,15 @@
+/*
+    X-Frame-Options: DENY
+    X-Content-Type-Options: nosniff
+    Referrer-Policy: no-referrer
+    Permissions-Policy: document-domain=()
+    Content-Security-Policy: script-src 'self'; frame-ancestors 'none';
+
+/css/*
+    Access-Control-Allow-Origin: *
+
+/metadata
+    Content-Type: application/json
+
+/dist/service-worker/service-worker.js
+    service-worker-allowed: /
