@@ -1,6 +1,6 @@
-import { stat } from "fs/promises";
+const { stat } = require("fs/promises");
 
-import glob from "glob";
+const glob = require("glob");
 
 const include = ["site/css/**/*", "site/dist/**/*", "site/icons/**/*", "site/images/**/*",
                  "site/*.html", "site/*.json", "site/metadata"];

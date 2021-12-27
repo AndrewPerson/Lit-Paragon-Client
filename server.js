@@ -1,14 +1,12 @@
-import WebDevServer from "web-dev-server";
+const WebDevServer = require("web-dev-server");
 
-import path from "path";
-import { fileURLToPath } from "url";
+const path = require("path");
+const { fileURLToPath } =  require("url");
 
-import { readFile } from "fs/promises";
-
-const dirname = path.dirname(fileURLToPath(import.meta.url));
+const { readFile } = require("fs/promises");
 
 WebDevServer.Server.CreateNew()
-.SetDocumentRoot(path.resolve(dirname, "site"))
+.SetDocumentRoot(path.resolve(__dirname, "site"))
 .SetPort(5555)
 .SetHostname("127.0.0.1")
 .SetErrorHandler(async err => {
@@ -20,19 +18,19 @@ WebDevServer.Server.CreateNew()
             res.SetHeader("service-worker-allowed", "/");
             break;
         case "/callback":
-            res.SetBody(await readFile(path.resolve(dirname, "site/callback.html"), "utf8")).Send();
+            res.SetBody(await readFile(path.resolve(__dirname, "site/callback.html"), "utf8")).Send();
             event.PreventDefault();
             break;
         case "/login":
-            res.SetBody(await readFile(path.resolve(dirname, "site/login.html"), "utf8")).Send();
+            res.SetBody(await readFile(path.resolve(__dirname, "site/login.html"), "utf8")).Send();
             event.PreventDefault();
             break;
         case "/unsupported":
-            res.SetBody(await readFile(path.resolve(dirname, "site/unsupported.html"), "utf8")).Send();
+            res.SetBody(await readFile(path.resolve(__dirname, "site/unsupported.html"), "utf8")).Send();
             event.PreventDefault();
             break;
         case "/dist/index.js":
-            res.SetBody(await readFile(path.resolve(dirname, "site/dist/index.js"), "utf8")).Send();
+            res.SetBody(await readFile(path.resolve(__dirname, "site/dist/index.js"), "utf8")).Send();
             event.PreventDefault();
             break;
         case "/metadata":
