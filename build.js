@@ -109,7 +109,7 @@ var buildPromise = (async () => {
                 name: "lit-svg",
                 setup(build) {        
                     build.onLoad({ filter: /\.svg$/ }, async args => {
-                        let contents = await new Promise((resolve, reject) => readFile(args.path, "utf8", (err, data) => err ? reject(err) : resolve(data)));
+                        let contents = await new Promise((resolve, reject) => readFile(args.path, (err, data) => err ? reject(err) : resolve(data)));
             
                         if (env.svg.floatPrecision)
                             contents = optimize(contents, {
@@ -128,7 +128,7 @@ var buildPromise = (async () => {
                 name: "lit-css",
                 setup(build) {
                     build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                        var textContent = await new Promise((resolve, reject) => readFile(args.path, "utf8", (err, data) => err ? reject(err) : resolve(data)));
+                        var textContent = await new Promise((resolve, reject) => readFile(args.path, (err, data) => err ? reject(err) : resolve(data)));
 
                         return {
                             loader: "js",
