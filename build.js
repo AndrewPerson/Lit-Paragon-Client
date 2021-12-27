@@ -71,7 +71,7 @@ var tsPromise = new Promise(res => {
     exec("npx tsc --noEmit", (err, stdout, stderr) => {
         console.log(stdout);
         console.log(stderr);
-        console.log(err ?? "");
+        console.log(err || "");
         res();
     });
 });
