@@ -4,7 +4,7 @@ const config = require("./build.json");
 
 const path = require("path");
 
-const { writeFile, readFile } = require("fs/promises");
+const { writeFile, readFile } = require("fs");
 
 const { exec } = require("child_process");
 
@@ -109,7 +109,7 @@ var buildPromise = (async () => {
                 name: "lit-svg",
                 setup(build) {        
                     build.onLoad({ filter: /\.svg$/ }, async args => {
-                        let contents = await readFile(args.path, "utf8");
+                        let contents = await new Promise((resolve, reject) => readFile(args.path, "utf8", (err, data) => err ? reject(err) : resolve(data)));
             
                         if (env.svg.floatPrecision)
                             contents = optimize(contents, {
@@ -128,7 +128,7 @@ var buildPromise = (async () => {
                 name: "lit-css",
                 setup(build) {
                     build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                        var textContent = await readFile(args.path, "utf8");
+                        var textContent = await new Promise((resolve, reject) => readFile(args.path, "utf8", (err, data) => err ? reject(err) : resolve(data)));
 
                         return {
                             loader: "js",
