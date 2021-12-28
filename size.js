@@ -4,7 +4,7 @@ import glob from "glob";
 
 const include = ["site/css/**/*", "site/dist/**/*", "site/icons/**/*", "site/images/**/*",
                  "site/*.html", "site/*.json", "site/metadata"];
-const exclude = ["site/images/**/*.sketch", "js/**/types.ts"];
+const exclude = ["site/images/**/*.sketch", "ts/**/types.ts"];
 
 Main();
 

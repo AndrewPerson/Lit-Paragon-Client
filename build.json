@@ -1,12 +1,12 @@
 {
     "files": [
-        "js/init.ts",
-        "js/elements.ts",
-        "js/index.ts",
-        "js/callback.ts",
-        "js/login.ts",
-        "js/unsupported.ts",
-        "js/service-worker/service-worker.js"
+        "ts/init.ts",
+        "ts/elements.ts",
+        "ts/index.ts",
+        "ts/callback.ts",
+        "ts/login.ts",
+        "ts/unsupported.ts",
+        "ts/service-worker/service-worker.js"
     ],
     "metadata": {
         "version": "Development",

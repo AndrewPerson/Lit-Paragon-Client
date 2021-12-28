@@ -1,5 +1,5 @@
 {
-    "include": ["site/js/**/*.ts"],
+    "include": ["site/ts/**/*.ts"],
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
