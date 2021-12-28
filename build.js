@@ -1,19 +1,22 @@
 const start = new Date();
 
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
 const config = require("./build.json");
 
-const path = require("path");
+import path from "path";
+import { fileURLToPath } from "url";
 
-const { writeFile, readFile } = require("fs");
+import { writeFile, readFile } from "fs/promises";
 
-const { exec } = require("child_process");
+import { exec } from "child_process";
 
-const { optimize } = require("svgo");
+import { optimize } from "svgo";
 
-const { build } = require("esbuild");
+import { build } from "esbuild";
 
-const clearPromise = import("esbuild-plugin-clear");
-const conditionalBuildPromise = import("esbuild-plugin-conditional-build");
+import clear from "esbuild-plugin-clear";
+import conditionalBuild from "esbuild-plugin-conditional-build";
 
 function transformVars(vars) {
     for (var key of Object.keys(vars)) {
@@ -60,7 +63,9 @@ const sharedEnv = config.env["shared"] || {};
 //Order matters here so values specified in the specified env override those in the sharedEnv
 const env = merge(sharedEnv, specifiedEnv);
 
-writeFile(path.resolve(__dirname, "site/metadata"), JSON.stringify(config.metadata), () => {});
+const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
 
 var tsPromise = new Promise(res => {
     exec("npx tsc --noEmit", (err, stdout, stderr) => {
@@ -71,78 +76,73 @@ var tsPromise = new Promise(res => {
     });
 });
 
-var buildPromise = (async () => {
-    clear = (await clearPromise).default;
-    conditionalBuild = (await conditionalBuildPromise).default;
-
-    return build({
-        entryPoints: config.files.map(file => `site/${file}`),
-        outdir: "site/dist",
-        bundle: true,
-        minify: env.js.minify,
-        target: "es2020",
-        define: transformVars(env.vars),
-        plugins: [
-            clear("./site/dist"),
-            {
-                name: "css-redirect",
-                setup(build) {
-                    build.onResolve({ filter: /^default\/.*\.css$/, namespace: "file" }, args => {
-                        return {
-                            path: path.resolve(__dirname, "site/css", args.path)
-                        };
-                    });
-                }
-            },
-            {
-                name: "svg-redirect",
-                setup(build) {
-                    build.onResolve({ filter: /\.svg$/, namespace: "file" }, args => {
-                        return {
-                            path: path.resolve(__dirname, "site/images", args.path)
-                        };
-                    });
-                }
-            },
-            conditionalBuild(env.constants),
-            {
-                name: "lit-svg",
-                setup(build) {        
-                    build.onLoad({ filter: /\.svg$/ }, async args => {
-                        let contents = await new Promise((resolve, reject) => readFile(args.path, (err, data) => err ? reject(err) : resolve(data)));
-            
-                        if (env.svg.floatPrecision)
-                            contents = optimize(contents, {
-                                path: args.path,
-                                floatPrecision: env.svg.floatPrecision,
-                            }).data;
-            
-                        return {
-                            loader: "js",
-                            contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
-                        };
-                    });
-                }
-            },
-            {
-                name: "lit-css",
-                setup(build) {
-                    build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                        var textContent = await new Promise((resolve, reject) => readFile(args.path, (err, data) => err ? reject(err) : resolve(data)));
-
-                        return {
-                            loader: "js",
-                            contents: `import {css} from "lit"; export default css\`${textContent}\`;`
-                        }
-                    });
-                }
+var buildPromise = build({
+    entryPoints: config.files.map(file => `site/${file}`),
+    outdir: "site/dist",
+    bundle: true,
+    minify: env.js.minify,
+    target: "es2020",
+    define: transformVars(env.vars),
+    plugins: [
+        clear("./site/dist"),
+        {
+            name: "css-redirect",
+            setup(build) {
+                build.onResolve({ filter: /^default\/.*\.css$/, namespace: "file" }, args => {
+                    return {
+                        path: path.resolve(dirname, "site/css", args.path)
+                    };
+                });
             }
-        ]
-    })
-    .catch(() => {
-        process.exit(1);
-    });
-})();
+        },
+        {
+            name: "svg-redirect",
+            setup(build) {
+                build.onResolve({ filter: /\.svg$/, namespace: "file" }, args => {
+                    return {
+                        path: path.resolve(dirname, "site/images", args.path)
+                    };
+                });
+            }
+        },
+        conditionalBuild(env.constants),
+        {
+            name: "lit-svg",
+            setup(build) {        
+                build.onLoad({ filter: /\.svg$/ }, async args => {
+                    let contents = await readFile(args.path, "utf8");
+        
+                    if (env.svg.floatPrecision)
+                        contents = optimize(contents, {
+                            path: args.path,
+                            floatPrecision: env.svg.floatPrecision,
+                        }).data;
+        
+                    return {
+                        loader: "js",
+                        contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
+                    };
+                });
+            }
+        },
+        {
+            name: "lit-css",
+            setup(build) {
+                build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
+                    var textContent = await readFile(args.path, "utf8");
+
+                    return {
+                        loader: "js",
+                        contents: `import {css} from "lit"; export default css\`${textContent}\`;`
+                    }
+                });
+            }
+        }
+    ]
+})
+.catch(() => {
+    process.exit(1);
+});
 
 Promise.all([tsPromise, buildPromise]).then(() => {
     console.log(`Time taken: ${(new Date() - start) / 1000}s`);
