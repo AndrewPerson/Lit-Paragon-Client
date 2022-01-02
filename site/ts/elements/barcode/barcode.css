@@ -1,5 +1,7 @@
 :host {
     position: relative;
+
+    touch-action: none;
 }
 
 #point1,
@@ -21,6 +23,18 @@
     cursor: move;
 }
 
+#point1::after,
+#point2::after {
+    content: "";
+
+    display: block;
+
+    width: 3vmax;
+    height: 3vmax;
+
+    margin: calc(var(--size) / 2 - 1.5vmax);
+}
+
 #barcodeDisplay {
     position: absolute;
 
@@ -34,11 +48,10 @@
 }
 
 info-popup {
-    margin-top: 1vmin;
-    margin-left: 1vmin;
-    width: 5vmin;
-    height: 5vmin;
     --max-width: 30vmax;
     --offset: 7vmin;
+    
+    width: 5vmin;
+    height: 5vmin;
     z-index: 2;
 }

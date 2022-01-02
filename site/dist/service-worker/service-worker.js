@@ -1,5 +1,5 @@
 (() => {
-  // site/js/service-worker/service-worker.debug.ts
+  // site/ts/service-worker/service-worker.debug.ts
   self.addEventListener("install", (e) => e.waitUntil(self.skipWaiting()));
   self.addEventListener("activate", (e) => e.waitUntil(self.clients.claim()));
   self.addEventListener("fetch", (e) => e.respondWith(onFetch(e)));
@@ -17,6 +17,7 @@
     if (e.data.command == "metadata-fetch") {
       var metadataCache = await caches.open("Metadata");
       await metadataCache.put(`${location.origin}/Metadata`, await fetch("http://127.0.0.1:5555/metadata"));
+      e.source?.postMessage({ command: "metadata-fetched" });
     }
   }
 })();

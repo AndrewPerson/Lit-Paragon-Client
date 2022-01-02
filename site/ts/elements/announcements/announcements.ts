@@ -64,16 +64,15 @@ export class SchoolAnnouncements extends Page {
             </select>
         </div>
 
-        <div class="content">
-            ${repeat(filteredAnnouncements, (announcement: Announcement) => html`
-            <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
-                               years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
-                               ${announcement.meetingTime === null ? "" :
-                               `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
-                               ` (${announcement.meetingTimeParsed})`}"`}
-                               weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
-            `)}
-        </div>
+        <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
+        <div class="content">${repeat(filteredAnnouncements, (announcement: Announcement) => html`
+        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
+                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
+                           ${announcement.meetingTime === null ? "" :
+                           `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
+                           ` (${announcement.meetingTimeParsed})`}"`}
+                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
+        `)}</div>
         `;
     }
 }

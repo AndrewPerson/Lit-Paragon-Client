@@ -29,7 +29,7 @@ export class FullTimetable extends Page {
     @state()
     private _day: string;
 
-    clearHighlight() {
+    ClearHighlight() {
         TimetablePeriod.highlight("");
     }
 
@@ -40,11 +40,13 @@ export class FullTimetable extends Page {
         this.AddResource("dailytimetable", "dailyTimetable");
 
         this.addEventListener("pointerover", e => e.stopPropagation());
-        document.addEventListener("pointerover", this.clearHighlight);
+        document.addEventListener("pointerover", this.ClearHighlight);
     }
 
     disconnectedCallback() {
-        document.removeEventListener("pointerover", this.clearHighlight);
+        super.disconnectedCallback();
+        
+        document.removeEventListener("pointerover", this.ClearHighlight);
     }
 
     renderPage() {        

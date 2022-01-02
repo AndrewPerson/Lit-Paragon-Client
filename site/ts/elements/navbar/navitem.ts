@@ -37,8 +37,6 @@ export class NavItem extends LitElement {
         e.preventDefault();
 
         Site.NavigateTo(this.page);
-
-        return false;
     }
 
     render() {

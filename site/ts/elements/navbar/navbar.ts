@@ -4,17 +4,11 @@ import { repeat } from "lit/directives/repeat.js";
 
 import { Site } from "../../site";
 
-import { NavbarSortableEvent } from "./types";
-
 import "./navitem";
 import { NavItem } from "./navitem";
 
 //@ts-ignore
 import navbarCss from "./navbar.css";
-
-//@ts-ignore
-import Sortable, { AutoScroll } from "sortablejs/modular/sortable.core.esm.js";
-Sortable.mount(AutoScroll);
 
 @customElement("nav-bar")
 export class Navbar extends LitElement {
@@ -73,8 +67,9 @@ export class Navbar extends LitElement {
 
     pages: string[] = [];
     icons: string[] = [];
-    order: number[] = [0, 1, 2, 3, 4, 5];
-    sortable: Sortable = null;
+    order: number[] = [];
+
+    draggedNavItemIndex: number = 0;
 
     constructor() {
         super();
@@ -82,7 +77,36 @@ export class Navbar extends LitElement {
         matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
 
-    GetNavItem: (order: number) => TemplateResult<1> = ((order: number) => {
+    SetDraggedNavItemIndex(e: DragEvent) {  
+        //Not always guaranteed to be a NavItem
+        var target = e.target as NavItem;
+
+        if (!target.editing) return;
+        if (target.dataset.index === undefined) return;
+
+        this.draggedNavItemIndex = parseInt(target.dataset.index);
+
+        if (e.dataTransfer) e.dataTransfer.effectAllowed = "copyLink";
+        e.dataTransfer?.setData("Text", target.id);
+    }
+
+    ReorderNavItems(e: DragEvent) {
+        //Not always guaranteed to be a NavItem
+        var target = e.target as NavItem;
+
+        if (!target.editing) return;
+        if (target.dataset.index === undefined) return;
+
+        var newIndex = parseInt(target.dataset.index);
+
+        this.order.splice(newIndex, 0, this.order.splice(this.draggedNavItemIndex, 1)[0]);
+
+        this.draggedNavItemIndex = newIndex;
+
+        Site.SetNavbarOrder(this.order);
+    }
+
+    GetNavItem: (order: number, index: number) => TemplateResult<1> = ((order: number, index: number) => {
         var page: string;
         var title: string;
         var icon: string;
@@ -97,7 +121,9 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}">
+            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" 
+                      @dragstart="${this.SetDraggedNavItemIndex}" @dragenter="${this.ReorderNavItems}" @dragover="${(e: DragEvent) => e.preventDefault()}"
+                      data-index="${index}">
                 <img draggable="false" src="${icon}">
             </nav-item>
         `;
@@ -154,32 +180,6 @@ export class Navbar extends LitElement {
 
     firstUpdated() {
         this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
-    
-        this.sortable = new Sortable(this.itemsContainer, {
-            group: "nav-items",
-            sort: true,
-            disabled: !this.editing,
-            draggable: "nav-item",
-            handle: "#handle",
-
-            ghostClass: "selected",
-            dragClass: "drag",
-
-            fallbackOnBody: true,
-            
-            onEnd: (e: NavbarSortableEvent) => {
-                if (Site.page == e.item.page) e.item.classList.add("selected");
-
-                if (e.oldIndex === undefined || e.newIndex === undefined) return;
-
-                var order = this.order.splice(e.oldIndex, 1)[0];
-                this.order.splice(e.newIndex, 0, order);
-
-                localStorage.setItem("Nav Order", JSON.stringify(this.order));
-
-                this.requestUpdate();
-            }
-        });
     }
 
     updated() {
@@ -189,27 +189,16 @@ export class Navbar extends LitElement {
     }
 
     render() {
-        var order = localStorage.getItem("Nav Order");
-
-        if (order)
-            this.order = JSON.parse(order);
+        this.order = Site.GetNavbarOrder();
 
         var extensions = Site.GetInstalledExtensions();
 
         this.pages = Object.keys(extensions);
-        this.icons = this.pages.map(key => {
-            var url = new URL(extensions[key].url);
-            url.pathname = extensions[key].navIcon;
-            url.search = `cache-version=${extensions[key].version}`;
-
-            return url.toString();
-        });
+        this.icons = this.pages.map(key => Site.GetExtensionNavIconURL(extensions[key]));
 
         var mobile = window.innerWidth <= window.innerHeight;
         var vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
         var scrollable = this.order.length * 12 * vmin > window.innerHeight;
-
-        if (this.sortable != null) this.sortable.option("disabled", !this.editing);
 
         return html`
         <div id="items-container">

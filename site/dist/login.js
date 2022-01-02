@@ -1,19 +1,19 @@
 (() => {
-  // site/js/site.ts
+  // site/ts/site.ts
   var Site = class {
     static NavigateTo(page) {
       if (page.extension) {
         var extensions = this.GetInstalledExtensions();
-        if (Object.keys(extensions).indexOf(page.page) != -1) {
+        if (Object.keys(extensions).includes(page.page)) {
           var newPage = document.getElementById(`extension-${page.page}`);
-          if (newPage)
-            this.SetPage(page, newPage);
-          else {
+          if (newPage === null) {
             var extensionPage = document.createElement("extension-page");
             extensionPage.src = extensions[page.page].url;
             extensionPage.id = `extension-${page.page}`;
-            document.getElementById("pages-container")?.appendChild(extensionPage);
+            document.querySelector("main")?.appendChild(extensionPage);
+            newPage = extensionPage;
           }
+          this.SetPage(page, newPage);
         }
       } else
         this.SetPage(page, document.getElementById(page.page));
@@ -88,6 +88,14 @@
       } else
         callback(void 0);
     }
+    static async GetResourceNow(name) {
+      var cache = await caches.open("User Resources");
+      var response = await cache.match(name);
+      if (response)
+        return await response.json();
+      else
+        return void 0;
+    }
     static async FetchResources() {
       var { valid, token } = await this.GetToken();
       if (!valid)
@@ -111,7 +119,45 @@
       return true;
     }
     static GetInstalledExtensions() {
-      return JSON.parse(localStorage.getItem("Installed Extensions")) || {};
+      return JSON.parse(localStorage.getItem("Installed Extensions") || "{}");
+    }
+    static SetInstalledExtensions(extensions) {
+      localStorage.setItem("Installed Extensions", JSON.stringify(extensions));
+      document.querySelector("nav-bar").requestUpdate();
+    }
+    static async GetExtensionsNow() {
+      var cache = await caches.open("Metadata");
+      var response = await cache.match("Metadata");
+      if (!response)
+        return {};
+      return (await response.json()).pages || {};
+    }
+    static async GetExtensions(callback) {
+      this.extensionCallbacks.push(callback);
+      var extensions = await this.GetExtensionsNow();
+      callback(extensions);
+    }
+    static async FireExtensionCallbacks() {
+      var extensions = await this.GetExtensionsNow();
+      for (var callback of this.extensionCallbacks)
+        callback(extensions);
+    }
+    static GetExtensionIconURL(extension) {
+      var url = new URL(extension.icon, extension.url);
+      url.search = `cache-version=${extension.version}`;
+      return url.toString();
+    }
+    static GetExtensionNavIconURL(extension) {
+      var url = new URL(extension.navIcon, extension.url);
+      url.search = `cache-version=${extension.version}`;
+      return url.toString();
+    }
+    static GetNavbarOrder() {
+      return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
+    }
+    static SetNavbarOrder(order) {
+      localStorage.setItem("Nav Order", JSON.stringify(order));
+      document.querySelector("nav-bar").requestUpdate();
     }
     static ShowNotification(content, loader = false) {
       var notification = document.createElement("inline-notification");
@@ -151,12 +197,13 @@
   Site.hue = localStorage.getItem("Hue") || "200";
   Site.pageElement = null;
   Site.resourceCallbacks = {};
+  Site.extensionCallbacks = [];
   Site.darkCallbacks = [];
 
-  // site/js/login-url.ts
+  // site/ts/login-url.ts
   var login_url_default = `https://student.sbhs.net.au/api/authorize?response_type=code&scope=all-ro&state=abc&client_id=${"Paragon_Tools"}&redirect_uri=${location.origin}/callback`;
 
-  // site/js/login.ts
+  // site/ts/login.ts
   if (Site.dark)
     document.getElementById("logo-p").src = "images/logo-dark.svg";
   var loginLink = document.getElementById("login");

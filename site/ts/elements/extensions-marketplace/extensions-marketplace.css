@@ -12,6 +12,10 @@
 }
 
 .content {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(calc(var(--font-size) * 20), 1fr));
+    gap: 2vmin;
+
     flex: 1;
     overflow-y: auto;
 
@@ -31,7 +35,7 @@
 }
 
 .content:empty::after {
-    content: "No announcements. Try changing your filter or searching for something else.";
+    content: "No extensions. Try searching for something else.";
 
     display: block;
     width: 100%;
@@ -41,8 +45,4 @@
     text-align: center;
 
     font-size: calc(var(--font-size) * 1.4);
-}
-
-announcement-post {
-    margin-bottom: 3vmin;
 }

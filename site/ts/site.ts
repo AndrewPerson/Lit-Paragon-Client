@@ -3,15 +3,21 @@ import { Navbar } from "./elements/navbar/navbar";
 import { InlineNotification } from "./elements/notification/notification";
 
 declare const RESOURCE_CACHE: string;
+declare const METADATA_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
-type Extension = {
-    url: string,
+export type ExtensionCallback = (extension: Extensions) => any;
+
+export type Extension = {
     navIcon: string,
+    url: string,
+    preview: boolean,
+    description: string,
+    icon: string,
     version: string
 };
 
-type Extensions = {
+export type Extensions = {
     [index:string]: Extension
 };
 
@@ -20,11 +26,9 @@ export type Page = {
     extension: boolean
 };
 
-type ResourceCallbacks = {
-    [index: string]: ((resource: any) => any)[]
-};
+export type ResourceCallback = (resource: any) => any;
 
-type ResourceResult = {
+export type ResourceResult = {
     result: {
         [index: string]: any
     },
@@ -38,7 +42,7 @@ export type Token = {
     termination: Date
 };
 
-type DarkCallback = (dark: boolean) => any;
+export type DarkCallback = (dark: boolean) => any;
 
 export class Site {
     static page: Page = {
@@ -51,7 +55,8 @@ export class Site {
 
     private static pageElement: HTMLElement | null = null;
 
-    private static resourceCallbacks: ResourceCallbacks = {};
+    private static resourceCallbacks: {[index: string]: ResourceCallback[]} = {};
+    private static extensionCallbacks: ExtensionCallback[] = [];
     private static darkCallbacks: DarkCallback[] = [];
 
     //#region Navigation
@@ -59,17 +64,20 @@ export class Site {
         if (page.extension) {
             var extensions = this.GetInstalledExtensions();
 
-            if (Object.keys(extensions).indexOf(page.page) != -1) {
+            if (Object.keys(extensions).includes(page.page)) {
                 var newPage = document.getElementById(`extension-${page.page}`);
 
-                if (newPage) this.SetPage(page, newPage);
-                else {
+                if (newPage === null) {
                     var extensionPage: ExtensionPage = document.createElement("extension-page") as ExtensionPage;
                     extensionPage.src = extensions[page.page].url;
                     extensionPage.id = `extension-${page.page}`;
 
-                    document.getElementById("pages-container")?.appendChild(extensionPage);
+                    document.querySelector("main")?.appendChild(extensionPage);
+
+                    newPage = extensionPage;
                 }
+
+                this.SetPage(page, newPage);
             }
         }
         else this.SetPage(page, document.getElementById(page.page));
@@ -150,7 +158,7 @@ export class Site {
                 callback(JSON.parse(resource));
     }
 
-    static async GetResource(name: string, callback: (resource: any) => any): Promise<void> {
+    static async GetResource(name: string, callback: ResourceCallback): Promise<void> {
         if (name in this.resourceCallbacks)
             this.resourceCallbacks[name].push(callback);
         else
@@ -164,6 +172,14 @@ export class Site {
             callback(resource);
         }
         else callback(undefined);
+    }
+
+    static async GetResourceNow(name: string): Promise<any> {
+        var cache = await caches.open(RESOURCE_CACHE);
+        var response = await cache.match(name);
+
+        if (response) return await response.json();
+        else return undefined;
     }
 
     static async FetchResources(): Promise<boolean> {
@@ -199,10 +215,68 @@ export class Site {
     }
     //#endregion
 
+    //#region Extensions
     static GetInstalledExtensions(): Extensions {
-        return JSON.parse(localStorage.getItem("Installed Extensions") as string) || {};
+        return JSON.parse(localStorage.getItem("Installed Extensions") || "{}");
     }
 
+    static SetInstalledExtensions(extensions: Extensions) {
+        localStorage.setItem("Installed Extensions", JSON.stringify(extensions));
+
+        (document.querySelector("nav-bar") as Navbar).requestUpdate();
+    }
+
+    static async GetExtensionsNow() {
+        var cache = await caches.open(METADATA_CACHE);
+        var response = await cache.match("Metadata");
+
+        if (!response) return {};
+
+        return (await response.json()).pages || {};
+    }
+
+    static async GetExtensions(callback: ExtensionCallback) {
+        this.extensionCallbacks.push(callback);
+
+        var extensions = await this.GetExtensionsNow();
+        callback(extensions);
+    }
+
+    static async FireExtensionCallbacks() {
+        var extensions = await this.GetExtensionsNow();
+
+        for (var callback of this.extensionCallbacks)
+            callback(extensions);
+    }
+
+    static GetExtensionIconURL(extension: Extension) {
+        var url = new URL(extension.icon, extension.url);
+        url.search = `cache-version=${extension.version}`;
+
+        return url.toString();
+    }
+
+    static GetExtensionNavIconURL(extension: Extension) {
+        var url = new URL(extension.navIcon, extension.url);
+        url.search = `cache-version=${extension.version}`;
+
+        return url.toString();
+    }
+    //#endregion
+
+    //#region Navbar Order
+    static GetNavbarOrder(): number[] {
+        return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
+    }
+
+    static SetNavbarOrder(order: number[]) {
+        localStorage.setItem("Nav Order", JSON.stringify(order));
+
+        (document.querySelector("nav-bar") as Navbar).requestUpdate();
+    }
+    //#endregion
+
+    //#region Notifications
     static ShowNotification(content: HTMLElement | string, loader: boolean = false) {
         var notification = document.createElement("inline-notification") as InlineNotification;
 
@@ -222,6 +296,7 @@ export class Site {
 
         this.ShowNotification(content);
     }
+    //#endregion
 
     //#region Theming
     static SetDark(dark: boolean): void {

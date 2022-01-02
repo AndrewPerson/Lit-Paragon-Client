@@ -13,27 +13,37 @@ import infoSvg from "info.svg";
 export class Info extends LitElement {
     static styles = [imgCss, infoCss];
 
-    @query("slot", true)
+    @query("slot")
     info: HTMLElement;
 
-    @query(".background", true)
+    @query(".background")
     background: HTMLDivElement;
-
-    ShowPopup() {
-        this.info.style.removeProperty("display");
-        this.background.style.removeProperty("display");
-    }
-
-    HidePopup() {
-        this.info.style.display = "none";
-        this.background.style.display = "none";
-    }
 
     constructor() {
         super();
 
         this.addEventListener("pointerover", this.ShowPopup);
-        this.addEventListener("pointerout", this.HidePopup);
+        this.addEventListener("pointerleave", this.HidePopup);
+        
+        document.addEventListener("pointerover", this.HidePopup);
+    }
+
+    ShowPopup(e: PointerEvent) {
+        this.info.style.removeProperty("display");
+        this.background.style.removeProperty("display");
+
+        e.stopPropagation();
+    }
+
+    HidePopup = (() => {
+        this.info.style.display = "none";
+        this.background.style.display = "none";
+    }).bind(this);
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        document.removeEventListener("pointerover", this.HidePopup);
     }
 
     render() {

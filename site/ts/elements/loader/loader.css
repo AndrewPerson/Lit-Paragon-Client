@@ -7,7 +7,7 @@
 
 svg {
     width: inherit;
-    height: auto;
+    height: inherit;
     animation: 3s infinite spin;
 }
 

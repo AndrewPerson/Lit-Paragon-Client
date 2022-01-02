@@ -3,7 +3,8 @@
 
     margin: auto;
 
-    width: 60vh;
+    width: 60vw;
+    max-width: 60vh;
     min-width: 300px;
     height: 80%;
 }

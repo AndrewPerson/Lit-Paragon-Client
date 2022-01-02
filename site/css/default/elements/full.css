@@ -1,6 +1,9 @@
 :host {
     flex: 1;
     margin: 1%;
+
+    box-sizing: border-box;
+    padding: 1vmin;
 }
 
 /*

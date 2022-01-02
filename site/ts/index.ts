@@ -5,15 +5,26 @@ declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 
 import "./elements";
+import "./extensions";
 
 Main();
 
 async function Main() {
-    if (location.hash)
+    if (location.hash) {
+        var extension = location.hash.indexOf("extension-") == 1;
+
+        if (extension) {
+            var page = decodeURIComponent(location.hash.substring(11));
+        }
+        else {
+            var page = decodeURIComponent(location.hash.substring(1));
+        }
+
         Site.NavigateTo({
-            page: location.hash.substring(1),
-            extension: location.hash.indexOf("extension-") == 1
+            page: page,
+            extension: extension
         });
+    }
 
     //#if DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -53,6 +64,12 @@ async function Main() {
         await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
             scope: "/"
         });
+
+    navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
+        if (e.data.command == "metadata-fetched") {
+            Site.FireExtensionCallbacks();
+        }
+    });
 
     var serviceWorker = await navigator.serviceWorker.ready;
 

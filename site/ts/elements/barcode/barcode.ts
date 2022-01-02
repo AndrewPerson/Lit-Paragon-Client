@@ -5,6 +5,8 @@ import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site";
 
+import "../info/info";
+
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
@@ -48,6 +50,8 @@ export class StudentBarcode extends Page {
     constructor() {
         super();
 
+        this.addEventListener("pointerdown", e => e.preventDefault());
+
         this.addEventListener("pointermove", this.DragPoint);
         this.addEventListener("pointerup", this.EndDrag);
 
@@ -63,14 +67,12 @@ export class StudentBarcode extends Page {
 
         this.draggedElement = e.target as HTMLElement;
         this.style.cursor = "move";
-
-        return false;
     }
 
     DragPoint(e: PointerEvent) {
-        if (this.draggedElement == null) return true;
-
         e.preventDefault();
+
+        if (this.draggedElement == null) return;
 
         if (!this.dragging) {
             this.dragging = true;
@@ -82,8 +84,6 @@ export class StudentBarcode extends Page {
 
             this.dragging = false;
         }
-        
-        return false;
     }
 
     EndDrag() {
@@ -146,10 +146,10 @@ export class StudentBarcode extends Page {
         if (storedPoints) points = JSON.parse(storedPoints);
 
         return html`
-        <info-popup>Use this barcode to scan in instead of your Student Card.</info-popup>
+        <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
 
-        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
-        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}" @pointermove="${(e: PointerEvent) => e.stopPropagation()}"></div>
+        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
+        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
 
         <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;

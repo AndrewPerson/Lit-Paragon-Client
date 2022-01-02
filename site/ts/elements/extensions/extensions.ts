@@ -18,16 +18,14 @@ export class ExtensionPage extends LitElement {
     @query("loading-indicator", true)
     loader: LoadingIndicator;
 
-    firstUpdated() {
-        this.frame.addEventListener("load", () => {
-            this.loader.remove();
-            this.frame.removeAttribute("style");
-        });
+    StopLoading() {
+        this.loader.remove();
+        this.frame.removeAttribute("style");
     }
-
+    
     render() {
         return html`
-        <iframe sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" src="${this.src}" style="display: none"></iframe>
+        <iframe @load="${this.StopLoading}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" src="${this.src}" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }

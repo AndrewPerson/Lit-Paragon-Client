@@ -2,7 +2,7 @@
   // <define:REQUIRED_FEATURES>
   var define_REQUIRED_FEATURES_default = ["navigator.serviceWorker", "ShadowRoot", "customElements"];
 
-  // site/js/init.ts
+  // site/ts/init.ts
   var dark = localStorage.getItem("Dark") == "true";
   document.documentElement.classList.toggle("dark", dark);
   var hue = localStorage.getItem("Hue") || "200";
