@@ -189,6 +189,7 @@
     static SetDark(dark) {
       this.dark = dark;
       document.documentElement.classList.toggle("dark", dark);
+      localStorage.setItem("Dark", dark.toString());
       for (var callback of this.darkCallbacks) {
         callback(dark);
       }
@@ -883,7 +884,7 @@
         return T;
       if (this._state == 1 /* Loading */) {
         return p`
-            <loading-indicator style="width: 80%; height: 80%; margin: 10%;"></loading-indicator>
+            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
             <style>
                 :host {
                     display: flex;
@@ -1678,9 +1679,9 @@ info-popup {
 }
 
 loading-indicator {
-    width: 80%;
-    height: 80%;
-    margin: 10%;
+    width: 80vmin;
+    height: 100%;
+    margin: auto;
 }
 
 iframe {
@@ -2147,7 +2148,7 @@ a {
     cursor: default;
 }
 
-:where(button, a.button) {
+:where(button, .button) {
     border: solid 0.2vmin var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);
@@ -2157,12 +2158,12 @@ a {
     font-size: var(--font-size);
 }
 
-:where(button:hover, a.button:hover) {
+:where(button:hover, .button:hover) {
     background-color: var(--surface3);
     color: var(--text2);
 }
 
-:where(button:active, a.button:active) {
+:where(button:active, .button:active) {
     border: solid 0.2vmin transparent;
     color: var(--text4);
     text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
@@ -2322,6 +2323,7 @@ img {
       return p`
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
+            <input type="checkbox">
         </div>
 
         ${this.fetchingExtensions ? T : p`
@@ -2630,14 +2632,31 @@ span {
 }
 
 #toggle {
+    display: grid;
+
     padding: 1vmin;
     width: 8vmin;
     height: 8vmin;
+
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-#toggle > svg {
+#toggle::after {
+    content: "";
     width: 100%;
     height: 100%;
+
+    background-image: url(/images/moon.svg);
+    background-size: contain;
+
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+
+    pointer-events: none;
+}
+
+#toggle:checked::after {
+    background-image: url(/images/sun.svg);
 }
 
 info-popup {
@@ -2650,51 +2669,6 @@ info-popup {
     --offset: 7vmin;
     z-index: 2;
 }`;
-
-  // site/images/sun.svg
-  var sun_default = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="33px" height="33px" viewBox="0 0 33 33" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" />
-    <clipPath id="mask_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
-  </defs>
-  <g id="sun" transform="translate(1.000001 1)">
-    <g id="Group">
-      <g id="Ellipse" transform="translate(5.774308 5.5712147)">
-        <g id="Mask-group">
-          <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="none" />
-          <g clip-path="url(#mask_1)">
-            <g id="Group">
-              <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />
-            </g>
-          </g>
-        </g>
-      </g>
-      <path d="M0 4.05179L0 0" transform="translate(15.705684 0)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 2.86505L2.80902 0" transform="translate(24.218447 4.0517807)" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 2.86505L2.80902 0" transform="translate(3.9866457 24.079388)" id="Line-8" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L2.80902 2.86505" transform="translate(23.91343 24.010275)" id="Line-4" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L7.57704e-06 4.0518" transform="translate(15.790706 26.948204)" id="Line-5" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L3.97255 0" transform="translate(27.027449 16.207167)" id="Line-3" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M3.97255 3.86409e-06L0 0" transform="translate(0 15.599411)" id="Line-6" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M2.80902 2.86506L0 0" transform="translate(3.9725513 4.051792)" id="Line-7" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-    </g>
-  </g>
-</svg>`;
-
-  // site/images/moon.svg
-  var moon_default = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <path d="M8.34615 6.55769C8.34615 4.27591 8.68224 1.96656 9.53846 0C3.84296 2.47925 0 8.29548 0 14.9038C0 23.7932 7.20676 31 16.0962 31C22.7045 31 28.5207 27.157 31 21.4615C29.0334 22.3178 26.7241 22.6538 24.4423 22.6538C15.5529 22.6538 8.34615 15.4471 8.34615 6.55769L8.34615 6.55769L8.34615 6.55769Z" transform="translate(0.5 0.5)" id="path_1" />
-    <clipPath id="mask_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
-  </defs>
-  <path d="M8.34615 6.55769C8.34615 4.27591 8.68224 1.96656 9.53846 0C3.84296 2.47925 0 8.29548 0 14.9038C0 23.7932 7.20676 31 16.0962 31C22.7045 31 28.5207 27.157 31 21.4615C29.0334 22.3178 26.7241 22.6538 24.4423 22.6538C15.5529 22.6538 8.34615 15.4471 8.34615 6.55769L8.34615 6.55769L8.34615 6.55769Z" transform="translate(0.5 0.5)" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" />
-</svg>`;
 
   // site/ts/elements/settings/settings.ts
   var Settings = class extends s4 {
@@ -2724,9 +2698,9 @@ info-popup {
     SaveColour(e8) {
       localStorage.setItem("Hue", e8.target.value);
     }
-    ToggleDark() {
-      localStorage.setItem("Dark", (!Site.dark).toString());
-      Site.SetDark(!Site.dark);
+    ToggleDark(e8) {
+      var darkCheckbox = e8.target;
+      Site.SetDark(darkCheckbox.checked);
       this.requestUpdate();
     }
     ToggleEditNavbar() {
@@ -2759,9 +2733,7 @@ info-popup {
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
-            ${Site.dark ? sun_default : moon_default}
-        </button>
+        <input type="checkbox" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 

@@ -43,6 +43,7 @@ export class ExtensionsMarketplace extends LitElement {
         return html`
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
+            <input type="checkbox">
         </div>
 
         ${this.fetchingExtensions ? nothing : html`

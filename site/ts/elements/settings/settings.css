@@ -13,14 +13,31 @@ span {
 }
 
 #toggle {
+    display: grid;
+
     padding: 1vmin;
     width: 8vmin;
     height: 8vmin;
+
+    appearance: none;
+    -webkit-appearance: none;
 }
 
-#toggle > svg {
+#toggle::after {
+    content: "";
     width: 100%;
     height: 100%;
+
+    background-image: url(/images/moon.svg);
+    background-size: contain;
+
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+
+    pointer-events: none;
+}
+
+#toggle:checked::after {
+    background-image: url(/images/sun.svg);
 }
 
 info-popup {

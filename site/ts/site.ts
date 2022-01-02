@@ -304,6 +304,8 @@ export class Site {
 
         document.documentElement.classList.toggle("dark", dark);
 
+        localStorage.setItem("Dark", dark.toString());
+
         for (var callback of this.darkCallbacks) {
             callback(dark);
         }

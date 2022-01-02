@@ -177,6 +177,7 @@
     static SetDark(dark) {
       this.dark = dark;
       document.documentElement.classList.toggle("dark", dark);
+      localStorage.setItem("Dark", dark.toString());
       for (var callback of this.darkCallbacks) {
         callback(dark);
       }

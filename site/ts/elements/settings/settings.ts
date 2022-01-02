@@ -20,11 +20,6 @@ import elementCss from "default/elements/element.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
-//@ts-ignore
-import sunSvg from "sun.svg";
-//@ts-ignore
-import moonSvg from "moon.svg";
-
 @customElement("user-settings")
 export class Settings extends LitElement {
     static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, elementCss, settingsCss];
@@ -69,9 +64,10 @@ export class Settings extends LitElement {
         localStorage.setItem("Hue", (e.target as HTMLInputElement).value);
     }
 
-    ToggleDark() {
-        localStorage.setItem("Dark", (!Site.dark).toString());
-        Site.SetDark(!Site.dark);
+    ToggleDark(e: InputEvent) {
+        var darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+
+        Site.SetDark(darkCheckbox.checked);
 
         this.requestUpdate();
     }
@@ -108,9 +104,7 @@ export class Settings extends LitElement {
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <button title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" id="toggle" @click="${this.ToggleDark}">
-            ${Site.dark ? sunSvg : moonSvg}
-        </button>
+        <input type="checkbox" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 

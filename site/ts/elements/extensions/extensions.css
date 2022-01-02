@@ -4,9 +4,9 @@
 }
 
 loading-indicator {
-    width: 80%;
-    height: 80%;
-    margin: 10%;
+    width: 80vmin;
+    height: 100%;
+    margin: auto;
 }
 
 iframe {
