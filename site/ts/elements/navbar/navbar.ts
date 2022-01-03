@@ -16,7 +16,7 @@ export class Navbar extends LitElement {
 
     static defaultPages = [
         {
-            page: "dailytimetable",
+            page: "daily-timetable",
             title: "Daily Timetable",
             icon: "images/dailytimetable.svg"
         },
