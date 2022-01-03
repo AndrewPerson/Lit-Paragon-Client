@@ -127,10 +127,12 @@ export class StudentBarcode extends Page {
                                  this.point2.style.top
                              ]));
 
-        JsBarcode(this.barcode, this.studentId, {
-            displayValue: false,
-            margin: 0
-        });
+        if (typeof JsBarcode === "function") {
+            JsBarcode(this.barcode, this.studentId, {
+                displayValue: false,
+                margin: 0
+            });
+        }
     }
 
     updated() {

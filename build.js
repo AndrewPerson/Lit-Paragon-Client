@@ -57,7 +57,12 @@ function merge() {
     return target;
 }
 
-const specifiedEnv = (process.argv.length > 2 ? config.env[process.argv[2]] : config.env.default) || {};
+const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
+                         `${process.env.CF_PAGES_BRANCH}-preview` in config.env ? `${process.env.CF_PAGES_BRANCH}-preview` :
+                         process.argv[2] ?? "default";
+
+
+const specifiedEnv = config.env[specifiedEnvName] || {};
 const sharedEnv = config.env["shared"] || {};
 
 //Order matters here so values specified in the specified env override those in the sharedEnv
