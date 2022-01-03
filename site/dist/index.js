@@ -1674,6 +1674,49 @@ info-popup {
     n5("student-barcode")
   ], StudentBarcode);
 
+  // site/css/default/elements/card.css
+  var card_default = r`:host {
+    padding: 2vmin;
+
+    margin: auto;
+
+    width: 60vw;
+    max-width: 60vh;
+    min-width: 300px;
+    height: 80%;
+}
+
+@media (max-width: 300px) {
+    :host {
+        width: 100vw;
+        min-width: unset;
+    }
+}`;
+
+  // site/ts/elements/daily-timetable/daily-timetable.css
+  var daily_timetable_default = r``;
+
+  // site/ts/elements/daily-timetable/daily-timetable.ts
+  var SchoolAnnouncements2 = class extends Page {
+    constructor() {
+      super();
+      this.AddResource("dailytimetable", "dailyTimetable");
+    }
+    renderPage() {
+      console.log(this.dailyTimetable);
+      return p`
+        
+        `;
+    }
+  };
+  SchoolAnnouncements2.styles = [element_default, card_default, text_default, daily_timetable_default];
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements2.prototype, "dailyTimetable", 2);
+  SchoolAnnouncements2 = __decorateClass([
+    n5("daily-timetable")
+  ], SchoolAnnouncements2);
+
   // site/ts/elements/loader/loader.css
   var loader_default = r`:host {
     overflow: hidden;
@@ -2252,7 +2295,7 @@ a {
   Navbar.styles = navbar_default;
   Navbar.defaultPages = [
     {
-      page: "dailytimetable",
+      page: "daily-timetable",
       title: "Daily Timetable",
       icon: "images/dailytimetable.svg"
     },
@@ -2601,25 +2644,6 @@ svg {
     height: calc(var(--font-size) / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
-}`;
-
-  // site/css/default/elements/card.css
-  var card_default = r`:host {
-    padding: 2vmin;
-
-    margin: auto;
-
-    width: 60vw;
-    max-width: 60vh;
-    min-width: 300px;
-    height: 80%;
-}
-
-@media (max-width: 300px) {
-    :host {
-        width: 100vw;
-        min-width: unset;
-    }
 }`;
 
   // site/ts/elements/settings/settings.css
@@ -3217,17 +3241,13 @@ timetable-row + timetable-row {
   Main();
   async function Main() {
     if (location.hash) {
-      var extension = location.hash.indexOf("extension-") == 1;
-      if (extension) {
-        var page = decodeURIComponent(location.hash.substring(11));
-      } else {
-        var page = decodeURIComponent(location.hash.substring(1));
-      }
-      Site.NavigateTo({
-        page,
-        extension
-      });
+      NavigateToHash(location.hash);
     }
+    window.addEventListener("hashchange", () => {
+      if (location.hash) {
+        NavigateToHash(location.hash);
+      }
+    });
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
     if (registration)
       await registration.update();
@@ -3272,6 +3292,18 @@ timetable-row + timetable-row {
     } else
       console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
     navigator.serviceWorker.controller?.postMessage({ command: "metadata-fetch" });
+  }
+  function NavigateToHash(hash) {
+    var extension = hash.indexOf("extension-") == 1;
+    if (extension) {
+      var page = decodeURIComponent(hash.substring(11));
+    } else {
+      var page = decodeURIComponent(hash.substring(1));
+    }
+    Site.NavigateTo({
+      page,
+      extension
+    });
   }
   function ShowResourceNotification() {
     return Site.ShowNotification("Updating resources...", true);

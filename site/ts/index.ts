@@ -11,20 +11,14 @@ Main();
 
 async function Main() {
     if (location.hash) {
-        var extension = location.hash.indexOf("extension-") == 1;
-
-        if (extension) {
-            var page = decodeURIComponent(location.hash.substring(11));
-        }
-        else {
-            var page = decodeURIComponent(location.hash.substring(1));
-        }
-
-        Site.NavigateTo({
-            page: page,
-            extension: extension
-        });
+        NavigateToHash(location.hash);
     }
+
+    window.addEventListener("hashchange", () => {
+        if (location.hash) {
+            NavigateToHash(location.hash);
+        }
+    });
 
     //#if DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -96,6 +90,22 @@ async function Main() {
 
     navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"}); 
     //#endif
+}
+
+function NavigateToHash(hash: string) {
+    var extension = hash.indexOf("extension-") == 1;
+
+    if (extension) {
+        var page = decodeURIComponent(hash.substring(11));
+    }
+    else {
+        var page = decodeURIComponent(hash.substring(1));
+    }
+
+    Site.NavigateTo({
+        page: page,
+        extension: extension
+    });
 }
 
 function ShowResourceNotification() {
