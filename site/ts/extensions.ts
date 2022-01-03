@@ -7,6 +7,17 @@ var origins = Object.keys(extensions).map(extension => {
     return url.origin;
 });
 
+Site.ListenForDark(dark => {
+    origins.forEach(origin => {
+        window.postMessage({
+            command: "Set Dark",
+            data: {
+                dark: dark
+            }
+        }, origin);
+    });
+});
+
 window.addEventListener("message", async e => {
     var origin = e.origin;
 
