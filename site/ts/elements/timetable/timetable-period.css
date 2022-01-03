@@ -61,7 +61,7 @@ p {
 
 p:hover + #popup {
     z-index: 98;
-    border: solid 0.5vmin var(--text1);
+    outline: solid 0.5vmin var(--text1);
 }
 
 #popup::before {
