@@ -202,7 +202,7 @@
   Site.darkCallbacks = [];
 
   // site/ts/login-url.ts
-  var login_url_default = `https://student.sbhs.net.au/api/authorize?response_type=code&scope=all-ro&state=abc&client_id=${"Paragon_Tools"}&redirect_uri=${location.origin}/callback`;
+  var login_url_default = `https://student.sbhs.net.au/api/authorize?response_type=code&scope=all-ro&state=abc&client_id=${""}&redirect_uri=${location.origin}/callback`;
 
   // site/ts/login.ts
   if (Site.dark)

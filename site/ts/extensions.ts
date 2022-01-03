@@ -8,14 +8,14 @@ var origins = Object.keys(extensions).map(extension => {
 });
 
 Site.ListenForDark(dark => {
-    origins.forEach(origin => {
-        window.postMessage({
+    for (let i = 0; i < window.frames.length; i++) {
+        var frame = window.frames[i];
+
+        frame.postMessage({
             command: "Set Dark",
-            data: {
-                dark: dark
-            }
-        }, origin);
-    });
+            data: dark
+        }, "*");
+    }
 });
 
 window.addEventListener("message", async e => {

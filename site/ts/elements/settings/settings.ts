@@ -104,7 +104,7 @@ export class Settings extends LitElement {
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <input type="checkbox" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+        <input type="checkbox" ?checked="${Site.dark}" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 

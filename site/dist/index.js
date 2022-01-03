@@ -2001,6 +2001,8 @@ a {
     box-sizing: border-box;
 
     z-index: 100;
+
+    border-radius: 0 2vmin 2vmin 0;
 }
 
 #items-container {
@@ -2737,7 +2739,7 @@ info-popup {
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <input type="checkbox" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+        <input type="checkbox" ?checked="${Site.dark}" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 
@@ -3154,14 +3156,13 @@ timetable-row + timetable-row {
     return url.origin;
   });
   Site.ListenForDark((dark) => {
-    origins.forEach((origin) => {
-      window.postMessage({
+    for (let i7 = 0; i7 < window.frames.length; i7++) {
+      var frame = window.frames[i7];
+      frame.postMessage({
         command: "Set Dark",
-        data: {
-          dark
-        }
-      }, origin);
-    });
+        data: dark
+      }, "*");
+    }
   });
   window.addEventListener("message", async (e8) => {
     var origin = e8.origin;
