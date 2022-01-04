@@ -2,7 +2,7 @@ import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
-import { Site } from "../../site";
+import { Extensions, Extension } from "../../extensions";
 
 import "./navitem";
 import { NavItem } from "./navitem";
@@ -77,9 +77,19 @@ export class Navbar extends LitElement {
         matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
 
+    static GetNavbarOrder(): number[] {
+        return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
+    }
+
+    static SetNavbarOrder(order: number[]) {
+        localStorage.setItem("Nav Order", JSON.stringify(order));
+
+        (document.querySelector("nav-bar") as Navbar).requestUpdate();
+    }
+
     SetDraggedNavItemIndex(e: DragEvent) {  
         //Not always guaranteed to be a NavItem
-        var target = e.target as NavItem;
+        let target = e.target as NavItem;
 
         if (!target.editing) return;
         if (target.dataset.index === undefined) return;
@@ -92,25 +102,25 @@ export class Navbar extends LitElement {
 
     ReorderNavItems(e: DragEvent) {
         //Not always guaranteed to be a NavItem
-        var target = e.target as NavItem;
+        let target = e.target as NavItem;
 
         if (!target.editing) return;
         if (target.dataset.index === undefined) return;
 
-        var newIndex = parseInt(target.dataset.index);
+        let newIndex = parseInt(target.dataset.index);
 
         this.order.splice(newIndex, 0, this.order.splice(this.draggedNavItemIndex, 1)[0]);
 
         this.draggedNavItemIndex = newIndex;
 
-        Site.SetNavbarOrder(this.order);
+        Navbar.SetNavbarOrder(this.order);
     }
 
     GetNavItem: (order: number, index: number) => TemplateResult<1> = ((order: number, index: number) => {
-        var page: string;
-        var title: string;
-        var icon: string;
-        var extension: boolean = false;
+        let page: string;
+        let title: string;
+        let icon: string;
+        let extension: boolean = false;
 
         if (order < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[order]);
         else {
@@ -165,7 +175,7 @@ export class Navbar extends LitElement {
     }
 
     createRenderRoot() {
-        var root = super.createRenderRoot();
+        let root = super.createRenderRoot();
 
         root.addEventListener("pointerdown", () => {
             this.itemsContainer.classList.add("hover");
@@ -183,22 +193,24 @@ export class Navbar extends LitElement {
     }
 
     updated() {
-        for (var navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>) {
+        for (let navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>) {
             navItem.requestUpdate();
         }
     }
 
     render() {
-        this.order = Site.GetNavbarOrder();
+        this.order = Navbar.GetNavbarOrder();
 
-        var extensions = Site.GetInstalledExtensions();
+        let extensions = Extensions.installedExtensions;
 
-        this.pages = Object.keys(extensions);
-        this.icons = this.pages.map(key => Site.GetExtensionNavIconURL(extensions[key]));
+        for (var key of extensions.keys()) {
+            this.pages.push(key);
+            this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
+        }
 
-        var mobile = window.innerWidth <= window.innerHeight;
-        var vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-        var scrollable = this.order.length * 12 * vmin > window.innerHeight;
+        let mobile = window.innerWidth <= window.innerHeight;
+        let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
+        let scrollable = this.order.length * 12 * vmin > window.innerHeight;
 
         return html`
         <div id="items-container">

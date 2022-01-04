@@ -34,10 +34,10 @@ export class Settings extends LitElement {
         super();
 
         caches.open("Metadata").then(async cache => {
-            var metadataResponse = await cache.match("Metadata");
+            let metadataResponse = await cache.match("Metadata");
 
             if (metadataResponse) {
-                var metadata = await metadataResponse.json();
+                let metadata = await metadataResponse.json();
 
                 this.version = metadata.version;
             }
@@ -65,7 +65,7 @@ export class Settings extends LitElement {
     }
 
     ToggleDark(e: InputEvent) {
-        var darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+        let darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
         Site.SetDark(darkCheckbox.checked);
 
@@ -73,7 +73,7 @@ export class Settings extends LitElement {
     }
 
     ToggleEditNavbar() {
-        var navbar: Navbar = document.querySelector("nav-bar") as Navbar;
+        let navbar: Navbar = document.querySelector("nav-bar") as Navbar;
 
         if (navbar) {
             navbar.toggleAttribute("editing");

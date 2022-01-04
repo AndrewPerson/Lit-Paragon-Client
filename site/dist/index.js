@@ -11,41 +11,16 @@
     return result;
   };
 
-  // site/ts/site.ts
-  var Site = class {
-    static NavigateTo(page) {
-      if (page.extension) {
-        var extensions2 = this.GetInstalledExtensions();
-        if (Object.keys(extensions2).includes(page.page)) {
-          var newPage = document.getElementById(`extension-${page.page}`);
-          if (newPage === null) {
-            var extensionPage = document.createElement("extension-page");
-            extensionPage.src = extensions2[page.page].url;
-            extensionPage.id = `extension-${page.page}`;
-            document.querySelector("main")?.appendChild(extensionPage);
-            newPage = extensionPage;
-          }
-          this.SetPage(page, newPage);
-        }
-      } else
-        this.SetPage(page, document.getElementById(page.page));
-    }
-    static SetPage(page, element) {
-      if (element) {
-        if (this.pageElement != null)
-          this.pageElement.classList.add("hidden");
-        element.classList.remove("hidden");
-        this.pageElement = element;
-        this.page = page;
-        location.hash = page.extension ? `extension-${page.page}` : page.page;
-        var navbar = document.querySelector("nav-bar");
-        navbar.removeAttribute("editing");
-        navbar.requestUpdate?.();
-      }
+  // site/ts/resources.ts
+  var Resources = class {
+    static ShowLoginNotification() {
+      let content = document.createElement("p");
+      content.innerHTML = `You need to <a>login</a> to see the latest information.`;
+      Site.ShowNotification(content);
     }
     static async GetToken() {
-      var cache = await caches.open("User Resources");
-      var tokenResponse = await cache.match("Token");
+      let cache = await caches.open("User Resources");
+      let tokenResponse = await cache.match("Token");
       if (!tokenResponse) {
         location.href = `${location.origin}/login`;
         return {
@@ -53,7 +28,7 @@
           token: null
         };
       }
-      var token = await tokenResponse.json();
+      let token = await tokenResponse.json();
       if (new Date() > token.termination) {
         this.ShowLoginNotification();
         return {
@@ -67,60 +42,49 @@
       };
     }
     static async SetResources(resources) {
-      var cache = await caches.open("User Resources");
-      var promises = [];
+      let cache = await caches.open("User Resources");
+      let promises = [];
       resources.forEach((resourceGroup) => {
-        var name = resourceGroup.name;
-        var resource = resourceGroup.resource;
+        let name = resourceGroup.name;
+        let resource = resourceGroup.resource;
         promises.push(cache.put(name, new Response(resource)).then(() => {
-          if (name in this.resourceCallbacks)
-            for (var callback of this.resourceCallbacks[name])
-              callback(JSON.parse(resource));
+          for (let callback of this._resourceCallbacks.get(name) ?? [])
+            callback(JSON.parse(resource));
         }));
       });
       await Promise.all(promises);
     }
     static async SetResource(name, resource) {
-      var cache = await caches.open("User Resources");
+      let cache = await caches.open("User Resources");
       await cache.put(name, new Response(resource));
-      if (name in this.resourceCallbacks)
-        for (var callback of this.resourceCallbacks[name])
-          callback(JSON.parse(resource));
+      for (let callback of this._resourceCallbacks.get(name) ?? [])
+        callback(JSON.parse(resource));
     }
     static async GetResource(name, callback) {
-      if (name in this.resourceCallbacks)
-        this.resourceCallbacks[name].push(callback);
-      else
-        this.resourceCallbacks[name] = [callback];
-      var cache = await caches.open("User Resources");
-      var response = await cache.match(name);
+      let callbacks = this._resourceCallbacks.get(name) ?? [];
+      callbacks.push(callback);
+      this._resourceCallbacks.set(name, callbacks);
+      let cache = await caches.open("User Resources");
+      let response = await cache.match(name);
       if (response) {
-        var resource = await response.json();
+        let resource = await response.json();
         callback(resource);
       } else
         callback(void 0);
     }
-    static async GetResourceNow(name) {
-      var cache = await caches.open("User Resources");
-      var response = await cache.match(name);
-      if (response)
-        return await response.json();
-      else
-        return void 0;
-    }
     static async FetchResources() {
-      var { valid, token } = await this.GetToken();
+      let { valid, token } = await this.GetToken();
       if (!valid)
         return false;
-      var serverUrl = new URL("https://sbhs-random-data.profsmart.repl.co/resources");
+      let serverUrl = new URL("https://sbhs-random-data.profsmart.repl.co/resources");
       serverUrl.searchParams.append("token", JSON.stringify(token));
-      var resourceResponse = await fetch(serverUrl.toString());
+      let resourceResponse = await fetch(serverUrl.toString());
       if (!resourceResponse.ok) {
         this.ShowLoginNotification();
         return false;
       }
-      var resourceResult = await resourceResponse.json();
-      var cache = await caches.open("User Resources");
+      let resourceResult = await resourceResponse.json();
+      let cache = await caches.open("User Resources");
       await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
       await this.SetResources(Object.keys(resourceResult.result).map((key) => {
         return {
@@ -130,88 +94,8 @@
       }));
       return true;
     }
-    static GetInstalledExtensions() {
-      return JSON.parse(localStorage.getItem("Installed Extensions") || "{}");
-    }
-    static SetInstalledExtensions(extensions2) {
-      localStorage.setItem("Installed Extensions", JSON.stringify(extensions2));
-      document.querySelector("nav-bar").requestUpdate();
-    }
-    static async GetExtensionsNow() {
-      var cache = await caches.open("Metadata");
-      var response = await cache.match("Metadata");
-      if (!response)
-        return {};
-      return (await response.json()).pages || {};
-    }
-    static async GetExtensions(callback) {
-      this.extensionCallbacks.push(callback);
-      var extensions2 = await this.GetExtensionsNow();
-      callback(extensions2);
-    }
-    static async FireExtensionCallbacks() {
-      var extensions2 = await this.GetExtensionsNow();
-      for (var callback of this.extensionCallbacks)
-        callback(extensions2);
-    }
-    static GetExtensionIconURL(extension) {
-      var url = new URL(extension.icon, extension.url);
-      url.search = `cache-version=${extension.version}`;
-      return url.toString();
-    }
-    static GetExtensionNavIconURL(extension) {
-      var url = new URL(extension.navIcon, extension.url);
-      url.search = `cache-version=${extension.version}`;
-      return url.toString();
-    }
-    static GetNavbarOrder() {
-      return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
-    }
-    static SetNavbarOrder(order) {
-      localStorage.setItem("Nav Order", JSON.stringify(order));
-      document.querySelector("nav-bar").requestUpdate();
-    }
-    static ShowNotification(content, loader = false) {
-      var notification = document.createElement("inline-notification");
-      if (typeof content === "string")
-        notification.innerText = content;
-      else
-        notification.appendChild(content);
-      notification.loader = loader;
-      document.getElementById("notification-area")?.appendChild(notification);
-      return notification;
-    }
-    static ShowLoginNotification() {
-      var content = document.createElement("p");
-      content.innerHTML = `You need to <a>login</a> to see the latest information.`;
-      this.ShowNotification(content);
-    }
-    static SetDark(dark) {
-      this.dark = dark;
-      document.documentElement.classList.toggle("dark", dark);
-      localStorage.setItem("Dark", dark.toString());
-      for (var callback of this.darkCallbacks) {
-        callback(dark);
-      }
-    }
-    static ListenForDark(callback) {
-      this.darkCallbacks.push(callback);
-    }
-    static SetColour(hue) {
-      document.documentElement.style.setProperty("--main-hue", hue);
-      document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
-    }
   };
-  Site.page = {
-    page: "dailytimetable",
-    extension: false
-  };
-  Site.dark = localStorage.getItem("Dark") == "true";
-  Site.hue = localStorage.getItem("Hue") || "200";
-  Site.pageElement = null;
-  Site.resourceCallbacks = {};
-  Site.extensionCallbacks = [];
-  Site.darkCallbacks = [];
+  Resources._resourceCallbacks = /* @__PURE__ */ new Map();
 
   // node_modules/@lit/reactive-element/css-tag.js
   var t = window.ShadowRoot && (window.ShadyCSS === void 0 || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
@@ -848,60 +732,6 @@
     } });
   }
 
-  // site/ts/elements/page/page.ts
-  var Page = class extends s4 {
-    constructor() {
-      super(...arguments);
-      this._state = 0 /* Waiting */;
-      this._unreceivedResources = 0;
-      this._uncompletedResources = 0;
-    }
-    AddResource(resourceName, property) {
-      this._unreceivedResources++;
-      this._uncompletedResources++;
-      var received = false;
-      var completed = false;
-      Site.GetResource(resourceName, (resource) => {
-        if (!received) {
-          this._unreceivedResources--;
-          received = true;
-        }
-        if (resource !== null && resource !== void 0) {
-          if (!completed) {
-            this._uncompletedResources--;
-            completed = true;
-          }
-          this[property] = resource;
-        }
-        if (this._uncompletedResources == 0)
-          this._state = 2 /* Loaded */;
-        else if (this._unreceivedResources == 0)
-          this._state = 1 /* Loading */;
-      });
-    }
-    render() {
-      if (this._state == 0 /* Waiting */)
-        return T;
-      if (this._state == 1 /* Loading */) {
-        return p`
-            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
-            <style>
-                :host {
-                    display: flex;
-                }
-            </style>
-            `;
-      }
-      return this.renderPage();
-    }
-    renderPage() {
-      return T;
-    }
-  };
-  __decorateClass([
-    t3()
-  ], Page.prototype, "_state", 2);
-
   // node_modules/lit-html/directive.js
   var t4 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
   var e5 = (t5) => (...e8) => ({ _$litDirective$: t5, values: e8 });
@@ -1031,83 +861,17 @@
     }
   });
 
-  // node_modules/lit-html/directives/unsafe-html.js
-  var e7 = class extends i5 {
-    constructor(i7) {
-      if (super(i7), this.it = T, i7.type !== t4.CHILD)
-        throw Error(this.constructor.directiveName + "() can only be used in child bindings");
-    }
-    render(r4) {
-      if (r4 === T || r4 == null)
-        return this.vt = void 0, this.it = r4;
-      if (r4 === b)
-        return r4;
-      if (typeof r4 != "string")
-        throw Error(this.constructor.directiveName + "() called with a non-string value");
-      if (r4 === this.it)
-        return this.vt;
-      this.it = r4;
-      const s6 = [r4];
-      return s6.raw = s6, this.vt = { _$litType$: this.constructor.resultType, strings: s6, values: [] };
-    }
-  };
-  e7.directiveName = "unsafeHTML", e7.resultType = 1;
-  var o6 = e5(e7);
+  // site/css/default/img.css
+  var img_default = r`:where(img, svg) {
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+    cursor: default;
 
-  // site/ts/elements/announcements/post.css
-  var post_default = r`:host {
-    display: block;
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
-
-details, summary {
-    --user-select: text;
-    cursor: text;
-}
-
-summary {
-    position: relative;
-
-    list-style: none;
-
-    margin-bottom: 1vmin;
-}
-
-summary > * {
-    cursor: pointer;
-}
-
-summary::after {
-    content: "";
-
-    position: absolute;
-    top: 0;
-    right: 0;
-
-    display: block;
-    width: calc(var(--font-size) * 1.5);
-    height: calc(var(--font-size) * 1.5);
-
-    margin-left: auto;
-    
-    background-image: url(images/toggle.svg);
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position-y: center;
-
-    cursor: pointer;
-
-    transform: rotate(180deg);
-
-    transition: 0.3s;
-}
-
-details[open] > summary::after {
-    transform: none;
-}
-
-.info {
-    font-size: calc(var(--font-size) * 0.7);
-}`;
+`;
 
   // site/css/default/text.css
   var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
@@ -1167,762 +931,6 @@ details[open] > summary::after {
     margin: 0;
     padding-left: calc(var(--font-size) / 4 * 3);
 }`;
-
-  // site/ts/elements/announcements/post.ts
-  var AnnouncementPost = class extends s4 {
-    render() {
-      return p`
-        <details>
-            <summary>
-                <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meetingTime === void 0 ? "" : ` | At ${this.meetingTime}`}</p>
-            </summary>
-
-            ${o6(this.content)}
-        </details>
-        `;
-    }
-  };
-  AnnouncementPost.styles = [text_default, post_default];
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "title", 2);
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "author", 2);
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "years", 2);
-  __decorateClass([
-    e4({ type: Boolean })
-  ], AnnouncementPost.prototype, "meeting", 2);
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "meetingTime", 2);
-  __decorateClass([
-    e4()
-  ], AnnouncementPost.prototype, "content", 2);
-  __decorateClass([
-    e4({ type: Number })
-  ], AnnouncementPost.prototype, "weight", 2);
-  AnnouncementPost = __decorateClass([
-    n5("announcement-post")
-  ], AnnouncementPost);
-
-  // site/css/default/img.css
-  var img_default = r`:where(img, svg) {
-    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
-    cursor: default;
-
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-}
-`;
-
-  // site/css/default/search.css
-  var search_default = r`:where(input[type=search]) {
-    border: none;
-    border-bottom: 0.2vmin solid var(--text2);
-    border-radius: 0;
-
-    background-color: var(--surface2);
-    color: var(--text1);
-
-    font-size: var(--font-size);
-    font-family: monospace;
-
-    height: calc(var(--font-size) * 2);
-}
-
-:where(input[type=search]:focus) {
-    outline: none;
-}
-
-:where(input[type=search])::-webkit-input-placeholder {
-    color: var(--text3);
-}
-
-:where(input[type=search])::-moz-placeholder {
-    color: var(--text3);
-}
-
-:where(input[type=search])::-webkit-search-cancel-button {
-    -webkit-appearance: none;
-}`;
-
-  // site/css/default/select.css
-  var select_default = r`:where(select) {
-    border: 0.2vmin solid var(--text2);
-    background-color: var(--surface2);
-    color: var(--text2);
-
-    padding: 1vmin 0;
-    padding-right: 6vmin;
-
-    border-radius: 1vmin;
-
-    font-size: calc(var(--font-size) / 1.2);
-
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-}
-
-:where(option) {
-    background-color: var(--surface2);
-}`;
-
-  // site/css/default/elements/full.css
-  var full_default = r`:host {
-    flex: 1;
-    margin: 1%;
-
-    box-sizing: border-box;
-    padding: 1vmin;
-}
-
-/*
-    306px is 102% of 300px.
-    We use 102% because that includes the margin,
-    which is 1% either side.
-*/
-@media (max-width: 306px) {
-    :host {
-        margin: 1% calc(50% - 150px);
-    }
-}
-
-@media (max-width: 300px) {
-    :host {
-        margin: 1% 0;
-    }
-}`;
-
-  // site/css/default/elements/element.css
-  var element_default = r`:host {
-    box-shadow: var(--shadow);
-    background-color: var(--surface2);
-    border-radius: 2vmin;
-}`;
-
-  // site/ts/elements/announcements/announcements.css
-  var announcements_default = r`:host {
-    display: flex;
-    flex-direction: column;
-    gap: 3vmin;
-
-    overscroll-behavior: contain;
-}
-
-.header {
-    display: flex;
-    justify-content: space-between;
-}
-
-.content {
-    flex: 1;
-    overflow-y: auto;
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface4) transparent;
-}
-
-.content::-webkit-scrollbar-track {
-    background-color: transparent;
-
-    width: 1vmin;
-}
-
-.content::-webkit-scrollbar-thumb {
-    background-color: var(--surface4);
-    border-radius: 1vmin;
-}
-
-.content:empty::after {
-    content: "No announcements. Try changing your filter or searching for something else.";
-
-    display: block;
-    width: 100%;
-
-    margin-top: 1vmin;
-
-    text-align: center;
-
-    font-size: calc(var(--font-size) * 1.4);
-}
-
-announcement-post {
-    margin-bottom: 3vmin;
-}`;
-
-  // site/ts/elements/announcements/announcements.ts
-  var SchoolAnnouncements = class extends Page {
-    constructor() {
-      super();
-      this.yearFilter = "all";
-      this.searchFilter = "";
-      this.AddResource("announcements", "announcements");
-    }
-    renderPage() {
-      var filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement) => announcement.years.includes(this.yearFilter));
-      filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement) => announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) || announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
-      return p`
-        <div class="header">
-            <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
-
-            <select @input="${(e8) => this.yearFilter = e8.target.value}">
-                <option value="all">All</option>
-                <option value="Staff">Staff</option>
-                <option value="12">Year 12</option>
-                <option value="11">Year 11</option>
-                <option value="10">Year 10</option>
-                <option value="9">Year 9</option>
-                <option value="8">Year 8</option>
-                <option value="7">Year 7</option>
-            </select>
-        </div>
-
-        <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${c3(filteredAnnouncements, (announcement) => p`
-        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
-                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
-                           ${announcement.meetingTime === null ? "" : `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === void 0 ? "" : ` (${announcement.meetingTimeParsed})`}"`}
-                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
-        `)}</div>
-        `;
-    }
-  };
-  SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
-  __decorateClass([
-    t3()
-  ], SchoolAnnouncements.prototype, "announcements", 2);
-  __decorateClass([
-    t3()
-  ], SchoolAnnouncements.prototype, "yearFilter", 2);
-  __decorateClass([
-    t3()
-  ], SchoolAnnouncements.prototype, "searchFilter", 2);
-  SchoolAnnouncements = __decorateClass([
-    n5("school-announcements")
-  ], SchoolAnnouncements);
-
-  // site/ts/elements/info/info.css
-  var info_default = r`:host {
-    position: relative;
-    display: block;
-}
-
-button {
-    all: unset;
-    width: inherit;
-    height: inherit;
-}
-
-svg {
-    width: inherit;
-    height: inherit;
-}
-
-slot {
-    position: absolute;
-    display: block;
-    top: var(--offset);
-    
-    width: max-content;
-    max-width: var(--max-width);
-
-    background-color: var(--surface2);
-
-    border-radius: 2vmin;
-    box-shadow: var(--shadow);
-    padding: 2vmin;
-
-    z-index: inherit;
-
-    box-sizing: border-box;
-}
-
-.background {
-    position: absolute;
-    width: var(--max-width);
-    height: 200%;
-    top: 0;
-    clip-path: polygon(0 0, 100% 100%, 0 100%);
-}`;
-
-  // site/images/info.svg
-  var info_default2 = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="210px" height="210px" viewBox="0 0 210 210" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Group" transform="translate(5 5)">
-    <path d="M0 100C0 44.7715 44.7715 0 100 0C155.228 0 200 44.7715 200 100C200 155.228 155.228 200 100 200C44.7715 200 0 155.228 0 100Z" id="Ellipse" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
-    <g id="" transform="translate(58 37)">
-      <path d="M32.7841 86.4091L32.7841 85.7954Q32.8864 76.0284 34.8295 70.25Q36.7727 64.4716 40.3523 60.892Q43.9318 57.3125 48.9432 54.2954Q53.4432 51.5852 56.5114 47.1875Q59.5795 42.7898 59.5795 36.7045Q59.5795 29.1875 54.4915 24.7642Q49.4034 20.3409 42.1932 20.3409Q38 20.3409 34.1136 22.0795Q30.2273 23.8182 27.6193 27.5511Q25.0114 31.2841 24.6023 37.3182L11.7159 37.3182Q12.125 28.625 16.2415 22.4375Q20.358 16.25 27.1335 12.9773Q33.9091 9.70454 42.1932 9.70454Q51.1932 9.70454 57.8665 13.2841Q64.5398 16.8636 68.196 23.1023Q71.8523 29.3409 71.8523 37.3182Q71.8523 45.8068 68.0682 51.8409Q64.2841 57.875 57.5341 61.9659Q50.7841 66.1591 47.9972 71.2216Q45.2102 76.2841 45.0568 85.7954L45.0568 86.4091L32.7841 86.4091ZM39.3295 116.682Q35.5454 116.682 32.8352 113.972Q30.125 111.261 30.125 107.477Q30.125 103.693 32.8352 100.983Q35.5454 98.2727 39.3295 98.2727Q43.1136 98.2727 45.8239 100.983Q48.5341 103.693 48.5341 107.477Q48.5341 111.261 45.8239 113.972Q43.1136 116.682 39.3295 116.682Z" />
-    </g>
-  </g>
-</svg>`;
-
-  // site/ts/elements/info/info.ts
-  var Info = class extends s4 {
-    constructor() {
-      super();
-      this.HidePopup = (() => {
-        this.info.style.display = "none";
-        this.background.style.display = "none";
-      }).bind(this);
-      this.addEventListener("pointerover", this.ShowPopup);
-      this.addEventListener("pointerleave", this.HidePopup);
-      document.addEventListener("pointerover", this.HidePopup);
-    }
-    ShowPopup(e8) {
-      this.info.style.removeProperty("display");
-      this.background.style.removeProperty("display");
-      e8.stopPropagation();
-    }
-    disconnectedCallback() {
-      super.disconnectedCallback();
-      document.removeEventListener("pointerover", this.HidePopup);
-    }
-    render() {
-      return p`
-        <button @click="${this.ShowPopup}">
-            ${info_default2}
-        </button>
-
-        <slot style="display: none"></slot>
-
-        <div class="background" style="display: none"></div>
-        `;
-    }
-  };
-  Info.styles = [img_default, info_default];
-  __decorateClass([
-    i4("slot")
-  ], Info.prototype, "info", 2);
-  __decorateClass([
-    i4(".background")
-  ], Info.prototype, "background", 2);
-  Info = __decorateClass([
-    n5("info-popup")
-  ], Info);
-
-  // site/ts/elements/barcode/barcode.css
-  var barcode_default = r`:host {
-    position: relative;
-
-    touch-action: none;
-}
-
-#point1,
-#point2 {
-    --size: 3vmin;
-
-    position: absolute;
-
-    width: var(--size);
-    height: var(--size);
-
-    background-color: var(--surface4);
-    border-radius: calc(var(--size) / 2);
-
-    transform: translate(-50%, -50%);
-
-    z-index: 1;
-
-    cursor: move;
-}
-
-#point1::after,
-#point2::after {
-    content: "";
-
-    display: block;
-
-    width: 3vmax;
-    height: 3vmax;
-
-    margin: calc(var(--size) / 2 - 1.5vmax);
-}
-
-#barcodeDisplay {
-    position: absolute;
-
-    box-sizing: border-box;
-
-    filter: contrast(5);
-}
-
-#barcodeDisplay.outline {
-    border: solid 1vmin var(--text1);
-}
-
-info-popup {
-    --max-width: 30vmax;
-    --offset: 7vmin;
-    
-    width: 5vmin;
-    height: 5vmin;
-    z-index: 2;
-}`;
-
-  // site/ts/elements/barcode/barcode.ts
-  var StudentBarcode = class extends Page {
-    constructor() {
-      super();
-      this.draggedElement = null;
-      this.dragging = false;
-      this.addEventListener("pointerdown", (e8) => e8.preventDefault());
-      this.addEventListener("pointermove", this.DragPoint);
-      this.addEventListener("pointerup", this.EndDrag);
-      this.AddResource("userinfo", "userInfo");
-      Site.ListenForDark((dark) => {
-        this.barcode?.classList.toggle("outline", dark);
-      });
-    }
-    set userInfo(value) {
-      this.studentId = value.studentId;
-      this.requestUpdate();
-    }
-    StartDrag(e8) {
-      e8.preventDefault();
-      this.draggedElement = e8.target;
-      this.style.cursor = "move";
-    }
-    DragPoint(e8) {
-      e8.preventDefault();
-      if (this.draggedElement == null)
-        return;
-      if (!this.dragging) {
-        this.dragging = true;
-        this.draggedElement.style.left = `${(e8.clientX - this.offsetLeft) / this.clientWidth * 100}%`;
-        this.draggedElement.style.top = `${(e8.clientY - this.offsetTop) / this.clientHeight * 100}%`;
-        this.SetBarcodePosition();
-        this.dragging = false;
-      }
-    }
-    EndDrag() {
-      this.draggedElement = null;
-      this.removeAttribute("style");
-      this.RenderBarcode();
-    }
-    SetBarcodePosition() {
-      if (this.barcode === null)
-        return;
-      var x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
-      var y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
-      var x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
-      var y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
-      var maxX = Math.max(x1, x2);
-      var minX = Math.min(x1, x2);
-      var maxY = Math.max(y1, y2);
-      var minY = Math.min(y1, y2);
-      this.barcode.style.left = `${minX}%`;
-      this.barcode.style.top = `${minY}%`;
-      this.barcode.style.width = `${maxX - minX}%`;
-      this.barcode.style.height = `${maxY - minY}%`;
-    }
-    RenderBarcode() {
-      if (this.draggedElement != null)
-        return;
-      if (this.barcode === null || this.point1 === null || this.point2 === null)
-        return;
-      localStorage.setItem("Barcode Points", JSON.stringify([
-        this.point1.style.left,
-        this.point1.style.top,
-        this.point2.style.left,
-        this.point2.style.top
-      ]));
-      if (typeof JsBarcode === "function") {
-        JsBarcode(this.barcode, this.studentId, {
-          displayValue: false,
-          margin: 0
-        });
-      }
-    }
-    updated() {
-      this.SetBarcodePosition();
-      this.RenderBarcode();
-    }
-    renderPage() {
-      var storedPoints = localStorage.getItem("Barcode Points");
-      var points = ["20%", "20%", "80%", "40%"];
-      if (storedPoints)
-        points = JSON.parse(storedPoints);
-      return p`
-        <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-
-        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
-        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
-
-        <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
-        `;
-    }
-  };
-  StudentBarcode.styles = [element_default, full_default, text_default, img_default, barcode_default];
-  __decorateClass([
-    i4("#barcodeDisplay")
-  ], StudentBarcode.prototype, "barcode", 2);
-  __decorateClass([
-    i4("#point1")
-  ], StudentBarcode.prototype, "point1", 2);
-  __decorateClass([
-    i4("#point2")
-  ], StudentBarcode.prototype, "point2", 2);
-  StudentBarcode = __decorateClass([
-    n5("student-barcode")
-  ], StudentBarcode);
-
-  // site/css/default/elements/card.css
-  var card_default = r`:host {
-    padding: 2vmin;
-
-    margin: auto;
-
-    width: 60vw;
-    max-width: 60vh;
-    min-width: 300px;
-    height: 80%;
-}
-
-@media (max-width: 300px) {
-    :host {
-        width: 100vw;
-        min-width: unset;
-    }
-}`;
-
-  // site/ts/elements/daily-timetable/daily-timetable.css
-  var daily_timetable_default = r``;
-
-  // site/ts/elements/daily-timetable/daily-timetable.ts
-  var SchoolAnnouncements2 = class extends Page {
-    constructor() {
-      super();
-      this.AddResource("dailytimetable", "dailyTimetable");
-    }
-    renderPage() {
-      console.log(this.dailyTimetable);
-      return p`
-        
-        `;
-    }
-  };
-  SchoolAnnouncements2.styles = [element_default, card_default, text_default, daily_timetable_default];
-  __decorateClass([
-    t3()
-  ], SchoolAnnouncements2.prototype, "dailyTimetable", 2);
-  SchoolAnnouncements2 = __decorateClass([
-    n5("daily-timetable")
-  ], SchoolAnnouncements2);
-
-  // site/ts/elements/loader/loader.css
-  var loader_default = r`:host {
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-svg {
-    width: inherit;
-    height: inherit;
-    animation: 3s infinite spin;
-}
-
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}`;
-
-  // site/images/rings.svg
-  var rings_default = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="529px" height="528px" viewBox="0 0 529 528" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_1" />
-    <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_2" />
-    <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_3" />
-    <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_4" />
-    <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_5" />
-    <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_6" />
-    <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_7" />
-    <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_8" />
-    <clipPath id="mask_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
-    <clipPath id="mask_2">
-      <use xlink:href="#path_2" />
-    </clipPath>
-    <clipPath id="mask_3">
-      <use xlink:href="#path_3" />
-    </clipPath>
-    <clipPath id="mask_4">
-      <use xlink:href="#path_4" />
-    </clipPath>
-    <clipPath id="mask_5">
-      <use xlink:href="#path_5" />
-    </clipPath>
-    <clipPath id="mask_6">
-      <use xlink:href="#path_6" />
-    </clipPath>
-    <clipPath id="mask_7">
-      <use xlink:href="#path_7" />
-    </clipPath>
-    <clipPath id="mask_8">
-      <use xlink:href="#path_8" />
-    </clipPath>
-  </defs>
-  <g id="Rings" transform="translate(8 8)">
-    <g id="Green-Solid" transform="translate(7.6293945E-05 0)">
-      <g id="Mask-group">
-        <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_1)">
-          <g id="Group">
-            <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Green-Transparent" transform="translate(0 0.00030517578)">
-      <g id="Mask-group">
-        <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_2)">
-          <g id="Group">
-            <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-opacity="0.2784314" stroke-width="8" stroke-dasharray="46 2 12 46 2 12" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Yellow-Solid" transform="translate(14.489731 14.490631)">
-      <g id="Mask-group">
-        <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_3)">
-          <g id="Group">
-            <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Yellow-Transparent" transform="translate(14.498611 14.347076)">
-      <g id="Mask-group">
-        <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_4)">
-          <g id="Group">
-            <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-opacity="0.6901961" stroke-width="16" stroke-dasharray="56 2 4 56 2 4" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Orange-Solid" transform="translate(28.979431 28.98117)">
-      <g id="Mask-group">
-        <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_5)">
-          <g id="Group">
-            <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Orange-Transparent" transform="translate(28.98436 28.81987)">
-      <g id="Mask-group">
-        <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_6)">
-          <g id="Group">
-            <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-opacity="0.4392157" stroke-width="8" stroke-dasharray="140 4 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Red-Solid" transform="translate(46.68904 46.691833)">
-      <g id="Mask-group">
-        <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_7)">
-          <g id="Group">
-            <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Red-Transparent" transform="translate(46.691147 46.691635)">
-      <g id="Mask-group">
-        <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_8)">
-          <g id="Group">
-            <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-opacity="0.2784314" stroke-width="4" stroke-dasharray="35 7 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-  </g>
-</svg>`;
-
-  // site/ts/elements/loader/loader.ts
-  var LoadingIndicator = class extends s4 {
-    render() {
-      return rings_default;
-    }
-  };
-  LoadingIndicator.styles = loader_default;
-  LoadingIndicator = __decorateClass([
-    n5("loading-indicator")
-  ], LoadingIndicator);
-
-  // site/ts/elements/extensions/extensions.css
-  var extensions_default = r`:host {
-    width: 100%;
-    height: 100%;
-}
-
-loading-indicator {
-    width: 80vmin;
-    height: 100%;
-    margin: auto;
-}
-
-iframe {
-    width: inherit;
-    height: inherit;
-    border: none;
-}`;
-
-  // site/ts/elements/extensions/extensions.ts
-  var ExtensionPage = class extends s4 {
-    constructor() {
-      super(...arguments);
-      this.src = "";
-    }
-    StopLoading() {
-      this.loader.remove();
-      this.frame.removeAttribute("style");
-    }
-    render() {
-      var srcUrl = new URL(this.src);
-      srcUrl.searchParams.set("dark", Site.dark.toString());
-      return p`
-        <iframe @load="${this.StopLoading}" src="${srcUrl.toString()}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
-        <loading-indicator></loading-indicator>
-        `;
-    }
-  };
-  ExtensionPage.styles = extensions_default;
-  __decorateClass([
-    e4({ type: String })
-  ], ExtensionPage.prototype, "src", 2);
-  __decorateClass([
-    i4("iframe", true)
-  ], ExtensionPage.prototype, "frame", 2);
-  __decorateClass([
-    i4("loading-indicator", true)
-  ], ExtensionPage.prototype, "loader", 2);
-  ExtensionPage = __decorateClass([
-    n5("extension-page")
-  ], ExtensionPage);
 
   // site/ts/elements/navbar/navitem.css
   var navitem_default = r`:host {
@@ -2183,10 +1191,10 @@ a {
       this.order = [];
       this.draggedNavItemIndex = 0;
       this.GetNavItem = ((order, index) => {
-        var page;
-        var title;
-        var icon;
-        var extension = false;
+        let page;
+        let title;
+        let icon;
+        let extension = false;
         if (order < Navbar.defaultPages.length)
           ({ page, title, icon } = Navbar.defaultPages[order]);
         else {
@@ -2205,8 +1213,15 @@ a {
       }).bind(this);
       matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
     }
+    static GetNavbarOrder() {
+      return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
+    }
+    static SetNavbarOrder(order) {
+      localStorage.setItem("Nav Order", JSON.stringify(order));
+      document.querySelector("nav-bar").requestUpdate();
+    }
     SetDraggedNavItemIndex(e8) {
-      var target = e8.target;
+      let target = e8.target;
       if (!target.editing)
         return;
       if (target.dataset.index === void 0)
@@ -2217,15 +1232,15 @@ a {
       e8.dataTransfer?.setData("Text", target.id);
     }
     ReorderNavItems(e8) {
-      var target = e8.target;
+      let target = e8.target;
       if (!target.editing)
         return;
       if (target.dataset.index === void 0)
         return;
-      var newIndex = parseInt(target.dataset.index);
+      let newIndex = parseInt(target.dataset.index);
       this.order.splice(newIndex, 0, this.order.splice(this.draggedNavItemIndex, 1)[0]);
       this.draggedNavItemIndex = newIndex;
-      Site.SetNavbarOrder(this.order);
+      Navbar.SetNavbarOrder(this.order);
     }
     ShowShadows() {
       if (!this.shadowRoot)
@@ -2255,7 +1270,7 @@ a {
       }
     }
     createRenderRoot() {
-      var root = super.createRenderRoot();
+      let root = super.createRenderRoot();
       root.addEventListener("pointerdown", () => {
         this.itemsContainer.classList.add("hover");
       });
@@ -2268,18 +1283,20 @@ a {
       this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
     }
     updated() {
-      for (var navItem of this.shadowRoot?.querySelectorAll("nav-item")) {
+      for (let navItem of this.shadowRoot?.querySelectorAll("nav-item")) {
         navItem.requestUpdate();
       }
     }
     render() {
-      this.order = Site.GetNavbarOrder();
-      var extensions2 = Site.GetInstalledExtensions();
-      this.pages = Object.keys(extensions2);
-      this.icons = this.pages.map((key) => Site.GetExtensionNavIconURL(extensions2[key]));
-      var mobile = window.innerWidth <= window.innerHeight;
-      var vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-      var scrollable = this.order.length * 12 * vmin > window.innerHeight;
+      this.order = Navbar.GetNavbarOrder();
+      let extensions = Extensions.installedExtensions;
+      for (var key of extensions.keys()) {
+        this.pages.push(key);
+        this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key)));
+      }
+      let mobile = window.innerWidth <= window.innerHeight;
+      let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
+      let scrollable = this.order.length * 12 * vmin > window.innerHeight;
       return p`
         <div id="items-container">
             ${c3(this.order, this.GetNavItem)}
@@ -2347,6 +1364,1103 @@ a {
     n5("nav-bar")
   ], Navbar);
 
+  // site/ts/extensions.ts
+  var _Extensions = class {
+    static get installedExtensions() {
+      return this._installedExtensions;
+    }
+    static set installedExtensions(value) {
+      this._installedExtensions = value;
+      this.extensionOrigins = this.GetExtensionOrigins(value);
+    }
+    static GetExtensionOrigins(extensions) {
+      let origins = [];
+      for (let extension of extensions.values())
+        origins.push(new URL(extension.url).origin);
+      return origins;
+    }
+    static async HandleCommand(command, data, source) {
+      if (command == "Get Resource") {
+        return new Promise((resolve) => {
+          let resolved = false;
+          Resources.GetResource(data.name, async (resource) => {
+            if (resolved) {
+              source?.postMessage({
+                command: "Resource",
+                data: {
+                  resource
+                }
+              });
+              return;
+            }
+            resolved = true;
+            resolve({
+              command: "Resource",
+              data: {
+                resource
+              }
+            });
+          });
+        });
+      }
+      if (command == "Get Token") {
+        let token = await Resources.GetToken();
+        return {
+          command: "Token",
+          data: {
+            token: token.token === null ? null : token.token.access_token,
+            valid: token.valid
+          }
+        };
+      }
+      if (command == "Refresh Token") {
+        let fetchedResources = await Resources.FetchResources();
+        if (!fetchedResources)
+          return {
+            command: "Refreshed Token",
+            data: {
+              token: null,
+              valid: false
+            }
+          };
+        let token = await Resources.GetToken();
+        return {
+          command: "Refreshed Token",
+          data: {
+            token: token.token === null ? null : token.token.access_token,
+            valid: token.valid
+          }
+        };
+      }
+      return {
+        command: "Unknown Command",
+        data: {
+          command
+        }
+      };
+    }
+    static async InstallExtension(extensionName) {
+      let extension = (await this.GetExtensionsNow()).get(extensionName);
+      if (extension) {
+        this._installedExtensions.set(extensionName, extension);
+        localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this._installedExtensions)));
+        let order = Navbar.GetNavbarOrder();
+        order.splice(order.length - 1, 0, order.length);
+        Navbar.SetNavbarOrder(order);
+      }
+    }
+    static async UninstallExtension(extensionName) {
+      let installedExtensions = _Extensions.installedExtensions;
+      let order = Navbar.GetNavbarOrder();
+      let index = order.indexOf(Object.keys(installedExtensions).indexOf(extensionName)) + Navbar.defaultPages.length;
+      let position = order.splice(index, 1)[0];
+      for (let i7 = 0; i7 < order.length; i7++) {
+        if (order[i7] > position) {
+          order[i7]--;
+        }
+      }
+      Navbar.SetNavbarOrder(order);
+      var extensionPage = document.getElementById(`extension-${extensionName}`);
+      if (extensionPage !== null)
+        extensionPage.remove();
+      this._installedExtensions.delete(extensionName);
+      localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this._installedExtensions)));
+    }
+    static async GetExtensionsNow() {
+      let cache = await caches.open("Metadata");
+      let response = await cache.match("Metadata");
+      if (!response)
+        return /* @__PURE__ */ new Map();
+      let extensions = new Map(Object.entries((await response.json()).pages || {}));
+      return extensions;
+    }
+    static async GetExtensions(callback) {
+      this._extensionCallbacks.push(callback);
+      callback(await this.GetExtensionsNow());
+    }
+    static async FireExtensionCallbacks() {
+      let extensions = await this.GetExtensionsNow();
+      for (let callback of this._extensionCallbacks)
+        callback(extensions);
+    }
+    static GetExtensionIconURL(extension) {
+      let url = new URL(extension.icon, extension.url);
+      url.search = `cache-version=${extension.version}`;
+      return url.toString();
+    }
+    static GetExtensionNavIconURL(extension) {
+      let url = new URL(extension.navIcon, extension.url);
+      url.search = `cache-version=${extension.version}`;
+      return url.toString();
+    }
+    static AddListeners() {
+      Site.ListenForDark((dark) => {
+        for (let i7 = 0; i7 < window.frames.length; i7++) {
+          let frame = window.frames[i7];
+          frame.postMessage({
+            command: "Set Dark",
+            data: dark
+          }, "*");
+        }
+      });
+      window.addEventListener("message", async (e8) => {
+        let origin = e8.origin;
+        if (!_Extensions.extensionOrigins.includes(origin))
+          return;
+        e8.source?.postMessage(await _Extensions.HandleCommand(e8.data.command, e8.data.data, e8.source));
+      });
+    }
+  };
+  var Extensions = _Extensions;
+  Extensions._installedExtensions = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
+  Extensions.extensionOrigins = _Extensions.GetExtensionOrigins(_Extensions._installedExtensions);
+  Extensions._extensionCallbacks = [];
+
+  // site/ts/site.ts
+  var Site = class {
+    static NavigateTo(page) {
+      if (page.extension) {
+        let extensions = Extensions.installedExtensions;
+        if (extensions.has(page.page)) {
+          let newPage = document.getElementById(`extension-${page.page}`);
+          if (newPage === null) {
+            let extensionPage = document.createElement("extension-page");
+            extensionPage.src = extensions.get(page.page).url;
+            extensionPage.id = `extension-${page.page}`;
+            document.querySelector("main")?.appendChild(extensionPage);
+            newPage = extensionPage;
+          }
+          this.SetPage(page, newPage);
+        }
+      } else
+        this.SetPage(page, document.getElementById(page.page));
+    }
+    static SetPage(page, element) {
+      if (element) {
+        if (this.pageElement != null)
+          this.pageElement.classList.add("hidden");
+        element.classList.remove("hidden");
+        this.pageElement = element;
+        this.page = page;
+        location.hash = page.extension ? `extension-${page.page}` : page.page;
+        let navbar = document.querySelector("nav-bar");
+        navbar.removeAttribute("editing");
+        navbar.requestUpdate?.();
+      }
+    }
+    static ShowNotification(content, loader = false) {
+      let notification = document.createElement("inline-notification");
+      if (typeof content === "string")
+        notification.innerText = content;
+      else
+        notification.appendChild(content);
+      notification.loader = loader;
+      document.getElementById("notification-area")?.appendChild(notification);
+      return notification;
+    }
+    static SetDark(dark) {
+      this.dark = dark;
+      document.documentElement.classList.toggle("dark", dark);
+      localStorage.setItem("Dark", dark.toString());
+      for (let callback of this.darkCallbacks) {
+        callback(dark);
+      }
+    }
+    static ListenForDark(callback) {
+      this.darkCallbacks.push(callback);
+    }
+    static SetColour(hue) {
+      document.documentElement.style.setProperty("--main-hue", hue);
+      document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+    }
+  };
+  Site.page = {
+    page: "",
+    extension: false
+  };
+  Site.dark = localStorage.getItem("Dark") == "true";
+  Site.hue = localStorage.getItem("Hue") || "200";
+  Site.pageElement = null;
+  Site.darkCallbacks = [];
+
+  // site/ts/elements/page/page.ts
+  var Page2 = class extends s4 {
+    constructor() {
+      super(...arguments);
+      this._state = 0 /* Waiting */;
+      this._unreceivedResources = 0;
+      this._uncompletedResources = 0;
+    }
+    AddResource(resourceName, property) {
+      this._unreceivedResources++;
+      this._uncompletedResources++;
+      let received = false;
+      let completed = false;
+      Resources.GetResource(resourceName, (resource) => {
+        if (!received) {
+          this._unreceivedResources--;
+          received = true;
+        }
+        if (resource !== null && resource !== void 0) {
+          if (!completed) {
+            this._uncompletedResources--;
+            completed = true;
+          }
+          this[property] = resource;
+        }
+        if (this._uncompletedResources == 0)
+          this._state = 2 /* Loaded */;
+        else if (this._unreceivedResources == 0)
+          this._state = 1 /* Loading */;
+      });
+    }
+    render() {
+      if (this._state == 0 /* Waiting */)
+        return T;
+      if (this._state == 1 /* Loading */) {
+        return p`
+            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
+            <style>
+                :host {
+                    display: flex;
+                }
+            </style>
+            `;
+      }
+      return this.renderPage();
+    }
+    renderPage() {
+      return T;
+    }
+  };
+  __decorateClass([
+    t3()
+  ], Page2.prototype, "_state", 2);
+
+  // node_modules/lit-html/directives/unsafe-html.js
+  var e7 = class extends i5 {
+    constructor(i7) {
+      if (super(i7), this.it = T, i7.type !== t4.CHILD)
+        throw Error(this.constructor.directiveName + "() can only be used in child bindings");
+    }
+    render(r4) {
+      if (r4 === T || r4 == null)
+        return this.vt = void 0, this.it = r4;
+      if (r4 === b)
+        return r4;
+      if (typeof r4 != "string")
+        throw Error(this.constructor.directiveName + "() called with a non-string value");
+      if (r4 === this.it)
+        return this.vt;
+      this.it = r4;
+      const s6 = [r4];
+      return s6.raw = s6, this.vt = { _$litType$: this.constructor.resultType, strings: s6, values: [] };
+    }
+  };
+  e7.directiveName = "unsafeHTML", e7.resultType = 1;
+  var o6 = e5(e7);
+
+  // site/ts/elements/announcements/post.css
+  var post_default = r`:host {
+    display: block;
+}
+
+details, summary {
+    --user-select: text;
+    cursor: text;
+}
+
+summary {
+    position: relative;
+
+    list-style: none;
+
+    margin-bottom: 1vmin;
+}
+
+summary > * {
+    cursor: pointer;
+}
+
+summary::after {
+    content: "";
+
+    position: absolute;
+    top: 0;
+    right: 0;
+
+    display: block;
+    width: calc(var(--font-size) * 1.5);
+    height: calc(var(--font-size) * 1.5);
+
+    margin-left: auto;
+    
+    background-image: url(images/toggle.svg);
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position-y: center;
+
+    cursor: pointer;
+
+    transform: rotate(180deg);
+
+    transition: 0.3s;
+}
+
+details[open] > summary::after {
+    transform: none;
+}
+
+.info {
+    font-size: calc(var(--font-size) * 0.7);
+}`;
+
+  // site/ts/elements/announcements/post.ts
+  var AnnouncementPost = class extends s4 {
+    render() {
+      return p`
+        <details>
+            <summary>
+                <h3>${this.title}</h3>
+                <p class="info">By ${this.author} | For ${this.years}${this.meetingTime === void 0 ? "" : ` | At ${this.meetingTime}`}</p>
+            </summary>
+
+            ${o6(this.content)}
+        </details>
+        `;
+    }
+  };
+  AnnouncementPost.styles = [text_default, post_default];
+  __decorateClass([
+    e4()
+  ], AnnouncementPost.prototype, "title", 2);
+  __decorateClass([
+    e4()
+  ], AnnouncementPost.prototype, "author", 2);
+  __decorateClass([
+    e4()
+  ], AnnouncementPost.prototype, "years", 2);
+  __decorateClass([
+    e4({ type: Boolean })
+  ], AnnouncementPost.prototype, "meeting", 2);
+  __decorateClass([
+    e4()
+  ], AnnouncementPost.prototype, "meetingTime", 2);
+  __decorateClass([
+    e4()
+  ], AnnouncementPost.prototype, "content", 2);
+  __decorateClass([
+    e4({ type: Number })
+  ], AnnouncementPost.prototype, "weight", 2);
+  AnnouncementPost = __decorateClass([
+    n5("announcement-post")
+  ], AnnouncementPost);
+
+  // site/css/default/search.css
+  var search_default = r`:where(input[type=search]) {
+    border: none;
+    border-bottom: 0.2vmin solid var(--text2);
+    border-radius: 0;
+
+    background-color: var(--surface2);
+    color: var(--text1);
+
+    font-size: var(--font-size);
+    font-family: monospace;
+
+    height: calc(var(--font-size) * 2);
+}
+
+:where(input[type=search]:focus) {
+    outline: none;
+}
+
+:where(input[type=search])::-webkit-input-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-moz-placeholder {
+    color: var(--text3);
+}
+
+:where(input[type=search])::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+}`;
+
+  // site/css/default/select.css
+  var select_default = r`:where(select) {
+    border: 0.2vmin solid var(--text2);
+    background-color: var(--surface2);
+    color: var(--text2);
+
+    padding: 1vmin 0;
+    padding-right: 6vmin;
+
+    border-radius: 1vmin;
+
+    font-size: calc(var(--font-size) / 1.2);
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+}
+
+:where(option) {
+    background-color: var(--surface2);
+}`;
+
+  // site/css/default/elements/full.css
+  var full_default = r`:host {
+    flex: 1;
+    margin: 1%;
+
+    box-sizing: border-box;
+    padding: 1vmin;
+}
+
+/*
+    306px is 102% of 300px.
+    We use 102% because that includes the margin,
+    which is 1% either side.
+*/
+@media (max-width: 306px) {
+    :host {
+        margin: 1% calc(50% - 150px);
+    }
+}
+
+@media (max-width: 300px) {
+    :host {
+        margin: 1% 0;
+    }
+}`;
+
+  // site/css/default/elements/element.css
+  var element_default = r`:host {
+    box-shadow: var(--shadow);
+    background-color: var(--surface2);
+    border-radius: 2vmin;
+}`;
+
+  // site/ts/elements/announcements/announcements.css
+  var announcements_default = r`:host {
+    display: flex;
+    flex-direction: column;
+    gap: 3vmin;
+
+    overscroll-behavior: contain;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+}
+
+.content {
+    flex: 1;
+    overflow: hidden auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface4) transparent;
+}
+
+.content::-webkit-scrollbar-track {
+    background-color: transparent;
+
+    width: 1vmin;
+}
+
+.content::-webkit-scrollbar-thumb {
+    background-color: var(--surface4);
+    border-radius: 1vmin;
+}
+
+.content:empty::after {
+    content: "No announcements. Try changing your filter or searching for something else.";
+
+    display: block;
+    width: 100%;
+
+    margin-top: 1vmin;
+
+    text-align: center;
+
+    font-size: calc(var(--font-size) * 1.4);
+}
+
+announcement-post {
+    margin-bottom: 3vmin;
+}`;
+
+  // site/ts/elements/announcements/announcements.ts
+  var SchoolAnnouncements = class extends Page2 {
+    constructor() {
+      super();
+      this.yearFilter = "all";
+      this.searchFilter = "";
+      this.AddResource("announcements", "announcements");
+    }
+    renderPage() {
+      let filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement) => announcement.years.includes(this.yearFilter));
+      filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement) => announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) || announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
+      return p`
+        <div class="header">
+            <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
+
+            <select @input="${(e8) => this.yearFilter = e8.target.value}">
+                <option value="all">All</option>
+                <option value="Staff">Staff</option>
+                <option value="12">Year 12</option>
+                <option value="11">Year 11</option>
+                <option value="10">Year 10</option>
+                <option value="9">Year 9</option>
+                <option value="8">Year 8</option>
+                <option value="7">Year 7</option>
+            </select>
+        </div>
+
+        <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
+        <div class="content">${c3(filteredAnnouncements, (announcement) => p`
+        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
+                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
+                           ${announcement.meetingTime === null ? "" : `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === void 0 ? "" : ` (${announcement.meetingTimeParsed})`}"`}
+                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
+        `)}</div>
+        `;
+    }
+  };
+  SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements.prototype, "announcements", 2);
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements.prototype, "yearFilter", 2);
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements.prototype, "searchFilter", 2);
+  SchoolAnnouncements = __decorateClass([
+    n5("school-announcements")
+  ], SchoolAnnouncements);
+
+  // site/ts/elements/info/info.css
+  var info_default = r`:host {
+    position: relative;
+    display: block;
+}
+
+button {
+    all: unset;
+    width: inherit;
+    height: inherit;
+}
+
+svg {
+    width: inherit;
+    height: inherit;
+}
+
+slot {
+    position: absolute;
+    display: block;
+    top: var(--offset);
+    
+    width: max-content;
+    max-width: var(--max-width);
+
+    background-color: var(--surface2);
+
+    border-radius: 2vmin;
+    box-shadow: var(--shadow);
+    padding: 2vmin;
+
+    z-index: inherit;
+
+    box-sizing: border-box;
+}
+
+.background {
+    position: absolute;
+    width: var(--max-width);
+    height: 200%;
+    top: 0;
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
+}`;
+
+  // site/images/info.svg
+  var info_default2 = y`<?xml version="1.0" encoding="utf-8"?>
+<svg width="210px" height="210px" viewBox="0 0 210 210" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <g id="Group" transform="translate(5 5)">
+    <path d="M0 100C0 44.7715 44.7715 0 100 0C155.228 0 200 44.7715 200 100C200 155.228 155.228 200 100 200C44.7715 200 0 155.228 0 100Z" id="Ellipse" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
+    <g id="" transform="translate(58 37)">
+      <path d="M32.7841 86.4091L32.7841 85.7954Q32.8864 76.0284 34.8295 70.25Q36.7727 64.4716 40.3523 60.892Q43.9318 57.3125 48.9432 54.2954Q53.4432 51.5852 56.5114 47.1875Q59.5795 42.7898 59.5795 36.7045Q59.5795 29.1875 54.4915 24.7642Q49.4034 20.3409 42.1932 20.3409Q38 20.3409 34.1136 22.0795Q30.2273 23.8182 27.6193 27.5511Q25.0114 31.2841 24.6023 37.3182L11.7159 37.3182Q12.125 28.625 16.2415 22.4375Q20.358 16.25 27.1335 12.9773Q33.9091 9.70454 42.1932 9.70454Q51.1932 9.70454 57.8665 13.2841Q64.5398 16.8636 68.196 23.1023Q71.8523 29.3409 71.8523 37.3182Q71.8523 45.8068 68.0682 51.8409Q64.2841 57.875 57.5341 61.9659Q50.7841 66.1591 47.9972 71.2216Q45.2102 76.2841 45.0568 85.7954L45.0568 86.4091L32.7841 86.4091ZM39.3295 116.682Q35.5454 116.682 32.8352 113.972Q30.125 111.261 30.125 107.477Q30.125 103.693 32.8352 100.983Q35.5454 98.2727 39.3295 98.2727Q43.1136 98.2727 45.8239 100.983Q48.5341 103.693 48.5341 107.477Q48.5341 111.261 45.8239 113.972Q43.1136 116.682 39.3295 116.682Z" />
+    </g>
+  </g>
+</svg>`;
+
+  // site/ts/elements/info/info.ts
+  var Info = class extends s4 {
+    constructor() {
+      super();
+      this.HidePopup = (() => {
+        this.info.style.display = "none";
+        this.background.style.display = "none";
+      }).bind(this);
+      this.addEventListener("pointerover", this.ShowPopup);
+      this.addEventListener("pointerleave", this.HidePopup);
+      document.addEventListener("pointerover", this.HidePopup);
+    }
+    ShowPopup(e8) {
+      this.info.style.removeProperty("display");
+      this.background.style.removeProperty("display");
+      e8.stopPropagation();
+    }
+    disconnectedCallback() {
+      super.disconnectedCallback();
+      document.removeEventListener("pointerover", this.HidePopup);
+    }
+    render() {
+      return p`
+        <button @click="${this.ShowPopup}">
+            ${info_default2}
+        </button>
+
+        <slot style="display: none"></slot>
+
+        <div class="background" style="display: none"></div>
+        `;
+    }
+  };
+  Info.styles = [img_default, info_default];
+  __decorateClass([
+    i4("slot")
+  ], Info.prototype, "info", 2);
+  __decorateClass([
+    i4(".background")
+  ], Info.prototype, "background", 2);
+  Info = __decorateClass([
+    n5("info-popup")
+  ], Info);
+
+  // site/ts/elements/barcode/barcode.css
+  var barcode_default = r`:host {
+    position: relative;
+
+    touch-action: none;
+}
+
+#point1,
+#point2 {
+    --size: 3vmin;
+
+    position: absolute;
+
+    width: var(--size);
+    height: var(--size);
+
+    background-color: var(--surface4);
+    border-radius: calc(var(--size) / 2);
+
+    transform: translate(-50%, -50%);
+
+    z-index: 1;
+
+    cursor: move;
+}
+
+#point1::after,
+#point2::after {
+    content: "";
+
+    display: block;
+
+    width: 3vmax;
+    height: 3vmax;
+
+    margin: calc(var(--size) / 2 - 1.5vmax);
+}
+
+#barcodeDisplay {
+    position: absolute;
+
+    box-sizing: border-box;
+
+    filter: contrast(5);
+}
+
+#barcodeDisplay.outline {
+    border: solid 1vmin var(--text1);
+}
+
+info-popup {
+    --max-width: 30vmax;
+    --offset: 7vmin;
+    
+    width: 5vmin;
+    height: 5vmin;
+    z-index: 2;
+}`;
+
+  // site/ts/elements/barcode/barcode.ts
+  var StudentBarcode = class extends Page2 {
+    constructor() {
+      super();
+      this.draggedElement = null;
+      this.dragging = false;
+      this.addEventListener("pointerdown", (e8) => e8.preventDefault());
+      this.addEventListener("pointermove", this.DragPoint);
+      this.addEventListener("pointerup", this.EndDrag);
+      this.AddResource("userinfo", "userInfo");
+      Site.ListenForDark((dark) => {
+        this.barcode?.classList.toggle("outline", dark);
+      });
+    }
+    set userInfo(value) {
+      this.studentId = value.studentId;
+      this.requestUpdate();
+    }
+    StartDrag(e8) {
+      e8.preventDefault();
+      this.draggedElement = e8.target;
+      this.draggedElement.style.pointerEvents = "none";
+      this.style.cursor = "move";
+    }
+    DragPoint(e8) {
+      e8.preventDefault();
+      if (this.draggedElement == null)
+        return;
+      if (!this.dragging) {
+        this.dragging = true;
+        this.draggedElement.style.left = `${(e8.clientX - this.offsetLeft) / this.clientWidth * 100}%`;
+        this.draggedElement.style.top = `${(e8.clientY - this.offsetTop) / this.clientHeight * 100}%`;
+        this.SetBarcodePosition();
+        this.dragging = false;
+      }
+    }
+    EndDrag() {
+      if (this.draggedElement != null)
+        this.draggedElement.style.removeProperty("pointer-events");
+      this.draggedElement = null;
+      this.removeAttribute("style");
+      this.RenderBarcode();
+    }
+    SetBarcodePosition() {
+      if (this.barcode === null)
+        return;
+      let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
+      let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
+      let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
+      let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
+      let maxX = Math.max(x1, x2);
+      let minX = Math.min(x1, x2);
+      let maxY = Math.max(y1, y2);
+      let minY = Math.min(y1, y2);
+      this.barcode.style.left = `${minX}%`;
+      this.barcode.style.top = `${minY}%`;
+      this.barcode.style.width = `${maxX - minX}%`;
+      this.barcode.style.height = `${maxY - minY}%`;
+    }
+    RenderBarcode() {
+      if (this.draggedElement != null)
+        return;
+      if (this.barcode === null || this.point1 === null || this.point2 === null)
+        return;
+      localStorage.setItem("Barcode Points", JSON.stringify([
+        this.point1.style.left,
+        this.point1.style.top,
+        this.point2.style.left,
+        this.point2.style.top
+      ]));
+      if (typeof JsBarcode === "function") {
+        JsBarcode(this.barcode, this.studentId, {
+          displayValue: false,
+          margin: 0
+        });
+      }
+    }
+    updated() {
+      this.SetBarcodePosition();
+      this.RenderBarcode();
+    }
+    renderPage() {
+      let storedPoints = localStorage.getItem("Barcode Points");
+      let points = ["20%", "20%", "80%", "40%"];
+      if (storedPoints)
+        points = JSON.parse(storedPoints);
+      return p`
+        <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
+
+        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
+        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
+
+        <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        `;
+    }
+  };
+  StudentBarcode.styles = [element_default, full_default, text_default, img_default, barcode_default];
+  __decorateClass([
+    i4("#barcodeDisplay")
+  ], StudentBarcode.prototype, "barcode", 2);
+  __decorateClass([
+    i4("#point1")
+  ], StudentBarcode.prototype, "point1", 2);
+  __decorateClass([
+    i4("#point2")
+  ], StudentBarcode.prototype, "point2", 2);
+  StudentBarcode = __decorateClass([
+    n5("student-barcode")
+  ], StudentBarcode);
+
+  // site/css/default/elements/card.css
+  var card_default = r`:host {
+    padding: 2vmin;
+
+    margin: auto;
+
+    width: 60vw;
+    max-width: 60vh;
+    min-width: 300px;
+    height: 80%;
+}
+
+@media (max-width: 300px) {
+    :host {
+        width: 100vw;
+        min-width: unset;
+    }
+}`;
+
+  // site/ts/elements/daily-timetable/daily-timetable.css
+  var daily_timetable_default = r``;
+
+  // site/ts/elements/daily-timetable/daily-timetable.ts
+  var SchoolAnnouncements2 = class extends Page2 {
+    constructor() {
+      super();
+      this.AddResource("dailytimetable", "dailyTimetable");
+    }
+    renderPage() {
+      return p`
+        
+        `;
+    }
+  };
+  SchoolAnnouncements2.styles = [element_default, card_default, text_default, daily_timetable_default];
+  __decorateClass([
+    t3()
+  ], SchoolAnnouncements2.prototype, "dailyTimetable", 2);
+  SchoolAnnouncements2 = __decorateClass([
+    n5("daily-timetable")
+  ], SchoolAnnouncements2);
+
+  // site/ts/elements/loader/loader.css
+  var loader_default = r`:host {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+svg {
+    width: inherit;
+    height: inherit;
+    animation: 3s infinite spin;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}`;
+
+  // site/images/rings.svg
+  var rings_default = y`<?xml version="1.0" encoding="utf-8"?>
+<svg width="529px" height="528px" viewBox="0 0 529 528" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_1" />
+    <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_2" />
+    <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_3" />
+    <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_4" />
+    <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_5" />
+    <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_6" />
+    <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_7" />
+    <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_8" />
+    <clipPath id="mask_1">
+      <use xlink:href="#path_1" />
+    </clipPath>
+    <clipPath id="mask_2">
+      <use xlink:href="#path_2" />
+    </clipPath>
+    <clipPath id="mask_3">
+      <use xlink:href="#path_3" />
+    </clipPath>
+    <clipPath id="mask_4">
+      <use xlink:href="#path_4" />
+    </clipPath>
+    <clipPath id="mask_5">
+      <use xlink:href="#path_5" />
+    </clipPath>
+    <clipPath id="mask_6">
+      <use xlink:href="#path_6" />
+    </clipPath>
+    <clipPath id="mask_7">
+      <use xlink:href="#path_7" />
+    </clipPath>
+    <clipPath id="mask_8">
+      <use xlink:href="#path_8" />
+    </clipPath>
+  </defs>
+  <g id="Rings" transform="translate(8 8)">
+    <g id="Green-Solid" transform="translate(7.6293945E-05 0)">
+      <g id="Mask-group">
+        <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_1)">
+          <g id="Group">
+            <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Green-Transparent" transform="translate(0 0.00030517578)">
+      <g id="Mask-group">
+        <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_2)">
+          <g id="Group">
+            <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-opacity="0.2784314" stroke-width="8" stroke-dasharray="46 2 12 46 2 12" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Yellow-Solid" transform="translate(14.489731 14.490631)">
+      <g id="Mask-group">
+        <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_3)">
+          <g id="Group">
+            <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Yellow-Transparent" transform="translate(14.498611 14.347076)">
+      <g id="Mask-group">
+        <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_4)">
+          <g id="Group">
+            <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-opacity="0.6901961" stroke-width="16" stroke-dasharray="56 2 4 56 2 4" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Orange-Solid" transform="translate(28.979431 28.98117)">
+      <g id="Mask-group">
+        <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_5)">
+          <g id="Group">
+            <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Orange-Transparent" transform="translate(28.98436 28.81987)">
+      <g id="Mask-group">
+        <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_6)">
+          <g id="Group">
+            <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-opacity="0.4392157" stroke-width="8" stroke-dasharray="140 4 10 80" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Red-Solid" transform="translate(46.68904 46.691833)">
+      <g id="Mask-group">
+        <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_7)">
+          <g id="Group">
+            <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80" />
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="Red-Transparent" transform="translate(46.691147 46.691635)">
+      <g id="Mask-group">
+        <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="none" />
+        <g clip-path="url(#mask_8)">
+          <g id="Group">
+            <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-opacity="0.2784314" stroke-width="4" stroke-dasharray="35 7 10 80" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>`;
+
+  // site/ts/elements/loader/loader.ts
+  var LoadingIndicator = class extends s4 {
+    render() {
+      return rings_default;
+    }
+  };
+  LoadingIndicator.styles = loader_default;
+  LoadingIndicator = __decorateClass([
+    n5("loading-indicator")
+  ], LoadingIndicator);
+
+  // site/ts/elements/extensions/extensions.css
+  var extensions_default = r`:host {
+    width: 100%;
+    height: 100%;
+}
+
+loading-indicator {
+    width: 80vmin;
+    height: 100%;
+    margin: auto;
+}
+
+iframe {
+    width: inherit;
+    height: inherit;
+    border: none;
+}`;
+
+  // site/ts/elements/extensions/extensions.ts
+  var ExtensionPage = class extends s4 {
+    constructor() {
+      super(...arguments);
+      this.src = "";
+    }
+    StopLoading() {
+      this.loader.remove();
+      this.frame.removeAttribute("style");
+    }
+    render() {
+      let srcUrl = new URL(this.src);
+      srcUrl.searchParams.set("dark", Site.dark.toString());
+      return p`
+        <iframe @load="${this.StopLoading}" src="${srcUrl.toString()}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
+        <loading-indicator></loading-indicator>
+        `;
+    }
+  };
+  ExtensionPage.styles = extensions_default;
+  __decorateClass([
+    e4({ type: String })
+  ], ExtensionPage.prototype, "src", 2);
+  __decorateClass([
+    i4("iframe", true)
+  ], ExtensionPage.prototype, "frame", 2);
+  __decorateClass([
+    i4("loading-indicator", true)
+  ], ExtensionPage.prototype, "loader", 2);
+  ExtensionPage = __decorateClass([
+    n5("extension-page")
+  ], ExtensionPage);
+
   // site/css/default/button.css
   var button_default = r`a.button {
     text-decoration: none;
@@ -2405,31 +2519,11 @@ img {
   // site/ts/elements/extensions-marketplace/extension-display.ts
   var ExtensionDisplay = class extends s4 {
     async Install() {
-      var allExtensions = await Site.GetExtensionsNow();
-      var installedExtensions = Site.GetInstalledExtensions();
-      var extension = allExtensions[this.title];
-      if (extension) {
-        installedExtensions[this.title] = extension;
-        Site.SetInstalledExtensions(installedExtensions);
-        var order = Site.GetNavbarOrder();
-        order.push(order.length);
-        Site.SetNavbarOrder(order);
-      }
+      await Extensions.InstallExtension(this.title);
       document.getElementById("pages").requestUpdate();
     }
     async Uninstall() {
-      var installedExtensions = Site.GetInstalledExtensions();
-      var order = Site.GetNavbarOrder();
-      var index = order.indexOf(Object.keys(installedExtensions).indexOf(this.title)) + Navbar.defaultPages.length;
-      var position = order.splice(index, 1)[0];
-      for (let i7 = 0; i7 < order.length; i7++) {
-        if (order[i7] > position) {
-          order[i7]--;
-        }
-      }
-      Site.SetNavbarOrder(order);
-      delete installedExtensions[this.title];
-      Site.SetInstalledExtensions(installedExtensions);
+      await Extensions.UninstallExtension(this.title);
       document.getElementById("pages").requestUpdate();
     }
     render() {
@@ -2517,14 +2611,17 @@ img {
     constructor() {
       super();
       this.fetchingExtensions = true;
-      this.extensions = {};
-      Site.GetExtensions((extensions2) => {
+      this.extensions = /* @__PURE__ */ new Map();
+      Extensions.GetExtensions((extensions) => {
         this.fetchingExtensions = false;
-        this.extensions = extensions2;
+        this.extensions = extensions;
       });
     }
     render() {
-      var installedExtensions = Site.GetInstalledExtensions();
+      let installedExtensions = Extensions.installedExtensions;
+      let installedExtensionNames = [];
+      for (var key of installedExtensions.keys())
+        installedExtensionNames.push(key);
       return p`
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
@@ -2533,10 +2630,10 @@ img {
 
         ${this.fetchingExtensions ? T : p`
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${c3(Object.keys(this.extensions), (extensionName) => p`
-        <extension-display title="${extensionName}" img="${Site.GetExtensionIconURL(this.extensions[extensionName])}"
-                           description="${this.extensions[extensionName].description}"
-                           ?installed="${Object.keys(installedExtensions).includes(extensionName)}"></extension-display>
+        <div class="content">${c3(this.extensions.keys(), (extensionName) => p`
+        <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(this.extensions.get(extensionName))}"
+                           description="${this.extensions.get(extensionName).description}"
+                           ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
         `)}</div>
         `}
         `;
@@ -2706,9 +2803,9 @@ info-popup {
       super();
       this.version = "0.0.0";
       caches.open("Metadata").then(async (cache) => {
-        var metadataResponse = await cache.match("Metadata");
+        let metadataResponse = await cache.match("Metadata");
         if (metadataResponse) {
-          var metadata = await metadataResponse.json();
+          let metadata = await metadataResponse.json();
           this.version = metadata.version;
         }
       });
@@ -2729,12 +2826,12 @@ info-popup {
       localStorage.setItem("Hue", e8.target.value);
     }
     ToggleDark(e8) {
-      var darkCheckbox = e8.target;
+      let darkCheckbox = e8.target;
       Site.SetDark(darkCheckbox.checked);
       this.requestUpdate();
     }
     ToggleEditNavbar() {
-      var navbar = document.querySelector("nav-bar");
+      let navbar = document.querySelector("nav-bar");
       if (navbar) {
         navbar.toggleAttribute("editing");
       }
@@ -2890,7 +2987,7 @@ p:hover + #popup {
   var TimetablePeriod = class extends s4 {
     static highlight(name) {
       this.highlighted = name;
-      for (var instance of this.instances)
+      for (let instance of this.instances)
         instance.requestUpdate();
     }
     constructor() {
@@ -2907,11 +3004,11 @@ p:hover + #popup {
       }
     }
     render() {
-      var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+      let highlighted = TimetablePeriod.highlighted == this.name && this.name;
       if (highlighted) {
-        var nextSibling = this.nextElementSibling;
-        var nextNextSibling = nextSibling?.nextElementSibling;
-        var displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
+        let nextSibling = this.nextElementSibling;
+        let nextNextSibling = nextSibling?.nextElementSibling;
+        let displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
         return p`
                 <p class="highlighted">${this.name}</p>
                 <p id="popup"
@@ -3114,7 +3211,7 @@ timetable-row + timetable-row {
 }`;
 
   // site/ts/elements/timetable/timetable.ts
-  var FullTimetable = class extends Page {
+  var FullTimetable = class extends Page2 {
     set dailyTimetable(value) {
       this._day = value.timetable.timetable.dayname;
     }
@@ -3173,75 +3270,16 @@ timetable-row + timetable-row {
     n5("full-timetable")
   ], FullTimetable);
 
-  // site/ts/extensions.ts
-  var extensions = Site.GetInstalledExtensions();
-  var origins = Object.keys(extensions).map((extension) => {
-    var url = new URL(extensions[extension].url);
-    return url.origin;
-  });
-  Site.ListenForDark((dark) => {
-    for (let i7 = 0; i7 < window.frames.length; i7++) {
-      var frame = window.frames[i7];
-      frame.postMessage({
-        command: "Set Dark",
-        data: dark
-      }, "*");
-    }
-  });
-  window.addEventListener("message", async (e8) => {
-    var origin = e8.origin;
-    if (!origins.includes(origin))
-      return;
-    e8.source?.postMessage(await HandleCommands(e8.data.command, e8.data.data), {
-      targetOrigin: origin
-    });
-  });
-  async function HandleCommands(command, data) {
-    switch (command) {
-      case "Get Resource":
-        return {
-          command: "Resource",
-          data: {
-            resource: await Site.GetResourceNow(data.resource)
-          }
-        };
-      case "Get Token":
-        var token = await Site.GetToken();
-        return {
-          command: "Token",
-          data: {
-            token: token.token === null ? null : token.token.access_token,
-            valid: token.valid
-          }
-        };
-      case "Refresh Token":
-        var fetchedResources = await Site.FetchResources();
-        if (!fetchedResources)
-          return {
-            command: "Refreshed Token",
-            data: {
-              token: null,
-              valid: false
-            }
-          };
-        var token = await Site.GetToken();
-        return {
-          command: "Refreshed Token",
-          data: {
-            token: token.token === null ? null : token.token.access_token,
-            valid: token.valid
-          }
-        };
-      default:
-        break;
-    }
-  }
-
   // site/ts/index.ts
   Main();
   async function Main() {
     if (location.hash) {
       NavigateToHash(location.hash);
+    } else {
+      Site.NavigateTo({
+        page: document.querySelector("main").children[0].id,
+        extension: false
+      });
     }
     window.addEventListener("hashchange", () => {
       if (location.hash) {
@@ -3255,16 +3293,17 @@ timetable-row + timetable-row {
       await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
         scope: "/"
       });
-    var lastReloadedText = sessionStorage.getItem("Last Reloaded");
-    var resourceNotification = ShowResourceNotification();
+    let lastReloadedText = sessionStorage.getItem("Last Reloaded");
+    let resourceNotification = ShowResourceNotification();
     if (lastReloadedText) {
-      var lastReloaded = new Date(lastReloadedText);
+      let lastReloaded = new Date(lastReloadedText);
       if (new Date().getTime() - lastReloaded.getTime() > "3600") {
-        Site.FetchResources().then(() => resourceNotification.remove());
+        Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
         sessionStorage.setItem("Last Refreshed", new Date().toISOString());
       }
     } else
-      Site.FetchResources().then(() => resourceNotification.remove());
+      Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
+    Extensions.AddListeners();
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
     if (registration)
       await registration.update();
@@ -3274,12 +3313,12 @@ timetable-row + timetable-row {
       });
     navigator.serviceWorker.addEventListener("message", (e8) => {
       if (e8.data.command == "metadata-fetched") {
-        Site.FireExtensionCallbacks();
+        Extensions.FireExtensionCallbacks();
       }
     });
-    var serviceWorker = await navigator.serviceWorker.ready;
+    let serviceWorker = await navigator.serviceWorker.ready;
     if (serviceWorker.periodicSync) {
-      var tags = await serviceWorker.periodicSync.getTags();
+      let tags = await serviceWorker.periodicSync.getTags();
       if (!tags.includes("metadata-fetch")) {
         try {
           await serviceWorker.periodicSync.register("metadata-fetch", {
@@ -3294,11 +3333,12 @@ timetable-row + timetable-row {
     navigator.serviceWorker.controller?.postMessage({ command: "metadata-fetch" });
   }
   function NavigateToHash(hash) {
-    var extension = hash.indexOf("extension-") == 1;
+    let extension = hash.indexOf("extension-") == 1;
+    let page = "";
     if (extension) {
-      var page = decodeURIComponent(hash.substring(11));
+      page = decodeURIComponent(hash.substring(11));
     } else {
-      var page = decodeURIComponent(hash.substring(1));
+      page = decodeURIComponent(hash.substring(1));
     }
     Site.NavigateTo({
       page,

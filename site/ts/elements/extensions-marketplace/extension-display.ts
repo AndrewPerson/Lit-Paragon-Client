@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Site } from "../../site";
+import { Extensions } from "../../extensions";
 
 import { Navbar } from "../navbar/navbar";
 import { ExtensionsMarketplace } from "./extensions-marketplace";
@@ -30,44 +31,13 @@ export class ExtensionDisplay extends LitElement {
     installed: boolean;
 
     async Install() {
-        var allExtensions = await Site.GetExtensionsNow();
-        var installedExtensions = Site.GetInstalledExtensions();
-
-        var extension = allExtensions[this.title];
-
-        if (extension) {
-            installedExtensions[this.title] = extension;
-
-            Site.SetInstalledExtensions(installedExtensions);
-
-            var order = Site.GetNavbarOrder();
-            order.push(order.length);
-
-            Site.SetNavbarOrder(order);
-        }
+        await Extensions.InstallExtension(this.title);
 
         (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
     }
 
     async Uninstall() {
-        var installedExtensions = Site.GetInstalledExtensions();
-
-        var order = Site.GetNavbarOrder();
-
-        var index = order.indexOf(Object.keys(installedExtensions).indexOf(this.title)) + Navbar.defaultPages.length;
-        var position = order.splice(index, 1)[0];
-
-        for (let i = 0; i < order.length; i++) {
-            if (order[i] > position) {
-                order[i]--;
-            }
-        }
-
-        Site.SetNavbarOrder(order);
-
-        delete installedExtensions[this.title];
-
-        Site.SetInstalledExtensions(installedExtensions);
+        await Extensions.UninstallExtension(this.title);
 
         (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
     }

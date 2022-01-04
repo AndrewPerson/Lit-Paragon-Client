@@ -7,7 +7,7 @@
   async function onFetch(e) {
     const request = e.request;
     if (request.method == "GET") {
-      var url = new URL(request.url);
+      let url = new URL(request.url);
       if (url.hostname == location.hostname && url.pathname == "/login")
         return await fetch("/callback");
     }
@@ -15,7 +15,7 @@
   }
   async function onMessage(e) {
     if (e.data.command == "metadata-fetch") {
-      var metadataCache = await caches.open("Metadata");
+      let metadataCache = await caches.open("Metadata");
       await metadataCache.put(`${location.origin}/Metadata`, await fetch("http://127.0.0.1:5555/metadata"));
       e.source?.postMessage({ command: "metadata-fetched" });
     }

@@ -28,7 +28,7 @@ export class ExtensionPage extends LitElement {
     }
     
     render() {
-        var srcUrl = new URL(this.src);
+        let srcUrl = new URL(this.src);
 
         srcUrl.searchParams.set("dark", Site.dark.toString());
 

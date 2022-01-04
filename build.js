@@ -19,8 +19,8 @@ import clear from "esbuild-plugin-clear";
 import conditionalBuild from "esbuild-plugin-conditional-build";
 
 function transformVars(vars) {
-    for (var key of Object.keys(vars)) {
-        var value = vars[key];
+    for (let key of Object.keys(vars)) {
+        let value = vars[key];
 
         if (typeof value === "object")
             vars[key] = JSON.stringify(value);
@@ -72,7 +72,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
 
-var tsPromise = new Promise(res => {
+let tsPromise = new Promise(res => {
     exec("npx tsc --noEmit", (err, stdout, stderr) => {
         console.log(stdout);
         console.log(stderr);
@@ -81,11 +81,12 @@ var tsPromise = new Promise(res => {
     });
 });
 
-var buildPromise = build({
+let buildPromise = build({
     entryPoints: config.files.map(file => `site/${file}`),
     outdir: "site/dist",
     bundle: true,
     minify: env.js.minify,
+    treeShaking: env.js.treeShaking,
     target: "es2020",
     define: transformVars(env.vars),
     plugins: [
@@ -134,7 +135,7 @@ var buildPromise = build({
             name: "lit-css",
             setup(build) {
                 build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                    var textContent = await readFile(args.path, "utf8");
+                    let textContent = await readFile(args.path, "utf8");
 
                     return {
                         loader: "js",

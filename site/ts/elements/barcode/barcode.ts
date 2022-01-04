@@ -66,6 +66,9 @@ export class StudentBarcode extends Page {
         e.preventDefault();
 
         this.draggedElement = e.target as HTMLElement;
+
+        this.draggedElement.style.pointerEvents = "none";
+
         this.style.cursor = "move";
     }
 
@@ -87,6 +90,8 @@ export class StudentBarcode extends Page {
     }
 
     EndDrag() {
+        if (this.draggedElement != null) this.draggedElement.style.removeProperty("pointer-events");
+
         this.draggedElement = null;
         this.removeAttribute("style");
 
@@ -96,17 +101,17 @@ export class StudentBarcode extends Page {
     SetBarcodePosition() {
         if (this.barcode === null) return;
 
-        var x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
-        var y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
+        let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
+        let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
 
-        var x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
-        var y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
+        let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
+        let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
     
-        var maxX = Math.max(x1, x2);
-        var minX = Math.min(x1, x2);
+        let maxX = Math.max(x1, x2);
+        let minX = Math.min(x1, x2);
 
-        var maxY = Math.max(y1, y2);
-        var minY = Math.min(y1, y2);
+        let maxY = Math.max(y1, y2);
+        let minY = Math.min(y1, y2);
 
         this.barcode.style.left = `${minX}%`;
         this.barcode.style.top = `${minY}%`;
@@ -141,9 +146,9 @@ export class StudentBarcode extends Page {
     }
 
     renderPage() {
-        var storedPoints = localStorage.getItem("Barcode Points");
+        let storedPoints = localStorage.getItem("Barcode Points");
 
-        var points: string[] = ["20%", "20%", "80%", "40%"];
+        let points: string[] = ["20%", "20%", "80%", "40%"];
 
         if (storedPoints) points = JSON.parse(storedPoints);
 
