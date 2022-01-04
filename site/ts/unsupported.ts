@@ -1,4 +1,4 @@
-import { Site } from "./site";
+import { Site } from "./site/site";
 
 if (Site.dark)
     (document.getElementById("logo-p") as HTMLImageElement).src = "images/logo-dark.svg";

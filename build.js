@@ -88,6 +88,7 @@ let buildPromise = build({
     minify: env.js.minify,
     treeShaking: env.js.treeShaking,
     target: "es2020",
+    format: "esm",
     define: transformVars(env.vars),
     plugins: [
         clear("./site/dist"),

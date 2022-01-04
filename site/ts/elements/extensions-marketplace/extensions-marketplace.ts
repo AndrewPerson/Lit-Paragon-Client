@@ -2,7 +2,7 @@ import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
-import { Extensions, Extension } from "../../extensions";
+import { Extensions, Extension } from "../../site/extensions";
 
 import "./extension-display";
 

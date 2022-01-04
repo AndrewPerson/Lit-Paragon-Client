@@ -1,7 +1,7 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import { Site, Page } from "../../site";
+import { Site, Page } from "../../site/site";
 
 //@ts-ignore
 import imgCss from "default/img.css";

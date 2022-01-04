@@ -1,8 +1,8 @@
 import { Extensions, Extension } from "./extensions";
 
-import { ExtensionPage } from "./elements/extensions/extensions";
-import { Navbar } from "./elements/navbar/navbar";
-import { InlineNotification } from "./elements/notification/notification";
+import { ExtensionPage } from "../elements/extensions/extensions";
+import { Navbar } from "../elements/navbar/navbar";
+import { InlineNotification } from "../elements/notification/notification";
 
 export type Page = {
     page: string,

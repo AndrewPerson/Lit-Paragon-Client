@@ -1,14 +1,14 @@
 //#conditional
 
-import { Site } from "./site";
-import { Resources } from "./resources";
-import { Extensions } from "./extensions";
+import { Site } from "./site/site";
+import { Resources } from "./site/resources";
+import { Extensions } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 
-import "./elements";
-import "./extensions";
+import "./site/elements";
+import "./site/extensions";
 
 Main();
 

@@ -1,6 +1,6 @@
 //#conditional
 
-import { Site } from "./site";
+import { Site } from "./site/site";
 import LOGIN_URL from "./login-url";
 
 declare const RESOURCE_CACHE: string;

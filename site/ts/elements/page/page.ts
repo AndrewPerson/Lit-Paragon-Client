@@ -1,6 +1,6 @@
 import { LitElement, html, nothing, TemplateResult } from "lit";
 import { state } from "lit/decorators.js";
-import { Resources } from "../../resources";
+import { Resources } from "../../site/resources";
 
 export enum PageState {
     Waiting,

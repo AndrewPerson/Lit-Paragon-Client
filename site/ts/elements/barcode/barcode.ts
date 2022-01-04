@@ -3,7 +3,7 @@ import { Page } from "../page/page";
 import { html } from "lit";
 import { customElement, query } from "lit/decorators.js";
 
-import { Site } from "../../site";
+import { Site } from "../../site/site";
 
 import "../info/info";
 

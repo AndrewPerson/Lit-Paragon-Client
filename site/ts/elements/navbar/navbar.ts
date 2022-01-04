@@ -2,7 +2,7 @@ import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
-import { Extensions, Extension } from "../../extensions";
+import { Extensions, Extension } from "../../site/extensions";
 
 import "./navitem";
 import { NavItem } from "./navitem";

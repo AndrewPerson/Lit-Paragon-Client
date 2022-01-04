@@ -1,6 +1,6 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
-import { Navbar } from "./elements/navbar/navbar";
+import { Navbar } from "../elements/navbar/navbar";
 
 declare const METADATA_CACHE: string;
 
@@ -193,19 +193,19 @@ export class Extensions {
         Site.ListenForDark(dark => {
             for (let i = 0; i < window.frames.length; i++) {
                 let frame = window.frames[i];
-        
+
                 frame.postMessage({
                     command: "Set Dark",
                     data: dark
                 }, "*");
             }
         });
-        
+
         window.addEventListener("message", async e => {
             let origin = e.origin;
-        
+
             if (!Extensions.extensionOrigins.includes(origin)) return;
-        
+
             e.source?.postMessage(await Extensions.HandleCommand(e.data.command, e.data.data, e.source));
         });
     }

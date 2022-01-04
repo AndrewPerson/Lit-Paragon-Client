@@ -1,10 +1,8 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import { Site } from "../../site";
-import { Extensions } from "../../extensions";
+import { Extensions } from "../../site/extensions";
 
-import { Navbar } from "../navbar/navbar";
 import { ExtensionsMarketplace } from "./extensions-marketplace";
 
 //@ts-ignore

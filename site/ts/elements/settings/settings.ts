@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
-import { Site } from "../../site";
+import { Site } from "../../site/site";
 
 import { Navbar } from "../navbar/navbar";
 

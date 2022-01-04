@@ -32,16 +32,28 @@ export class TimetablePeriod extends LitElement {
         TimetablePeriod.instances.push(this);
     }
 
+    Highlight() {
+        TimetablePeriod.highlight(this.name);
+        this.classList.add("highlighted");
+    }
+
+    Unhighlight() {
+        TimetablePeriod.highlight("");
+        this.classList.remove("highlighted");
+    }
+
     firstUpdated() {
         //Just to prevent unnecessary event listeners
         if (this.name) {
             this.tabIndex = 0;
 
-            this.addEventListener("pointerover", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("pointerleave", () => TimetablePeriod.highlight(""));
+            this.addEventListener("mouseover", this.Highlight);
+            this.addEventListener("mouseleave", this.Unhighlight);
 
-            this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("blur", () => TimetablePeriod.highlight(""));
+            this.addEventListener("click", this.Highlight);
+
+            this.addEventListener("focus", this.Highlight);
+            this.addEventListener("blur", this.Unhighlight);
         }
     }
 
@@ -56,11 +68,11 @@ export class TimetablePeriod extends LitElement {
                                || nextNextSibling?.getAttribute("name") == this.name;
 
             return html`
-                <p class="highlighted">${this.name}</p>
-                <p id="popup"
-                   ?reversed="${displayPopupTop}">
-                    ${this.room}
-                </p>
+            <p class="highlighted">${this.name}</p>
+            <p id="popup"
+                ?reversed="${displayPopupTop}">
+                ${this.room}
+            </p>
             `;
         }
         else return html`<p>${this.name}</p>`;
