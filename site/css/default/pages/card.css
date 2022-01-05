@@ -1,4 +1,4 @@
-:host {
+:host, main {
     padding: 2vmin;
 
     margin: auto;
@@ -10,7 +10,7 @@
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         width: 100vw;
         min-width: unset;
     }

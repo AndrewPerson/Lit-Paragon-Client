@@ -14,15 +14,15 @@ import buttonCss from "default/button.css";
 //@ts-ignore
 import rangeCss from "default/range.css";
 //@ts-ignore
-import cardElementCss from "default/elements/card.css";
+import cardElementCss from "default/pages/card.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
 @customElement("user-settings")
 export class Settings extends LitElement {
-    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, elementCss, settingsCss];
+    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss];
 
     @query("#hue", true)
     hueInput: HTMLInputElement;

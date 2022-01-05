@@ -11,13 +11,13 @@ import "./timetable-row";
 import { TimetablePeriod } from "./timetable-period";
 
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import timetableCss from "./timetable.css";
 
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [elementCss, timetableCss];
+    static styles = [pageCss, timetableCss];
 
     @state()
     timetable: Timetable;

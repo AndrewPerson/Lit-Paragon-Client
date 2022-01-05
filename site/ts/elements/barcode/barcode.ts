@@ -12,9 +12,9 @@ import textCss from "default/text.css";
 //@ts-ignore
 import imgCss from "default/img.css";
 //@ts-ignore
-import fullElementCss from "default/elements/full.css";
+import fullElementCss from "default/pages/full.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
 
@@ -25,7 +25,7 @@ declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
 
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
-    static styles = [elementCss, fullElementCss, textCss, imgCss, barcodeCss];
+    static styles = [pageCss, fullElementCss, textCss, imgCss, barcodeCss];
 
     @query("#barcodeDisplay")
     private barcode: HTMLCanvasElement | null;
