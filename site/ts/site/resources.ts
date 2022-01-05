@@ -67,7 +67,7 @@ export class Resources {
             let resource = resourceGroup.resource;
 
             promises.push(cache.put(name, new Response(resource))
-                          .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
+                               .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
         });
 
         await Promise.all(promises);
@@ -80,6 +80,17 @@ export class Resources {
         this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
     }
 
+    static async GetResourceNow(name: string) {
+        let cache = await caches.open(RESOURCE_CACHE);
+        let response = await cache.match(name);
+
+        if (response) {
+            let resource = await response.json();
+            return resource;
+        }
+        else return undefined;
+    }
+
     static async GetResource(name: string, callback: Callback<any>): Promise<void> {
         let callbacks = this._resourceCallbacks.get(name);
 
@@ -87,15 +98,8 @@ export class Resources {
             callbacks.AddListener(callback);
             this._resourceCallbacks.set(name, callbacks);
         }
-        
-        let cache = await caches.open(RESOURCE_CACHE);
-        let response = await cache.match(name);
 
-        if (response) {
-            let resource = await response.json();
-            callback(resource);
-        }
-        else callback(undefined);
+        callback(await this.GetResourceNow(name));
     }
 
     static async FetchResources(): Promise<boolean> {

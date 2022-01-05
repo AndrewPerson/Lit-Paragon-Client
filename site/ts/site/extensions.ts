@@ -32,6 +32,8 @@ export class Extensions {
 
     private static _extensionCallbacks: Callbacks<Map<string, Extension>> = new Callbacks();
 
+    private static _resourceListeners: Map<string, MessageEvent[]> = new Map();
+
     static GetExtensionOrigins(extensions: Map<string, Extension>) {
         let origins: string[] = [];
 
@@ -57,35 +59,46 @@ export class Extensions {
         }
 
         if (command == "Get Resource") {
-            return new Promise(resolve => {
-                let resolved = false;
+            let listeners = this._resourceListeners.get(data.name);
 
-                Resources.GetResource(data.name, async resource => {
-                    if (resolved) {
-                        e.source?.postMessage({
+            let firstTime = false;
+
+            if (listeners === undefined) {
+                firstTime = true;
+                listeners = [];
+            }
+
+            listeners.push(e);
+
+            this._resourceListeners.set(data.name, listeners);
+
+            if (firstTime) {
+                Resources.GetResource(data.name, resource => {
+                    let listeners = this._resourceListeners.get(data.name) ?? [];
+
+                    for (let listener of listeners) {
+                        listener.source?.postMessage({
                             command: "Resource",
                             data: {
                                 name: data.name,
                                 resource: resource
                             }
                         }, {
-                            targetOrigin: e.origin
+                            targetOrigin: listener.origin
                         });
-
-                        return;
                     }
-
-                    resolved = true;
-
-                    resolve({
-                        command: "Resource",
-                        data: {
-                            name: data.name,
-                            resource: resource
-                        }
-                    });
                 });
-            });
+            }
+
+            let resource = await Resources.GetResourceNow(data.name);
+
+            return {
+                command: "Resource",
+                data: {
+                    name: data.name,
+                    resource: resource
+                }
+            }
         }
 
         if (command == "Get Token") {
