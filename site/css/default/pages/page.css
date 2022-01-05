@@ -1,4 +1,4 @@
-:host {
+:host, main {
     box-shadow: var(--shadow);
     background-color: var(--surface2);
     border-radius: 2vmin;

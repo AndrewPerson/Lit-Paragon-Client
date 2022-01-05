@@ -11,15 +11,15 @@ import textCss from "default/text.css";
 //@ts-ignore
 import searchCss from "default/search.css";
 //@ts-ignore
-import fullElementCss from "default/elements/full.css";
+import fullElementCss from "default/pages/full.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [elementCss, fullElementCss, textCss, searchCss, extensionsMarketplaceCss];
+    static styles = [pageCss, fullElementCss, textCss, searchCss, extensionsMarketplaceCss];
 
     fetchingExtensions: boolean = true;
 

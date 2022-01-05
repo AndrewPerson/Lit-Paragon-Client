@@ -1,4 +1,4 @@
-:host {
+:host, main {
     flex: 1;
     margin: 1%;
 
@@ -12,13 +12,13 @@
     which is 1% either side.
 */
 @media (max-width: 306px) {
-    :host {
+    :host, main {
         margin: 1% calc(50% - 150px);
     }
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         margin: 1% 0;
     }
 }

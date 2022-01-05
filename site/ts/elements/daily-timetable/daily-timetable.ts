@@ -11,15 +11,15 @@ import "./period";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
-import cardElementCss from "default/elements/card.css";
+import cardElementCss from "default/pages/card.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import dailyTimetableCss from "./daily-timetable.css";
 
 @customElement("daily-timetable")
 export class SchoolAnnouncements extends Page {
-    static styles = [elementCss, cardElementCss, textCss, dailyTimetableCss];
+    static styles = [pageCss, cardElementCss, textCss, dailyTimetableCss];
 
     @state()
     dailyTimetable: DailyTimetable;

@@ -17,15 +17,15 @@ import searchCss from "default/search.css";
 //@ts-ignore
 import selectCss from "default/select.css";
 //@ts-ignore
-import fullElementCss from "default/elements/full.css";
+import fullElementCss from "default/pages/full.css";
 //@ts-ignore
-import elementCss from "default/elements/element.css";
+import pageCss from "default/pages/page.css";
 //@ts-ignore
 import announcementCss from "./announcements.css";
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [elementCss, fullElementCss, textCss, imgCss, searchCss, selectCss, announcementCss];
+    static styles = [pageCss, fullElementCss, textCss, imgCss, searchCss, selectCss, announcementCss];
 
     @state()
     announcements: Announcements;
