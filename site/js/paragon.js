@@ -1,3 +1,16 @@
+customElements.define("extension-main", class extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({mode: "open"});
+        this.shadowRoot.innerHTML = `
+            <link rel="stylesheet" href="https://paragon.pages.dev/css/default/elements/${size}.css">
+            <slot></slot>
+        `;
+    }
+
+    static get observedAttributes() { return ["size"]; }
+});
+
 var version = undefined;
 
 var resourceCallbacks = new Map();
