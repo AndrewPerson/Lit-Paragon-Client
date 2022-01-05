@@ -9,7 +9,7 @@ const exclude = ["site/images/**/*.sketch", "ts/**/types.ts"];
 Main();
 
 async function Main() {
-    var files = (await Promise.all(include.map(file => new Promise((resolve, reject) => {
+    let files = (await Promise.all(include.map(file => new Promise((resolve, reject) => {
         glob.glob(file, (err, matches) => {
             if (err) reject(err);
 
@@ -17,7 +17,7 @@ async function Main() {
         });
     })))).flat();
     
-    var excludedFiles = (await Promise.all(exclude.map(file => new Promise((resolve, reject) => {
+    let excludedFiles = (await Promise.all(exclude.map(file => new Promise((resolve, reject) => {
         glob.glob(file, (err, matches) => {
             if (err) reject(err);
 

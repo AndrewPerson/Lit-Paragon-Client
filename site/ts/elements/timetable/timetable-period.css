@@ -59,9 +59,9 @@ p {
     pointer-events: none;
 }
 
-p:hover + #popup {
+:host(.highlighted) > #popup {
     z-index: 98;
-    outline: solid 0.5vmin var(--text1);
+    box-shadow: 0 0 0 0.5vmin var(--text1);
 }
 
 #popup::before {

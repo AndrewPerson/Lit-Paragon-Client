@@ -18,7 +18,7 @@ async function onFetch(e: FetchEvent): Promise<Response> {
     const request = e.request;
 
     if (request.method == "GET") {
-        var url = new URL(request.url);
+        let url = new URL(request.url);
 
         if (url.hostname == location.hostname && url.pathname == "/login")
             return await fetch("/callback");
@@ -29,9 +29,9 @@ async function onFetch(e: FetchEvent): Promise<Response> {
 
 async function onMessage(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
-        var metadataCache = await caches.open(METADATA_CACHE);
+        let metadataCache = await caches.open(METADATA_CACHE);
         
-        await metadataCache.put(`${location.origin}/metadata`, await fetch(METADATA_ENDPOINT));
+        await metadataCache.put(`${location.origin}/Metadata`, await fetch(METADATA_ENDPOINT));
 
         e.source?.postMessage({ command: "metadata-fetched" });
     }

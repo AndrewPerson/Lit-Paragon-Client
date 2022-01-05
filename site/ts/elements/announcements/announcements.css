@@ -13,7 +13,7 @@
 
 .content {
     flex: 1;
-    overflow-y: auto;
+    overflow: hidden auto;
 
     scrollbar-width: thin;
     scrollbar-color: var(--surface4) transparent;

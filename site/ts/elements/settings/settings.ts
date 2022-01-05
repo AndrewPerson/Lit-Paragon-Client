@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
-import { Site } from "../../site";
+import { Site } from "../../site/site";
 
 import { Navbar } from "../navbar/navbar";
 
@@ -28,20 +28,12 @@ export class Settings extends LitElement {
     hueInput: HTMLInputElement;
 
     @state()
-    version: string = "0.0.0";
+    version: string | undefined = "0.0.0";
 
     constructor() {
         super();
 
-        caches.open("Metadata").then(async cache => {
-            var metadataResponse = await cache.match("Metadata");
-
-            if (metadataResponse) {
-                var metadata = await metadataResponse.json();
-
-                this.version = metadata.version;
-            }
-        });
+        Site.GetVersion().then(version => this.version = version);
     }
 
     Patch() {
@@ -50,22 +42,12 @@ export class Settings extends LitElement {
 
     ResetColour() {
         this.hueInput.value = "200";
-        Site.SetColour("200");
-        localStorage.setItem("Hue", "200");
-    }
-
-    SetColour(e: InputEvent) {
-        if (!e.target) return;
-
-        Site.SetColour((e.target as HTMLInputElement).value);
-    }
-
-    SaveColour(e: InputEvent) {
-        localStorage.setItem("Hue", (e.target as HTMLInputElement).value);
+        Site.SetHue("200");
+        Site.SaveHue();
     }
 
     ToggleDark(e: InputEvent) {
-        var darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+        let darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
         Site.SetDark(darkCheckbox.checked);
 
@@ -73,7 +55,7 @@ export class Settings extends LitElement {
     }
 
     ToggleEditNavbar() {
-        var navbar: Navbar = document.querySelector("nav-bar") as Navbar;
+        let navbar: Navbar = document.querySelector("nav-bar") as Navbar;
 
         if (navbar) {
             navbar.toggleAttribute("editing");
@@ -98,13 +80,15 @@ export class Settings extends LitElement {
 
         <button @click="${this.ResetColour}">Reset</button>
 
-        <input type="range" id="hue" min="0" max="359" value="${Site.hue}" @input="${this.SetColour}" @change="${this.SaveColour}">
+        <input type="range" id="hue" min="0" max="359" value="${Site.hue}"
+               @input="${(e: InputEvent) => Site.SetHue((e.target as HTMLInputElement).value)}"
+               @change="${Site.SaveHue.bind(Site)}">
 
         <span></span>
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <input type="checkbox" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+        <input type="checkbox" ?checked="${Site.dark}" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 

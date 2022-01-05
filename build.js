@@ -19,8 +19,8 @@ import clear from "esbuild-plugin-clear";
 import conditionalBuild from "esbuild-plugin-conditional-build";
 
 function transformVars(vars) {
-    for (var key of Object.keys(vars)) {
-        var value = vars[key];
+    for (let key of Object.keys(vars)) {
+        let value = vars[key];
 
         if (typeof value === "object")
             vars[key] = JSON.stringify(value);
@@ -57,7 +57,12 @@ function merge() {
     return target;
 }
 
-const specifiedEnv = (process.argv.length > 2 ? config.env[process.argv[2]] : config.env.default) || {};
+const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
+                         `${process.env.CF_PAGES_BRANCH}-preview` in config.env ? `${process.env.CF_PAGES_BRANCH}-preview` :
+                         process.argv[2] ?? "default";
+
+
+const specifiedEnv = config.env[specifiedEnvName] || {};
 const sharedEnv = config.env["shared"] || {};
 
 //Order matters here so values specified in the specified env override those in the sharedEnv
@@ -67,7 +72,7 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
 
-var tsPromise = new Promise(res => {
+let tsPromise = new Promise(res => {
     exec("npx tsc --noEmit", (err, stdout, stderr) => {
         console.log(stdout);
         console.log(stderr);
@@ -76,12 +81,14 @@ var tsPromise = new Promise(res => {
     });
 });
 
-var buildPromise = build({
+let buildPromise = build({
     entryPoints: config.files.map(file => `site/${file}`),
     outdir: "site/dist",
     bundle: true,
     minify: env.js.minify,
+    treeShaking: env.js.treeShaking,
     target: "es2020",
+    format: "esm",
     define: transformVars(env.vars),
     plugins: [
         clear("./site/dist"),
@@ -129,7 +136,7 @@ var buildPromise = build({
             name: "lit-css",
             setup(build) {
                 build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                    var textContent = await readFile(args.path, "utf8");
+                    let textContent = await readFile(args.path, "utf8");
 
                     return {
                         loader: "js",

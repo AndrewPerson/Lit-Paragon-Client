@@ -23,7 +23,7 @@ export class TimetablePeriod extends LitElement {
     static highlight(name: string) {
         this.highlighted = name;
 
-        for (var instance of this.instances) instance.requestUpdate();
+        for (let instance of this.instances) instance.requestUpdate();
     }
 
     constructor() {
@@ -32,35 +32,47 @@ export class TimetablePeriod extends LitElement {
         TimetablePeriod.instances.push(this);
     }
 
+    Highlight() {
+        TimetablePeriod.highlight(this.name);
+        this.classList.add("highlighted");
+    }
+
+    Unhighlight() {
+        TimetablePeriod.highlight("");
+        this.classList.remove("highlighted");
+    }
+
     firstUpdated() {
         //Just to prevent unnecessary event listeners
         if (this.name) {
             this.tabIndex = 0;
 
-            this.addEventListener("pointerover", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("pointerleave", () => TimetablePeriod.highlight(""));
+            this.addEventListener("mouseover", this.Highlight);
+            this.addEventListener("mouseleave", this.Unhighlight);
 
-            this.addEventListener("focus", () => TimetablePeriod.highlight(this.name));
-            this.addEventListener("blur", () => TimetablePeriod.highlight(""));
+            this.addEventListener("click", this.Highlight);
+
+            this.addEventListener("focus", this.Highlight);
+            this.addEventListener("blur", this.Unhighlight);
         }
     }
 
     render() {
-        var highlighted = TimetablePeriod.highlighted == this.name && this.name;
+        let highlighted = TimetablePeriod.highlighted == this.name && this.name;
 
         if (highlighted) {
-            var nextSibling = this.nextElementSibling;
-            var nextNextSibling = nextSibling?.nextElementSibling;
+            let nextSibling = this.nextElementSibling;
+            let nextNextSibling = nextSibling?.nextElementSibling;
 
-            var displayPopupTop = nextSibling?.getAttribute("name") == this.name
+            let displayPopupTop = nextSibling?.getAttribute("name") == this.name
                                || nextNextSibling?.getAttribute("name") == this.name;
 
             return html`
-                <p class="highlighted">${this.name}</p>
-                <p id="popup"
-                   ?reversed="${displayPopupTop}">
-                    ${this.room}
-                </p>
+            <p class="highlighted">${this.name}</p>
+            <p id="popup"
+                ?reversed="${displayPopupTop}">
+                ${this.room}
+            </p>
             `;
         }
         else return html`<p>${this.name}</p>`;

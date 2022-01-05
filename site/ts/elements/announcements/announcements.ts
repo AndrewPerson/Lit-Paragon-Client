@@ -43,7 +43,7 @@ export class SchoolAnnouncements extends Page {
     }
 
     renderPage() {
-        var filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement: Announcement) => announcement.years.includes(this.yearFilter));
+        let filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement: Announcement) => announcement.years.includes(this.yearFilter));
         filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement: Announcement) =>
                                                                                                                 announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
                                                                                                                 announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));

@@ -191,6 +191,21 @@
             "vars": {
                 "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
+                "CLIENT_ID": ""
+            }
+        },
+        "rewrite-preview": {
+            "constants": [
+                "DEVELOPMENT"
+            ],
+            "js": {
+                "minify": false
+            },
+            "svg": {
+            },
+            "vars": {
+                "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata",
+                "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "Paragon_Tools"
             }
         },

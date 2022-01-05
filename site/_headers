@@ -7,6 +7,9 @@
 /css/*
     Access-Control-Allow-Origin: *
 
+/js/paragon.js
+    Access-Control-Allow-Origin: *
+
 /metadata
     Content-Type: application/json
 
