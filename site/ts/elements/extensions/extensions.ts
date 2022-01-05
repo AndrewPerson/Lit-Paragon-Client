@@ -28,12 +28,8 @@ export class ExtensionPage extends LitElement {
     }
     
     render() {
-        let srcUrl = new URL(this.src);
-
-        srcUrl.searchParams.set("dark", Site.dark.toString());
-
         return html`
-        <iframe @load="${this.StopLoading}" src="${srcUrl.toString()}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
+        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }

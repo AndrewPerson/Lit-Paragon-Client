@@ -23,6 +23,8 @@ async function Main() {
         });
     }
 
+    Extensions.AddListeners();
+
     window.addEventListener("hashchange", () => {
         if (location.hash) {
             NavigateToHash(location.hash);
@@ -57,8 +59,6 @@ async function Main() {
     }
     //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
     else Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
-
-    Extensions.AddListeners();
 
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");

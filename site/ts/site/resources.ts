@@ -1,9 +1,9 @@
 import { Site } from "./site";
 
+import { Callbacks, Callback } from "./callback";
+
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
-
-export type ResourceCallback = (resource: any) => any;
 
 export type ResourceResult = {
     result: {
@@ -20,7 +20,7 @@ export type Token = {
 };
 
 export class Resources {
-    private static _resourceCallbacks: Map<string, ResourceCallback[]> = new Map();
+    private static _resourceCallbacks: Map<string, Callbacks<any>> = new Map();
 
     static ShowLoginNotification() {
         let content = document.createElement("p");
@@ -66,10 +66,8 @@ export class Resources {
             let name = resourceGroup.name;
             let resource = resourceGroup.resource;
 
-            promises.push(cache.put(name, new Response(resource)).then(() => {
-                for (let callback of this._resourceCallbacks.get(name) ?? [])
-                    callback(JSON.parse(resource));
-            }));
+            promises.push(cache.put(name, new Response(resource))
+                          .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
         });
 
         await Promise.all(promises);
@@ -79,14 +77,16 @@ export class Resources {
         let cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
 
-        for (let callback of this._resourceCallbacks.get(name) ?? [])
-            callback(JSON.parse(resource));
+        this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
     }
 
-    static async GetResource(name: string, callback: ResourceCallback): Promise<void> {
-        let callbacks = this._resourceCallbacks.get(name) ?? [];
-        callbacks.push(callback);
-        this._resourceCallbacks.set(name, callbacks);
+    static async GetResource(name: string, callback: Callback<any>): Promise<void> {
+        let callbacks = this._resourceCallbacks.get(name);
+
+        if (callbacks !== undefined) {
+            callbacks.AddListener(callback);
+            this._resourceCallbacks.set(name, callbacks);
+        }
         
         let cache = await caches.open(RESOURCE_CACHE);
         let response = await cache.match(name);

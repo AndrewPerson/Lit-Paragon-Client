@@ -1,15 +1,17 @@
 import { Extensions, Extension } from "./extensions";
 
+import { Callbacks, Callback } from "./callback";
+
 import { ExtensionPage } from "../elements/extensions/extensions";
 import { Navbar } from "../elements/navbar/navbar";
 import { InlineNotification } from "../elements/notification/notification";
+
+declare const METADATA_CACHE: string;
 
 export type Page = {
     page: string,
     extension: boolean
 };
-
-export type DarkCallback = (dark: boolean) => any;
 
 export class Site {
     static page: Page = {
@@ -20,9 +22,10 @@ export class Site {
     static dark: boolean = localStorage.getItem("Dark") == "true";
     static hue: string = localStorage.getItem("Hue") || "200";
 
-    private static pageElement: HTMLElement | null = null;
+    private static _pageElement: HTMLElement | null = null;
 
-    private static darkCallbacks: DarkCallback[] = [];
+    private static _darkCallbacks: Callbacks<boolean> = new Callbacks();
+    private static _hueCallbacks: Callbacks<number> = new Callbacks();
 
     //#region Navigation
     static NavigateTo(page: Page): void {
@@ -50,10 +53,10 @@ export class Site {
 
     private static SetPage(page: Page, element: HTMLElement | null) {
         if (element) {
-            if (this.pageElement != null) this.pageElement.classList.add("hidden");
+            if (this._pageElement != null) this._pageElement.classList.add("hidden");
 
             element.classList.remove("hidden");
-            this.pageElement = element;
+            this._pageElement = element;
             
             this.page = page;
 
@@ -89,18 +92,42 @@ export class Site {
 
         localStorage.setItem("Dark", dark.toString());
 
-        for (let callback of this.darkCallbacks) {
-            callback(dark);
-        }
+        this._darkCallbacks.Invoke(dark);
     }
 
-    static ListenForDark(callback: DarkCallback) {
-        this.darkCallbacks.push(callback);
+    static ListenForDark(callback: Callback<boolean>) {
+        this._darkCallbacks.AddListener(callback);
     }
 
-    static SetColour(hue: string): void {
+    static SetHue(hue: string): void {
         document.documentElement.style.setProperty("--main-hue", hue);
         document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+
+        this.hue = hue;
+    }
+
+    static SaveHue() {
+        localStorage.setItem("Hue", this.hue);
+
+        this._hueCallbacks.Invoke(parseFloat(this.hue));
+    }
+
+    static ListenForHue(callback: Callback<number>) {
+        this._hueCallbacks.AddListener(callback);
     }
     //#endregion
+
+    static async GetVersion(): Promise<string | undefined> {
+        var cache = await caches.open(METADATA_CACHE);
+
+        let metadataResponse = await cache.match("Metadata");
+
+        if (metadataResponse) {
+            let metadata = await metadataResponse.json();
+
+            return metadata.version;
+        }
+
+        return undefined;
+    }
 }

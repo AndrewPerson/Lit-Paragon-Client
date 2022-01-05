@@ -46,23 +46,21 @@ var Resources = class {
     resources.forEach((resourceGroup) => {
       let name = resourceGroup.name;
       let resource = resourceGroup.resource;
-      promises.push(cache.put(name, new Response(resource)).then(() => {
-        for (let callback of this._resourceCallbacks.get(name) ?? [])
-          callback(JSON.parse(resource));
-      }));
+      promises.push(cache.put(name, new Response(resource)).then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
     });
     await Promise.all(promises);
   }
   static async SetResource(name, resource) {
     let cache = await caches.open("User Resources");
     await cache.put(name, new Response(resource));
-    for (let callback of this._resourceCallbacks.get(name) ?? [])
-      callback(JSON.parse(resource));
+    this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
   }
   static async GetResource(name, callback) {
-    let callbacks = this._resourceCallbacks.get(name) ?? [];
-    callbacks.push(callback);
-    this._resourceCallbacks.set(name, callbacks);
+    let callbacks = this._resourceCallbacks.get(name);
+    if (callbacks !== void 0) {
+      callbacks.AddListener(callback);
+      this._resourceCallbacks.set(name, callbacks);
+    }
     let cache = await caches.open("User Resources");
     let response = await cache.match(name);
     if (response) {
@@ -95,6 +93,20 @@ var Resources = class {
   }
 };
 Resources._resourceCallbacks = /* @__PURE__ */ new Map();
+
+// site/ts/site/callback.ts
+var Callbacks = class {
+  constructor() {
+    this._callbacks = [];
+  }
+  AddListener(callback) {
+    this._callbacks.push(callback);
+  }
+  Invoke(param) {
+    for (let callback of this._callbacks)
+      callback(param);
+  }
+};
 
 // node_modules/@lit/reactive-element/css-tag.js
 var t = window.ShadowRoot && (window.ShadyCSS === void 0 || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
@@ -1378,17 +1390,32 @@ var _Extensions = class {
       origins.push(new URL(extension.url).origin);
     return origins;
   }
-  static async HandleCommand(command, data, source) {
+  static async HandleCommand(e8) {
+    let command = e8.data.command;
+    let data = e8.data.data;
+    if (command == "Initialise") {
+      return {
+        command: "Initialise",
+        data: {
+          dark: Site.dark,
+          hue: Site.hue,
+          version: await Site.GetVersion()
+        }
+      };
+    }
     if (command == "Get Resource") {
       return new Promise((resolve) => {
         let resolved = false;
         Resources.GetResource(data.name, async (resource) => {
           if (resolved) {
-            source?.postMessage({
+            e8.source?.postMessage({
               command: "Resource",
               data: {
+                name: data.name,
                 resource
               }
+            }, {
+              targetOrigin: e8.origin
             });
             return;
           }
@@ -1396,6 +1423,7 @@ var _Extensions = class {
           resolve({
             command: "Resource",
             data: {
+              name: data.name,
               resource
             }
           });
@@ -1429,6 +1457,11 @@ var _Extensions = class {
           token: token.token === null ? null : token.token.access_token,
           valid: token.valid
         }
+      };
+    }
+    if (command == "Ping") {
+      return {
+        command: "Pong"
       };
     }
     return {
@@ -1474,13 +1507,12 @@ var _Extensions = class {
     return extensions;
   }
   static async GetExtensions(callback) {
-    this._extensionCallbacks.push(callback);
+    this._extensionCallbacks.AddListener(callback);
     callback(await this.GetExtensionsNow());
   }
   static async FireExtensionCallbacks() {
     let extensions = await this.GetExtensionsNow();
-    for (let callback of this._extensionCallbacks)
-      callback(extensions);
+    this._extensionCallbacks.Invoke(extensions);
   }
   static GetExtensionIconURL(extension) {
     let url = new URL(extension.icon, extension.url);
@@ -1489,7 +1521,7 @@ var _Extensions = class {
   }
   static GetExtensionNavIconURL(extension) {
     let url = new URL(extension.navIcon, extension.url);
-    url.search = `cache-version=${extension.version}`;
+    url.searchParams.set("cache-version", extension.version);
     return url.toString();
   }
   static AddListeners() {
@@ -1498,22 +1530,37 @@ var _Extensions = class {
         let frame = window.frames[i7];
         frame.postMessage({
           command: "Set Dark",
-          data: dark
+          data: {
+            dark
+          }
+        }, "*");
+      }
+    });
+    Site.ListenForHue((hue) => {
+      for (let i7 = 0; i7 < window.frames.length; i7++) {
+        let frame = window.frames[i7];
+        frame.postMessage({
+          command: "Set Hue",
+          data: {
+            hue
+          }
         }, "*");
       }
     });
     window.addEventListener("message", async (e8) => {
       let origin = e8.origin;
-      if (!_Extensions.extensionOrigins.includes(origin))
+      if (!this.extensionOrigins.includes(origin))
         return;
-      e8.source?.postMessage(await _Extensions.HandleCommand(e8.data.command, e8.data.data, e8.source));
+      e8.source?.postMessage(await this.HandleCommand(e8), {
+        targetOrigin: origin
+      });
     });
   }
 };
 var Extensions = _Extensions;
 Extensions._installedExtensions = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
 Extensions.extensionOrigins = _Extensions.GetExtensionOrigins(_Extensions._installedExtensions);
-Extensions._extensionCallbacks = [];
+Extensions._extensionCallbacks = new Callbacks();
 
 // site/ts/site/site.ts
 var Site = class {
@@ -1536,10 +1583,10 @@ var Site = class {
   }
   static SetPage(page, element) {
     if (element) {
-      if (this.pageElement != null)
-        this.pageElement.classList.add("hidden");
+      if (this._pageElement != null)
+        this._pageElement.classList.add("hidden");
       element.classList.remove("hidden");
-      this.pageElement = element;
+      this._pageElement = element;
       this.page = page;
       location.hash = page.extension ? `extension-${page.page}` : page.page;
       let navbar = document.querySelector("nav-bar");
@@ -1561,16 +1608,31 @@ var Site = class {
     this.dark = dark;
     document.documentElement.classList.toggle("dark", dark);
     localStorage.setItem("Dark", dark.toString());
-    for (let callback of this.darkCallbacks) {
-      callback(dark);
-    }
+    this._darkCallbacks.Invoke(dark);
   }
   static ListenForDark(callback) {
-    this.darkCallbacks.push(callback);
+    this._darkCallbacks.AddListener(callback);
   }
-  static SetColour(hue) {
+  static SetHue(hue) {
     document.documentElement.style.setProperty("--main-hue", hue);
     document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+    this.hue = hue;
+  }
+  static SaveHue() {
+    localStorage.setItem("Hue", this.hue);
+    this._hueCallbacks.Invoke(parseFloat(this.hue));
+  }
+  static ListenForHue(callback) {
+    this._hueCallbacks.AddListener(callback);
+  }
+  static async GetVersion() {
+    var cache = await caches.open("Metadata");
+    let metadataResponse = await cache.match("Metadata");
+    if (metadataResponse) {
+      let metadata = await metadataResponse.json();
+      return metadata.version;
+    }
+    return void 0;
   }
 };
 Site.page = {
@@ -1579,8 +1641,9 @@ Site.page = {
 };
 Site.dark = localStorage.getItem("Dark") == "true";
 Site.hue = localStorage.getItem("Hue") || "200";
-Site.pageElement = null;
-Site.darkCallbacks = [];
+Site._pageElement = null;
+Site._darkCallbacks = new Callbacks();
+Site._hueCallbacks = new Callbacks();
 
 // site/ts/elements/page/page.ts
 var Page2 = class extends s4 {
@@ -2437,10 +2500,8 @@ var ExtensionPage = class extends s4 {
     this.frame.removeAttribute("style");
   }
   render() {
-    let srcUrl = new URL(this.src);
-    srcUrl.searchParams.set("dark", Site.dark.toString());
     return p`
-        <iframe @load="${this.StopLoading}" src="${srcUrl.toString()}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
+        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
   }
@@ -2800,28 +2861,14 @@ var Settings = class extends s4 {
   constructor() {
     super();
     this.version = "0.0.0";
-    caches.open("Metadata").then(async (cache) => {
-      let metadataResponse = await cache.match("Metadata");
-      if (metadataResponse) {
-        let metadata = await metadataResponse.json();
-        this.version = metadata.version;
-      }
-    });
+    Site.GetVersion().then((version) => this.version = version);
   }
   Patch() {
   }
   ResetColour() {
     this.hueInput.value = "200";
-    Site.SetColour("200");
-    localStorage.setItem("Hue", "200");
-  }
-  SetColour(e8) {
-    if (!e8.target)
-      return;
-    Site.SetColour(e8.target.value);
-  }
-  SaveColour(e8) {
-    localStorage.setItem("Hue", e8.target.value);
+    Site.SetHue("200");
+    Site.SaveHue();
   }
   ToggleDark(e8) {
     let darkCheckbox = e8.target;
@@ -2852,7 +2899,9 @@ var Settings = class extends s4 {
 
         <button @click="${this.ResetColour}">Reset</button>
 
-        <input type="range" id="hue" min="0" max="359" value="${Site.hue}" @input="${this.SetColour}" @change="${this.SaveColour}">
+        <input type="range" id="hue" min="0" max="359" value="${Site.hue}"
+               @input="${(e8) => Site.SetHue(e8.target.value)}"
+               @change="${Site.SaveHue.bind(Site)}">
 
         <span></span>
 
@@ -3288,6 +3337,7 @@ async function Main() {
       extension: false
     });
   }
+  Extensions.AddListeners();
   window.addEventListener("hashchange", () => {
     if (location.hash) {
       NavigateToHash(location.hash);
@@ -3310,7 +3360,6 @@ async function Main() {
     }
   } else
     Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
-  Extensions.AddListeners();
   var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
   if (registration)
     await registration.update();

@@ -1,5 +1,8 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
+
+import { Callbacks, Callback } from "./callback";
+
 import { Navbar } from "../elements/navbar/navbar";
 
 declare const METADATA_CACHE: string;
@@ -12,8 +15,6 @@ export type Extension = {
     icon: string,
     version: string
 };
-
-export type ExtensionCallback = (extension: Map<string, Extension>) => any;
 
 export class Extensions {
     static get installedExtensions() {
@@ -29,7 +30,7 @@ export class Extensions {
 
     static extensionOrigins: string[] = this.GetExtensionOrigins(this._installedExtensions);
 
-    private static _extensionCallbacks: ExtensionCallback[] = [];
+    private static _extensionCallbacks: Callbacks<Map<string, Extension>> = new Callbacks();
 
     static GetExtensionOrigins(extensions: Map<string, Extension>) {
         let origins: string[] = [];
@@ -40,18 +41,35 @@ export class Extensions {
         return origins;
     }
 
-    static async HandleCommand(command: string, data: any, source: MessageEventSource | null) {
+    static async HandleCommand(e: MessageEvent) {
+        let command = e.data.command;
+        let data = e.data.data;
+
+        if (command == "Initialise") {
+            return {
+                command: "Initialise",
+                data: {
+                    dark: Site.dark,
+                    hue: Site.hue,
+                    version: await Site.GetVersion()
+                }
+            }
+        }
+
         if (command == "Get Resource") {
             return new Promise(resolve => {
                 let resolved = false;
 
                 Resources.GetResource(data.name, async resource => {
                     if (resolved) {
-                        source?.postMessage({
+                        e.source?.postMessage({
                             command: "Resource",
                             data: {
+                                name: data.name,
                                 resource: resource
                             }
+                        }, {
+                            targetOrigin: e.origin
                         });
 
                         return;
@@ -62,6 +80,7 @@ export class Extensions {
                     resolve({
                         command: "Resource",
                         data: {
+                            name: data.name,
                             resource: resource
                         }
                     });
@@ -104,10 +123,16 @@ export class Extensions {
             }
         }
 
+        if (command == "Ping") {
+            return {
+                command: "Pong"
+            }
+        }
+
         return {
             command: "Unknown Command",
             data: {
-                command: command,
+                command: command
             }
         }
     }
@@ -162,8 +187,8 @@ export class Extensions {
         return extensions;
     }
 
-    static async GetExtensions(callback: ExtensionCallback) {
-        this._extensionCallbacks.push(callback);
+    static async GetExtensions(callback: Callback<Map<string, Extension>>) {
+        this._extensionCallbacks.AddListener(callback);
 
         callback(await this.GetExtensionsNow());
     }
@@ -171,8 +196,7 @@ export class Extensions {
     static async FireExtensionCallbacks() {
         let extensions = await this.GetExtensionsNow();
 
-        for (let callback of this._extensionCallbacks)
-            callback(extensions);
+        this._extensionCallbacks.Invoke(extensions);
     }
 
     static GetExtensionIconURL(extension: Extension) {
@@ -184,7 +208,7 @@ export class Extensions {
 
     static GetExtensionNavIconURL(extension: Extension) {
         let url = new URL(extension.navIcon, extension.url);
-        url.search = `cache-version=${extension.version}`;
+        url.searchParams.set("cache-version", extension.version);
 
         return url.toString();
     }
@@ -196,17 +220,34 @@ export class Extensions {
 
                 frame.postMessage({
                     command: "Set Dark",
-                    data: dark
+                    data: {
+                        dark: dark
+                    }
                 }, "*");
             }
         });
 
+        Site.ListenForHue(hue => {
+            for (let i = 0; i < window.frames.length; i++) {
+                let frame = window.frames[i];
+
+                frame.postMessage({
+                    command: "Set Hue",
+                    data: {
+                        hue: hue
+                    }
+                }, "*");
+            }
+        })
+
         window.addEventListener("message", async e => {
             let origin = e.origin;
 
-            if (!Extensions.extensionOrigins.includes(origin)) return;
+            if (!this.extensionOrigins.includes(origin)) return;
 
-            e.source?.postMessage(await Extensions.HandleCommand(e.data.command, e.data.data, e.source));
+            e.source?.postMessage(await this.HandleCommand(e), {
+                targetOrigin: origin
+            });
         });
     }
 }
