@@ -6,7 +6,7 @@
 
 #point1,
 #point2 {
-    --size: 3vmin;
+    --size: 1.2rem;
 
     position: absolute;
 
@@ -44,14 +44,14 @@
 }
 
 #barcodeDisplay.outline {
-    border: solid 1vmin var(--text1);
+    border: solid 0.4rem var(--text1);
 }
 
 info-popup {
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     
-    width: 5vmin;
-    height: 5vmin;
+    width: 1.9rem;
+    height: 1.9rem;
     z-index: 2;
 }

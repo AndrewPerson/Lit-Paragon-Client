@@ -1,14 +1,14 @@
 :where(select) {
-    border: 0.2vmin solid var(--text2);
+    border: solid 0.05rem var(--text2);
     background-color: var(--surface2);
     color: var(--text2);
 
-    padding: 1vmin 0;
-    padding-right: 6vmin;
+    padding: 0.4rem 0;
+    padding-right: 2.3rem;
 
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 
-    font-size: calc(var(--font-size) / 1.2);
+    font-size: calc(1rem / 1.2);
 
     user-select: none;
     -ms-user-select: none;

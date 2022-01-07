@@ -21,13 +21,13 @@ main {
 
 #notification-area {
     position: absolute;
-    top: 1vmin;
-    right: 1vmin;
+    top: 0.4rem;
+    right: 0.4rem;
 
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 1vmin;
+    gap: 0.4rem;
 
     z-index: 100;
 }

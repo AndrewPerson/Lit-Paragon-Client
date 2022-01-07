@@ -32,7 +32,15 @@ export class SchoolAnnouncements extends Page {
 
     renderPage() {
         return html`
-        
+            <div class="next-display">
+                <p>Nothing</p>
+                <p>in</p>
+                <div class="timer-container">
+                    <span class="line left"></span>
+                    <h1 class="timer">Never</h1>
+                    <span class="line right"></span>
+                </div>
+            </div>
         `;
     }
 }

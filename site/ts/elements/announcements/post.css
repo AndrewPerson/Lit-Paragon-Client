@@ -12,7 +12,7 @@ summary {
 
     list-style: none;
 
-    margin-bottom: 1vmin;
+    margin-bottom: 0.4rem;
 }
 
 summary > * {
@@ -27,8 +27,8 @@ summary::after {
     right: 0;
 
     display: block;
-    width: calc(var(--font-size) * 1.5);
-    height: calc(var(--font-size) * 1.5);
+    width: 1.5rem;
+    height: 1.5rem;
 
     margin-left: auto;
     
@@ -49,5 +49,5 @@ details[open] > summary::after {
 }
 
 .info {
-    font-size: calc(var(--font-size) * 0.7);
+    font-size: 0.7rem;
 }

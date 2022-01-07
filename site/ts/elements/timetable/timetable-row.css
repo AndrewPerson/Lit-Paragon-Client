@@ -2,8 +2,8 @@
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
-    padding-top: 1vmin;
-    margin-bottom: 1vmin;
+    padding-top: 0.4rem;
+    margin-bottom: 0.4rem;
 }
 
 .period-nums {
@@ -14,8 +14,8 @@
 
 .period-nums > p {
     color: var(--text3);
-    height: 3.9vmin;
-    line-height: calc(var(--font-size) * 1.5);
+    height: 1.5rem;
+    line-height: 1.5rem;
 
     user-select: none;
     -ms-user-select: none;

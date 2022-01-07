@@ -1,15 +1,15 @@
 :where(input[type=search]) {
     border: none;
-    border-bottom: 0.2vmin solid var(--text2);
+    border-bottom: solid 0.05rem var(--text2);
     border-radius: 0;
 
     background-color: var(--surface2);
     color: var(--text1);
 
-    font-size: var(--font-size);
+    font-size: 1rem;
     font-family: monospace;
 
-    height: calc(var(--font-size) * 2);
+    height: 2rem;
 }
 
 :where(input[type=search]:focus) {

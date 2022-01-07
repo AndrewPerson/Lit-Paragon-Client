@@ -3,17 +3,17 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    width: calc(var(--font-size) * 4.5);
+    width: 4.5rem;
     min-width: 0;
 }
 
 .name {
-    margin-bottom: 1vmin;
+    margin-bottom: 0.4rem;
     text-align: center;
-    font-size: calc(var(--font-size) / 1.2);
-    width: calc(var(--font-size) * 3.63);
+    font-size: calc(1rem / 1.2);
+    width: 3.63rem;
     color: var(--text3);
-    border-bottom: solid grey 0.2vmin;
+    border-bottom: solid grey 0.05rem;
 }
 
 .highlighted {

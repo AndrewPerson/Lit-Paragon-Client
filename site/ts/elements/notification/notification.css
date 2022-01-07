@@ -3,11 +3,11 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5vmin;
+    gap: 0.6rem;
 
     background-color: var(--surface2);
-    padding: 1.5vmin;
-    border-radius: 1.5vmin;
+    padding: 0.6rem;
+    border-radius: 0.6rem;
     box-shadow: var(--small-shadow);
 }
 
@@ -24,8 +24,8 @@ loading-indicator {
 
     display: flex;
 
-    width: calc(var(--font-size) * var(--scale));
-    height: calc(var(--font-size) * var(--scale));
+    width: calc(1rem * var(--scale));
+    height: calc(1rem * var(--scale));
 }
 
 svg {

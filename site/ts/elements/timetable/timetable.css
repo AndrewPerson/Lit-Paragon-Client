@@ -1,17 +1,25 @@
 :host {
     margin: auto;
-    padding: 4vmin;
+    padding: 1.6rem;
     max-width: 92%;
-    width: calc(var(--font-size) * 23);
-    height: calc(calc(var(--font-size) * 25.5) + 9vmin);
+    width: 23rem;
+    height: 29rem;
 }
 
 @media (max-aspect-ratio: 3/4) {
     :host {
-        height: calc(calc(calc(var(--font-size) * 25.5) + 9vmin) + 7.5vmax);
+        height: calc(29rem + 7.5vmax);
     }
 }
 
+/* We use 26.2rem because that is the full width of the timetable including padding.
+@media (max-width: 26.2rem) {
+    :host {
+        padding: calc((100vw - 23rem) / 2);
+    }
+}
+*/
+
 timetable-row + timetable-row {
-    border-top: solid grey 0.2vmin;
+    border-top: solid grey 0.05rem;
 }

@@ -1,0 +1,32 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.next-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.timer {
+    font-size: 2.5rem;
+}
+
+.line {
+    flex: 1;
+    height: 0;
+    border-top: solid 0.05rem var(--text3);
+}
