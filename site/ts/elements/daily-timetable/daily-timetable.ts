@@ -2,7 +2,6 @@ import { Page } from "../page/page";
 
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
 import { DailyTimetable } from "./types";
 

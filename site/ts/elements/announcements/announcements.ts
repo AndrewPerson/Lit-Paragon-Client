@@ -2,7 +2,6 @@ import { Page } from "../page/page";
 
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
 import { Announcements, Announcement } from "./types";
 
@@ -65,13 +64,13 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${repeat(filteredAnnouncements, (announcement: Announcement) => html`
-        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
-                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
-                           ${announcement.meetingTime === null ? "" :
-                           `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
-                           ` (${announcement.meetingTimeParsed})`}"`}
-                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
+        <div class="content">${filteredAnnouncements.map((announcement: Announcement) => html`
+            <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
+                               years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
+                               ${announcement.meetingTime === null ? "" :
+                               `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
+                               ` (${announcement.meetingTimeParsed})`}"`}
+                               weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
         `)}</div>
         `;
     }

@@ -85,10 +85,9 @@ let buildPromise = build({
     entryPoints: config.files.map(file => `site/${file}`),
     outdir: "site/dist",
     bundle: true,
-    minify: env.js.minify,
-    treeShaking: env.js.treeShaking,
+    minify: true,
+    treeShaking: true,
     target: "es2020",
-    format: "esm",
     define: transformVars(env.vars),
     plugins: [
         clear("./site/dist"),
@@ -118,12 +117,11 @@ let buildPromise = build({
             setup(build) {        
                 build.onLoad({ filter: /\.svg$/ }, async args => {
                     let contents = await readFile(args.path, "utf8");
-        
-                    if (env.svg.floatPrecision)
-                        contents = optimize(contents, {
-                            path: args.path,
-                            floatPrecision: env.svg.floatPrecision,
-                        }).data;
+
+                    contents = optimize(contents, {
+                        path: args.path,
+                        floatPrecision: 1,
+                    }).data;
         
                     return {
                         loader: "js",

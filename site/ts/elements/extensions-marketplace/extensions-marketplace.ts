@@ -1,6 +1,5 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
 import { Extensions, Extension } from "../../site/extensions";
 
@@ -52,10 +51,10 @@ export class ExtensionsMarketplace extends LitElement {
 
         ${this.fetchingExtensions ? nothing : html`
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${repeat(this.extensions.keys(), (extensionName: string) => html`
-        <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
-                           description="${(this.extensions.get(extensionName) as Extension).description}"
-                           ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
+        <div class="content">${[...this.extensions.keys()].map((extensionName: string) => html`
+            <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
+                            description="${(this.extensions.get(extensionName) as Extension).description}"
+                            ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
         `)}</div>
         `}
         `;

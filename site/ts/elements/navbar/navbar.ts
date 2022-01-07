@@ -1,6 +1,5 @@
 import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
 import { Extensions, Extension } from "../../site/extensions";
 
@@ -214,7 +213,7 @@ export class Navbar extends LitElement {
 
         return html`
         <div id="items-container">
-            ${repeat(this.order, this.GetNavItem)}
+            ${this.order.map(this.GetNavItem)}
         
             <div id="top-shadow" style="display: none"></div>
             <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
