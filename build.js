@@ -121,6 +121,16 @@ let buildPromise = build({
                     contents = optimize(contents, {
                         path: args.path,
                         floatPrecision: 1,
+                        plugins: [
+                            {
+                                name: "preset-default",
+                                params: {
+                                    overrides: {
+                                        removeViewBox: false
+                                    }
+                                }
+                            }
+                        ]
                     }).data;
         
                     return {
