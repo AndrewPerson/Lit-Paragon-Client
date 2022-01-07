@@ -35,8 +35,11 @@ WebDevServer.Server.CreateNew()
             res.SetBody(await readFile(path.resolve(dirname, "site/dist/index.js"), "utf8")).Send();
             event.PreventDefault();
             break;
+        case "/Metadata":
         case "/metadata":
             res.SetHeader("Content-Type", "application/json");
+            res.SetBody(await readFile(path.resolve(dirname, "site/metadata"), "utf8")).Send();
+            event.PreventDefault();
             break;
     }
 })
