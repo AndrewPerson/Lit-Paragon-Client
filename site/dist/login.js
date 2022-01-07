@@ -55,19 +55,22 @@ var Resources = class {
     await cache.put(name, new Response(resource));
     this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
   }
+  static async GetResourceNow(name) {
+    let cache = await caches.open("User Resources");
+    let response = await cache.match(name);
+    if (response) {
+      let resource = await response.json();
+      return resource;
+    } else
+      return void 0;
+  }
   static async GetResource(name, callback) {
     let callbacks = this._resourceCallbacks.get(name);
     if (callbacks !== void 0) {
       callbacks.AddListener(callback);
       this._resourceCallbacks.set(name, callbacks);
     }
-    let cache = await caches.open("User Resources");
-    let response = await cache.match(name);
-    if (response) {
-      let resource = await response.json();
-      callback(resource);
-    } else
-      callback(void 0);
+    callback(await this.GetResourceNow(name));
   }
   static async FetchResources() {
     let { valid, token } = await this.GetToken();
@@ -882,8 +885,6 @@ var img_default = r`:where(img, svg) {
 // site/css/default/text.css
 var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
-
-    /*mix-blend-mode: difference;*/
 }
 
 :where(*) {
@@ -899,23 +900,27 @@ var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
 }
 
 :where(h1) {
-    font-size: calc(var(--font-size) * 1.6);
+    font-size: 2rem;
 }
 
 :where(h2) {
-    font-size: calc(var(--font-size) * 1.5);
+    font-size: 1.5rem;
 }
 
 :where(h3) {
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 :where(h4) {
-    font-size: calc(var(--font-size) * 1.3);
+    font-size: 1.3rem;
 }
 
 :where(h5) {
-    font-size: calc(var(--font-size) * 1.2);
+    font-size: 1.2rem;
+}
+
+:where(h6) {
+    font-size: 1.1rem;
 }
 
 :where(b, strong) {
@@ -944,7 +949,7 @@ var navitem_default = r`:host {
     width: 12vmin;
     height: 12vmin;
     position: relative;
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -955,8 +960,8 @@ var navitem_default = r`:host {
 }
 
 #handle {
-    --size: 2vmin;
-    --padding: 2vmin;
+    --size: 0.8rem;
+    --padding: 0.8rem;
 
     --full-size: calc(calc(var(--padding) * 2) + var(--size));
 
@@ -1059,7 +1064,7 @@ var navbar_default = r`:host {
 
     z-index: 100;
 
-    border-radius: 0 2vmin 2vmin 0;
+    border-radius: 0.8rem 0.8rem 0 0;
 }
 
 #items-container {
@@ -1081,7 +1086,7 @@ var navbar_default = r`:host {
 
         padding-bottom: 12vmin;
 
-        border-radius: 0 2vmin 2vmin 0;
+        border-radius: 0 0.8rem 0.8rem 0;
     }
 
     #items-container {
@@ -1096,7 +1101,7 @@ var navbar_default = r`:host {
         position: absolute;
         left: 0;
         bottom: 0;
-        border-radius: 0 0 2vmin 0;
+        border-radius: 0 0 0.8rem 0;
     }
 }
 
@@ -1107,7 +1112,7 @@ var navbar_default = r`:host {
         width: 100%;
         height: 12vmin;
 
-        border-radius: 2vmin 2vmin 0 0;
+        border-radius: 0.8rem0.8rem 0 0;
     }
 
     #items-container {
@@ -1124,8 +1129,8 @@ var navbar_default = r`:host {
 }
 
 #items-container::-webkit-scrollbar {
-    width: 1vmin;
-    height: 1vmin;
+    width: 0.4rem;
+    height: 0.4rem;
     display: none;
 }
 
@@ -1154,12 +1159,12 @@ var navbar_default = r`:host {
 #top-shadow,
 #bottom-shadow {
     width: 12vmin;
-    height: 2vmin;
+    height: 0.8rem;
     left: 0;
 }
 
 #top-shadow {
-    border-radius: 0 2vmin 0 0;
+    border-radius: 0.05rem 0 0;
     top: 0;
     --angle: 180deg;
 }
@@ -1171,7 +1176,7 @@ var navbar_default = r`:host {
 
 #left-shadow,
 #right-shadow {
-    width: 2vmin;
+    width: 0.8rem;
     height: 12vmin;
     bottom: 0;
 }
@@ -1182,7 +1187,7 @@ var navbar_default = r`:host {
 }
 
 #right-shadow {
-    border-radius: 0 2vmin 0 0;
+    border-radius: 0.05rem 0 0;
     right: 0;
     --angle: -90deg;
 }`;
@@ -1399,31 +1404,38 @@ var _Extensions = class {
       };
     }
     if (command == "Get Resource") {
-      return new Promise((resolve) => {
-        let resolved = false;
-        Resources.GetResource(data.name, async (resource) => {
-          if (resolved) {
-            e7.source?.postMessage({
+      let listeners = this._resourceListeners.get(data.name);
+      let firstTime = false;
+      if (listeners === void 0) {
+        firstTime = true;
+        listeners = [];
+      }
+      listeners.push(e7);
+      this._resourceListeners.set(data.name, listeners);
+      if (firstTime) {
+        Resources.GetResource(data.name, (resource2) => {
+          let listeners2 = this._resourceListeners.get(data.name) ?? [];
+          for (let listener of listeners2) {
+            listener.source?.postMessage({
               command: "Resource",
               data: {
                 name: data.name,
-                resource
+                resource: resource2
               }
             }, {
-              targetOrigin: e7.origin
+              targetOrigin: listener.origin
             });
-            return;
           }
-          resolved = true;
-          resolve({
-            command: "Resource",
-            data: {
-              name: data.name,
-              resource
-            }
-          });
         });
-      });
+      }
+      let resource = await Resources.GetResourceNow(data.name);
+      return {
+        command: "Resource",
+        data: {
+          name: data.name,
+          resource
+        }
+      };
     }
     if (command == "Get Token") {
       let token = await Resources.GetToken();
@@ -1556,6 +1568,7 @@ var Extensions = _Extensions;
 Extensions._installedExtensions = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
 Extensions.extensionOrigins = _Extensions.GetExtensionOrigins(_Extensions._installedExtensions);
 Extensions._extensionCallbacks = new Callbacks();
+Extensions._resourceListeners = /* @__PURE__ */ new Map();
 
 // site/ts/site/site.ts
 var Site = class {

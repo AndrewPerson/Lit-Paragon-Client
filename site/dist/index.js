@@ -55,19 +55,22 @@ var Resources = class {
     await cache.put(name, new Response(resource));
     this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
   }
+  static async GetResourceNow(name) {
+    let cache = await caches.open("User Resources");
+    let response = await cache.match(name);
+    if (response) {
+      let resource = await response.json();
+      return resource;
+    } else
+      return void 0;
+  }
   static async GetResource(name, callback) {
     let callbacks = this._resourceCallbacks.get(name);
     if (callbacks !== void 0) {
       callbacks.AddListener(callback);
       this._resourceCallbacks.set(name, callbacks);
     }
-    let cache = await caches.open("User Resources");
-    let response = await cache.match(name);
-    if (response) {
-      let resource = await response.json();
-      callback(resource);
-    } else
-      callback(void 0);
+    callback(await this.GetResourceNow(name));
   }
   static async FetchResources() {
     let { valid, token } = await this.GetToken();
@@ -887,8 +890,6 @@ var img_default = r`:where(img, svg) {
 // site/css/default/text.css
 var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
-
-    /*mix-blend-mode: difference;*/
 }
 
 :where(*) {
@@ -904,23 +905,27 @@ var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
 }
 
 :where(h1) {
-    font-size: calc(var(--font-size) * 1.6);
+    font-size: 2rem;
 }
 
 :where(h2) {
-    font-size: calc(var(--font-size) * 1.5);
+    font-size: 1.5rem;
 }
 
 :where(h3) {
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 :where(h4) {
-    font-size: calc(var(--font-size) * 1.3);
+    font-size: 1.3rem;
 }
 
 :where(h5) {
-    font-size: calc(var(--font-size) * 1.2);
+    font-size: 1.2rem;
+}
+
+:where(h6) {
+    font-size: 1.1rem;
 }
 
 :where(b, strong) {
@@ -949,7 +954,7 @@ var navitem_default = r`:host {
     width: 12vmin;
     height: 12vmin;
     position: relative;
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -960,8 +965,8 @@ var navitem_default = r`:host {
 }
 
 #handle {
-    --size: 2vmin;
-    --padding: 2vmin;
+    --size: 0.8rem;
+    --padding: 0.8rem;
 
     --full-size: calc(calc(var(--padding) * 2) + var(--size));
 
@@ -1064,7 +1069,7 @@ var navbar_default = r`:host {
 
     z-index: 100;
 
-    border-radius: 0 2vmin 2vmin 0;
+    border-radius: 0.8rem 0.8rem 0 0;
 }
 
 #items-container {
@@ -1086,7 +1091,7 @@ var navbar_default = r`:host {
 
         padding-bottom: 12vmin;
 
-        border-radius: 0 2vmin 2vmin 0;
+        border-radius: 0 0.8rem 0.8rem 0;
     }
 
     #items-container {
@@ -1101,7 +1106,7 @@ var navbar_default = r`:host {
         position: absolute;
         left: 0;
         bottom: 0;
-        border-radius: 0 0 2vmin 0;
+        border-radius: 0 0 0.8rem 0;
     }
 }
 
@@ -1112,7 +1117,7 @@ var navbar_default = r`:host {
         width: 100%;
         height: 12vmin;
 
-        border-radius: 2vmin 2vmin 0 0;
+        border-radius: 0.8rem0.8rem 0 0;
     }
 
     #items-container {
@@ -1129,8 +1134,8 @@ var navbar_default = r`:host {
 }
 
 #items-container::-webkit-scrollbar {
-    width: 1vmin;
-    height: 1vmin;
+    width: 0.4rem;
+    height: 0.4rem;
     display: none;
 }
 
@@ -1159,12 +1164,12 @@ var navbar_default = r`:host {
 #top-shadow,
 #bottom-shadow {
     width: 12vmin;
-    height: 2vmin;
+    height: 0.8rem;
     left: 0;
 }
 
 #top-shadow {
-    border-radius: 0 2vmin 0 0;
+    border-radius: 0.05rem 0 0;
     top: 0;
     --angle: 180deg;
 }
@@ -1176,7 +1181,7 @@ var navbar_default = r`:host {
 
 #left-shadow,
 #right-shadow {
-    width: 2vmin;
+    width: 0.8rem;
     height: 12vmin;
     bottom: 0;
 }
@@ -1187,7 +1192,7 @@ var navbar_default = r`:host {
 }
 
 #right-shadow {
-    border-radius: 0 2vmin 0 0;
+    border-radius: 0.05rem 0 0;
     right: 0;
     --angle: -90deg;
 }`;
@@ -1404,31 +1409,38 @@ var _Extensions = class {
       };
     }
     if (command == "Get Resource") {
-      return new Promise((resolve) => {
-        let resolved = false;
-        Resources.GetResource(data.name, async (resource) => {
-          if (resolved) {
-            e8.source?.postMessage({
+      let listeners = this._resourceListeners.get(data.name);
+      let firstTime = false;
+      if (listeners === void 0) {
+        firstTime = true;
+        listeners = [];
+      }
+      listeners.push(e8);
+      this._resourceListeners.set(data.name, listeners);
+      if (firstTime) {
+        Resources.GetResource(data.name, (resource2) => {
+          let listeners2 = this._resourceListeners.get(data.name) ?? [];
+          for (let listener of listeners2) {
+            listener.source?.postMessage({
               command: "Resource",
               data: {
                 name: data.name,
-                resource
+                resource: resource2
               }
             }, {
-              targetOrigin: e8.origin
+              targetOrigin: listener.origin
             });
-            return;
           }
-          resolved = true;
-          resolve({
-            command: "Resource",
-            data: {
-              name: data.name,
-              resource
-            }
-          });
         });
-      });
+      }
+      let resource = await Resources.GetResourceNow(data.name);
+      return {
+        command: "Resource",
+        data: {
+          name: data.name,
+          resource
+        }
+      };
     }
     if (command == "Get Token") {
       let token = await Resources.GetToken();
@@ -1561,6 +1573,7 @@ var Extensions = _Extensions;
 Extensions._installedExtensions = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
 Extensions.extensionOrigins = _Extensions.GetExtensionOrigins(_Extensions._installedExtensions);
 Extensions._extensionCallbacks = new Callbacks();
+Extensions._resourceListeners = /* @__PURE__ */ new Map();
 
 // site/ts/site/site.ts
 var Site = class {
@@ -1681,7 +1694,7 @@ var Page2 = class extends s4 {
       return T;
     if (this._state == 1 /* Loading */) {
       return p`
-            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
+            <loading-indicator style="width: 30.8rem; height: 100%; margin: auto;"></loading-indicator>
             <style>
                 :host {
                     display: flex;
@@ -1737,7 +1750,7 @@ summary {
 
     list-style: none;
 
-    margin-bottom: 1vmin;
+    margin-bottom: 0.4rem;
 }
 
 summary > * {
@@ -1752,8 +1765,8 @@ summary::after {
     right: 0;
 
     display: block;
-    width: calc(var(--font-size) * 1.5);
-    height: calc(var(--font-size) * 1.5);
+    width: 1.5rem;
+    height: 1.5rem;
 
     margin-left: auto;
     
@@ -1774,7 +1787,7 @@ details[open] > summary::after {
 }
 
 .info {
-    font-size: calc(var(--font-size) * 0.7);
+    font-size: 0.7rem;
 }`;
 
 // site/ts/elements/announcements/post.ts
@@ -1821,16 +1834,16 @@ AnnouncementPost = __decorateClass([
 // site/css/default/search.css
 var search_default = r`:where(input[type=search]) {
     border: none;
-    border-bottom: 0.2vmin solid var(--text2);
+    border-bottom: solid 0.05rem var(--text2);
     border-radius: 0;
 
     background-color: var(--surface2);
     color: var(--text1);
 
-    font-size: var(--font-size);
+    font-size: 1rem;
     font-family: monospace;
 
-    height: calc(var(--font-size) * 2);
+    height: 2rem;
 }
 
 :where(input[type=search]:focus) {
@@ -1851,16 +1864,16 @@ var search_default = r`:where(input[type=search]) {
 
 // site/css/default/select.css
 var select_default = r`:where(select) {
-    border: 0.2vmin solid var(--text2);
+    border: solid 0.05rem var(--text2);
     background-color: var(--surface2);
     color: var(--text2);
 
-    padding: 1vmin 0;
-    padding-right: 6vmin;
+    padding: 0.4rem 0;
+    padding-right: 2.3rem;
 
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 
-    font-size: calc(var(--font-size) / 1.2);
+    font-size: calc(1rem / 1.2);
 
     user-select: none;
     -ms-user-select: none;
@@ -1872,13 +1885,13 @@ var select_default = r`:where(select) {
     background-color: var(--surface2);
 }`;
 
-// site/css/default/elements/full.css
-var full_default = r`:host {
+// site/css/default/pages/full.css
+var full_default = r`:host, main {
     flex: 1;
     margin: 1%;
 
     box-sizing: border-box;
-    padding: 1vmin;
+    padding: 0.4rem;
 }
 
 /*
@@ -1887,29 +1900,29 @@ var full_default = r`:host {
     which is 1% either side.
 */
 @media (max-width: 306px) {
-    :host {
+    :host, main {
         margin: 1% calc(50% - 150px);
     }
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         margin: 1% 0;
     }
 }`;
 
-// site/css/default/elements/element.css
-var element_default = r`:host {
+// site/css/default/pages/page.css
+var page_default = r`:host, main {
     box-shadow: var(--shadow);
     background-color: var(--surface2);
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
 }`;
 
 // site/ts/elements/announcements/announcements.css
 var announcements_default = r`:host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
+    gap: 1.2rem;
 
     overscroll-behavior: contain;
 }
@@ -1930,12 +1943,12 @@ var announcements_default = r`:host {
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -1944,15 +1957,15 @@ var announcements_default = r`:host {
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 announcement-post {
-    margin-bottom: 3vmin;
+    margin-bottom: 1.2rem;
 }`;
 
 // site/ts/elements/announcements/announcements.ts
@@ -1992,7 +2005,7 @@ var SchoolAnnouncements = class extends Page2 {
         `;
   }
 };
-SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
+SchoolAnnouncements.styles = [page_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
 __decorateClass([
   t3()
 ], SchoolAnnouncements.prototype, "announcements", 2);
@@ -2033,9 +2046,9 @@ slot {
 
     background-color: var(--surface2);
 
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     box-shadow: var(--shadow);
-    padding: 2vmin;
+    padding: 0.8rem;
 
     z-index: inherit;
 
@@ -2113,7 +2126,7 @@ var barcode_default = r`:host {
 
 #point1,
 #point2 {
-    --size: 3vmin;
+    --size: 1.2rem;
 
     position: absolute;
 
@@ -2151,15 +2164,15 @@ var barcode_default = r`:host {
 }
 
 #barcodeDisplay.outline {
-    border: solid 1vmin var(--text1);
+    border: solid 0.4rem var(--text1);
 }
 
 info-popup {
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     
-    width: 5vmin;
-    height: 5vmin;
+    width: 1.9rem;
+    height: 1.9rem;
     z-index: 2;
 }`;
 
@@ -2259,7 +2272,7 @@ var StudentBarcode = class extends Page2 {
         `;
   }
 };
-StudentBarcode.styles = [element_default, full_default, text_default, img_default, barcode_default];
+StudentBarcode.styles = [page_default, full_default, text_default, img_default, barcode_default];
 __decorateClass([
   i4("#barcodeDisplay")
 ], StudentBarcode.prototype, "barcode", 2);
@@ -2273,9 +2286,9 @@ StudentBarcode = __decorateClass([
   n5("student-barcode")
 ], StudentBarcode);
 
-// site/css/default/elements/card.css
-var card_default = r`:host {
-    padding: 2vmin;
+// site/css/default/pages/card.css
+var card_default = r`:host, main {
+    padding: 0.8rem;
 
     margin: auto;
 
@@ -2286,14 +2299,45 @@ var card_default = r`:host {
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         width: 100vw;
         min-width: unset;
     }
 }`;
 
 // site/ts/elements/daily-timetable/daily-timetable.css
-var daily_timetable_default = r``;
+var daily_timetable_default = r`:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.next-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.timer {
+    font-size: 2.5rem;
+}
+
+.line {
+    flex: 1;
+    height: 0;
+    border-top: solid 0.05rem var(--text3);
+}`;
 
 // site/ts/elements/daily-timetable/daily-timetable.ts
 var SchoolAnnouncements2 = class extends Page2 {
@@ -2303,11 +2347,19 @@ var SchoolAnnouncements2 = class extends Page2 {
   }
   renderPage() {
     return p`
-        
+            <div class="next-display">
+                <p>Nothing</p>
+                <p>in</p>
+                <div class="timer-container">
+                    <span class="line left"></span>
+                    <h1 class="timer">Never</h1>
+                    <span class="line right"></span>
+                </div>
+            </div>
         `;
   }
 };
-SchoolAnnouncements2.styles = [element_default, card_default, text_default, daily_timetable_default];
+SchoolAnnouncements2.styles = [page_default, card_default, text_default, daily_timetable_default];
 __decorateClass([
   t3()
 ], SchoolAnnouncements2.prototype, "dailyTimetable", 2);
@@ -2478,7 +2530,7 @@ var extensions_default = r`:host {
 }
 
 loading-indicator {
-    width: 80vmin;
+    width: 30.8rem;
     height: 100%;
     margin: auto;
 }
@@ -2527,13 +2579,13 @@ var button_default = r`a.button {
 }
 
 :where(button, .button) {
-    border: solid 0.2vmin var(--surface4);
+    border: solid 0.05rem var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);
-    padding: 1vmin 2vmin;
-    border-radius: calc(var(--font-size) / 2.5);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
     box-shadow: var(--small-shadow);
-    font-size: var(--font-size);
+    font-size: 1rem;
 }
 
 :where(button:hover, .button:hover) {
@@ -2542,9 +2594,9 @@ var button_default = r`a.button {
 }
 
 :where(button:active, .button:active) {
-    border: solid 0.2vmin transparent;
+    border: solid 0.05rem transparent;
     color: var(--text4);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.1rem 0.1rem var(--shadow-colour);
     background-color: var(--surface4);
 }`;
 
@@ -2553,12 +2605,12 @@ var extension_display_default = r`:host {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 3vmin;
+    gap: 1.2rem;
 }
 
 img {
-    width: calc(var(--font-size) * 4);
-    height: calc(var(--font-size) * 4);
+    width: 4rem;
+    height: 4rem;
 
     border-radius: 100%;
 
@@ -2570,7 +2622,7 @@ img {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 1vmin;
+    gap: 0.4rem;
 
     flex: 1;
 }`;
@@ -2619,7 +2671,7 @@ ExtensionDisplay = __decorateClass([
 var extensions_marketplace_default = r`:host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
+    gap: 1.2rem;
 
     overscroll-behavior: contain;
 }
@@ -2631,12 +2683,13 @@ var extensions_marketplace_default = r`:host {
 
 .content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--font-size) * 20), 1fr));
-    gap: 2vmin;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-rows: max-content;
+    gap: 0.8rem;
 
     flex: 1;
-    overflow-y: auto;
 
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--surface4) transparent;
 }
@@ -2644,12 +2697,12 @@ var extensions_marketplace_default = r`:host {
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -2658,11 +2711,11 @@ var extensions_marketplace_default = r`:host {
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }`;
 
 // site/ts/elements/extensions-marketplace/extensions-marketplace.ts
@@ -2698,7 +2751,7 @@ var ExtensionsMarketplace = class extends s4 {
         `;
   }
 };
-ExtensionsMarketplace.styles = [element_default, full_default, text_default, search_default, extensions_marketplace_default];
+ExtensionsMarketplace.styles = [page_default, full_default, text_default, search_default, extensions_marketplace_default];
 __decorateClass([
   t3()
 ], ExtensionsMarketplace.prototype, "extensions", 2);
@@ -2712,11 +2765,11 @@ var notification_default = r`:host {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1.5vmin;
+    gap: 0.6rem;
 
     background-color: var(--surface2);
-    padding: 1.5vmin;
-    border-radius: 1.5vmin;
+    padding: 0.6rem;
+    border-radius: 0.6rem;
     box-shadow: var(--small-shadow);
 }
 
@@ -2733,8 +2786,8 @@ loading-indicator {
 
     display: flex;
 
-    width: calc(var(--font-size) * var(--scale));
-    height: calc(var(--font-size) * var(--scale));
+    width: calc(1rem * var(--scale));
+    height: calc(1rem * var(--scale));
 }
 
 svg {
@@ -2775,19 +2828,19 @@ InlineNotification = __decorateClass([
 // site/css/default/range.css
 var range_default = r`:where(input[type=range]) {
     appearance: none;
-    width: calc(var(--font-size) * 7);
+    width: 7rem;
     background-color: var(--surface1);
-    height: calc(var(--font-size) / 1.5);
+    height: calc(1rem / 1.5);
     box-shadow: var(--small-shadow);
-    border-radius: calc(var(--font-size) / 2.5);
+    border-radius: calc(1rem / 2.5);
 }
 
 :where(input[type=range])::-moz-range-thumb {
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
 }
@@ -2796,8 +2849,8 @@ var range_default = r`:where(input[type=range]) {
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
 }`;
@@ -2809,20 +2862,20 @@ var settings_default = r`:host {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3vmin;
+    gap: 1.2rem;
 }
 
 span {
     width: 80%;
-    border-bottom: 0.2vmin solid var(--text3);
+    border-bottom: solid 0.05rem var(--text3);
 }
 
 #toggle {
     display: grid;
 
-    padding: 1vmin;
-    width: 8vmin;
-    height: 8vmin;
+    padding: 0.4rem;
+    width: 3.1rem;
+    height: 3.1rem;
 
     appearance: none;
     -webkit-appearance: none;
@@ -2847,12 +2900,12 @@ span {
 
 info-popup {
     position: absolute;
-    top: 3vmin;
-    left: 3vmin;
-    width: 5vmin;
-    height: 5vmin;
+    top: 1.2rem;
+    left: 1.2rem;
+    width: 1.9rem;
+    height: 1.9rem;
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     z-index: 2;
 }`;
 
@@ -2917,7 +2970,7 @@ var Settings = class extends s4 {
         `;
   }
 };
-Settings.styles = [text_default, img_default, button_default, range_default, card_default, element_default, settings_default];
+Settings.styles = [text_default, img_default, button_default, range_default, card_default, page_default, settings_default];
 __decorateClass([
   i4("#hue", true)
 ], Settings.prototype, "hueInput", 2);
@@ -2937,13 +2990,13 @@ var timetable_period_default = r`:host {
 }
 
 .highlighted {
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 
     background-color: var(--surface4);
     color: var(--text4);
 
     box-shadow: var(--shadow);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
 
     animation: appear 0.3s ease-out;
 }
@@ -2959,10 +3012,10 @@ var timetable_period_default = r`:host {
 }
 
 p {
-    width: calc(var(--font-size) * 4);
-    height: calc(var(--font-size) * 1.5);
+    width: 4rem;
+    height: 1.5rem;
     text-align: center;
-    line-height: calc(var(--font-size) * 1.5);
+    line-height: 1.5rem;
 }
 
 @media (max-aspect-ratio: 3/4) {
@@ -2973,15 +3026,15 @@ p {
 
 #popup {
     position: absolute;
-    top: calc(var(--font-size) * 2);
+    top: 2rem;
 
     color: var(--text4);
 
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
     background-color: var(--surface4);
 
     box-shadow: var(--shadow);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
 
     z-index: 97;
 
@@ -2992,11 +3045,11 @@ p {
 
 :host(.highlighted) > #popup {
     z-index: 98;
-    box-shadow: 0 0 0 0.5vmin var(--text1);
+    box-shadow: 0 0 0 0.2rem var(--text1);
 }
 
 #popup::before {
-    --size: calc(var(--font-size) / 2);
+    --size: 0.5rem;
 
     content: "";
 
@@ -3010,7 +3063,7 @@ p {
 }
 
 #popup[reversed] {
-    top: calc(var(--font-size) * -2);
+    top: -2rem;
 }
 
 #popup[reversed]::before {
@@ -3094,17 +3147,17 @@ var timetable_day_default = r`:host {
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    width: calc(var(--font-size) * 4.5);
+    width: 4.5rem;
     min-width: 0;
 }
 
 .name {
-    margin-bottom: 1vmin;
+    margin-bottom: 0.4rem;
     text-align: center;
-    font-size: calc(var(--font-size) / 1.2);
-    width: calc(var(--font-size) * 3.63);
+    font-size: calc(1rem / 1.2);
+    width: 3.63rem;
     color: var(--text3);
-    border-bottom: solid grey 0.2vmin;
+    border-bottom: solid grey 0.05rem;
 }
 
 .highlighted {
@@ -3154,8 +3207,8 @@ var timetable_row_default = r`:host {
     display: flex;
     align-items: flex-end;
     justify-content: space-around;
-    padding-top: 1vmin;
-    margin-bottom: 1vmin;
+    padding-top: 0.4rem;
+    margin-bottom: 0.4rem;
 }
 
 .period-nums {
@@ -3166,8 +3219,8 @@ var timetable_row_default = r`:host {
 
 .period-nums > p {
     color: var(--text3);
-    height: 3.9vmin;
-    line-height: calc(var(--font-size) * 1.5);
+    height: 1.5rem;
+    line-height: 1.5rem;
 
     user-select: none;
     -ms-user-select: none;
@@ -3250,20 +3303,27 @@ TimetableRow = __decorateClass([
 // site/ts/elements/timetable/timetable.css
 var timetable_default = r`:host {
     margin: auto;
-    padding: 4vmin;
+    padding: calc((100vw - 23rem) / 2);
     max-width: 92%;
-    width: calc(var(--font-size) * 23);
-    height: calc(calc(var(--font-size) * 25.5) + 9vmin);
+    width: 23rem;
+    height: 29rem;
 }
 
 @media (max-aspect-ratio: 3/4) {
     :host {
-        height: calc(calc(calc(var(--font-size) * 25.5) + 9vmin) + 7.5vmax);
+        height: calc(29rem + 7.5vmax);
+    }
+}
+
+/* We use 26.2rem because that is the full width of the timetable including padding. */
+@media (max-width: 26.2rem) {
+    :host {
+        padding: calc((100vw - 23rem) / 2);
     }
 }
 
 timetable-row + timetable-row {
-    border-top: solid grey 0.2vmin;
+    border-top: solid grey 0.05rem;
 }`;
 
 // site/ts/elements/timetable/timetable.ts
@@ -3315,7 +3375,7 @@ var FullTimetable = class extends Page2 {
         `;
   }
 };
-FullTimetable.styles = [element_default, timetable_default];
+FullTimetable.styles = [page_default, timetable_default];
 __decorateClass([
   t3()
 ], FullTimetable.prototype, "timetable", 2);
