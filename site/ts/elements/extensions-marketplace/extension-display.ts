@@ -1,7 +1,7 @@
 import { LitElement, html } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import { Extensions } from "../../site/extensions";
+import { InstallExtension, UninstallExtension } from "../../site/extensions";
 
 import { ExtensionsMarketplace } from "./extensions-marketplace";
 
@@ -29,13 +29,13 @@ export class ExtensionDisplay extends LitElement {
     installed: boolean;
 
     async Install() {
-        await Extensions.InstallExtension(this.title);
+        await InstallExtension(this.title);
 
         (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
     }
 
     async Uninstall() {
-        await Extensions.UninstallExtension(this.title);
+        await UninstallExtension(this.title);
 
         (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
     }

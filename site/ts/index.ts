@@ -2,7 +2,7 @@
 
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
-import { Extensions } from "./site/extensions";
+import { AddExtensionListeners, FireExtensionCallbacks } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
@@ -23,7 +23,7 @@ async function Main() {
         });
     }
 
-    Extensions.AddListeners();
+    AddExtensionListeners();
 
     window.addEventListener("hashchange", () => {
         if (location.hash) {
@@ -72,7 +72,7 @@ async function Main() {
 
     navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
         if (e.data.command == "metadata-fetched") {
-            Extensions.FireExtensionCallbacks();
+            FireExtensionCallbacks();
         }
     });
 

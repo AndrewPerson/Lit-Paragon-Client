@@ -1,7 +1,7 @@
 import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 
-import { Extensions, Extension } from "../../site/extensions";
+import { Extensions, Extension, GetExtensionNavIconURL } from "../../site/extensions";
 
 import "./navitem";
 import { NavItem } from "./navitem";
@@ -204,7 +204,7 @@ export class Navbar extends LitElement {
 
         for (var key of extensions.keys()) {
             this.pages.push(key);
-            this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
+            this.icons.push(GetExtensionNavIconURL(extensions.get(key) as Extension));
         }
 
         let mobile = window.innerWidth <= window.innerHeight;

@@ -1,7 +1,7 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { Extensions, Extension } from "../../site/extensions";
+import { Extensions, Extension, GetExtensions, GetExtensionIconURL } from "../../site/extensions";
 
 import "./extension-display";
 
@@ -30,7 +30,7 @@ export class ExtensionsMarketplace extends LitElement {
     constructor() {
         super();
 
-        Extensions.GetExtensions(extensions => {
+        GetExtensions(extensions => {
             this.fetchingExtensions = false;
             this.extensions = extensions;
         });
@@ -52,7 +52,7 @@ export class ExtensionsMarketplace extends LitElement {
         ${this.fetchingExtensions ? nothing : html`
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
         <div class="content">${[...this.extensions.keys()].map((extensionName: string) => html`
-            <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
+            <extension-display title="${extensionName}" img="${GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
                             description="${(this.extensions.get(extensionName) as Extension).description}"
                             ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
         `)}</div>
