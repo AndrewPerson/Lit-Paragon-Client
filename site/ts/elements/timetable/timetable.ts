@@ -6,9 +6,9 @@ import { customElement, state } from "lit/decorators.js";
 import { Timetable } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
 
-import "./timetable-row";
+import "./row";
 
-import { TimetablePeriod } from "./timetable-period";
+import { TimetablePeriod } from "./period";
 
 //@ts-ignore
 import pageCss from "default/pages/page.css";

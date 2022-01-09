@@ -3,16 +3,16 @@ import { customElement, property } from "lit/decorators.js";
 
 import { Day } from "./types";
 
-import "./timetable-day";
+import "./day";
 
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
-import timetableRowCss from "./timetable-row.css";
+import rowCss from "./row.css";
 
 @customElement("timetable-row")
 export class TimetableRow extends LitElement {
-    static styles = [textCss, timetableRowCss];
+    static styles = [textCss, rowCss];
 
     @property()
     week: string;

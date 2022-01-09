@@ -3,16 +3,16 @@ import { customElement, property } from "lit/decorators.js";
 
 import { Periods } from "./types";
 
-import "./timetable-period";
+import "./period";
 
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
-import timetableDayCss from "./timetable-day.css";
+import dayCss from "./day.css";
 
 @customElement("timetable-day")
 export class TimetableDay extends LitElement {
-    static styles = [textCss, timetableDayCss];
+    static styles = [textCss, dayCss];
 
     @property()
     name: string;

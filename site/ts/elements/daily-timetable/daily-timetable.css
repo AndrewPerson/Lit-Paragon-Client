@@ -2,7 +2,6 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
 }
 
 .next-display {
@@ -10,7 +9,7 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 100%;
+    width: 80%;
 }
 
 .timer-container {
@@ -29,4 +28,14 @@
     flex: 1;
     height: 0;
     border-top: solid 0.05rem var(--text3);
+}
+
+.periods {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    flex: 1;
+
+    width: 80%;
 }

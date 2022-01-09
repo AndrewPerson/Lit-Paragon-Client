@@ -1,0 +1,10 @@
+:host {
+    display: flex;
+    justify-content: space-between;
+
+    width: 100%;
+}
+
+p {
+    color: var(--text3);
+}

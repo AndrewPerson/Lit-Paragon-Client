@@ -1,1 +1,0 @@
-var h=Object.defineProperty;var i=Object.getOwnPropertyDescriptor;var k=(g,b,d,c)=>{for(var a=c>1?void 0:c?i(b,d):b,e=g.length-1,f;e>=0;e--)(f=g[e])&&(a=(c?f(b,d,a):f(a))||a);return c&&a&&h(b,d,a),a};var n=["navigator.serviceWorker","ShadowRoot","customElements"];export{k as a,n as b};

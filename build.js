@@ -86,7 +86,7 @@ let buildPromise = build({
     outdir: "site/dist",
     bundle: true,
     minify: true,
-    splitting: true,
+    //splitting: true,
     treeShaking: true,
     format: "esm",
     target: "es2020",

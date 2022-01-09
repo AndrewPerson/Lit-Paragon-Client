@@ -4,11 +4,11 @@ import { customElement, property } from "lit/decorators.js";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
-import timetablePeriodCss from "./timetable-period.css";
+import periodCss from "./period.css";
 
 @customElement("timetable-period")
 export class TimetablePeriod extends LitElement {
-    static styles = [textCss, timetablePeriodCss];
+    static styles = [textCss, periodCss];
 
     @property()
     name: string;

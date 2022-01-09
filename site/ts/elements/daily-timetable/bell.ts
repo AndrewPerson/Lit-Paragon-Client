@@ -2,13 +2,13 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 //@ts-ignore
-import periodCss from "./period.css";
+import bellCss from "./bell.css";
 //@ts-ignore
 import textCss from "default/text.css";
 
-@customElement("daily-timetable-period")
+@customElement("daily-timetable-bell")
 export class Bell extends LitElement {
-    static styles = [textCss, periodCss];
+    static styles = [textCss, bellCss];
 
     @property()
     title: string;
