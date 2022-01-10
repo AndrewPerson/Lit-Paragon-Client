@@ -60,14 +60,12 @@ export class Resources {
     static async SetResources(resources: {name: string, resource: string}[]) {
         let cache = await caches.open(RESOURCE_CACHE);
 
-        let promises: Promise<void>[] = [];
-
-        resources.forEach(resourceGroup => {
+        let promises = resources.map(resourceGroup => {
             let name = resourceGroup.name;
             let resource = resourceGroup.resource;
 
-            promises.push(cache.put(name, new Response(resource))
-                               .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
+            return cache.put(name, new Response(resource))
+                        .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource)));
         });
 
         await Promise.all(promises);
@@ -92,12 +90,10 @@ export class Resources {
     }
 
     static async GetResource(name: string, callback: Callback<any>): Promise<void> {
-        let callbacks = this._resourceCallbacks.get(name);
+        let callbacks = this._resourceCallbacks.get(name) ?? new Callbacks();
 
-        if (callbacks !== undefined) {
-            callbacks.AddListener(callback);
-            this._resourceCallbacks.set(name, callbacks);
-        }
+        callbacks.AddListener(callback);
+        this._resourceCallbacks.set(name, callbacks);
 
         callback(await this.GetResourceNow(name));
     }

@@ -1,3 +1,11 @@
 :host {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     
+    width: 100%;
+}
+
+.info {
+    font-size: 0.6rem;
 }

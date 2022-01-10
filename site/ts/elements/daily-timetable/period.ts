@@ -16,9 +16,19 @@ export class Bell extends LitElement {
     @property()
     time: string;
 
+    @property()
+    teacher: string;
+
+    @property()
+    room: string;
+
     render() {
         return html`
-            <p>${this.title}</p>
+            <div>
+                <p>${this.title}</p>
+                <p class="info">at ${this.time} with ${this.teacher}</p>
+            </div>
+
             <p>${this.time}</p>
         `;
     }

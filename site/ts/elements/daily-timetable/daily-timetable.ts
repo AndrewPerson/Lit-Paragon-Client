@@ -3,7 +3,7 @@ import { Page } from "../page/page";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { DailyTimetable, Bell, RollCall, Period, RoomVariation, ClassVariation } from "./types";
+import { DailyTimetable, Bell, RollCall, Period, RoomVariation, ClassVariation, TeacherType } from "./types";
 
 import "./bell";
 import "./period";
@@ -34,9 +34,21 @@ export class SchoolAnnouncements extends Page {
         return html`<daily-timetable-bell title="${bell.bellDisplay}" time="${bell.time}"></daily-timetable-bell>`;
     }
 
-    GetPeriod(period: Period | RollCall, roomVariation: RoomVariation | undefined, classVariation: ClassVariation | undefined) {
+    GetPeriodTitle(year: string, title: string) {
+        let fullName = this.dailyTimetable.timetable.subjects[`${year}${title}`].title;
+
+        return fullName.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
+    }
+
+    GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | undefined, roomVariation: RoomVariation | undefined) {
         return html`
-        <daily-timetable-period></daily-timetable-period>
+        <daily-timetable-period title="${this.GetPeriodTitle(period.year, period.title)}"
+                                time="${bell.time}"
+                                teacher="${classVariation === undefined ? period.fullTeacher :
+                                           classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher :
+                                           classVariation.type == TeacherType.NO_COVER ? "No one" :
+                                           classVariation.casualSurname ?? this.FormatTeacherCode(classVariation.casual)}"
+                                room="${roomVariation?.roomTo ?? period.room}"></daily-timetable-period>
         `;
     }
 
@@ -65,7 +77,7 @@ export class SchoolAnnouncements extends Page {
 
                         //Check if the bell is a roll call
                         if ("fullTeacher" in period && "year" in period)
-                            return this.GetPeriod(periods[bell.period], roomVariations[bell.period], classVariations[bell.period]);
+                            return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
                         else
                             return this.GetBell(bell);
                     }

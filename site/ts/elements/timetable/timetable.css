@@ -3,22 +3,21 @@
     padding: 1.6rem;
     max-width: 92%;
     width: 23rem;
-    height: 29rem;
+    min-height: 29rem;
+    max-height: 30rem;
+
+    overflow-y: auto;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface4) transparent;
 }
 
 @media (max-aspect-ratio: 3/4) {
     :host {
-        height: calc(29rem + 7.5vmax);
+        min-height: calc(29rem + 7.5vmax);
+        max-height: calc(30rem + 7.5vmax);
     }
 }
-
-/* We use 26.2rem because that is the full width of the timetable including padding.
-@media (max-width: 26.2rem) {
-    :host {
-        padding: calc((100vw - 23rem) / 2);
-    }
-}
-*/
 
 timetable-row + timetable-row {
     border-top: solid grey 0.05rem;

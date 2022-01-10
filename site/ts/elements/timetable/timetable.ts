@@ -3,7 +3,7 @@ import { Page } from "../page/page";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { Timetable } from "./types";
+import { Timetable, Day } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
 
 import "./row";
@@ -52,31 +52,28 @@ export class FullTimetable extends Page {
     renderPage() {        
         this._day = this._day.slice(0, 3).toUpperCase() + " " + this._day.slice(-1);
 
+        let days = Object.keys(this.timetable.days);
+
+        let dayGroups: Day[][] = [];
+        for (let i = 0; i < days.length; i++) {
+            //We use 5 because there are 5 days in a week when we go to school.
+            let dayGroupIndex = Math.floor(i / 5);
+
+            if (dayGroups.length > dayGroupIndex) dayGroups[dayGroupIndex].push(this.timetable.days[days[i]]);
+            else dayGroups[dayGroupIndex] = [this.timetable.days[days[i]]];
+        }
+
         return html`
-            <timetable-row week="A"
-                           .day1="${this.timetable.days["1"]}"
-                           .day2="${this.timetable.days["2"]}"
-                           .day3="${this.timetable.days["3"]}"
-                           .day4="${this.timetable.days["4"]}"
-                           .day5="${this.timetable.days["5"]}"
+            ${dayGroups.map((dayGroup, index) => html`
+            <timetable-row week="${String.fromCharCode(65 + index)}"
+                           .day1="${dayGroup[0]}"
+                           .day2="${dayGroup[1]}"
+                           .day3="${dayGroup[2]}"
+                           .day4="${dayGroup[3]}"
+                           .day5="${dayGroup[4]}"
                            day="${this._day}">
             </timetable-row>
-            <timetable-row week="B"
-                           .day1="${this.timetable.days["6"]}"
-                           .day2="${this.timetable.days["7"]}"
-                           .day3="${this.timetable.days["8"]}"
-                           .day4="${this.timetable.days["9"]}"
-                           .day5="${this.timetable.days["10"]}"
-                           day="${this._day}">
-            </timetable-row>
-            <timetable-row week="C"
-                           .day1="${this.timetable.days["11"]}"
-                           .day2="${this.timetable.days["12"]}"
-                           .day3="${this.timetable.days["13"]}"
-                           .day4="${this.timetable.days["14"]}"
-                           .day5="${this.timetable.days["15"]}"
-                           day="${this._day}">
-            </timetable-row>
+            `)}
         `;
     }
 }
