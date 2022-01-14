@@ -45,20 +45,19 @@ export class TimetablePeriod extends LitElement {
     }
 
     firstUpdated() {
-        //Just to prevent unnecessary event listeners
+        //Just to prevent unnecessary tabbing
         if (this.room !== undefined && this.room !== null) {
             this.tabIndex = 0;
-
-//            this.addEventListener("focus", this.Highlight);
-//            this.addEventListener("blur", this.Unhighlight);
         }
     }
 
     render() {
         let highlighted = TimetablePeriod.highlighted == this.name;
+        this.classList.toggle("highlighted", highlighted);
+        if (!highlighted) this.blur();
 
         return html`
-        <p class="${highlighted ? "highlighted" : ""}">${this.name}</p>
+        <p>${this.name}</p>
         <p id="popup"
            style="${highlighted ? "" : "display: none"}">
             ${this.room}

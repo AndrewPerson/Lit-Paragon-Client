@@ -143,8 +143,6 @@ export class Navbar extends LitElement {
     render() {
         this.order = Navbar.GetNavbarOrder();
 
-        this.order = [...this.order, ...this.order];
-
         let extensions = Extensions.installedExtensions;
 
         for (var key of extensions.keys()) {

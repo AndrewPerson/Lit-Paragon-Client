@@ -8,8 +8,15 @@ export function SafeAccess<T>(obj: Unknown, types: string[], fields: (string | n
             return undefined;
         }
 
-        if (typeof value !== types[i]) {
-            return undefined;
+        if (types[i] == "array") {
+            if (!Array.isArray(value)) {
+                return undefined
+            }
+        }
+        else {
+            if (typeof value !== types[i]) {
+                return undefined;
+            }
         }
 
         if (i < fields.length) value = value[fields[i]];

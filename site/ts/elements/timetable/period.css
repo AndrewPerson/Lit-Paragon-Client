@@ -5,9 +5,7 @@
     justify-content: center;
 }
 
-.highlighted {
-    border-radius: 0.4rem;
-
+:host(.highlighted) > p {
     background-color: var(--surface4);
     color: var(--text4);
 
@@ -31,38 +29,18 @@ p {
     width: 4rem;
     height: 1.5rem;
     text-align: center;
-    line-height: 1.5rem;
-}
+    line-height: 1.5;
 
-@media (max-aspect-ratio: 3/4) {
-    p {
-        margin-top: 0.5vmax;
-    }
+    border-radius: 0.4rem;
 }
 
 #popup {
     position: absolute;
     top: 2rem;
 
-    color: var(--text4);
-
-    border-radius: 0.4rem;
-    background-color: var(--surface4);
-
-    box-shadow: var(--shadow);
-    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
-
     z-index: 97;
 
-    animation: popupAppear 0.3s ease-out;
-
     pointer-events: none;
-}
-
-p:hover + #popup,
-:host(:focus) > #popup {
-    z-index: 98;
-    box-shadow: 0 0 0 0.2rem var(--text1);
 }
 
 #popup::before {
@@ -79,12 +57,12 @@ p:hover + #popup,
     border-left: calc(var(--size) / 1.5) solid transparent;
 }
 
-@keyframes popupAppear {
-    from {
-        filter: opacity(0);
-    }
+:host(:hover), :host(:focus) {
+    z-index: 98;
+}
 
-    to {
-        filter: opacity(1);
-    }
+:host(:hover) > p,
+:host(:focus) > p {
+    z-index: 98;
+    box-shadow: 0 0 0 0.2rem var(--text1) !important;
 }
