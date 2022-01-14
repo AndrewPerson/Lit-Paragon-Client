@@ -24,7 +24,7 @@ import announcementCss from "./announcements.css";
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [pageCss, fullElementCss, textCss, imgCss, searchCss, selectCss, announcementCss];
+    static styles = [textCss, imgCss, searchCss, selectCss, pageCss, fullElementCss, announcementCss];
 
     @state()
     announcements: Announcements;

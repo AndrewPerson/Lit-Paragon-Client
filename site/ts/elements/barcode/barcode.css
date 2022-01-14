@@ -29,10 +29,10 @@
 
     display: block;
 
-    width: 3vmax;
-    height: 3vmax;
+    width: calc(var(--size) * 2);
+    height: calc(var(--size) * 2);
 
-    margin: calc(var(--size) / 2 - 1.5vmax);
+    margin: calc(var(--size) / -2);
 }
 
 #barcodeDisplay {

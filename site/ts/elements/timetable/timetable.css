@@ -2,23 +2,69 @@
     margin: auto;
     padding: 1.6rem;
     max-width: 92%;
-    width: 23rem;
+    width: 25.2rem;
     min-height: 29rem;
-    max-height: 30rem;
+    max-height: 98%;
 
-    overflow-y: auto;
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface4) transparent;
+    box-sizing: border-box;
 }
 
-@media (max-aspect-ratio: 3/4) {
-    :host {
-        min-height: calc(29rem + 7.5vmax);
-        max-height: calc(30rem + 7.5vmax);
-    }
-}
-
-timetable-row + timetable-row {
+table + table {
     border-top: solid grey 0.05rem;
+}
+
+table {
+    counter-reset: period;
+
+    width: 100%;
+}
+
+thead > tr {
+    border-bottom: solid 0.05rem var(--text3);
+}
+
+tbody > tr {
+    padding-top: 0.4rem;
+    margin-bottom: 0.4rem;
+}
+
+tbody > tr::before {
+    counter-increment: period;
+    content: counter(period);
+
+    color: var(--text3);
+}
+
+td, th {
+    text-align: center;
+    padding: 0;
+}
+
+th {
+    color: var(--text3);
+    font-size: calc(1rem / 1.2);
+}
+
+th:not(:empty) {
+    border-bottom: solid 0.05rem var(--text3);
+}
+
+.current-day {
+    color: var(--text2);
+}
+
+td {
+    height: 1.5rem;
+    line-height: 1.5;
+}
+
+@media (pointer: coarse) {
+    :host {
+        min-height: 33.5rem;
+    }
+
+    td {
+        height: 1.8rem;
+        line-height: 1.8;
+    }
 }

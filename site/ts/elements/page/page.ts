@@ -2,6 +2,8 @@ import { LitElement, html, nothing, TemplateResult } from "lit";
 import { state } from "lit/decorators.js";
 import { Resources } from "../../site/resources";
 
+import { Unknown } from "../../unknown";
+
 export enum PageState {
     Waiting,
     Loading,
@@ -24,7 +26,7 @@ export class Page extends LitElement {
         let received = false;
         let completed = false;
 
-        Resources.GetResource(resourceName, (resource: any) => {
+        Resources.GetResource(resourceName, (resource: Unknown) => {
             if (!received) {
                 this._unreceivedResources--;
                 received = true;

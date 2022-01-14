@@ -19,7 +19,7 @@ import dailyTimetableCss from "./daily-timetable.css";
 
 @customElement("daily-timetable")
 export class SchoolAnnouncements extends Page {
-    static styles = [pageCss, cardElementCss, textCss, dailyTimetableCss];
+    static styles = [textCss, pageCss, cardElementCss, dailyTimetableCss];
 
     @state()
     dailyTimetable: DailyTimetable;

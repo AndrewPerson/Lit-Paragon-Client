@@ -121,3 +121,23 @@ export function RefreshToken() {
         }
     });
 }
+
+export function ShowNotification(id, content, loader = false) {
+    window.parent.postMessage({
+        command: "Show Notification",
+        data: {
+            id: id,
+            content: content,
+            loader: loader
+        }
+    }, "*");
+}
+
+export function CloseNotification(id) {
+    window.parent.postMessage({
+        command: "Close Notification",
+        data: {
+            id: id
+        }
+    }, "*");
+}

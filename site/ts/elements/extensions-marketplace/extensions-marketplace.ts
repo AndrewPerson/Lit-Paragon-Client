@@ -18,7 +18,7 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [pageCss, fullElementCss, textCss, searchCss, extensionsMarketplaceCss];
+    static styles = [textCss, searchCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
     fetchingExtensions: boolean = true;
 

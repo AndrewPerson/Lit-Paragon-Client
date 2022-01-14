@@ -16,6 +16,8 @@ export class InlineNotification extends LitElement {
     @property({ type: Boolean })
     loader: boolean;
 
+    Close = this.remove.bind(this);
+
     render() {
         return html`
         <slot></slot>

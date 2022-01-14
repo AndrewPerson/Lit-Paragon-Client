@@ -6,16 +6,12 @@ export type Timetable = {
 
 export type Day = {
     dayname: string;
-    periods: Periods;
-}
-
-export type Periods = {
-    [index: string]: Period;
+    periods: {
+        [index: string]: Period;
+    };
 }
 
 export type Period = {
     title: string;
-    teacher: string;
     room: string;
-    year: string;
 }

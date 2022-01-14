@@ -5,6 +5,8 @@ import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 
+import { DefinedUnknown, SafeAccess } from "../../unknown";
+
 import "../info/info";
 
 //@ts-ignore
@@ -25,7 +27,7 @@ declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
 
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
-    static styles = [pageCss, fullElementCss, textCss, imgCss, barcodeCss];
+    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
 
     @query("#barcodeDisplay")
     private barcode: HTMLCanvasElement | null;
@@ -40,9 +42,13 @@ export class StudentBarcode extends Page {
 
     dragging: boolean = false;
 
-    set userInfo(value: {studentId: string}) {
-        this.studentId = value.studentId;
-        this.requestUpdate();
+    set userInfo(value: {studentId: string} | DefinedUnknown) {
+        let studentId = SafeAccess<string>(value, ["object", "string"], ["studentId"]);
+
+        if (studentId !== undefined) {
+            this.studentId = studentId;
+            this.requestUpdate();
+        }
     }
 
     studentId: string;

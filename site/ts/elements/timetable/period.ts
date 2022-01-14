@@ -16,11 +16,13 @@ export class TimetablePeriod extends LitElement {
     @property()
     room: string;
 
-    static highlighted: string;
+    static highlighted: string | undefined;
 
     static instances: TimetablePeriod[] = [];
 
-    static highlight(name: string) {
+    static Highlight(name: string | undefined) {
+        if (this.highlighted == name) return;
+
         this.highlighted = name;
 
         for (let instance of this.instances) instance.requestUpdate();
@@ -33,48 +35,34 @@ export class TimetablePeriod extends LitElement {
     }
 
     Highlight() {
-        TimetablePeriod.highlight(this.name);
+        TimetablePeriod.Highlight(this.name);
         this.classList.add("highlighted");
     }
 
     Unhighlight() {
-        TimetablePeriod.highlight("");
+        TimetablePeriod.Highlight(undefined);
         this.classList.remove("highlighted");
     }
 
     firstUpdated() {
         //Just to prevent unnecessary event listeners
-        if (this.name) {
+        if (this.room !== undefined && this.room !== null) {
             this.tabIndex = 0;
 
-            this.addEventListener("mouseover", this.Highlight);
-            this.addEventListener("mouseleave", this.Unhighlight);
-
-            this.addEventListener("click", this.Highlight);
-
-            this.addEventListener("focus", this.Highlight);
-            this.addEventListener("blur", this.Unhighlight);
+//            this.addEventListener("focus", this.Highlight);
+//            this.addEventListener("blur", this.Unhighlight);
         }
     }
 
     render() {
-        let highlighted = TimetablePeriod.highlighted == this.name && this.name;
+        let highlighted = TimetablePeriod.highlighted == this.name;
 
-        if (highlighted) {
-            let nextSibling = this.nextElementSibling;
-            let nextNextSibling = nextSibling?.nextElementSibling;
-
-            let displayPopupTop = nextSibling?.getAttribute("name") == this.name
-                               || nextNextSibling?.getAttribute("name") == this.name;
-
-            return html`
-            <p class="highlighted">${this.name}</p>
-            <p id="popup"
-                ?reversed="${displayPopupTop}">
-                ${this.room}
-            </p>
-            `;
-        }
-        else return html`<p>${this.name}</p>`;
+        return html`
+        <p class="${highlighted ? "highlighted" : ""}">${this.name}</p>
+        <p id="popup"
+           style="${highlighted ? "" : "display: none"}">
+            ${this.room}
+        </p>
+        `;
     }
 }

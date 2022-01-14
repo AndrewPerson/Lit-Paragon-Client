@@ -238,6 +238,23 @@ export function AddExtensionListeners() {
                 }
             }
         }
+
+        if (command == "Show Notification") {
+            if (data.loader && typeof data.id !== "string") return;
+
+            let notification = Site.ShowNotification(data.contents, data.loader ?? false);
+            notification.id = data.id;
+
+            return;
+        }
+
+        if (command == "Close Notification") {
+            let notification = document.getElementById(data.id) as any | null;
+
+            if (notification !== null && "Close" in notification && typeof notification.Close === "function") notification.Close();
+        
+            return;
+        }
     
         if (command == "Ping") {
             return {

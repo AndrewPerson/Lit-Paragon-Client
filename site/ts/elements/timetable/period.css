@@ -59,7 +59,8 @@ p {
     pointer-events: none;
 }
 
-:host(.highlighted) > #popup {
+p:hover + #popup,
+:host(:focus) > #popup {
     z-index: 98;
     box-shadow: 0 0 0 0.2rem var(--text1);
 }
@@ -76,17 +77,6 @@ p {
     border-right: calc(var(--size) / 1.5) solid transparent;
     border-bottom: var(--size) solid var(--surface4);
     border-left: calc(var(--size) / 1.5) solid transparent;
-}
-
-#popup[reversed] {
-    top: -2rem;
-}
-
-#popup[reversed]::before {
-    top: unset;
-    bottom: calc(-1 * var(--size));
-
-    transform: rotate(180deg);
 }
 
 @keyframes popupAppear {

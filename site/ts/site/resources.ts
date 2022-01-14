@@ -2,12 +2,14 @@ import { Site } from "./site";
 
 import { Callbacks, Callback } from "./callback";
 
+import { Unknown } from "../unknown";
+
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
 export type ResourceResult = {
     result: {
-        [index: string]: any
+        [index: string]: Unknown
     },
     token: Token
 };
@@ -20,7 +22,7 @@ export type Token = {
 };
 
 export class Resources {
-    private static _resourceCallbacks: Map<string, Callbacks<any>> = new Map();
+    private static _resourceCallbacks: Map<string, Callbacks<Unknown>> = new Map();
 
     static ShowLoginNotification() {
         let content = document.createElement("p");
@@ -89,7 +91,7 @@ export class Resources {
         else return undefined;
     }
 
-    static async GetResource(name: string, callback: Callback<any>): Promise<void> {
+    static async GetResource(name: string, callback: Callback<Unknown>): Promise<void> {
         let callbacks = this._resourceCallbacks.get(name) ?? new Callbacks();
 
         callbacks.AddListener(callback);
