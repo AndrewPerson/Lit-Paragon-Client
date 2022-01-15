@@ -37,7 +37,7 @@ export class Settings extends LitElement {
     }
 
     Patch() {
-        //TODO
+        //TODO Implement patching
     }
 
     ResetColour() {
