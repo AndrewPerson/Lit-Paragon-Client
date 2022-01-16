@@ -1,6 +1,7 @@
 import { Missing } from "../../missing";
 
 export type DailyTimetable = {
+    date: string | Missing,
     bells: Bell[] | Missing,
     timetable: {
         timetable: {

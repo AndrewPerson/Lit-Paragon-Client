@@ -3,6 +3,8 @@ import { Page } from "../page/page";
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
+import { Resources } from "../../site/resources";
+
 import "./bell";
 import "./period";
 
@@ -22,6 +24,8 @@ import dailyTimetableCss from "./daily-timetable.css";
 @customElement("daily-timetable")
 export class SchoolAnnouncements extends Page {
     static styles = [textCss, pageCss, cardElementCss, dailyTimetableCss];
+
+    static updatingData: boolean = false;
 
     set dailyTimetable(value: DailyTimetable) {
         let bells = value.bells;
@@ -64,10 +68,112 @@ export class SchoolAnnouncements extends Page {
     @state()
     private _dailyTimetable: DailyTimetable;
 
+    static UpdateData() {
+        if (this.updatingData) return;
+        this.updatingData = true;
+
+        Resources.FetchResources().then(succeeded => {
+            //If it didn't succeed, make it look like the data is still being
+            //updated so that we won't keep trying to update it.
+            this.updatingData = !succeeded;
+        });
+    }
+
     constructor() {
         super();
 
         this.AddResource("dailytimetable", "dailyTimetable");
+
+        setInterval(() => {
+            this.requestUpdate();
+        }, 1000);
+    }
+
+    BellDate(bell: Bell) {
+        let time = new Date(this._dailyTimetable.date ?? "");
+
+        let parts = bell.time?.split(":") ?? ["00", "00"];
+
+        let hours = Number.parseInt(parts[0]);
+        let minutes = Number.parseInt(parts[1]);
+
+        time.setHours(hours);
+        time.setMinutes(minutes);
+
+        return time;
+    }
+
+    NextBell() {
+        let now = new Date();
+
+        for (let bell of this._dailyTimetable.bells ?? []) {
+            if (bell.time === undefined || bell.time === null) continue;
+
+            let time = this.BellDate(bell);
+
+            if (time.getTime() >= now.getTime()) return bell;
+        }
+
+        return undefined;
+    }
+
+    TimeDisplay(bell: Bell) {
+        let time = this.BellDate(bell);
+        let now = new Date();
+
+        let timeDifference = time.getTime() - now.getTime();
+
+        if (now.getMonth() > time.getMonth() && now.getDate() > time.getDate()) {
+            let difference = (time.getMonth() < now.getMonth() ? time.getMonth() + 12 : time.getMonth()) - now.getMonth();
+
+            return {
+                preposition: "in",
+                time: difference +
+                      (difference == 1 ?
+                      " Month" :
+                      " Months")
+            };
+        }
+        //Length of one day in ms
+        else if (timeDifference > 86400000) {
+            var days = Math.round(timeDifference / 86400000);
+
+            if (days == 1)
+                return {
+                    preposition: "is",
+                    time: "Tomorrow"
+                };
+
+            return {
+                preposition: "in",
+                time: days + " Days"
+            };
+        }
+        else {
+            let hours = Math.floor(timeDifference / 3600000).toString();
+            let minutes = Math.floor((timeDifference % 3600000) / 60000).toString();
+            let seconds = Math.floor(((timeDifference % 3600000) % 60000) / 1000).toString();
+
+            if (hours.length < 2)
+                hours = "0" + hours;
+
+            if (minutes.length < 2)
+                minutes = "0" + minutes;
+
+            if (seconds.length < 2)
+                seconds = "0" + seconds;
+            
+            if (hours == "00")
+                return {
+                    preposition: "in",
+                    time: `${minutes}:${seconds}`
+                };
+
+            return {
+                preposition: "in",
+                time: `${hours}:${minutes}:${seconds}`
+            }
+        }
     }
 
     GetBell(bell: Bell) {
@@ -106,6 +212,22 @@ export class SchoolAnnouncements extends Page {
     }
 
     renderPage() {
+        let nextBell = this.NextBell();
+
+        if (nextBell === undefined) {
+            this.UpdateData();
+        }
+
+        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBell?.bell ?? ""];
+        let nextClassName = nextBell?.bellDisplay ?? "Nothing";
+
+        if (nextClass !== undefined && nextClass !== null && "year" in nextClass) {
+            nextClassName = this.GetPeriodTitle(nextClass.year ?? "?", nextClass.title ?? "???");
+        }
+
+        let timeDisplay = { time: "Never", preposition: "in" };
+        if (nextBell !== undefined) timeDisplay = this.TimeDisplay(nextBell);
+
         let bells = this._dailyTimetable.bells ?? [];
         let periods = this._dailyTimetable.timetable?.timetable?.periods ?? {};
 
@@ -114,18 +236,17 @@ export class SchoolAnnouncements extends Page {
 
         return html`
             <div class="next-display">
-                <p>Nothing</p>
-                <p>in</p>
+                <p>${nextClassName}</p>
+                <p>${timeDisplay.preposition}</p>
                 <div class="timer-container">
                     <span class="line left"></span>
-                    <h1 class="timer">Never</h1>
+                    <h1 class="timer">${timeDisplay.time}</h1>
                     <span class="line right"></span>
                 </div>
             </div>
 
             <div class="periods">
                 ${bells.map(bell => {
-
                     if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
                         let period = periods[bell.period];
 
