@@ -4,6 +4,9 @@
     justify-content: space-between;
     
     width: 100%;
+
+    padding: 0.5rem;
+    border-radius: 0.5rem;
 }
 
 .info {

@@ -51,7 +51,25 @@ info-popup {
     --max-width: 30vmax;
     --offset: 2.6rem;
     
+    position: absolute;
+    top: 1%;
+    left: 1%;
+
     width: 1.9rem;
     height: 1.9rem;
     z-index: 2;
+}
+
+#save {
+    all: unset;
+    width: 1.7rem;
+    height: 1.7rem;
+    position: absolute;
+    top: 1.25%;
+    right: 1.25%;
+}
+
+#save > svg {
+    width: inherit;
+    height: inherit;
 }

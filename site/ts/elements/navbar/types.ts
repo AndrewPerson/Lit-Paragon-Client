@@ -1,4 +1,3 @@
-import { TemplateResult } from "lit";
 import { NavItem } from "./navitem";
 
 export type NavbarSortableEvent = {

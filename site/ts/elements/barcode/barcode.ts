@@ -5,7 +5,7 @@ import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 
-import { DefinedUnknown, SafeAccess } from "../../unknown";
+import { Missing } from "../../missing";
 
 import "../info/info";
 
@@ -19,6 +19,9 @@ import fullElementCss from "default/pages/full.css";
 import pageCss from "default/pages/page.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
+
+//@ts-ignore
+import saveSvg from "images/save.svg"
 
 declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
     displayValue: boolean
@@ -38,14 +41,17 @@ export class StudentBarcode extends Page {
     @query("#point2")
     point2: HTMLElement | null;
 
+    @query("#save")
+    saveLink: HTMLAnchorElement | null;
+
     draggedElement: HTMLElement | null = null;
 
     dragging: boolean = false;
 
-    set userInfo(value: {studentId: string} | DefinedUnknown) {
-        let studentId = SafeAccess<string>(value, ["object", "string"], ["studentId"]);
+    set userInfo(value: {studentId: string | Missing}) {
+        let studentId = value.studentId;
 
-        if (studentId !== undefined) {
+        if (studentId !== undefined && studentId !== null) {
             this.studentId = studentId;
             this.requestUpdate();
         }
@@ -144,6 +150,12 @@ export class StudentBarcode extends Page {
                 margin: 0
             });
         }
+
+        if (this.saveLink !== null) {
+            let url = this.barcode.toDataURL("image/png");
+            this.saveLink.href = url;
+            this.saveLink.download = `${this.studentId}.png`;
+        }
     }
 
     updated() {
@@ -160,6 +172,7 @@ export class StudentBarcode extends Page {
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
+        <a id="save" title="Save Barcode">${saveSvg}</a>
 
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>

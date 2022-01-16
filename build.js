@@ -106,9 +106,9 @@ let buildPromise = build({
         {
             name: "svg-redirect",
             setup(build) {
-                build.onResolve({ filter: /\.svg$/, namespace: "file" }, args => {
+                build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
                     return {
-                        path: path.resolve(dirname, "site/images", args.path)
+                        path: path.resolve(dirname, "site", args.path)
                     };
                 });
             }

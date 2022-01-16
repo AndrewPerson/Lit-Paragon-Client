@@ -30,9 +30,6 @@ export class AnnouncementPost extends LitElement {
     meetingTime: string;
 
     @property()
-    meetingLocation: string;
-
-    @property()
     content: string;
 
     @property({ type: Number })
@@ -43,7 +40,7 @@ export class AnnouncementPost extends LitElement {
         <details>
             <summary>
                 <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | At${this.meetingDate == "" ? "" : ` ${this.meetingDate}` } ${this.meetingTime} | In ${this.meetingLocation}` : ""}</p>
+                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | At${this.meetingDate == "" ? "" : ` ${this.meetingDate}` } ${this.meetingTime}` : ""}</p>
             </summary>
 
             ${unsafeHTML(this.content)}

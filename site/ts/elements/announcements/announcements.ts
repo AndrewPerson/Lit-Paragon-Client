@@ -7,7 +7,7 @@ import "./post";
 
 import { Announcements, Announcement } from "./types";
 
-import { DefinedUnknown, SafeAccess } from "../../unknown";
+import { Missing } from "../../missing";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -29,7 +29,7 @@ export class SchoolAnnouncements extends Page {
     static styles = [textCss, imgCss, searchCss, selectCss, pageCss, fullElementCss, announcementCss];
 
     @state()
-    announcements: Announcements | DefinedUnknown;
+    announcements: Announcements;
 
     @state()
     yearFilter: string = "all";
@@ -44,18 +44,19 @@ export class SchoolAnnouncements extends Page {
     }
 
     renderPage() {
-        let notices = SafeAccess<(Announcement | DefinedUnknown)[]>(this.announcements, ["object", "array"], ["notices"]) ?? [];
+        let notices = this.announcements.notices ?? [];
 
-        let filteredAnnouncements = this.yearFilter == "all" ? notices : notices.filter((announcement: Announcement | DefinedUnknown) => {
-            let years = SafeAccess<string[]>(announcement, ["object", "array"], ["years"]) ?? [];
+        let filteredAnnouncements = this.yearFilter == "all" ? notices : notices.filter(announcement => {
+            let years = announcement.years ?? [];
             return years.includes(this.yearFilter)
         });
 
-        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement: Announcement | DefinedUnknown) => {
-            let title = SafeAccess<string>(announcement, ["object", "string"], ["title"]);
-            let content = SafeAccess<string>(announcement, ["object", "string"], ["content"]);
+        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter(announcement => {
+            let title = announcement.title;
+            let content = announcement.content;
 
-            if (title === undefined || content === undefined) return false;
+            if (title === undefined || title === null ||
+                content === undefined || content === null) return false;
             
             return title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
                    content.toLowerCase().includes(this.searchFilter.toLowerCase())
@@ -78,26 +79,18 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${filteredAnnouncements.map((announcement: Announcement | DefinedUnknown) => {
-            let title = SafeAccess<string>(announcement, ["object", "string"], ["title"]) ?? "???";
-            let content = SafeAccess<string>(announcement, ["object", "string"], ["content"]) ?? "???";
-            let author = SafeAccess<string>(announcement, ["object", "string"], ["authorName"]) ?? "No one";
-            let years = SafeAccess<string>(announcement, ["object", "string"], ["displayYears"]) ?? "No one";
-            let meeting = (SafeAccess<number>(announcement, ["object", "number"], ["isMeeting"]) ?? 0) == 1;
+        <div class="content">${filteredAnnouncements.map(announcement => {
+            let meeting = announcement.isMeeting == 1;
 
-            let meetingDate = SafeAccess<string>(announcement, ["object", "string"], ["meetingDate"]) ?? "";
+            let meetingDate = announcement.meetingDate ?? "";
             //No need to show the meeting date if it's today.
             if (new Date().toISOString().split('T')[0] == meetingDate) meetingDate = "";
 
-            let meetingTime = SafeAccess<string>(announcement, ["object", "string"], ["meetingTime"]);
-            let meetingTimeParsed = SafeAccess<string>(announcement, ["object", "string"], ["meetingTimeParsed"]) ?? "";
-            let meetingLocation = SafeAccess<string>(announcement, ["object", "string"], ["meetingLocation"]) ?? "";
-            let relativeWeight = SafeAccess<number>(announcement, ["object", "number"], ["relativeWeight"]) ?? 0;
-
             return html`
-            <announcement-post title="${title}" content="${content}" author="${author}" years="${years}"
-                               ?meeting="${meeting}" meetingDate="${meetingDate}" meetingTime="${meeting ? (meetingTime ?? meetingTimeParsed) : ""}"
-                               meetingLocation="${meeting ? meetingLocation : ""}" weight="${relativeWeight + (meeting ? 1 : 0)}"></announcement-post>
+            <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"
+                               author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
+                               ?meeting="${meeting}" meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
+                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"></announcement-post>
             `;
         })}</div>
         `;

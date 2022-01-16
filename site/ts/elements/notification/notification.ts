@@ -7,7 +7,7 @@ import notificationCss from "./notification.css";
 import imgCss from "default/img.css";
 
 //@ts-ignore
-import crossSvg from "cross.svg";
+import crossSvg from "images/cross.svg";
 
 @customElement("inline-notification")
 export class InlineNotification extends LitElement {
