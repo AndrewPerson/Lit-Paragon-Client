@@ -2,11 +2,12 @@ import { Page } from "../page/page";
 
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
+
+import "./post";
 
 import { Announcements, Announcement } from "./types";
 
-import "./post";
+import { Missing } from "../../missing";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -25,7 +26,7 @@ import announcementCss from "./announcements.css";
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [pageCss, fullElementCss, textCss, imgCss, searchCss, selectCss, announcementCss];
+    static styles = [textCss, imgCss, searchCss, selectCss, pageCss, fullElementCss, announcementCss];
 
     @state()
     announcements: Announcements;
@@ -43,10 +44,23 @@ export class SchoolAnnouncements extends Page {
     }
 
     renderPage() {
-        let filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement: Announcement) => announcement.years.includes(this.yearFilter));
-        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement: Announcement) =>
-                                                                                                                announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
-                                                                                                                announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
+        let notices = this.announcements.notices ?? [];
+
+        let filteredAnnouncements = this.yearFilter == "all" ? notices : notices.filter(announcement => {
+            let years = announcement.years ?? [];
+            return years.includes(this.yearFilter)
+        });
+
+        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter(announcement => {
+            let title = announcement.title;
+            let content = announcement.content;
+
+            if (title === undefined || title === null ||
+                content === undefined || content === null) return false;
+            
+            return title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
+                   content.toLowerCase().includes(this.searchFilter.toLowerCase())
+        });
 
         return html`
         <div class="header">
@@ -65,14 +79,20 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${repeat(filteredAnnouncements, (announcement: Announcement) => html`
-        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
-                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
-                           ${announcement.meetingTime === null ? "" :
-                           `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === undefined ? "" :
-                           ` (${announcement.meetingTimeParsed})`}"`}
-                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
-        `)}</div>
+        <div class="content">${filteredAnnouncements.map(announcement => {
+            let meeting = announcement.isMeeting == 1;
+
+            let meetingDate = announcement.meetingDate ?? "";
+            //No need to show the meeting date if it's today.
+            if (new Date().toISOString().split('T')[0] == meetingDate) meetingDate = "";
+
+            return html`
+            <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"
+                               author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
+                               ?meeting="${meeting}" meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
+                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"></announcement-post>
+            `;
+        })}</div>
         `;
     }
 }

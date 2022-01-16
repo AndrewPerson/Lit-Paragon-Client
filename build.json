@@ -5,7 +5,8 @@
         "ts/callback.ts",
         "ts/login.ts",
         "ts/unsupported.ts",
-        "ts/service-worker/service-worker.js"
+        "ts/service-worker/service-worker.js",
+        "ts/elements/notification/notification.ts"
     ],
     "metadata": {
         "version": "Development",
@@ -18,147 +19,11 @@
                 "icon": "/icon.svg",
                 "version": "0.0.1"
             },
-            "Award Scheme Point": {
+            "Calculator": {
                 "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
+                "url": "https://calculator.profsmart.repl.co",
                 "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme Poin": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme Poi": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme Po": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme P": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme ": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Scheme": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Schem": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Sche": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Sch": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award Sc": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award S": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award ": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Award": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Awar": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Awa": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "Aw": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            },
-            "A": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": true,
-                "description": "Displays your award scheme points.",
+                "description": "A simple calculator.",
                 "icon": "/icon.svg",
                 "version": "0.0.1"
             }
@@ -183,11 +48,6 @@
             "constants": [
                 "DEVELOPMENT"
             ],
-            "js": {
-                "minify": false
-            },
-            "svg": {
-            },
             "vars": {
                 "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
@@ -198,11 +58,6 @@
             "constants": [
                 "DEVELOPMENT"
             ],
-            "js": {
-                "minify": false
-            },
-            "svg": {
-            },
             "vars": {
                 "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
@@ -213,12 +68,6 @@
             "constants": [
 
             ],
-            "js": {
-                "minify": true
-            },
-            "svg": {
-                "floatPrecision": 1
-            },
             "vars": {
                 "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata",
                 "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",

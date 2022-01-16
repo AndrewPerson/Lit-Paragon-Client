@@ -24,7 +24,10 @@ export class AnnouncementPost extends LitElement {
     meeting: boolean;
 
     @property()
-    meetingTime: string | undefined;
+    meetingDate: string;
+
+    @property()
+    meetingTime: string;
 
     @property()
     content: string;
@@ -37,7 +40,7 @@ export class AnnouncementPost extends LitElement {
         <details>
             <summary>
                 <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meetingTime === undefined ? "" : ` | At ${this.meetingTime}`}</p>
+                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | At${this.meetingDate == "" ? "" : ` ${this.meetingDate}` } ${this.meetingTime}` : ""}</p>
             </summary>
 
             ${unsafeHTML(this.content)}

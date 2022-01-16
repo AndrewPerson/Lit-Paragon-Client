@@ -1,879 +1,4 @@
-var __defProp = Object.defineProperty;
-var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-var __decorateClass = (decorators, target, key, kind) => {
-  var result = kind > 1 ? void 0 : kind ? __getOwnPropDesc(target, key) : target;
-  for (var i7 = decorators.length - 1, decorator; i7 >= 0; i7--)
-    if (decorator = decorators[i7])
-      result = (kind ? decorator(target, key, result) : decorator(result)) || result;
-  if (kind && result)
-    __defProp(target, key, result);
-  return result;
-};
-
-// site/ts/site/resources.ts
-var Resources = class {
-  static ShowLoginNotification() {
-    let content = document.createElement("p");
-    content.innerHTML = `You need to <a>login</a> to see the latest information.`;
-    Site.ShowNotification(content);
-  }
-  static async GetToken() {
-    let cache = await caches.open("User Resources");
-    let tokenResponse = await cache.match("Token");
-    if (!tokenResponse) {
-      location.href = `${location.origin}/login`;
-      return {
-        valid: false,
-        token: null
-      };
-    }
-    let token = await tokenResponse.json();
-    if (new Date() > token.termination) {
-      this.ShowLoginNotification();
-      return {
-        valid: false,
-        token: null
-      };
-    }
-    return {
-      valid: true,
-      token
-    };
-  }
-  static async SetResources(resources) {
-    let cache = await caches.open("User Resources");
-    let promises = [];
-    resources.forEach((resourceGroup) => {
-      let name = resourceGroup.name;
-      let resource = resourceGroup.resource;
-      promises.push(cache.put(name, new Response(resource)).then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource))));
-    });
-    await Promise.all(promises);
-  }
-  static async SetResource(name, resource) {
-    let cache = await caches.open("User Resources");
-    await cache.put(name, new Response(resource));
-    this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
-  }
-  static async GetResource(name, callback) {
-    let callbacks = this._resourceCallbacks.get(name);
-    if (callbacks !== void 0) {
-      callbacks.AddListener(callback);
-      this._resourceCallbacks.set(name, callbacks);
-    }
-    let cache = await caches.open("User Resources");
-    let response = await cache.match(name);
-    if (response) {
-      let resource = await response.json();
-      callback(resource);
-    } else
-      callback(void 0);
-  }
-  static async FetchResources() {
-    let { valid, token } = await this.GetToken();
-    if (!valid)
-      return false;
-    let serverUrl = new URL("https://sbhs-random-data.profsmart.repl.co/resources");
-    serverUrl.searchParams.append("token", JSON.stringify(token));
-    let resourceResponse = await fetch(serverUrl.toString());
-    if (!resourceResponse.ok) {
-      this.ShowLoginNotification();
-      return false;
-    }
-    let resourceResult = await resourceResponse.json();
-    let cache = await caches.open("User Resources");
-    await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
-    await this.SetResources(Object.keys(resourceResult.result).map((key) => {
-      return {
-        name: key,
-        resource: JSON.stringify(resourceResult.result[key])
-      };
-    }));
-    return true;
-  }
-};
-Resources._resourceCallbacks = /* @__PURE__ */ new Map();
-
-// site/ts/site/callback.ts
-var Callbacks = class {
-  constructor() {
-    this._callbacks = [];
-  }
-  AddListener(callback) {
-    this._callbacks.push(callback);
-  }
-  Invoke(param) {
-    for (let callback of this._callbacks)
-      callback(param);
-  }
-};
-
-// node_modules/@lit/reactive-element/css-tag.js
-var t = window.ShadowRoot && (window.ShadyCSS === void 0 || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype;
-var e = Symbol();
-var n = /* @__PURE__ */ new Map();
-var s = class {
-  constructor(t5, n6) {
-    if (this._$cssResult$ = true, n6 !== e)
-      throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
-    this.cssText = t5;
-  }
-  get styleSheet() {
-    let e8 = n.get(this.cssText);
-    return t && e8 === void 0 && (n.set(this.cssText, e8 = new CSSStyleSheet()), e8.replaceSync(this.cssText)), e8;
-  }
-  toString() {
-    return this.cssText;
-  }
-};
-var o = (t5) => new s(typeof t5 == "string" ? t5 : t5 + "", e);
-var r = (t5, ...n6) => {
-  const o7 = t5.length === 1 ? t5[0] : n6.reduce((e8, n7, s6) => e8 + ((t6) => {
-    if (t6._$cssResult$ === true)
-      return t6.cssText;
-    if (typeof t6 == "number")
-      return t6;
-    throw Error("Value passed to 'css' function must be a 'css' function result: " + t6 + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
-  })(n7) + t5[s6 + 1], t5[0]);
-  return new s(o7, e);
-};
-var i = (e8, n6) => {
-  t ? e8.adoptedStyleSheets = n6.map((t5) => t5 instanceof CSSStyleSheet ? t5 : t5.styleSheet) : n6.forEach((t5) => {
-    const n7 = document.createElement("style"), s6 = window.litNonce;
-    s6 !== void 0 && n7.setAttribute("nonce", s6), n7.textContent = t5.cssText, e8.appendChild(n7);
-  });
-};
-var S = t ? (t5) => t5 : (t5) => t5 instanceof CSSStyleSheet ? ((t6) => {
-  let e8 = "";
-  for (const n6 of t6.cssRules)
-    e8 += n6.cssText;
-  return o(e8);
-})(t5) : t5;
-
-// node_modules/@lit/reactive-element/reactive-element.js
-var s2;
-var e2 = window.trustedTypes;
-var r2 = e2 ? e2.emptyScript : "";
-var h = window.reactiveElementPolyfillSupport;
-var o2 = { toAttribute(t5, i7) {
-  switch (i7) {
-    case Boolean:
-      t5 = t5 ? r2 : null;
-      break;
-    case Object:
-    case Array:
-      t5 = t5 == null ? t5 : JSON.stringify(t5);
-  }
-  return t5;
-}, fromAttribute(t5, i7) {
-  let s6 = t5;
-  switch (i7) {
-    case Boolean:
-      s6 = t5 !== null;
-      break;
-    case Number:
-      s6 = t5 === null ? null : Number(t5);
-      break;
-    case Object:
-    case Array:
-      try {
-        s6 = JSON.parse(t5);
-      } catch (t6) {
-        s6 = null;
-      }
-  }
-  return s6;
-} };
-var n2 = (t5, i7) => i7 !== t5 && (i7 == i7 || t5 == t5);
-var l = { attribute: true, type: String, converter: o2, reflect: false, hasChanged: n2 };
-var a = class extends HTMLElement {
-  constructor() {
-    super(), this._$Et = /* @__PURE__ */ new Map(), this.isUpdatePending = false, this.hasUpdated = false, this._$Ei = null, this.o();
-  }
-  static addInitializer(t5) {
-    var i7;
-    (i7 = this.l) !== null && i7 !== void 0 || (this.l = []), this.l.push(t5);
-  }
-  static get observedAttributes() {
-    this.finalize();
-    const t5 = [];
-    return this.elementProperties.forEach((i7, s6) => {
-      const e8 = this._$Eh(s6, i7);
-      e8 !== void 0 && (this._$Eu.set(e8, s6), t5.push(e8));
-    }), t5;
-  }
-  static createProperty(t5, i7 = l) {
-    if (i7.state && (i7.attribute = false), this.finalize(), this.elementProperties.set(t5, i7), !i7.noAccessor && !this.prototype.hasOwnProperty(t5)) {
-      const s6 = typeof t5 == "symbol" ? Symbol() : "__" + t5, e8 = this.getPropertyDescriptor(t5, s6, i7);
-      e8 !== void 0 && Object.defineProperty(this.prototype, t5, e8);
-    }
-  }
-  static getPropertyDescriptor(t5, i7, s6) {
-    return { get() {
-      return this[i7];
-    }, set(e8) {
-      const r4 = this[t5];
-      this[i7] = e8, this.requestUpdate(t5, r4, s6);
-    }, configurable: true, enumerable: true };
-  }
-  static getPropertyOptions(t5) {
-    return this.elementProperties.get(t5) || l;
-  }
-  static finalize() {
-    if (this.hasOwnProperty("finalized"))
-      return false;
-    this.finalized = true;
-    const t5 = Object.getPrototypeOf(this);
-    if (t5.finalize(), this.elementProperties = new Map(t5.elementProperties), this._$Eu = /* @__PURE__ */ new Map(), this.hasOwnProperty("properties")) {
-      const t6 = this.properties, i7 = [...Object.getOwnPropertyNames(t6), ...Object.getOwnPropertySymbols(t6)];
-      for (const s6 of i7)
-        this.createProperty(s6, t6[s6]);
-    }
-    return this.elementStyles = this.finalizeStyles(this.styles), true;
-  }
-  static finalizeStyles(i7) {
-    const s6 = [];
-    if (Array.isArray(i7)) {
-      const e8 = new Set(i7.flat(1 / 0).reverse());
-      for (const i8 of e8)
-        s6.unshift(S(i8));
-    } else
-      i7 !== void 0 && s6.push(S(i7));
-    return s6;
-  }
-  static _$Eh(t5, i7) {
-    const s6 = i7.attribute;
-    return s6 === false ? void 0 : typeof s6 == "string" ? s6 : typeof t5 == "string" ? t5.toLowerCase() : void 0;
-  }
-  o() {
-    var t5;
-    this._$Ep = new Promise((t6) => this.enableUpdating = t6), this._$AL = /* @__PURE__ */ new Map(), this._$Em(), this.requestUpdate(), (t5 = this.constructor.l) === null || t5 === void 0 || t5.forEach((t6) => t6(this));
-  }
-  addController(t5) {
-    var i7, s6;
-    ((i7 = this._$Eg) !== null && i7 !== void 0 ? i7 : this._$Eg = []).push(t5), this.renderRoot !== void 0 && this.isConnected && ((s6 = t5.hostConnected) === null || s6 === void 0 || s6.call(t5));
-  }
-  removeController(t5) {
-    var i7;
-    (i7 = this._$Eg) === null || i7 === void 0 || i7.splice(this._$Eg.indexOf(t5) >>> 0, 1);
-  }
-  _$Em() {
-    this.constructor.elementProperties.forEach((t5, i7) => {
-      this.hasOwnProperty(i7) && (this._$Et.set(i7, this[i7]), delete this[i7]);
-    });
-  }
-  createRenderRoot() {
-    var t5;
-    const s6 = (t5 = this.shadowRoot) !== null && t5 !== void 0 ? t5 : this.attachShadow(this.constructor.shadowRootOptions);
-    return i(s6, this.constructor.elementStyles), s6;
-  }
-  connectedCallback() {
-    var t5;
-    this.renderRoot === void 0 && (this.renderRoot = this.createRenderRoot()), this.enableUpdating(true), (t5 = this._$Eg) === null || t5 === void 0 || t5.forEach((t6) => {
-      var i7;
-      return (i7 = t6.hostConnected) === null || i7 === void 0 ? void 0 : i7.call(t6);
-    });
-  }
-  enableUpdating(t5) {
-  }
-  disconnectedCallback() {
-    var t5;
-    (t5 = this._$Eg) === null || t5 === void 0 || t5.forEach((t6) => {
-      var i7;
-      return (i7 = t6.hostDisconnected) === null || i7 === void 0 ? void 0 : i7.call(t6);
-    });
-  }
-  attributeChangedCallback(t5, i7, s6) {
-    this._$AK(t5, s6);
-  }
-  _$ES(t5, i7, s6 = l) {
-    var e8, r4;
-    const h3 = this.constructor._$Eh(t5, s6);
-    if (h3 !== void 0 && s6.reflect === true) {
-      const n6 = ((r4 = (e8 = s6.converter) === null || e8 === void 0 ? void 0 : e8.toAttribute) !== null && r4 !== void 0 ? r4 : o2.toAttribute)(i7, s6.type);
-      this._$Ei = t5, n6 == null ? this.removeAttribute(h3) : this.setAttribute(h3, n6), this._$Ei = null;
-    }
-  }
-  _$AK(t5, i7) {
-    var s6, e8, r4;
-    const h3 = this.constructor, n6 = h3._$Eu.get(t5);
-    if (n6 !== void 0 && this._$Ei !== n6) {
-      const t6 = h3.getPropertyOptions(n6), l4 = t6.converter, a4 = (r4 = (e8 = (s6 = l4) === null || s6 === void 0 ? void 0 : s6.fromAttribute) !== null && e8 !== void 0 ? e8 : typeof l4 == "function" ? l4 : null) !== null && r4 !== void 0 ? r4 : o2.fromAttribute;
-      this._$Ei = n6, this[n6] = a4(i7, t6.type), this._$Ei = null;
-    }
-  }
-  requestUpdate(t5, i7, s6) {
-    let e8 = true;
-    t5 !== void 0 && (((s6 = s6 || this.constructor.getPropertyOptions(t5)).hasChanged || n2)(this[t5], i7) ? (this._$AL.has(t5) || this._$AL.set(t5, i7), s6.reflect === true && this._$Ei !== t5 && (this._$E_ === void 0 && (this._$E_ = /* @__PURE__ */ new Map()), this._$E_.set(t5, s6))) : e8 = false), !this.isUpdatePending && e8 && (this._$Ep = this._$EC());
-  }
-  async _$EC() {
-    this.isUpdatePending = true;
-    try {
-      await this._$Ep;
-    } catch (t6) {
-      Promise.reject(t6);
-    }
-    const t5 = this.scheduleUpdate();
-    return t5 != null && await t5, !this.isUpdatePending;
-  }
-  scheduleUpdate() {
-    return this.performUpdate();
-  }
-  performUpdate() {
-    var t5;
-    if (!this.isUpdatePending)
-      return;
-    this.hasUpdated, this._$Et && (this._$Et.forEach((t6, i8) => this[i8] = t6), this._$Et = void 0);
-    let i7 = false;
-    const s6 = this._$AL;
-    try {
-      i7 = this.shouldUpdate(s6), i7 ? (this.willUpdate(s6), (t5 = this._$Eg) === null || t5 === void 0 || t5.forEach((t6) => {
-        var i8;
-        return (i8 = t6.hostUpdate) === null || i8 === void 0 ? void 0 : i8.call(t6);
-      }), this.update(s6)) : this._$EU();
-    } catch (t6) {
-      throw i7 = false, this._$EU(), t6;
-    }
-    i7 && this._$AE(s6);
-  }
-  willUpdate(t5) {
-  }
-  _$AE(t5) {
-    var i7;
-    (i7 = this._$Eg) === null || i7 === void 0 || i7.forEach((t6) => {
-      var i8;
-      return (i8 = t6.hostUpdated) === null || i8 === void 0 ? void 0 : i8.call(t6);
-    }), this.hasUpdated || (this.hasUpdated = true, this.firstUpdated(t5)), this.updated(t5);
-  }
-  _$EU() {
-    this._$AL = /* @__PURE__ */ new Map(), this.isUpdatePending = false;
-  }
-  get updateComplete() {
-    return this.getUpdateComplete();
-  }
-  getUpdateComplete() {
-    return this._$Ep;
-  }
-  shouldUpdate(t5) {
-    return true;
-  }
-  update(t5) {
-    this._$E_ !== void 0 && (this._$E_.forEach((t6, i7) => this._$ES(i7, this[i7], t6)), this._$E_ = void 0), this._$EU();
-  }
-  updated(t5) {
-  }
-  firstUpdated(t5) {
-  }
-};
-a.finalized = true, a.elementProperties = /* @__PURE__ */ new Map(), a.elementStyles = [], a.shadowRootOptions = { mode: "open" }, h == null || h({ ReactiveElement: a }), ((s2 = globalThis.reactiveElementVersions) !== null && s2 !== void 0 ? s2 : globalThis.reactiveElementVersions = []).push("1.0.2");
-
-// node_modules/lit-html/lit-html.js
-var t2;
-var i2 = globalThis.trustedTypes;
-var s3 = i2 ? i2.createPolicy("lit-html", { createHTML: (t5) => t5 }) : void 0;
-var e3 = `lit$${(Math.random() + "").slice(9)}$`;
-var o3 = "?" + e3;
-var n3 = `<${o3}>`;
-var l2 = document;
-var h2 = (t5 = "") => l2.createComment(t5);
-var r3 = (t5) => t5 === null || typeof t5 != "object" && typeof t5 != "function";
-var d = Array.isArray;
-var u = (t5) => {
-  var i7;
-  return d(t5) || typeof ((i7 = t5) === null || i7 === void 0 ? void 0 : i7[Symbol.iterator]) == "function";
-};
-var c = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g;
-var v = /-->/g;
-var a2 = />/g;
-var f = />|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g;
-var _ = /'/g;
-var m = /"/g;
-var g = /^(?:script|style|textarea)$/i;
-var $ = (t5) => (i7, ...s6) => ({ _$litType$: t5, strings: i7, values: s6 });
-var p = $(1);
-var y = $(2);
-var b = Symbol.for("lit-noChange");
-var T = Symbol.for("lit-nothing");
-var x = /* @__PURE__ */ new WeakMap();
-var w = (t5, i7, s6) => {
-  var e8, o7;
-  const n6 = (e8 = s6 == null ? void 0 : s6.renderBefore) !== null && e8 !== void 0 ? e8 : i7;
-  let l4 = n6._$litPart$;
-  if (l4 === void 0) {
-    const t6 = (o7 = s6 == null ? void 0 : s6.renderBefore) !== null && o7 !== void 0 ? o7 : null;
-    n6._$litPart$ = l4 = new N(i7.insertBefore(h2(), t6), t6, void 0, s6 != null ? s6 : {});
-  }
-  return l4._$AI(t5), l4;
-};
-var A = l2.createTreeWalker(l2, 129, null, false);
-var C = (t5, i7) => {
-  const o7 = t5.length - 1, l4 = [];
-  let h3, r4 = i7 === 2 ? "<svg>" : "", d2 = c;
-  for (let i8 = 0; i8 < o7; i8++) {
-    const s6 = t5[i8];
-    let o8, u5, $2 = -1, p2 = 0;
-    for (; p2 < s6.length && (d2.lastIndex = p2, u5 = d2.exec(s6), u5 !== null); )
-      p2 = d2.lastIndex, d2 === c ? u5[1] === "!--" ? d2 = v : u5[1] !== void 0 ? d2 = a2 : u5[2] !== void 0 ? (g.test(u5[2]) && (h3 = RegExp("</" + u5[2], "g")), d2 = f) : u5[3] !== void 0 && (d2 = f) : d2 === f ? u5[0] === ">" ? (d2 = h3 != null ? h3 : c, $2 = -1) : u5[1] === void 0 ? $2 = -2 : ($2 = d2.lastIndex - u5[2].length, o8 = u5[1], d2 = u5[3] === void 0 ? f : u5[3] === '"' ? m : _) : d2 === m || d2 === _ ? d2 = f : d2 === v || d2 === a2 ? d2 = c : (d2 = f, h3 = void 0);
-    const y2 = d2 === f && t5[i8 + 1].startsWith("/>") ? " " : "";
-    r4 += d2 === c ? s6 + n3 : $2 >= 0 ? (l4.push(o8), s6.slice(0, $2) + "$lit$" + s6.slice($2) + e3 + y2) : s6 + e3 + ($2 === -2 ? (l4.push(void 0), i8) : y2);
-  }
-  const u4 = r4 + (t5[o7] || "<?>") + (i7 === 2 ? "</svg>" : "");
-  return [s3 !== void 0 ? s3.createHTML(u4) : u4, l4];
-};
-var P = class {
-  constructor({ strings: t5, _$litType$: s6 }, n6) {
-    let l4;
-    this.parts = [];
-    let r4 = 0, d2 = 0;
-    const u4 = t5.length - 1, c4 = this.parts, [v2, a4] = C(t5, s6);
-    if (this.el = P.createElement(v2, n6), A.currentNode = this.el.content, s6 === 2) {
-      const t6 = this.el.content, i7 = t6.firstChild;
-      i7.remove(), t6.append(...i7.childNodes);
-    }
-    for (; (l4 = A.nextNode()) !== null && c4.length < u4; ) {
-      if (l4.nodeType === 1) {
-        if (l4.hasAttributes()) {
-          const t6 = [];
-          for (const i7 of l4.getAttributeNames())
-            if (i7.endsWith("$lit$") || i7.startsWith(e3)) {
-              const s7 = a4[d2++];
-              if (t6.push(i7), s7 !== void 0) {
-                const t7 = l4.getAttribute(s7.toLowerCase() + "$lit$").split(e3), i8 = /([.?@])?(.*)/.exec(s7);
-                c4.push({ type: 1, index: r4, name: i8[2], strings: t7, ctor: i8[1] === "." ? M : i8[1] === "?" ? H : i8[1] === "@" ? I : S2 });
-              } else
-                c4.push({ type: 6, index: r4 });
-            }
-          for (const i7 of t6)
-            l4.removeAttribute(i7);
-        }
-        if (g.test(l4.tagName)) {
-          const t6 = l4.textContent.split(e3), s7 = t6.length - 1;
-          if (s7 > 0) {
-            l4.textContent = i2 ? i2.emptyScript : "";
-            for (let i7 = 0; i7 < s7; i7++)
-              l4.append(t6[i7], h2()), A.nextNode(), c4.push({ type: 2, index: ++r4 });
-            l4.append(t6[s7], h2());
-          }
-        }
-      } else if (l4.nodeType === 8)
-        if (l4.data === o3)
-          c4.push({ type: 2, index: r4 });
-        else {
-          let t6 = -1;
-          for (; (t6 = l4.data.indexOf(e3, t6 + 1)) !== -1; )
-            c4.push({ type: 7, index: r4 }), t6 += e3.length - 1;
-        }
-      r4++;
-    }
-  }
-  static createElement(t5, i7) {
-    const s6 = l2.createElement("template");
-    return s6.innerHTML = t5, s6;
-  }
-};
-function V(t5, i7, s6 = t5, e8) {
-  var o7, n6, l4, h3;
-  if (i7 === b)
-    return i7;
-  let d2 = e8 !== void 0 ? (o7 = s6._$Cl) === null || o7 === void 0 ? void 0 : o7[e8] : s6._$Cu;
-  const u4 = r3(i7) ? void 0 : i7._$litDirective$;
-  return (d2 == null ? void 0 : d2.constructor) !== u4 && ((n6 = d2 == null ? void 0 : d2._$AO) === null || n6 === void 0 || n6.call(d2, false), u4 === void 0 ? d2 = void 0 : (d2 = new u4(t5), d2._$AT(t5, s6, e8)), e8 !== void 0 ? ((l4 = (h3 = s6)._$Cl) !== null && l4 !== void 0 ? l4 : h3._$Cl = [])[e8] = d2 : s6._$Cu = d2), d2 !== void 0 && (i7 = V(t5, d2._$AS(t5, i7.values), d2, e8)), i7;
-}
-var E = class {
-  constructor(t5, i7) {
-    this.v = [], this._$AN = void 0, this._$AD = t5, this._$AM = i7;
-  }
-  get parentNode() {
-    return this._$AM.parentNode;
-  }
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-  p(t5) {
-    var i7;
-    const { el: { content: s6 }, parts: e8 } = this._$AD, o7 = ((i7 = t5 == null ? void 0 : t5.creationScope) !== null && i7 !== void 0 ? i7 : l2).importNode(s6, true);
-    A.currentNode = o7;
-    let n6 = A.nextNode(), h3 = 0, r4 = 0, d2 = e8[0];
-    for (; d2 !== void 0; ) {
-      if (h3 === d2.index) {
-        let i8;
-        d2.type === 2 ? i8 = new N(n6, n6.nextSibling, this, t5) : d2.type === 1 ? i8 = new d2.ctor(n6, d2.name, d2.strings, this, t5) : d2.type === 6 && (i8 = new L(n6, this, t5)), this.v.push(i8), d2 = e8[++r4];
-      }
-      h3 !== (d2 == null ? void 0 : d2.index) && (n6 = A.nextNode(), h3++);
-    }
-    return o7;
-  }
-  m(t5) {
-    let i7 = 0;
-    for (const s6 of this.v)
-      s6 !== void 0 && (s6.strings !== void 0 ? (s6._$AI(t5, s6, i7), i7 += s6.strings.length - 2) : s6._$AI(t5[i7])), i7++;
-  }
-};
-var N = class {
-  constructor(t5, i7, s6, e8) {
-    var o7;
-    this.type = 2, this._$AH = T, this._$AN = void 0, this._$AA = t5, this._$AB = i7, this._$AM = s6, this.options = e8, this._$Cg = (o7 = e8 == null ? void 0 : e8.isConnected) === null || o7 === void 0 || o7;
-  }
-  get _$AU() {
-    var t5, i7;
-    return (i7 = (t5 = this._$AM) === null || t5 === void 0 ? void 0 : t5._$AU) !== null && i7 !== void 0 ? i7 : this._$Cg;
-  }
-  get parentNode() {
-    let t5 = this._$AA.parentNode;
-    const i7 = this._$AM;
-    return i7 !== void 0 && t5.nodeType === 11 && (t5 = i7.parentNode), t5;
-  }
-  get startNode() {
-    return this._$AA;
-  }
-  get endNode() {
-    return this._$AB;
-  }
-  _$AI(t5, i7 = this) {
-    t5 = V(this, t5, i7), r3(t5) ? t5 === T || t5 == null || t5 === "" ? (this._$AH !== T && this._$AR(), this._$AH = T) : t5 !== this._$AH && t5 !== b && this.$(t5) : t5._$litType$ !== void 0 ? this.T(t5) : t5.nodeType !== void 0 ? this.S(t5) : u(t5) ? this.M(t5) : this.$(t5);
-  }
-  A(t5, i7 = this._$AB) {
-    return this._$AA.parentNode.insertBefore(t5, i7);
-  }
-  S(t5) {
-    this._$AH !== t5 && (this._$AR(), this._$AH = this.A(t5));
-  }
-  $(t5) {
-    this._$AH !== T && r3(this._$AH) ? this._$AA.nextSibling.data = t5 : this.S(l2.createTextNode(t5)), this._$AH = t5;
-  }
-  T(t5) {
-    var i7;
-    const { values: s6, _$litType$: e8 } = t5, o7 = typeof e8 == "number" ? this._$AC(t5) : (e8.el === void 0 && (e8.el = P.createElement(e8.h, this.options)), e8);
-    if (((i7 = this._$AH) === null || i7 === void 0 ? void 0 : i7._$AD) === o7)
-      this._$AH.m(s6);
-    else {
-      const t6 = new E(o7, this), i8 = t6.p(this.options);
-      t6.m(s6), this.S(i8), this._$AH = t6;
-    }
-  }
-  _$AC(t5) {
-    let i7 = x.get(t5.strings);
-    return i7 === void 0 && x.set(t5.strings, i7 = new P(t5)), i7;
-  }
-  M(t5) {
-    d(this._$AH) || (this._$AH = [], this._$AR());
-    const i7 = this._$AH;
-    let s6, e8 = 0;
-    for (const o7 of t5)
-      e8 === i7.length ? i7.push(s6 = new N(this.A(h2()), this.A(h2()), this, this.options)) : s6 = i7[e8], s6._$AI(o7), e8++;
-    e8 < i7.length && (this._$AR(s6 && s6._$AB.nextSibling, e8), i7.length = e8);
-  }
-  _$AR(t5 = this._$AA.nextSibling, i7) {
-    var s6;
-    for ((s6 = this._$AP) === null || s6 === void 0 || s6.call(this, false, true, i7); t5 && t5 !== this._$AB; ) {
-      const i8 = t5.nextSibling;
-      t5.remove(), t5 = i8;
-    }
-  }
-  setConnected(t5) {
-    var i7;
-    this._$AM === void 0 && (this._$Cg = t5, (i7 = this._$AP) === null || i7 === void 0 || i7.call(this, t5));
-  }
-};
-var S2 = class {
-  constructor(t5, i7, s6, e8, o7) {
-    this.type = 1, this._$AH = T, this._$AN = void 0, this.element = t5, this.name = i7, this._$AM = e8, this.options = o7, s6.length > 2 || s6[0] !== "" || s6[1] !== "" ? (this._$AH = Array(s6.length - 1).fill(new String()), this.strings = s6) : this._$AH = T;
-  }
-  get tagName() {
-    return this.element.tagName;
-  }
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-  _$AI(t5, i7 = this, s6, e8) {
-    const o7 = this.strings;
-    let n6 = false;
-    if (o7 === void 0)
-      t5 = V(this, t5, i7, 0), n6 = !r3(t5) || t5 !== this._$AH && t5 !== b, n6 && (this._$AH = t5);
-    else {
-      const e9 = t5;
-      let l4, h3;
-      for (t5 = o7[0], l4 = 0; l4 < o7.length - 1; l4++)
-        h3 = V(this, e9[s6 + l4], i7, l4), h3 === b && (h3 = this._$AH[l4]), n6 || (n6 = !r3(h3) || h3 !== this._$AH[l4]), h3 === T ? t5 = T : t5 !== T && (t5 += (h3 != null ? h3 : "") + o7[l4 + 1]), this._$AH[l4] = h3;
-    }
-    n6 && !e8 && this.k(t5);
-  }
-  k(t5) {
-    t5 === T ? this.element.removeAttribute(this.name) : this.element.setAttribute(this.name, t5 != null ? t5 : "");
-  }
-};
-var M = class extends S2 {
-  constructor() {
-    super(...arguments), this.type = 3;
-  }
-  k(t5) {
-    this.element[this.name] = t5 === T ? void 0 : t5;
-  }
-};
-var k = i2 ? i2.emptyScript : "";
-var H = class extends S2 {
-  constructor() {
-    super(...arguments), this.type = 4;
-  }
-  k(t5) {
-    t5 && t5 !== T ? this.element.setAttribute(this.name, k) : this.element.removeAttribute(this.name);
-  }
-};
-var I = class extends S2 {
-  constructor(t5, i7, s6, e8, o7) {
-    super(t5, i7, s6, e8, o7), this.type = 5;
-  }
-  _$AI(t5, i7 = this) {
-    var s6;
-    if ((t5 = (s6 = V(this, t5, i7, 0)) !== null && s6 !== void 0 ? s6 : T) === b)
-      return;
-    const e8 = this._$AH, o7 = t5 === T && e8 !== T || t5.capture !== e8.capture || t5.once !== e8.once || t5.passive !== e8.passive, n6 = t5 !== T && (e8 === T || o7);
-    o7 && this.element.removeEventListener(this.name, this, e8), n6 && this.element.addEventListener(this.name, this, t5), this._$AH = t5;
-  }
-  handleEvent(t5) {
-    var i7, s6;
-    typeof this._$AH == "function" ? this._$AH.call((s6 = (i7 = this.options) === null || i7 === void 0 ? void 0 : i7.host) !== null && s6 !== void 0 ? s6 : this.element, t5) : this._$AH.handleEvent(t5);
-  }
-};
-var L = class {
-  constructor(t5, i7, s6) {
-    this.element = t5, this.type = 6, this._$AN = void 0, this._$AM = i7, this.options = s6;
-  }
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-  _$AI(t5) {
-    V(this, t5);
-  }
-};
-var R = { P: "$lit$", V: e3, L: o3, I: 1, N: C, R: E, D: u, j: V, H: N, O: S2, F: H, B: I, W: M, Z: L };
-var z = window.litHtmlPolyfillSupport;
-z == null || z(P, N), ((t2 = globalThis.litHtmlVersions) !== null && t2 !== void 0 ? t2 : globalThis.litHtmlVersions = []).push("2.0.2");
-
-// node_modules/lit-element/lit-element.js
-var l3;
-var o4;
-var s4 = class extends a {
-  constructor() {
-    super(...arguments), this.renderOptions = { host: this }, this._$Dt = void 0;
-  }
-  createRenderRoot() {
-    var t5, e8;
-    const i7 = super.createRenderRoot();
-    return (t5 = (e8 = this.renderOptions).renderBefore) !== null && t5 !== void 0 || (e8.renderBefore = i7.firstChild), i7;
-  }
-  update(t5) {
-    const i7 = this.render();
-    this.hasUpdated || (this.renderOptions.isConnected = this.isConnected), super.update(t5), this._$Dt = w(i7, this.renderRoot, this.renderOptions);
-  }
-  connectedCallback() {
-    var t5;
-    super.connectedCallback(), (t5 = this._$Dt) === null || t5 === void 0 || t5.setConnected(true);
-  }
-  disconnectedCallback() {
-    var t5;
-    super.disconnectedCallback(), (t5 = this._$Dt) === null || t5 === void 0 || t5.setConnected(false);
-  }
-  render() {
-    return b;
-  }
-};
-s4.finalized = true, s4._$litElement$ = true, (l3 = globalThis.litElementHydrateSupport) === null || l3 === void 0 || l3.call(globalThis, { LitElement: s4 });
-var n4 = globalThis.litElementPolyfillSupport;
-n4 == null || n4({ LitElement: s4 });
-((o4 = globalThis.litElementVersions) !== null && o4 !== void 0 ? o4 : globalThis.litElementVersions = []).push("3.0.2");
-
-// node_modules/@lit/reactive-element/decorators/custom-element.js
-var n5 = (n6) => (e8) => typeof e8 == "function" ? ((n7, e9) => (window.customElements.define(n7, e9), e9))(n6, e8) : ((n7, e9) => {
-  const { kind: t5, elements: i7 } = e9;
-  return { kind: t5, elements: i7, finisher(e10) {
-    window.customElements.define(n7, e10);
-  } };
-})(n6, e8);
-
-// node_modules/@lit/reactive-element/decorators/property.js
-var i3 = (i7, e8) => e8.kind === "method" && e8.descriptor && !("value" in e8.descriptor) ? { ...e8, finisher(n6) {
-  n6.createProperty(e8.key, i7);
-} } : { kind: "field", key: Symbol(), placement: "own", descriptor: {}, originalKey: e8.key, initializer() {
-  typeof e8.initializer == "function" && (this[e8.key] = e8.initializer.call(this));
-}, finisher(n6) {
-  n6.createProperty(e8.key, i7);
-} };
-function e4(e8) {
-  return (n6, t5) => t5 !== void 0 ? ((i7, e9, n7) => {
-    e9.constructor.createProperty(n7, i7);
-  })(e8, n6, t5) : i3(e8, n6);
-}
-
-// node_modules/@lit/reactive-element/decorators/state.js
-function t3(t5) {
-  return e4({ ...t5, state: true });
-}
-
-// node_modules/@lit/reactive-element/decorators/base.js
-var o5 = ({ finisher: e8, descriptor: t5 }) => (o7, n6) => {
-  var r4;
-  if (n6 === void 0) {
-    const n7 = (r4 = o7.originalKey) !== null && r4 !== void 0 ? r4 : o7.key, i7 = t5 != null ? { kind: "method", placement: "prototype", key: n7, descriptor: t5(o7.key) } : { ...o7, key: n7 };
-    return e8 != null && (i7.finisher = function(t6) {
-      e8(t6, n7);
-    }), i7;
-  }
-  {
-    const r5 = o7.constructor;
-    t5 !== void 0 && Object.defineProperty(o7, n6, t5(n6)), e8 == null || e8(r5, n6);
-  }
-};
-
-// node_modules/@lit/reactive-element/decorators/query.js
-function i4(i7, n6) {
-  return o5({ descriptor: (o7) => {
-    const t5 = { get() {
-      var o8, n7;
-      return (n7 = (o8 = this.renderRoot) === null || o8 === void 0 ? void 0 : o8.querySelector(i7)) !== null && n7 !== void 0 ? n7 : null;
-    }, enumerable: true, configurable: true };
-    if (n6) {
-      const n7 = typeof o7 == "symbol" ? Symbol() : "__" + o7;
-      t5.get = function() {
-        var o8, t6;
-        return this[n7] === void 0 && (this[n7] = (t6 = (o8 = this.renderRoot) === null || o8 === void 0 ? void 0 : o8.querySelector(i7)) !== null && t6 !== void 0 ? t6 : null), this[n7];
-      };
-    }
-    return t5;
-  } });
-}
-
-// node_modules/lit-html/directive.js
-var t4 = { ATTRIBUTE: 1, CHILD: 2, PROPERTY: 3, BOOLEAN_ATTRIBUTE: 4, EVENT: 5, ELEMENT: 6 };
-var e5 = (t5) => (...e8) => ({ _$litDirective$: t5, values: e8 });
-var i5 = class {
-  constructor(t5) {
-  }
-  get _$AU() {
-    return this._$AM._$AU;
-  }
-  _$AT(t5, e8, i7) {
-    this._$Ct = t5, this._$AM = e8, this._$Ci = i7;
-  }
-  _$AS(t5, e8) {
-    return this.update(t5, e8);
-  }
-  update(t5, e8) {
-    return this.render(...e8);
-  }
-};
-
-// node_modules/lit-html/directive-helpers.js
-var { H: i6 } = R;
-var e6 = () => document.createComment("");
-var u2 = (o7, t5, n6) => {
-  var v2;
-  const l4 = o7._$AA.parentNode, d2 = t5 === void 0 ? o7._$AB : t5._$AA;
-  if (n6 === void 0) {
-    const t6 = l4.insertBefore(e6(), d2), v3 = l4.insertBefore(e6(), d2);
-    n6 = new i6(t6, v3, o7, o7.options);
-  } else {
-    const i7 = n6._$AB.nextSibling, t6 = n6._$AM, r4 = t6 !== o7;
-    if (r4) {
-      let i8;
-      (v2 = n6._$AQ) === null || v2 === void 0 || v2.call(n6, o7), n6._$AM = o7, n6._$AP !== void 0 && (i8 = o7._$AU) !== t6._$AU && n6._$AP(i8);
-    }
-    if (i7 !== d2 || r4) {
-      let o8 = n6._$AA;
-      for (; o8 !== i7; ) {
-        const i8 = o8.nextSibling;
-        l4.insertBefore(o8, d2), o8 = i8;
-      }
-    }
-  }
-  return n6;
-};
-var c2 = (o7, i7, t5 = o7) => (o7._$AI(i7, t5), o7);
-var f2 = {};
-var s5 = (o7, i7 = f2) => o7._$AH = i7;
-var a3 = (o7) => o7._$AH;
-var m2 = (o7) => {
-  var i7;
-  (i7 = o7._$AP) === null || i7 === void 0 || i7.call(o7, false, true);
-  let t5 = o7._$AA;
-  const n6 = o7._$AB.nextSibling;
-  for (; t5 !== n6; ) {
-    const o8 = t5.nextSibling;
-    t5.remove(), t5 = o8;
-  }
-};
-
-// node_modules/lit-html/directives/repeat.js
-var u3 = (e8, s6, t5) => {
-  const r4 = /* @__PURE__ */ new Map();
-  for (let l4 = s6; l4 <= t5; l4++)
-    r4.set(e8[l4], l4);
-  return r4;
-};
-var c3 = e5(class extends i5 {
-  constructor(e8) {
-    if (super(e8), e8.type !== t4.CHILD)
-      throw Error("repeat() can only be used in text expressions");
-  }
-  dt(e8, s6, t5) {
-    let r4;
-    t5 === void 0 ? t5 = s6 : s6 !== void 0 && (r4 = s6);
-    const l4 = [], o7 = [];
-    let i7 = 0;
-    for (const s7 of e8)
-      l4[i7] = r4 ? r4(s7, i7) : i7, o7[i7] = t5(s7, i7), i7++;
-    return { values: o7, keys: l4 };
-  }
-  render(e8, s6, t5) {
-    return this.dt(e8, s6, t5).values;
-  }
-  update(s6, [t5, r4, c4]) {
-    var d2;
-    const a4 = a3(s6), { values: p2, keys: v2 } = this.dt(t5, r4, c4);
-    if (!Array.isArray(a4))
-      return this.ct = v2, p2;
-    const h3 = (d2 = this.ct) !== null && d2 !== void 0 ? d2 : this.ct = [], m3 = [];
-    let y2, x2, j = 0, k2 = a4.length - 1, w2 = 0, A2 = p2.length - 1;
-    for (; j <= k2 && w2 <= A2; )
-      if (a4[j] === null)
-        j++;
-      else if (a4[k2] === null)
-        k2--;
-      else if (h3[j] === v2[w2])
-        m3[w2] = c2(a4[j], p2[w2]), j++, w2++;
-      else if (h3[k2] === v2[A2])
-        m3[A2] = c2(a4[k2], p2[A2]), k2--, A2--;
-      else if (h3[j] === v2[A2])
-        m3[A2] = c2(a4[j], p2[A2]), u2(s6, m3[A2 + 1], a4[j]), j++, A2--;
-      else if (h3[k2] === v2[w2])
-        m3[w2] = c2(a4[k2], p2[w2]), u2(s6, a4[j], a4[k2]), k2--, w2++;
-      else if (y2 === void 0 && (y2 = u3(v2, w2, A2), x2 = u3(h3, j, k2)), y2.has(h3[j]))
-        if (y2.has(h3[k2])) {
-          const e8 = x2.get(v2[w2]), t6 = e8 !== void 0 ? a4[e8] : null;
-          if (t6 === null) {
-            const e9 = u2(s6, a4[j]);
-            c2(e9, p2[w2]), m3[w2] = e9;
-          } else
-            m3[w2] = c2(t6, p2[w2]), u2(s6, a4[j], t6), a4[e8] = null;
-          w2++;
-        } else
-          m2(a4[k2]), k2--;
-      else
-        m2(a4[j]), j++;
-    for (; w2 <= A2; ) {
-      const e8 = u2(s6, m3[A2 + 1]);
-      c2(e8, p2[w2]), m3[w2++] = e8;
-    }
-    for (; j <= k2; ) {
-      const e8 = a4[j++];
-      e8 !== null && m2(e8);
-    }
-    return this.ct = v2, s5(s6, m3), b;
-  }
-});
-
-// site/css/default/img.css
-var img_default = r`:where(img, svg) {
+var Ht=Object.defineProperty;var It=Object.getOwnPropertyDescriptor;var a=(s,e,t,i)=>{for(var r=i>1?void 0:i?It(e,t):e,o=s.length-1,n;o>=0;o--)(n=s[o])&&(r=(i?n(e,t,r):n(r))||r);return i&&r&&Ht(e,t,r),r};var I=class{constructor(){this._callbacks=[]}AddListener(e){this._callbacks.push(e)}Invoke(e){for(let t of this._callbacks)t(e)}};var k=class{static ShowLoginNotification(){let e=document.createElement("p");e.innerHTML="You need to <a>login</a> to see the latest information.",g.ShowNotification(e)}static async GetToken(){let t=await(await caches.open("User Resources")).match("Token");if(!t)return location.href=`${location.origin}/login`,{valid:!1,token:null};let i=await t.json();return new Date>i.termination?(this.ShowLoginNotification(),{valid:!1,token:null}):{valid:!0,token:i}}static async SetResources(e){let t=await caches.open("User Resources"),i=e.map(r=>{let o=r.name,n=r.resource;return t.put(o,new Response(n)).then(()=>this._resourceCallbacks.get(o)?.Invoke(JSON.parse(n)))});await Promise.all(i)}static async SetResource(e,t){await(await caches.open("User Resources")).put(e,new Response(t)),this._resourceCallbacks.get(e)?.Invoke(JSON.parse(t))}static async GetResourceNow(e){let i=await(await caches.open("User Resources")).match(e);if(i)return await i.json()}static async GetResource(e,t){let i=this._resourceCallbacks.get(e)??new I;i.AddListener(t),this._resourceCallbacks.set(e,i),t(await this.GetResourceNow(e))}static async FetchResources(){let{valid:e,token:t}=await this.GetToken();if(!e)return!1;let i=new URL("https://sbhs-random-data.profsmart.repl.co/resources");i.searchParams.append("token",JSON.stringify(t));let r=await fetch(i.toString());if(!r.ok)return this.ShowLoginNotification(),!1;let o=await r.json();return await(await caches.open("User Resources")).put("Token",new Response(JSON.stringify(o.token))),await this.SetResources(Object.keys(o.result).map(c=>({name:c,resource:JSON.stringify(o.result[c])}))),!0}};k._resourceCallbacks=new Map;var ue=window.ShadowRoot&&(window.ShadyCSS===void 0||window.ShadyCSS.nativeShadow)&&"adoptedStyleSheets"in Document.prototype&&"replace"in CSSStyleSheet.prototype,$e=Symbol(),Pe=new Map,ge=class{constructor(e,t){if(this._$cssResult$=!0,t!==$e)throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");this.cssText=e}get styleSheet(){let e=Pe.get(this.cssText);return ue&&e===void 0&&(Pe.set(this.cssText,e=new CSSStyleSheet),e.replaceSync(this.cssText)),e}toString(){return this.cssText}},Le=s=>new ge(typeof s=="string"?s:s+"",$e),h=(s,...e)=>{let t=s.length===1?s[0]:e.reduce((i,r,o)=>i+(n=>{if(n._$cssResult$===!0)return n.cssText;if(typeof n=="number")return n;throw Error("Value passed to 'css' function must be a 'css' function result: "+n+". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.")})(r)+s[o+1],s[0]);return new ge(t,$e)},Ee=(s,e)=>{ue?s.adoptedStyleSheets=e.map(t=>t instanceof CSSStyleSheet?t:t.styleSheet):e.forEach(t=>{let i=document.createElement("style"),r=window.litNonce;r!==void 0&&i.setAttribute("nonce",r),i.textContent=t.cssText,s.appendChild(i)})},fe=ue?s=>s:s=>s instanceof CSSStyleSheet?(e=>{let t="";for(let i of e.cssRules)t+=i.cssText;return Le(t)})(s):s;var ke,Ne=window.trustedTypes,Dt=Ne?Ne.emptyScript:"",He=window.reactiveElementPolyfillSupport,Ce={toAttribute(s,e){switch(e){case Boolean:s=s?Dt:null;break;case Object:case Array:s=s==null?s:JSON.stringify(s)}return s},fromAttribute(s,e){let t=s;switch(e){case Boolean:t=s!==null;break;case Number:t=s===null?null:Number(s);break;case Object:case Array:try{t=JSON.parse(s)}catch{t=null}}return t}},Ie=(s,e)=>e!==s&&(e==e||s==s),_e={attribute:!0,type:String,converter:Ce,reflect:!1,hasChanged:Ie},D=class extends HTMLElement{constructor(){super(),this._$Et=new Map,this.isUpdatePending=!1,this.hasUpdated=!1,this._$Ei=null,this.o()}static addInitializer(e){var t;(t=this.l)!==null&&t!==void 0||(this.l=[]),this.l.push(e)}static get observedAttributes(){this.finalize();let e=[];return this.elementProperties.forEach((t,i)=>{let r=this._$Eh(i,t);r!==void 0&&(this._$Eu.set(r,i),e.push(r))}),e}static createProperty(e,t=_e){if(t.state&&(t.attribute=!1),this.finalize(),this.elementProperties.set(e,t),!t.noAccessor&&!this.prototype.hasOwnProperty(e)){let i=typeof e=="symbol"?Symbol():"__"+e,r=this.getPropertyDescriptor(e,i,t);r!==void 0&&Object.defineProperty(this.prototype,e,r)}}static getPropertyDescriptor(e,t,i){return{get(){return this[t]},set(r){let o=this[e];this[t]=r,this.requestUpdate(e,o,i)},configurable:!0,enumerable:!0}}static getPropertyOptions(e){return this.elementProperties.get(e)||_e}static finalize(){if(this.hasOwnProperty("finalized"))return!1;this.finalized=!0;let e=Object.getPrototypeOf(this);if(e.finalize(),this.elementProperties=new Map(e.elementProperties),this._$Eu=new Map,this.hasOwnProperty("properties")){let t=this.properties,i=[...Object.getOwnPropertyNames(t),...Object.getOwnPropertySymbols(t)];for(let r of i)this.createProperty(r,t[r])}return this.elementStyles=this.finalizeStyles(this.styles),!0}static finalizeStyles(e){let t=[];if(Array.isArray(e)){let i=new Set(e.flat(1/0).reverse());for(let r of i)t.unshift(fe(r))}else e!==void 0&&t.push(fe(e));return t}static _$Eh(e,t){let i=t.attribute;return i===!1?void 0:typeof i=="string"?i:typeof e=="string"?e.toLowerCase():void 0}o(){var e;this._$Ep=new Promise(t=>this.enableUpdating=t),this._$AL=new Map,this._$Em(),this.requestUpdate(),(e=this.constructor.l)===null||e===void 0||e.forEach(t=>t(this))}addController(e){var t,i;((t=this._$Eg)!==null&&t!==void 0?t:this._$Eg=[]).push(e),this.renderRoot!==void 0&&this.isConnected&&((i=e.hostConnected)===null||i===void 0||i.call(e))}removeController(e){var t;(t=this._$Eg)===null||t===void 0||t.splice(this._$Eg.indexOf(e)>>>0,1)}_$Em(){this.constructor.elementProperties.forEach((e,t)=>{this.hasOwnProperty(t)&&(this._$Et.set(t,this[t]),delete this[t])})}createRenderRoot(){var e;let t=(e=this.shadowRoot)!==null&&e!==void 0?e:this.attachShadow(this.constructor.shadowRootOptions);return Ee(t,this.constructor.elementStyles),t}connectedCallback(){var e;this.renderRoot===void 0&&(this.renderRoot=this.createRenderRoot()),this.enableUpdating(!0),(e=this._$Eg)===null||e===void 0||e.forEach(t=>{var i;return(i=t.hostConnected)===null||i===void 0?void 0:i.call(t)})}enableUpdating(e){}disconnectedCallback(){var e;(e=this._$Eg)===null||e===void 0||e.forEach(t=>{var i;return(i=t.hostDisconnected)===null||i===void 0?void 0:i.call(t)})}attributeChangedCallback(e,t,i){this._$AK(e,i)}_$ES(e,t,i=_e){var r,o;let n=this.constructor._$Eh(e,i);if(n!==void 0&&i.reflect===!0){let c=((o=(r=i.converter)===null||r===void 0?void 0:r.toAttribute)!==null&&o!==void 0?o:Ce.toAttribute)(t,i.type);this._$Ei=e,c==null?this.removeAttribute(n):this.setAttribute(n,c),this._$Ei=null}}_$AK(e,t){var i,r,o;let n=this.constructor,c=n._$Eu.get(e);if(c!==void 0&&this._$Ei!==c){let d=n.getPropertyOptions(c),p=d.converter,A=(o=(r=(i=p)===null||i===void 0?void 0:i.fromAttribute)!==null&&r!==void 0?r:typeof p=="function"?p:null)!==null&&o!==void 0?o:Ce.fromAttribute;this._$Ei=c,this[c]=A(t,d.type),this._$Ei=null}}requestUpdate(e,t,i){let r=!0;e!==void 0&&(((i=i||this.constructor.getPropertyOptions(e)).hasChanged||Ie)(this[e],t)?(this._$AL.has(e)||this._$AL.set(e,t),i.reflect===!0&&this._$Ei!==e&&(this._$E_===void 0&&(this._$E_=new Map),this._$E_.set(e,i))):r=!1),!this.isUpdatePending&&r&&(this._$Ep=this._$EC())}async _$EC(){this.isUpdatePending=!0;try{await this._$Ep}catch(t){Promise.reject(t)}let e=this.scheduleUpdate();return e!=null&&await e,!this.isUpdatePending}scheduleUpdate(){return this.performUpdate()}performUpdate(){var e;if(!this.isUpdatePending)return;this.hasUpdated,this._$Et&&(this._$Et.forEach((r,o)=>this[o]=r),this._$Et=void 0);let t=!1,i=this._$AL;try{t=this.shouldUpdate(i),t?(this.willUpdate(i),(e=this._$Eg)===null||e===void 0||e.forEach(r=>{var o;return(o=r.hostUpdate)===null||o===void 0?void 0:o.call(r)}),this.update(i)):this._$EU()}catch(r){throw t=!1,this._$EU(),r}t&&this._$AE(i)}willUpdate(e){}_$AE(e){var t;(t=this._$Eg)===null||t===void 0||t.forEach(i=>{var r;return(r=i.hostUpdated)===null||r===void 0?void 0:r.call(i)}),this.hasUpdated||(this.hasUpdated=!0,this.firstUpdated(e)),this.updated(e)}_$EU(){this._$AL=new Map,this.isUpdatePending=!1}get updateComplete(){return this.getUpdateComplete()}getUpdateComplete(){return this._$Ep}shouldUpdate(e){return!0}update(e){this._$E_!==void 0&&(this._$E_.forEach((t,i)=>this._$ES(i,this[i],t)),this._$E_=void 0),this._$EU()}updated(e){}firstUpdated(e){}};D.finalized=!0,D.elementProperties=new Map,D.elementStyles=[],D.shadowRootOptions={mode:"open"},He==null||He({ReactiveElement:D}),((ke=globalThis.reactiveElementVersions)!==null&&ke!==void 0?ke:globalThis.reactiveElementVersions=[]).push("1.0.2");var Te,Z=globalThis.trustedTypes,De=Z?Z.createPolicy("lit-html",{createHTML:s=>s}):void 0,U=`lit$${(Math.random()+"").slice(9)}$`,Ue="?"+U,Ut=`<${Ue}>`,V=document,oe=(s="")=>V.createComment(s),ne=s=>s===null||typeof s!="object"&&typeof s!="function",Oe=Array.isArray,Ot=s=>{var e;return Oe(s)||typeof((e=s)===null||e===void 0?void 0:e[Symbol.iterator])=="function"},ae=/<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,ze=/-->/g,je=/>/g,q=/>|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g,Be=/'/g,qe=/"/g,Fe=/^(?:script|style|textarea)$/i,Ge=s=>(e,...t)=>({_$litType$:s,strings:e,values:t}),m=Ge(1),O=Ge(2),H=Symbol.for("lit-noChange"),y=Symbol.for("lit-nothing"),Ze=new WeakMap,Ve=(s,e,t)=>{var i,r;let o=(i=t==null?void 0:t.renderBefore)!==null&&i!==void 0?i:e,n=o._$litPart$;if(n===void 0){let c=(r=t==null?void 0:t.renderBefore)!==null&&r!==void 0?r:null;o._$litPart$=n=new K(e.insertBefore(oe(),c),c,void 0,t??{})}return n._$AI(s),n},W=V.createTreeWalker(V,129,null,!1),zt=(s,e)=>{let t=s.length-1,i=[],r,o=e===2?"<svg>":"",n=ae;for(let d=0;d<t;d++){let p=s[d],A,f,x=-1,P=0;for(;P<p.length&&(n.lastIndex=P,f=n.exec(p),f!==null);)P=n.lastIndex,n===ae?f[1]==="!--"?n=ze:f[1]!==void 0?n=je:f[2]!==void 0?(Fe.test(f[2])&&(r=RegExp("</"+f[2],"g")),n=q):f[3]!==void 0&&(n=q):n===q?f[0]===">"?(n=r??ae,x=-1):f[1]===void 0?x=-2:(x=n.lastIndex-f[2].length,A=f[1],n=f[3]===void 0?q:f[3]==='"'?qe:Be):n===qe||n===Be?n=q:n===ze||n===je?n=ae:(n=q,r=void 0);let pe=n===q&&s[d+1].startsWith("/>")?" ":"";o+=n===ae?p+Ut:x>=0?(i.push(A),p.slice(0,x)+"$lit$"+p.slice(x)+U+pe):p+U+(x===-2?(i.push(void 0),d):pe)}let c=o+(s[t]||"<?>")+(e===2?"</svg>":"");return[De!==void 0?De.createHTML(c):c,i]},J=class{constructor({strings:e,_$litType$:t},i){let r;this.parts=[];let o=0,n=0,c=e.length-1,d=this.parts,[p,A]=zt(e,t);if(this.el=J.createElement(p,i),W.currentNode=this.el.content,t===2){let f=this.el.content,x=f.firstChild;x.remove(),f.append(...x.childNodes)}for(;(r=W.nextNode())!==null&&d.length<c;){if(r.nodeType===1){if(r.hasAttributes()){let f=[];for(let x of r.getAttributeNames())if(x.endsWith("$lit$")||x.startsWith(U)){let P=A[n++];if(f.push(x),P!==void 0){let pe=r.getAttribute(P.toLowerCase()+"$lit$").split(U),me=/([.?@])?(.*)/.exec(P);d.push({type:1,index:o,name:me[2],strings:pe,ctor:me[1]==="."?Je:me[1]==="?"?Ye:me[1]==="@"?Ke:le})}else d.push({type:6,index:o})}for(let x of f)r.removeAttribute(x)}if(Fe.test(r.tagName)){let f=r.textContent.split(U),x=f.length-1;if(x>0){r.textContent=Z?Z.emptyScript:"";for(let P=0;P<x;P++)r.append(f[P],oe()),W.nextNode(),d.push({type:2,index:++o});r.append(f[x],oe())}}}else if(r.nodeType===8)if(r.data===Ue)d.push({type:2,index:o});else{let f=-1;for(;(f=r.data.indexOf(U,f+1))!==-1;)d.push({type:7,index:o}),f+=U.length-1}o++}}static createElement(e,t){let i=V.createElement("template");return i.innerHTML=e,i}};function Y(s,e,t=s,i){var r,o,n,c;if(e===H)return e;let d=i!==void 0?(r=t._$Cl)===null||r===void 0?void 0:r[i]:t._$Cu,p=ne(e)?void 0:e._$litDirective$;return(d==null?void 0:d.constructor)!==p&&((o=d==null?void 0:d._$AO)===null||o===void 0||o.call(d,!1),p===void 0?d=void 0:(d=new p(s),d._$AT(s,t,i)),i!==void 0?((n=(c=t)._$Cl)!==null&&n!==void 0?n:c._$Cl=[])[i]=d:t._$Cu=d),d!==void 0&&(e=Y(s,d._$AS(s,e.values),d,i)),e}var We=class{constructor(e,t){this.v=[],this._$AN=void 0,this._$AD=e,this._$AM=t}get parentNode(){return this._$AM.parentNode}get _$AU(){return this._$AM._$AU}p(e){var t;let{el:{content:i},parts:r}=this._$AD,o=((t=e==null?void 0:e.creationScope)!==null&&t!==void 0?t:V).importNode(i,!0);W.currentNode=o;let n=W.nextNode(),c=0,d=0,p=r[0];for(;p!==void 0;){if(c===p.index){let A;p.type===2?A=new K(n,n.nextSibling,this,e):p.type===1?A=new p.ctor(n,p.name,p.strings,this,e):p.type===6&&(A=new Xe(n,this,e)),this.v.push(A),p=r[++d]}c!==(p==null?void 0:p.index)&&(n=W.nextNode(),c++)}return o}m(e){let t=0;for(let i of this.v)i!==void 0&&(i.strings!==void 0?(i._$AI(e,i,t),t+=i.strings.length-2):i._$AI(e[t])),t++}},K=class{constructor(e,t,i,r){var o;this.type=2,this._$AH=y,this._$AN=void 0,this._$AA=e,this._$AB=t,this._$AM=i,this.options=r,this._$Cg=(o=r==null?void 0:r.isConnected)===null||o===void 0||o}get _$AU(){var e,t;return(t=(e=this._$AM)===null||e===void 0?void 0:e._$AU)!==null&&t!==void 0?t:this._$Cg}get parentNode(){let e=this._$AA.parentNode,t=this._$AM;return t!==void 0&&e.nodeType===11&&(e=t.parentNode),e}get startNode(){return this._$AA}get endNode(){return this._$AB}_$AI(e,t=this){e=Y(this,e,t),ne(e)?e===y||e==null||e===""?(this._$AH!==y&&this._$AR(),this._$AH=y):e!==this._$AH&&e!==H&&this.$(e):e._$litType$!==void 0?this.T(e):e.nodeType!==void 0?this.S(e):Ot(e)?this.M(e):this.$(e)}A(e,t=this._$AB){return this._$AA.parentNode.insertBefore(e,t)}S(e){this._$AH!==e&&(this._$AR(),this._$AH=this.A(e))}$(e){this._$AH!==y&&ne(this._$AH)?this._$AA.nextSibling.data=e:this.S(V.createTextNode(e)),this._$AH=e}T(e){var t;let{values:i,_$litType$:r}=e,o=typeof r=="number"?this._$AC(e):(r.el===void 0&&(r.el=J.createElement(r.h,this.options)),r);if(((t=this._$AH)===null||t===void 0?void 0:t._$AD)===o)this._$AH.m(i);else{let n=new We(o,this),c=n.p(this.options);n.m(i),this.S(c),this._$AH=n}}_$AC(e){let t=Ze.get(e.strings);return t===void 0&&Ze.set(e.strings,t=new J(e)),t}M(e){Oe(this._$AH)||(this._$AH=[],this._$AR());let t=this._$AH,i,r=0;for(let o of e)r===t.length?t.push(i=new K(this.A(oe()),this.A(oe()),this,this.options)):i=t[r],i._$AI(o),r++;r<t.length&&(this._$AR(i&&i._$AB.nextSibling,r),t.length=r)}_$AR(e=this._$AA.nextSibling,t){var i;for((i=this._$AP)===null||i===void 0||i.call(this,!1,!0,t);e&&e!==this._$AB;){let r=e.nextSibling;e.remove(),e=r}}setConnected(e){var t;this._$AM===void 0&&(this._$Cg=e,(t=this._$AP)===null||t===void 0||t.call(this,e))}},le=class{constructor(e,t,i,r,o){this.type=1,this._$AH=y,this._$AN=void 0,this.element=e,this.name=t,this._$AM=r,this.options=o,i.length>2||i[0]!==""||i[1]!==""?(this._$AH=Array(i.length-1).fill(new String),this.strings=i):this._$AH=y}get tagName(){return this.element.tagName}get _$AU(){return this._$AM._$AU}_$AI(e,t=this,i,r){let o=this.strings,n=!1;if(o===void 0)e=Y(this,e,t,0),n=!ne(e)||e!==this._$AH&&e!==H,n&&(this._$AH=e);else{let c=e,d,p;for(e=o[0],d=0;d<o.length-1;d++)p=Y(this,c[i+d],t,d),p===H&&(p=this._$AH[d]),n||(n=!ne(p)||p!==this._$AH[d]),p===y?e=y:e!==y&&(e+=(p??"")+o[d+1]),this._$AH[d]=p}n&&!r&&this.k(e)}k(e){e===y?this.element.removeAttribute(this.name):this.element.setAttribute(this.name,e??"")}},Je=class extends le{constructor(){super(...arguments),this.type=3}k(e){this.element[this.name]=e===y?void 0:e}},jt=Z?Z.emptyScript:"",Ye=class extends le{constructor(){super(...arguments),this.type=4}k(e){e&&e!==y?this.element.setAttribute(this.name,jt):this.element.removeAttribute(this.name)}},Ke=class extends le{constructor(e,t,i,r,o){super(e,t,i,r,o),this.type=5}_$AI(e,t=this){var i;if((e=(i=Y(this,e,t,0))!==null&&i!==void 0?i:y)===H)return;let r=this._$AH,o=e===y&&r!==y||e.capture!==r.capture||e.once!==r.once||e.passive!==r.passive,n=e!==y&&(r===y||o);o&&this.element.removeEventListener(this.name,this,r),n&&this.element.addEventListener(this.name,this,e),this._$AH=e}handleEvent(e){var t,i;typeof this._$AH=="function"?this._$AH.call((i=(t=this.options)===null||t===void 0?void 0:t.host)!==null&&i!==void 0?i:this.element,e):this._$AH.handleEvent(e)}},Xe=class{constructor(e,t,i){this.element=e,this.type=6,this._$AN=void 0,this._$AM=t,this.options=i}get _$AU(){return this._$AM._$AU}_$AI(e){Y(this,e)}};var Qe=window.litHtmlPolyfillSupport;Qe==null||Qe(J,K),((Te=globalThis.litHtmlVersions)!==null&&Te!==void 0?Te:globalThis.litHtmlVersions=[]).push("2.0.2");var Ae,Se;var b=class extends D{constructor(){super(...arguments),this.renderOptions={host:this},this._$Dt=void 0}createRenderRoot(){var e,t;let i=super.createRenderRoot();return(e=(t=this.renderOptions).renderBefore)!==null&&e!==void 0||(t.renderBefore=i.firstChild),i}update(e){let t=this.render();this.hasUpdated||(this.renderOptions.isConnected=this.isConnected),super.update(e),this._$Dt=Ve(t,this.renderRoot,this.renderOptions)}connectedCallback(){var e;super.connectedCallback(),(e=this._$Dt)===null||e===void 0||e.setConnected(!0)}disconnectedCallback(){var e;super.disconnectedCallback(),(e=this._$Dt)===null||e===void 0||e.setConnected(!1)}render(){return H}};b.finalized=!0,b._$litElement$=!0,(Ae=globalThis.litElementHydrateSupport)===null||Ae===void 0||Ae.call(globalThis,{LitElement:b});var et=globalThis.litElementPolyfillSupport;et==null||et({LitElement:b});((Se=globalThis.litElementVersions)!==null&&Se!==void 0?Se:globalThis.litElementVersions=[]).push("3.0.2");var v=s=>e=>typeof e=="function"?((t,i)=>(window.customElements.define(t,i),i))(s,e):((t,i)=>{let{kind:r,elements:o}=i;return{kind:r,elements:o,finisher(n){window.customElements.define(t,n)}}})(s,e);var Bt=(s,e)=>e.kind==="method"&&e.descriptor&&!("value"in e.descriptor)?{...e,finisher(t){t.createProperty(e.key,s)}}:{kind:"field",key:Symbol(),placement:"own",descriptor:{},originalKey:e.key,initializer(){typeof e.initializer=="function"&&(this[e.key]=e.initializer.call(this))},finisher(t){t.createProperty(e.key,s)}};function u(s){return(e,t)=>t!==void 0?((i,r,o)=>{r.constructor.createProperty(o,i)})(s,e,t):Bt(s,e)}function C(s){return u({...s,state:!0})}var X=({finisher:s,descriptor:e})=>(t,i)=>{var r;if(i===void 0){let o=(r=t.originalKey)!==null&&r!==void 0?r:t.key,n=e!=null?{kind:"method",placement:"prototype",key:o,descriptor:e(t.key)}:{...t,key:o};return s!=null&&(n.finisher=function(c){s(c,o)}),n}{let o=t.constructor;e!==void 0&&Object.defineProperty(t,i,e(i)),s==null||s(o,i)}};function _(s,e){return X({descriptor:t=>{let i={get(){var r,o;return(o=(r=this.renderRoot)===null||r===void 0?void 0:r.querySelector(s))!==null&&o!==void 0?o:null},enumerable:!0,configurable:!0};if(e){let r=typeof t=="symbol"?Symbol():"__"+t;i.get=function(){var o,n;return this[r]===void 0&&(this[r]=(n=(o=this.renderRoot)===null||o===void 0?void 0:o.querySelector(s))!==null&&n!==void 0?n:null),this[r]}}return i}})}var S=h`:where(img, svg) {
     filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     cursor: default;
 
@@ -882,20 +7,19 @@ var img_default = r`:where(img, svg) {
     -moz-user-select: none;
     -webkit-user-select: none;
 }
-`;
+`;var w=h`:root {
+    font-size: var(--font-size);
+}
 
-// site/css/default/text.css
-var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
+:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
-
-    /*mix-blend-mode: difference;*/
 }
 
 :where(*) {
     font-weight: 400;
     color: var(--text1);
     cursor: default;
-    font-size: var(--font-size);
+    font-size: inherit;
 
     user-select: var(--user-select, none);
     -ms-user-select: var(--user-select, none);
@@ -904,23 +28,27 @@ var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
 }
 
 :where(h1) {
-    font-size: calc(var(--font-size) * 1.6);
+    font-size: 2rem;
 }
 
 :where(h2) {
-    font-size: calc(var(--font-size) * 1.5);
+    font-size: 1.5rem;
 }
 
 :where(h3) {
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 :where(h4) {
-    font-size: calc(var(--font-size) * 1.3);
+    font-size: 1.3rem;
 }
 
 :where(h5) {
-    font-size: calc(var(--font-size) * 1.2);
+    font-size: 1.2rem;
+}
+
+:where(h6) {
+    font-size: 1.1rem;
 }
 
 :where(b, strong) {
@@ -941,15 +69,12 @@ var text_default = r`:where(h1, h2, h3, h4, h5, h6, p) {
     border-left: calc(var(--font-size) / 2) solid var(--surface4);
     margin: 0;
     padding-left: calc(var(--font-size) / 4 * 3);
-}`;
-
-// site/ts/elements/navbar/navitem.css
-var navitem_default = r`:host {
+}`;var tt=h`:host {
     display: inline-block;
     width: 12vmin;
     height: 12vmin;
     position: relative;
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -960,8 +85,8 @@ var navitem_default = r`:host {
 }
 
 #handle {
-    --size: 2vmin;
-    --padding: 2vmin;
+    --size: 0.8rem;
+    --padding: 0.8rem;
 
     --full-size: calc(calc(var(--padding) * 2) + var(--size));
 
@@ -998,61 +123,13 @@ a {
     margin: auto;
     filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     cursor: pointer;
-}`;
-
-// site/ts/elements/navbar/navitem.ts
-var NavItem = class extends s4 {
-  constructor() {
-    super(...arguments);
-    this.pageName = "";
-    this.extension = false;
-    this.title = "";
-    this.editing = false;
-  }
-  get page() {
-    return {
-      page: this.pageName,
-      extension: this.extension
-    };
-  }
-  UpdatePage(e8) {
-    e8.preventDefault();
-    Site.NavigateTo(this.page);
-  }
-  render() {
-    this.draggable = this.editing;
-    if (Site.page.page == this.page.page && Site.page.extension == this.page.extension)
-      this.classList.add("selected");
-    else
-      this.classList.remove("selected");
-    return p`
-        <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
+}`;var z=class extends b{constructor(){super(...arguments);this.pageName="";this.extension=!1;this.title="";this.editing=!1}get page(){return{page:this.pageName,extension:this.extension}}UpdatePage(e){e.preventDefault(),g.NavigateTo(this.page)}render(){return this.draggable=this.editing,g.page.page==this.page.page&&g.page.extension==this.page.extension?this.classList.add("selected"):this.classList.remove("selected"),m`
+        <a href="#${this.extension?"extension-":""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
             <slot></slot>
         </a>
 
-        ${this.editing ? p`<img id="handle" src="images/drag.svg" draggable="false">` : T}
-        `;
-  }
-};
-NavItem.styles = [text_default, img_default, navitem_default];
-__decorateClass([
-  e4({ type: String })
-], NavItem.prototype, "pageName", 2);
-__decorateClass([
-  e4({ type: Boolean })
-], NavItem.prototype, "extension", 2);
-__decorateClass([
-  e4({ type: String })
-], NavItem.prototype, "title", 2);
-__decorateClass([
-  e4({ type: Boolean })
-], NavItem.prototype, "editing", 2);
-NavItem = __decorateClass([
-  n5("nav-item")
-], NavItem);
-
-// site/ts/elements/navbar/navbar.css
-var navbar_default = r`:host {
+        ${this.editing?m`<img id="handle" src="images/drag.svg" draggable="false">`:y}
+        `}};z.styles=[w,S,tt],a([u({type:String})],z.prototype,"pageName",2),a([u({type:Boolean})],z.prototype,"extension",2),a([u({type:String})],z.prototype,"title",2),a([u({type:Boolean})],z.prototype,"editing",2),z=a([v("nav-item")],z);var it=h`:host {
     flex-shrink: 0;
 
     background-color: var(--surface3);
@@ -1064,7 +141,7 @@ var navbar_default = r`:host {
 
     z-index: 100;
 
-    border-radius: 0 2vmin 2vmin 0;
+    border-radius: 0.8rem 0.8rem 0 0;
 }
 
 #items-container {
@@ -1086,7 +163,7 @@ var navbar_default = r`:host {
 
         padding-bottom: 12vmin;
 
-        border-radius: 0 2vmin 2vmin 0;
+        border-radius: 0 0.8rem 0.8rem 0;
     }
 
     #items-container {
@@ -1095,13 +172,24 @@ var navbar_default = r`:host {
 
         overflow-x: hidden;
         overflow-y: auto;
+
+        background:
+            /* Shadow covers */
+            linear-gradient(to bottom, var(--surface3) 33%, transparent) no-repeat local,
+            linear-gradient(to top, var(--surface3) 33%, transparent) 0 100% no-repeat local,
+            
+            /* Shadows */
+            radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.3), transparent) no-repeat scroll,
+            radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.3), transparent) 0 100% no-repeat scroll;
+
+        background-size: 100% 42px, 100% 42px, 100% 14px, 100% 14px;
     }
 
     nav-item:last-of-type {
         position: absolute;
         left: 0;
         bottom: 0;
-        border-radius: 0 0 2vmin 0;
+        border-radius: 0 0 0.8rem 0;
     }
 }
 
@@ -1112,7 +200,7 @@ var navbar_default = r`:host {
         width: 100%;
         height: 12vmin;
 
-        border-radius: 2vmin 2vmin 0 0;
+        border-radius: 0.8rem0.8rem 0 0;
     }
 
     #items-container {
@@ -1121,6 +209,15 @@ var navbar_default = r`:host {
 
         overflow-x: auto;
         overflow-y: hidden;
+
+        background:
+            linear-gradient(to right, var(--surface3) 33%, transparent) no-repeat local,
+            linear-gradient(to left, var(--surface3) 33%, transparent) 100% 0 no-repeat local,
+
+            radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.3), transparent) no-repeat scroll,
+            radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.3), transparent) 100% 0 no-repeat scroll;
+
+        background-size: 42px 100%, 42px 100%, 14px 100%, 14px 100%;
     }
 }
 
@@ -1129,8 +226,7 @@ var navbar_default = r`:host {
 }
 
 #items-container::-webkit-scrollbar {
-    width: 1vmin;
-    height: 1vmin;
+    width: 0.4rem;
     display: none;
 }
 
@@ -1145,585 +241,24 @@ var navbar_default = r`:host {
 
 #items-container::-webkit-scrollbar-track {
     background-color: transparent;
-}
-
-#top-shadow,
-#bottom-shadow,
-#left-shadow,
-#right-shadow {
-    position: absolute;
-    background-image: linear-gradient(var(--angle), var(--shadow-colour), transparent);
-    z-index: 98;
-}
-
-#top-shadow,
-#bottom-shadow {
-    width: 12vmin;
-    height: 2vmin;
-    left: 0;
-}
-
-#top-shadow {
-    border-radius: 0 2vmin 0 0;
-    top: 0;
-    --angle: 180deg;
-}
-
-#bottom-shadow {
-    bottom: 12vmin;
-    --angle: 0;
-}
-
-#left-shadow,
-#right-shadow {
-    width: 2vmin;
-    height: 12vmin;
-    bottom: 0;
-}
-
-#left-shadow {
-    left: 0;
-    --angle: 90deg;
-}
-
-#right-shadow {
-    border-radius: 0 2vmin 0 0;
-    right: 0;
-    --angle: -90deg;
-}`;
-
-// site/ts/elements/navbar/navbar.ts
-var Navbar = class extends s4 {
-  constructor() {
-    super();
-    this.editing = false;
-    this.pages = [];
-    this.icons = [];
-    this.order = [];
-    this.draggedNavItemIndex = 0;
-    this.GetNavItem = ((order, index) => {
-      let page;
-      let title;
-      let icon;
-      let extension = false;
-      if (order < Navbar.defaultPages.length)
-        ({ page, title, icon } = Navbar.defaultPages[order]);
-      else {
-        page = this.pages[order - Navbar.defaultPages.length];
-        title = this.pages[order - Navbar.defaultPages.length];
-        icon = this.icons[order - Navbar.defaultPages.length];
-        extension = true;
-      }
-      return p`
-            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" 
-                      @dragstart="${this.SetDraggedNavItemIndex}" @dragenter="${this.ReorderNavItems}" @dragover="${(e8) => e8.preventDefault()}"
-                      data-index="${index}">
-                <img draggable="false" src="${icon}">
+}`;var $=class extends b{constructor(){super(...arguments);this.editing=!1;this.pages=[];this.icons=[];this.order=[];this.draggedNavItemIndex=0;this.GetNavItem=((e,t)=>{let i,r,o,n=!1;return e<$.defaultPages.length?{page:i,title:r,icon:o}=$.defaultPages[e]:(i=this.pages[e-$.defaultPages.length],r=this.pages[e-$.defaultPages.length],o=this.icons[e-$.defaultPages.length],n=!0),m`
+            <nav-item ?editing="${this.editing}" pageName="${i}" ?extension="${n}" title="${r}" 
+                      @dragstart="${this.SetDraggedNavItemIndex}" @dragenter="${this.ReorderNavItems}" @dragover="${c=>c.preventDefault()}"
+                      data-index="${t}">
+                <img draggable="false" src="${o}">
             </nav-item>
-        `;
-    }).bind(this);
-    matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
-  }
-  static GetNavbarOrder() {
-    return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
-  }
-  static SetNavbarOrder(order) {
-    localStorage.setItem("Nav Order", JSON.stringify(order));
-    document.querySelector("nav-bar").requestUpdate();
-  }
-  SetDraggedNavItemIndex(e8) {
-    let target = e8.target;
-    if (!target.editing)
-      return;
-    if (target.dataset.index === void 0)
-      return;
-    this.draggedNavItemIndex = parseInt(target.dataset.index);
-    if (e8.dataTransfer)
-      e8.dataTransfer.effectAllowed = "copyLink";
-    e8.dataTransfer?.setData("Text", target.id);
-  }
-  ReorderNavItems(e8) {
-    let target = e8.target;
-    if (!target.editing)
-      return;
-    if (target.dataset.index === void 0)
-      return;
-    let newIndex = parseInt(target.dataset.index);
-    this.order.splice(newIndex, 0, this.order.splice(this.draggedNavItemIndex, 1)[0]);
-    this.draggedNavItemIndex = newIndex;
-    Navbar.SetNavbarOrder(this.order);
-  }
-  ShowShadows() {
-    if (!this.shadowRoot)
-      return;
-    if (window.innerWidth <= window.innerHeight) {
-      this.topShadow.style.display = "none";
-      this.bottomShadow.style.display = "none";
-      if (this.itemsContainer.scrollLeft == 0)
-        this.leftShadow.style.display = "none";
-      else
-        this.leftShadow.style.removeProperty("display");
-      if (this.itemsContainer.scrollLeft >= this.itemsContainer.scrollWidth - this.itemsContainer.clientWidth - 1)
-        this.rightShadow.style.display = "none";
-      else
-        this.rightShadow.style.removeProperty("display");
-    } else {
-      this.leftShadow.style.display = "none";
-      this.rightShadow.style.display = "none";
-      if (this.itemsContainer.scrollTop == 0)
-        this.topShadow.style.display = "none";
-      else
-        this.topShadow.style.removeProperty("display");
-      if (this.itemsContainer.scrollTop >= this.itemsContainer.scrollHeight - this.itemsContainer.clientHeight - 1)
-        this.bottomShadow.style.display = "none";
-      else
-        this.bottomShadow.style.removeProperty("display");
-    }
-  }
-  createRenderRoot() {
-    let root = super.createRenderRoot();
-    root.addEventListener("pointerdown", () => {
-      this.itemsContainer.classList.add("hover");
-    });
-    root.addEventListener("pointerup", () => {
-      this.itemsContainer.classList.remove("hover");
-    });
-    return root;
-  }
-  firstUpdated() {
-    this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
-  }
-  updated() {
-    for (let navItem of this.shadowRoot?.querySelectorAll("nav-item")) {
-      navItem.requestUpdate();
-    }
-  }
-  render() {
-    this.order = Navbar.GetNavbarOrder();
-    let extensions = Extensions.installedExtensions;
-    for (var key of extensions.keys()) {
-      this.pages.push(key);
-      this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key)));
-    }
-    let mobile = window.innerWidth <= window.innerHeight;
-    let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-    let scrollable = this.order.length * 12 * vmin > window.innerHeight;
-    return p`
+        `}).bind(this)}static GetNavbarOrder(){return JSON.parse(localStorage.getItem("Nav Order")||"[0, 1, 2, 3, 4, 5]")}static SetNavbarOrder(e){localStorage.setItem("Nav Order",JSON.stringify(e)),document.querySelector("nav-bar").requestUpdate()}SetDraggedNavItemIndex(e){let t=e.target;!t.editing||t.dataset.index!==void 0&&(this.draggedNavItemIndex=parseInt(t.dataset.index),e.dataTransfer&&(e.dataTransfer.effectAllowed="copyLink"),e.dataTransfer?.setData("Text",t.id))}ReorderNavItems(e){let t=e.target;if(!t.editing||t.dataset.index===void 0)return;let i=parseInt(t.dataset.index);this.order.splice(i,0,this.order.splice(this.draggedNavItemIndex,1)[0]),this.draggedNavItemIndex=i,$.SetNavbarOrder(this.order)}createRenderRoot(){let e=super.createRenderRoot();return e.addEventListener("pointerdown",()=>{this.itemsContainer.classList.add("hover")}),e.addEventListener("pointerup",()=>{this.itemsContainer.classList.remove("hover")}),e}updated(){for(let e of this.shadowRoot?.querySelectorAll("nav-item"))e.requestUpdate()}render(){this.order=$.GetNavbarOrder();let e=E.installedExtensions;for(var t of e.keys())this.pages.push(t),this.icons.push(rt(e.get(t)));return m`
         <div id="items-container">
-            ${c3(this.order, this.GetNavItem)}
-        
-            <div id="top-shadow" style="display: none"></div>
-            <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
-            <div id="left-shadow" style="display: none"></div>
-            <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
+            ${this.order.map(this.GetNavItem)}
         </div>
-        `;
-  }
-};
-Navbar.styles = navbar_default;
-Navbar.defaultPages = [
-  {
-    page: "daily-timetable",
-    title: "Daily Timetable",
-    icon: "images/dailytimetable.svg"
-  },
-  {
-    page: "barcode",
-    title: "ID Barcode",
-    icon: "images/barcode.svg"
-  },
-  {
-    page: "timetable",
-    title: "Timetable",
-    icon: "images/timetable.svg"
-  },
-  {
-    page: "announcements",
-    title: "Announcements",
-    icon: "images/announcements.svg"
-  },
-  {
-    page: "pages",
-    title: "Pages Marketplace",
-    icon: "images/marketplace.svg"
-  },
-  {
-    page: "settings",
-    title: "Settings",
-    icon: "images/settings.svg"
-  }
-];
-__decorateClass([
-  e4({ type: Boolean })
-], Navbar.prototype, "editing", 2);
-__decorateClass([
-  i4("#items-container", true)
-], Navbar.prototype, "itemsContainer", 2);
-__decorateClass([
-  i4("#top-shadow", true)
-], Navbar.prototype, "topShadow", 2);
-__decorateClass([
-  i4("#bottom-shadow", true)
-], Navbar.prototype, "bottomShadow", 2);
-__decorateClass([
-  i4("#left-shadow", true)
-], Navbar.prototype, "leftShadow", 2);
-__decorateClass([
-  i4("#right-shadow", true)
-], Navbar.prototype, "rightShadow", 2);
-Navbar = __decorateClass([
-  n5("nav-bar")
-], Navbar);
-
-// site/ts/site/extensions.ts
-var _Extensions = class {
-  static get installedExtensions() {
-    return this._installedExtensions;
-  }
-  static set installedExtensions(value) {
-    this._installedExtensions = value;
-    this.extensionOrigins = this.GetExtensionOrigins(value);
-  }
-  static GetExtensionOrigins(extensions) {
-    let origins = [];
-    for (let extension of extensions.values())
-      origins.push(new URL(extension.url).origin);
-    return origins;
-  }
-  static async HandleCommand(e8) {
-    let command = e8.data.command;
-    let data = e8.data.data;
-    if (command == "Initialise") {
-      return {
-        command: "Initialise",
-        data: {
-          dark: Site.dark,
-          hue: Site.hue,
-          version: await Site.GetVersion()
-        }
-      };
-    }
-    if (command == "Get Resource") {
-      return new Promise((resolve) => {
-        let resolved = false;
-        Resources.GetResource(data.name, async (resource) => {
-          if (resolved) {
-            e8.source?.postMessage({
-              command: "Resource",
-              data: {
-                name: data.name,
-                resource
-              }
-            }, {
-              targetOrigin: e8.origin
-            });
-            return;
-          }
-          resolved = true;
-          resolve({
-            command: "Resource",
-            data: {
-              name: data.name,
-              resource
-            }
-          });
-        });
-      });
-    }
-    if (command == "Get Token") {
-      let token = await Resources.GetToken();
-      return {
-        command: "Token",
-        data: {
-          token: token.token === null ? null : token.token.access_token,
-          valid: token.valid
-        }
-      };
-    }
-    if (command == "Refresh Token") {
-      let fetchedResources = await Resources.FetchResources();
-      if (!fetchedResources)
-        return {
-          command: "Refreshed Token",
-          data: {
-            token: null,
-            valid: false
-          }
-        };
-      let token = await Resources.GetToken();
-      return {
-        command: "Refreshed Token",
-        data: {
-          token: token.token === null ? null : token.token.access_token,
-          valid: token.valid
-        }
-      };
-    }
-    if (command == "Ping") {
-      return {
-        command: "Pong"
-      };
-    }
-    return {
-      command: "Unknown Command",
-      data: {
-        command
-      }
-    };
-  }
-  static async InstallExtension(extensionName) {
-    let extension = (await this.GetExtensionsNow()).get(extensionName);
-    if (extension) {
-      this._installedExtensions.set(extensionName, extension);
-      localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this._installedExtensions)));
-      let order = Navbar.GetNavbarOrder();
-      order.splice(order.length - 1, 0, order.length);
-      Navbar.SetNavbarOrder(order);
-    }
-  }
-  static async UninstallExtension(extensionName) {
-    let installedExtensions = _Extensions.installedExtensions;
-    let order = Navbar.GetNavbarOrder();
-    let index = order.indexOf(Object.keys(installedExtensions).indexOf(extensionName)) + Navbar.defaultPages.length;
-    let position = order.splice(index, 1)[0];
-    for (let i7 = 0; i7 < order.length; i7++) {
-      if (order[i7] > position) {
-        order[i7]--;
-      }
-    }
-    Navbar.SetNavbarOrder(order);
-    var extensionPage = document.getElementById(`extension-${extensionName}`);
-    if (extensionPage !== null)
-      extensionPage.remove();
-    this._installedExtensions.delete(extensionName);
-    localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this._installedExtensions)));
-  }
-  static async GetExtensionsNow() {
-    let cache = await caches.open("Metadata");
-    let response = await cache.match("Metadata");
-    if (!response)
-      return /* @__PURE__ */ new Map();
-    let extensions = new Map(Object.entries((await response.json()).pages || {}));
-    return extensions;
-  }
-  static async GetExtensions(callback) {
-    this._extensionCallbacks.AddListener(callback);
-    callback(await this.GetExtensionsNow());
-  }
-  static async FireExtensionCallbacks() {
-    let extensions = await this.GetExtensionsNow();
-    this._extensionCallbacks.Invoke(extensions);
-  }
-  static GetExtensionIconURL(extension) {
-    let url = new URL(extension.icon, extension.url);
-    url.search = `cache-version=${extension.version}`;
-    return url.toString();
-  }
-  static GetExtensionNavIconURL(extension) {
-    let url = new URL(extension.navIcon, extension.url);
-    url.searchParams.set("cache-version", extension.version);
-    return url.toString();
-  }
-  static AddListeners() {
-    Site.ListenForDark((dark) => {
-      for (let i7 = 0; i7 < window.frames.length; i7++) {
-        let frame = window.frames[i7];
-        frame.postMessage({
-          command: "Set Dark",
-          data: {
-            dark
-          }
-        }, "*");
-      }
-    });
-    Site.ListenForHue((hue) => {
-      for (let i7 = 0; i7 < window.frames.length; i7++) {
-        let frame = window.frames[i7];
-        frame.postMessage({
-          command: "Set Hue",
-          data: {
-            hue
-          }
-        }, "*");
-      }
-    });
-    window.addEventListener("message", async (e8) => {
-      let origin = e8.origin;
-      if (!this.extensionOrigins.includes(origin))
-        return;
-      e8.source?.postMessage(await this.HandleCommand(e8), {
-        targetOrigin: origin
-      });
-    });
-  }
-};
-var Extensions = _Extensions;
-Extensions._installedExtensions = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
-Extensions.extensionOrigins = _Extensions.GetExtensionOrigins(_Extensions._installedExtensions);
-Extensions._extensionCallbacks = new Callbacks();
-
-// site/ts/site/site.ts
-var Site = class {
-  static NavigateTo(page) {
-    if (page.extension) {
-      let extensions = Extensions.installedExtensions;
-      if (extensions.has(page.page)) {
-        let newPage = document.getElementById(`extension-${page.page}`);
-        if (newPage === null) {
-          let extensionPage = document.createElement("extension-page");
-          extensionPage.src = extensions.get(page.page).url;
-          extensionPage.id = `extension-${page.page}`;
-          document.querySelector("main")?.appendChild(extensionPage);
-          newPage = extensionPage;
-        }
-        this.SetPage(page, newPage);
-      }
-    } else
-      this.SetPage(page, document.getElementById(page.page));
-  }
-  static SetPage(page, element) {
-    if (element) {
-      if (this._pageElement != null)
-        this._pageElement.classList.add("hidden");
-      element.classList.remove("hidden");
-      this._pageElement = element;
-      this.page = page;
-      location.hash = page.extension ? `extension-${page.page}` : page.page;
-      let navbar = document.querySelector("nav-bar");
-      navbar.removeAttribute("editing");
-      navbar.requestUpdate?.();
-    }
-  }
-  static ShowNotification(content, loader = false) {
-    let notification = document.createElement("inline-notification");
-    if (typeof content === "string")
-      notification.innerText = content;
-    else
-      notification.appendChild(content);
-    notification.loader = loader;
-    document.getElementById("notification-area")?.appendChild(notification);
-    return notification;
-  }
-  static SetDark(dark) {
-    this.dark = dark;
-    document.documentElement.classList.toggle("dark", dark);
-    localStorage.setItem("Dark", dark.toString());
-    this._darkCallbacks.Invoke(dark);
-  }
-  static ListenForDark(callback) {
-    this._darkCallbacks.AddListener(callback);
-  }
-  static SetHue(hue) {
-    document.documentElement.style.setProperty("--main-hue", hue);
-    document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
-    this.hue = hue;
-  }
-  static SaveHue() {
-    localStorage.setItem("Hue", this.hue);
-    this._hueCallbacks.Invoke(parseFloat(this.hue));
-  }
-  static ListenForHue(callback) {
-    this._hueCallbacks.AddListener(callback);
-  }
-  static async GetVersion() {
-    var cache = await caches.open("Metadata");
-    let metadataResponse = await cache.match("Metadata");
-    if (metadataResponse) {
-      let metadata = await metadataResponse.json();
-      return metadata.version;
-    }
-    return void 0;
-  }
-};
-Site.page = {
-  page: "",
-  extension: false
-};
-Site.dark = localStorage.getItem("Dark") == "true";
-Site.hue = localStorage.getItem("Hue") || "200";
-Site._pageElement = null;
-Site._darkCallbacks = new Callbacks();
-Site._hueCallbacks = new Callbacks();
-
-// site/ts/elements/page/page.ts
-var Page2 = class extends s4 {
-  constructor() {
-    super(...arguments);
-    this._state = 0 /* Waiting */;
-    this._unreceivedResources = 0;
-    this._uncompletedResources = 0;
-  }
-  AddResource(resourceName, property) {
-    this._unreceivedResources++;
-    this._uncompletedResources++;
-    let received = false;
-    let completed = false;
-    Resources.GetResource(resourceName, (resource) => {
-      if (!received) {
-        this._unreceivedResources--;
-        received = true;
-      }
-      if (resource !== null && resource !== void 0) {
-        if (!completed) {
-          this._uncompletedResources--;
-          completed = true;
-        }
-        this[property] = resource;
-      }
-      if (this._uncompletedResources == 0)
-        this._state = 2 /* Loaded */;
-      else if (this._unreceivedResources == 0)
-        this._state = 1 /* Loading */;
-    });
-  }
-  render() {
-    if (this._state == 0 /* Waiting */)
-      return T;
-    if (this._state == 1 /* Loading */) {
-      return p`
-            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
+        `}};$.styles=it,$.defaultPages=[{page:"daily-timetable",title:"Daily Timetable",icon:"images/dailytimetable.svg"},{page:"barcode",title:"ID Barcode",icon:"images/barcode.svg"},{page:"timetable",title:"Timetable",icon:"images/timetable.svg"},{page:"announcements",title:"Announcements",icon:"images/announcements.svg"},{page:"pages",title:"Pages Marketplace",icon:"images/marketplace.svg"},{page:"settings",title:"Settings",icon:"images/settings.svg"}],a([u({type:Boolean})],$.prototype,"editing",2),a([_("#items-container",!0)],$.prototype,"itemsContainer",2),$=a([v("nav-bar")],$);var E=class{};E.installedExtensions=new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions")||"{}"))),E._extensionCallbacks=new I,E._resourceListeners=new Map;function qt(){let s=[];for(let e of E.installedExtensions.values())s.push(new URL(e.url).origin);return s}async function st(s){let e=(await Me()).get(s);if(e){E.installedExtensions.set(s,e),localStorage.setItem("Installed Extensions",JSON.stringify(Object.fromEntries(E.installedExtensions)));let t=$.GetNavbarOrder();t.splice(t.length-1,0,t.length),$.SetNavbarOrder(t)}}async function ot(s){let e=E.installedExtensions,t=$.GetNavbarOrder(),i=t.indexOf(Object.keys(e).indexOf(s))+$.defaultPages.length,r=t.splice(i,1)[0];for(let n=0;n<t.length;n++)t[n]>r&&t[n]--;$.SetNavbarOrder(t);var o=document.getElementById(`extension-${s}`);o!==null&&o.remove(),E.installedExtensions.delete(s),localStorage.setItem("Installed Extensions",JSON.stringify(Object.fromEntries(E.installedExtensions)))}async function Me(){let e=await(await caches.open("Metadata")).match("Metadata");return e?new Map(Object.entries((await e.json()).pages||{})):new Map}async function nt(s){E._extensionCallbacks.AddListener(s),s(await Me())}async function at(){let s=await Me();E._extensionCallbacks.Invoke(s)}function lt(s){let e=new URL(s.icon,s.url);return e.search=`cache-version=${s.version}`,e.toString()}function rt(s){let e=new URL(s.navIcon,s.url);return e.searchParams.set("cache-version",s.version),e.toString()}function dt(){g.ListenForDark(e=>{for(let t=0;t<window.frames.length;t++)window.frames[t].postMessage({command:"Set Dark",data:{dark:e}},"*")}),g.ListenForHue(e=>{for(let t=0;t<window.frames.length;t++)window.frames[t].postMessage({command:"Set Hue",data:{hue:e}},"*")}),window.addEventListener("message",async e=>{let t=e.origin;!qt().includes(t)||e.source?.postMessage(await s(e),{targetOrigin:t})});async function s(e){let t=e.data.command,i=e.data.data;if(t=="Initialise")return{command:"Initialise",data:{dark:g.dark,hue:g.hue,version:await g.GetVersion()}};if(t=="Get Resource"){let r=E._resourceListeners.get(i.name),o=!1;r===void 0&&(o=!0,r=[]),r.push(e),E._resourceListeners.set(i.name,r),o&&k.GetResource(i.name,c=>{let d=E._resourceListeners.get(i.name)??[];for(let p of d)p.source?.postMessage({command:"Resource",data:{name:i.name,resource:c}},{targetOrigin:p.origin})});let n=await k.GetResourceNow(i.name);return{command:"Resource",data:{name:i.name,resource:n}}}if(t=="Get Token"){let r=await k.GetToken();return{command:"Token",data:{token:r.token===null?null:r.token.access_token,valid:r.valid}}}if(t=="Refresh Token"){if(!await k.FetchResources())return{command:"Refreshed Token",data:{token:null,valid:!1}};let o=await k.GetToken();return{command:"Refreshed Token",data:{token:o.token===null?null:o.token.access_token,valid:o.valid}}}if(t=="Show Notification"){if(i.loader&&typeof i.id!="string")return;let r=g.ShowNotification(i.contents,i.loader??!1);r.id=i.id;return}if(t=="Close Notification"){let r=document.getElementById(i.id);r!==null&&"Close"in r&&typeof r.Close=="function"&&r.Close();return}return t=="Ping"?{command:"Pong"}:{command:"Unknown Command",data:{command:t}}}}var g=class{static NavigateTo(e){if(e.extension){let t=E.installedExtensions;if(t.has(e.page)){let i=document.getElementById(`extension-${e.page}`);if(i===null){let r=document.createElement("extension-page");r.src=t.get(e.page).url,r.id=`extension-${e.page}`,document.querySelector("main")?.appendChild(r),i=r}this.SetPage(e,i)}}else this.SetPage(e,document.getElementById(e.page))}static SetPage(e,t){if(t){this._pageElement!=null&&this._pageElement.classList.add("hidden"),t.classList.remove("hidden"),this._pageElement=t,this.page=e,location.hash=e.extension?`extension-${e.page}`:e.page;let i=document.querySelector("nav-bar");i.removeAttribute("editing"),i.requestUpdate?.()}}static ShowNotification(e,t=!1){let i=document.createElement("inline-notification");return typeof e=="string"?i.innerText=e:i.appendChild(e),i.loader=t,document.getElementById("notification-area")?.appendChild(i),i}static SetDark(e){this.dark=e,document.documentElement.classList.toggle("dark",e),localStorage.setItem("Dark",e.toString()),this._darkCallbacks.Invoke(e)}static ListenForDark(e){this._darkCallbacks.AddListener(e)}static SetHue(e){document.documentElement.style.setProperty("--main-hue",e),document.documentElement.style.setProperty("--hue-rotate",`${parseFloat(e)-200}deg`),this.hue=e}static SaveHue(){localStorage.setItem("Hue",this.hue),this._hueCallbacks.Invoke(parseFloat(this.hue))}static ListenForHue(e){this._hueCallbacks.AddListener(e)}static async GetVersion(){var e=await caches.open("Metadata");let t=await e.match("Metadata");if(t)return(await t.json()).version}};g.page={page:"",extension:!1},g.dark=localStorage.getItem("Dark")=="true",g.hue=localStorage.getItem("Hue")||"200",g._pageElement=null,g._darkCallbacks=new I,g._hueCallbacks=new I;var L=class extends b{constructor(){super(...arguments);this._state=0;this._unreceivedResources=0;this._uncompletedResources=0}AddResource(e,t){this._unreceivedResources++,this._uncompletedResources++;let i=!1,r=!1;k.GetResource(e,o=>{i||(this._unreceivedResources--,i=!0),o!=null&&(r||(this._uncompletedResources--,r=!0),this[t]=o),this._uncompletedResources==0?this._state=2:this._unreceivedResources==0&&(this._state=1)})}render(){return this._state==0?y:this._state==1?m`
+            <loading-indicator style="width: 30.8rem; height: 100%; margin: auto;"></loading-indicator>
             <style>
                 :host {
                     display: flex;
                 }
             </style>
-            `;
-    }
-    return this.renderPage();
-  }
-  renderPage() {
-    return T;
-  }
-};
-__decorateClass([
-  t3()
-], Page2.prototype, "_state", 2);
-
-// node_modules/lit-html/directives/unsafe-html.js
-var e7 = class extends i5 {
-  constructor(i7) {
-    if (super(i7), this.it = T, i7.type !== t4.CHILD)
-      throw Error(this.constructor.directiveName + "() can only be used in child bindings");
-  }
-  render(r4) {
-    if (r4 === T || r4 == null)
-      return this.vt = void 0, this.it = r4;
-    if (r4 === b)
-      return r4;
-    if (typeof r4 != "string")
-      throw Error(this.constructor.directiveName + "() called with a non-string value");
-    if (r4 === this.it)
-      return this.vt;
-    this.it = r4;
-    const s6 = [r4];
-    return s6.raw = s6, this.vt = { _$litType$: this.constructor.resultType, strings: s6, values: [] };
-  }
-};
-e7.directiveName = "unsafeHTML", e7.resultType = 1;
-var o6 = e5(e7);
-
-// site/ts/elements/announcements/post.css
-var post_default = r`:host {
+            `:this.renderPage()}renderPage(){return y}};a([C()],L.prototype,"_state",2);var ct={ATTRIBUTE:1,CHILD:2,PROPERTY:3,BOOLEAN_ATTRIBUTE:4,EVENT:5,ELEMENT:6},ht=s=>(...e)=>({_$litDirective$:s,values:e}),Re=class{constructor(e){}get _$AU(){return this._$AM._$AU}_$AT(e,t,i){this._$Ct=e,this._$AM=t,this._$Ci=i}_$AS(e,t){return this.update(e,t)}update(e,t){return this.render(...t)}};var ve=class extends Re{constructor(e){if(super(e),this.it=y,e.type!==ct.CHILD)throw Error(this.constructor.directiveName+"() can only be used in child bindings")}render(e){if(e===y||e==null)return this.vt=void 0,this.it=e;if(e===H)return e;if(typeof e!="string")throw Error(this.constructor.directiveName+"() called with a non-string value");if(e===this.it)return this.vt;this.it=e;let t=[e];return t.raw=t,this.vt={_$litType$:this.constructor.resultType,strings:t,values:[]}}};ve.directiveName="unsafeHTML",ve.resultType=1;var pt=ht(ve);var mt=h`:host {
     display: block;
 }
 
@@ -1737,11 +272,15 @@ summary {
 
     list-style: none;
 
-    margin-bottom: 1vmin;
+    margin-bottom: 0.4rem;
 }
 
 summary > * {
     cursor: pointer;
+}
+
+summary > h3 {
+    padding-right: 2rem;
 }
 
 summary::after {
@@ -1752,8 +291,8 @@ summary::after {
     right: 0;
 
     display: block;
-    width: calc(var(--font-size) * 1.5);
-    height: calc(var(--font-size) * 1.5);
+    width: 1.5rem;
+    height: 1.5rem;
 
     margin-left: auto;
     
@@ -1774,63 +313,28 @@ details[open] > summary::after {
 }
 
 .info {
-    font-size: calc(var(--font-size) * 0.7);
-}`;
-
-// site/ts/elements/announcements/post.ts
-var AnnouncementPost = class extends s4 {
-  render() {
-    return p`
+    font-size: 0.7rem;
+}`;var M=class extends b{render(){return m`
         <details>
             <summary>
                 <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meetingTime === void 0 ? "" : ` | At ${this.meetingTime}`}</p>
+                <p class="info">By ${this.author} | For ${this.years}${this.meeting?` | At${this.meetingDate==""?"":` ${this.meetingDate}`} ${this.meetingTime}`:""}</p>
             </summary>
 
-            ${o6(this.content)}
+            ${pt(this.content)}
         </details>
-        `;
-  }
-};
-AnnouncementPost.styles = [text_default, post_default];
-__decorateClass([
-  e4()
-], AnnouncementPost.prototype, "title", 2);
-__decorateClass([
-  e4()
-], AnnouncementPost.prototype, "author", 2);
-__decorateClass([
-  e4()
-], AnnouncementPost.prototype, "years", 2);
-__decorateClass([
-  e4({ type: Boolean })
-], AnnouncementPost.prototype, "meeting", 2);
-__decorateClass([
-  e4()
-], AnnouncementPost.prototype, "meetingTime", 2);
-__decorateClass([
-  e4()
-], AnnouncementPost.prototype, "content", 2);
-__decorateClass([
-  e4({ type: Number })
-], AnnouncementPost.prototype, "weight", 2);
-AnnouncementPost = __decorateClass([
-  n5("announcement-post")
-], AnnouncementPost);
-
-// site/css/default/search.css
-var search_default = r`:where(input[type=search]) {
+        `}};M.styles=[w,mt],a([u()],M.prototype,"title",2),a([u()],M.prototype,"author",2),a([u()],M.prototype,"years",2),a([u({type:Boolean})],M.prototype,"meeting",2),a([u()],M.prototype,"meetingDate",2),a([u()],M.prototype,"meetingTime",2),a([u()],M.prototype,"content",2),a([u({type:Number})],M.prototype,"weight",2),M=a([v("announcement-post")],M);var be=h`:where(input[type=search]) {
     border: none;
-    border-bottom: 0.2vmin solid var(--text2);
+    border-bottom: solid 0.05rem var(--text2);
     border-radius: 0;
 
     background-color: var(--surface2);
     color: var(--text1);
 
-    font-size: var(--font-size);
+    font-size: 1rem;
     font-family: monospace;
 
-    height: calc(var(--font-size) * 2);
+    height: 2rem;
 }
 
 :where(input[type=search]:focus) {
@@ -1847,20 +351,17 @@ var search_default = r`:where(input[type=search]) {
 
 :where(input[type=search])::-webkit-search-cancel-button {
     -webkit-appearance: none;
-}`;
-
-// site/css/default/select.css
-var select_default = r`:where(select) {
-    border: 0.2vmin solid var(--text2);
+}`;var ut=h`:where(select) {
+    border: solid 0.05rem var(--text2);
     background-color: var(--surface2);
     color: var(--text2);
 
-    padding: 1vmin 0;
-    padding-right: 6vmin;
+    padding: 0.4rem 0;
+    padding-right: 2.3rem;
 
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 
-    font-size: calc(var(--font-size) / 1.2);
+    font-size: calc(1rem / 1.2);
 
     user-select: none;
     -ms-user-select: none;
@@ -1870,15 +371,12 @@ var select_default = r`:where(select) {
 
 :where(option) {
     background-color: var(--surface2);
-}`;
-
-// site/css/default/elements/full.css
-var full_default = r`:host {
+}`;var Q=h`:host, main {
     flex: 1;
     margin: 1%;
 
     box-sizing: border-box;
-    padding: 1vmin;
+    padding: 0.4rem;
 }
 
 /*
@@ -1887,31 +385,23 @@ var full_default = r`:host {
     which is 1% either side.
 */
 @media (max-width: 306px) {
-    :host {
+    :host, main {
         margin: 1% calc(50% - 150px);
     }
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         margin: 1% 0;
     }
-}`;
-
-// site/css/default/elements/element.css
-var element_default = r`:host {
+}`;var R=h`:host, main {
     box-shadow: var(--shadow);
     background-color: var(--surface2);
-    border-radius: 2vmin;
-}`;
-
-// site/ts/elements/announcements/announcements.css
-var announcements_default = r`:host {
+    border-radius: 0.8rem;
+}`;var gt=h`:host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
-
-    overscroll-behavior: contain;
+    gap: 1.2rem;
 }
 
 .header {
@@ -1930,12 +420,12 @@ var announcements_default = r`:host {
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -1944,33 +434,20 @@ var announcements_default = r`:host {
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 announcement-post {
-    margin-bottom: 3vmin;
-}`;
-
-// site/ts/elements/announcements/announcements.ts
-var SchoolAnnouncements = class extends Page2 {
-  constructor() {
-    super();
-    this.yearFilter = "all";
-    this.searchFilter = "";
-    this.AddResource("announcements", "announcements");
-  }
-  renderPage() {
-    let filteredAnnouncements = this.yearFilter == "all" ? this.announcements.notices : this.announcements.notices.filter((announcement) => announcement.years.includes(this.yearFilter));
-    filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter((announcement) => announcement.title.toLowerCase().includes(this.searchFilter.toLowerCase()) || announcement.content.toLowerCase().includes(this.searchFilter.toLowerCase()));
-    return p`
+    margin-bottom: 1.2rem;
+}`;var F=class extends L{constructor(){super();this.yearFilter="all";this.searchFilter="";this.AddResource("announcements","announcements")}renderPage(){let e=this.announcements.notices??[],t=this.yearFilter=="all"?e:e.filter(i=>(i.years??[]).includes(this.yearFilter));return t=this.searchFilter==""?t:t.filter(i=>{let r=i.title,o=i.content;return r==null||o===void 0||o===null?!1:r.toLowerCase().includes(this.searchFilter.toLowerCase())||o.toLowerCase().includes(this.searchFilter.toLowerCase())}),m`
         <div class="header">
-            <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
+            <input type="search" placeholder="Search..." @input="${i=>this.searchFilter=i.target.value}">
 
-            <select @input="${(e8) => this.yearFilter = e8.target.value}">
+            <select @input="${i=>this.yearFilter=i.target.value}">
                 <option value="all">All</option>
                 <option value="Staff">Staff</option>
                 <option value="12">Year 12</option>
@@ -1983,31 +460,13 @@ var SchoolAnnouncements = class extends Page2 {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${c3(filteredAnnouncements, (announcement) => p`
-        <announcement-post title="${announcement.title}" content="${announcement.content}" author="${announcement.authorName}"
-                           years="${announcement.displayYears}" ?meeting="${announcement.isMeeting == 1}"
-                           ${announcement.meetingTime === null ? "" : `meetingTime="${announcement.meetingTime}${announcement.meetingTimeParsed === void 0 ? "" : ` (${announcement.meetingTimeParsed})`}"`}
-                           weight="${announcement.relativeWeight + announcement.isMeeting}"></announcement-post>
-        `)}</div>
-        `;
-  }
-};
-SchoolAnnouncements.styles = [element_default, full_default, text_default, img_default, search_default, select_default, announcements_default];
-__decorateClass([
-  t3()
-], SchoolAnnouncements.prototype, "announcements", 2);
-__decorateClass([
-  t3()
-], SchoolAnnouncements.prototype, "yearFilter", 2);
-__decorateClass([
-  t3()
-], SchoolAnnouncements.prototype, "searchFilter", 2);
-SchoolAnnouncements = __decorateClass([
-  n5("school-announcements")
-], SchoolAnnouncements);
-
-// site/ts/elements/info/info.css
-var info_default = r`:host {
+        <div class="content">${t.map(i=>{let r=i.isMeeting==1,o=i.meetingDate??"";return new Date().toISOString().split("T")[0]==o&&(o=""),m`
+            <announcement-post title="${i.title??"???"}" content="${i.content??"???"}"
+                               author="${i.authorName??"???"}" years="${i.displayYears??"???"}"
+                               ?meeting="${r}" meetingDate="${o}" meetingTime="${r?i.meetingTime??i.meetingTimeParsed??"??:??":""}"
+                               weight="${(i.relativeWeight??0)+(r?1:0)}"></announcement-post>
+            `})}</div>
+        `}};F.styles=[w,S,be,ut,R,Q,gt],a([C()],F.prototype,"announcements",2),a([C()],F.prototype,"yearFilter",2),a([C()],F.prototype,"searchFilter",2),F=a([v("school-announcements")],F);var ft=h`:host {
     position: relative;
     display: block;
 }
@@ -2033,9 +492,9 @@ slot {
 
     background-color: var(--surface2);
 
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     box-shadow: var(--shadow);
-    padding: 2vmin;
+    padding: 0.8rem;
 
     z-index: inherit;
 
@@ -2048,64 +507,15 @@ slot {
     height: 200%;
     top: 0;
     clip-path: polygon(0 0, 100% 100%, 0 100%);
-}`;
-
-// site/images/info.svg
-var info_default2 = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="210px" height="210px" viewBox="0 0 210 210" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Group" transform="translate(5 5)">
-    <path d="M0 100C0 44.7715 44.7715 0 100 0C155.228 0 200 44.7715 200 100C200 155.228 155.228 200 100 200C44.7715 200 0 155.228 0 100Z" id="Ellipse" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" />
-    <g id="" transform="translate(58 37)">
-      <path d="M32.7841 86.4091L32.7841 85.7954Q32.8864 76.0284 34.8295 70.25Q36.7727 64.4716 40.3523 60.892Q43.9318 57.3125 48.9432 54.2954Q53.4432 51.5852 56.5114 47.1875Q59.5795 42.7898 59.5795 36.7045Q59.5795 29.1875 54.4915 24.7642Q49.4034 20.3409 42.1932 20.3409Q38 20.3409 34.1136 22.0795Q30.2273 23.8182 27.6193 27.5511Q25.0114 31.2841 24.6023 37.3182L11.7159 37.3182Q12.125 28.625 16.2415 22.4375Q20.358 16.25 27.1335 12.9773Q33.9091 9.70454 42.1932 9.70454Q51.1932 9.70454 57.8665 13.2841Q64.5398 16.8636 68.196 23.1023Q71.8523 29.3409 71.8523 37.3182Q71.8523 45.8068 68.0682 51.8409Q64.2841 57.875 57.5341 61.9659Q50.7841 66.1591 47.9972 71.2216Q45.2102 76.2841 45.0568 85.7954L45.0568 86.4091L32.7841 86.4091ZM39.3295 116.682Q35.5454 116.682 32.8352 113.972Q30.125 111.261 30.125 107.477Q30.125 103.693 32.8352 100.983Q35.5454 98.2727 39.3295 98.2727Q43.1136 98.2727 45.8239 100.983Q48.5341 103.693 48.5341 107.477Q48.5341 111.261 45.8239 113.972Q43.1136 116.682 39.3295 116.682Z" />
-    </g>
-  </g>
-</svg>`;
-
-// site/ts/elements/info/info.ts
-var Info = class extends s4 {
-  constructor() {
-    super();
-    this.HidePopup = (() => {
-      this.info.style.display = "none";
-      this.background.style.display = "none";
-    }).bind(this);
-    this.addEventListener("mouseleave", this.HidePopup);
-    document.addEventListener("pointerover", this.HidePopup);
-  }
-  ShowPopup(e8) {
-    this.info.style.removeProperty("display");
-    this.background.style.removeProperty("display");
-    e8.stopPropagation();
-  }
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    document.removeEventListener("pointerover", this.HidePopup);
-  }
-  render() {
-    return p`
+}`;var vt=O`<svg width="210" height="210" viewBox="0 0 210 210" xmlns="http://www.w3.org/2000/svg"><path d="M5 105a100 100 0 1 1 200 0 100 100 0 0 1-200 0Z" fill="none" stroke="#323232" stroke-width="10"/><path d="M95.8 128.4v-.6q0-9.8 2-15.5 2-5.8 5.6-9.4 3.5-3.6 8.5-6.6 4.5-2.7 7.6-7.1 3-4.4 3-10.5 0-7.5-5-12-5.1-4.4-12.3-4.4-4.2 0-8 1.8-4 1.7-6.6 5.5-2.6 3.7-3 9.7H74.7q.4-8.7 4.5-14.9 4.2-6.2 11-9.4 6.7-3.3 15-3.3 9 0 15.7 3.6 6.6 3.6 10.3 9.8 3.7 6.2 3.7 14.2 0 8.5-3.8 14.5T120.5 104q-6.7 4.2-9.5 9.2-2.8 5-3 14.6v.6H95.9Zm6.5 30.3q-3.8 0-6.5-2.7t-2.7-6.5q0-3.8 2.7-6.5t6.5-2.7q3.8 0 6.5 2.7t2.7 6.5q0 3.8-2.7 6.5t-6.5 2.7Z"/></svg>`;var ee=class extends b{constructor(){super();this.HidePopup=(()=>{this.info.style.display="none",this.background.style.display="none"}).bind(this);this.addEventListener("mouseleave",this.HidePopup),document.addEventListener("pointerover",this.HidePopup)}ShowPopup(e){this.info.style.removeProperty("display"),this.background.style.removeProperty("display"),e.stopPropagation()}disconnectedCallback(){super.disconnectedCallback(),document.removeEventListener("pointerover",this.HidePopup)}render(){return m`
         <button @click="${this.ShowPopup}" @mouseover="${this.ShowPopup}">
-            ${info_default2}
+            ${vt}
         </button>
 
         <slot style="display: none"></slot>
 
         <div class="background" style="display: none"></div>
-        `;
-  }
-};
-Info.styles = [img_default, info_default];
-__decorateClass([
-  i4("slot")
-], Info.prototype, "info", 2);
-__decorateClass([
-  i4(".background")
-], Info.prototype, "background", 2);
-Info = __decorateClass([
-  n5("info-popup")
-], Info);
-
-// site/ts/elements/barcode/barcode.css
-var barcode_default = r`:host {
+        `}};ee.styles=[S,ft],a([_("slot")],ee.prototype,"info",2),a([_(".background")],ee.prototype,"background",2),ee=a([v("info-popup")],ee);var bt=h`:host {
     position: relative;
 
     touch-action: none;
@@ -2113,7 +523,7 @@ var barcode_default = r`:host {
 
 #point1,
 #point2 {
-    --size: 3vmin;
+    --size: 1.2rem;
 
     position: absolute;
 
@@ -2136,10 +546,10 @@ var barcode_default = r`:host {
 
     display: block;
 
-    width: 3vmax;
-    height: 3vmax;
+    width: calc(var(--size) * 2);
+    height: calc(var(--size) * 2);
 
-    margin: calc(var(--size) / 2 - 1.5vmax);
+    margin: calc(var(--size) / -2);
 }
 
 #barcodeDisplay {
@@ -2151,172 +561,172 @@ var barcode_default = r`:host {
 }
 
 #barcodeDisplay.outline {
-    border: solid 1vmin var(--text1);
+    border: solid 0.4rem var(--text1);
 }
 
 info-popup {
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     
-    width: 5vmin;
-    height: 5vmin;
+    position: absolute;
+    top: 1%;
+    left: 1%;
+
+    width: 1.9rem;
+    height: 1.9rem;
     z-index: 2;
-}`;
+}
 
-// site/ts/elements/barcode/barcode.ts
-var StudentBarcode = class extends Page2 {
-  constructor() {
-    super();
-    this.draggedElement = null;
-    this.dragging = false;
-    this.addEventListener("pointerdown", (e8) => e8.preventDefault());
-    this.addEventListener("pointermove", this.DragPoint);
-    this.addEventListener("pointerup", this.EndDrag);
-    this.AddResource("userinfo", "userInfo");
-    Site.ListenForDark((dark) => {
-      this.barcode?.classList.toggle("outline", dark);
-    });
-  }
-  set userInfo(value) {
-    this.studentId = value.studentId;
-    this.requestUpdate();
-  }
-  StartDrag(e8) {
-    e8.preventDefault();
-    this.draggedElement = e8.target;
-    this.draggedElement.style.pointerEvents = "none";
-    this.style.cursor = "move";
-  }
-  DragPoint(e8) {
-    e8.preventDefault();
-    if (this.draggedElement == null)
-      return;
-    if (!this.dragging) {
-      this.dragging = true;
-      this.draggedElement.style.left = `${(e8.clientX - this.offsetLeft) / this.clientWidth * 100}%`;
-      this.draggedElement.style.top = `${(e8.clientY - this.offsetTop) / this.clientHeight * 100}%`;
-      this.SetBarcodePosition();
-      this.dragging = false;
-    }
-  }
-  EndDrag() {
-    if (this.draggedElement != null)
-      this.draggedElement.style.removeProperty("pointer-events");
-    this.draggedElement = null;
-    this.removeAttribute("style");
-    this.RenderBarcode();
-  }
-  SetBarcodePosition() {
-    if (this.barcode === null)
-      return;
-    let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
-    let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
-    let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
-    let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
-    let maxX = Math.max(x1, x2);
-    let minX = Math.min(x1, x2);
-    let maxY = Math.max(y1, y2);
-    let minY = Math.min(y1, y2);
-    this.barcode.style.left = `${minX}%`;
-    this.barcode.style.top = `${minY}%`;
-    this.barcode.style.width = `${maxX - minX}%`;
-    this.barcode.style.height = `${maxY - minY}%`;
-  }
-  RenderBarcode() {
-    if (this.draggedElement != null)
-      return;
-    if (this.barcode === null || this.point1 === null || this.point2 === null)
-      return;
-    localStorage.setItem("Barcode Points", JSON.stringify([
-      this.point1.style.left,
-      this.point1.style.top,
-      this.point2.style.left,
-      this.point2.style.top
-    ]));
-    if (typeof JsBarcode === "function") {
-      JsBarcode(this.barcode, this.studentId, {
-        displayValue: false,
-        margin: 0
-      });
-    }
-  }
-  updated() {
-    this.SetBarcodePosition();
-    this.RenderBarcode();
-  }
-  renderPage() {
-    let storedPoints = localStorage.getItem("Barcode Points");
-    let points = ["20%", "20%", "80%", "40%"];
-    if (storedPoints)
-      points = JSON.parse(storedPoints);
-    return p`
+#save {
+    all: unset;
+    width: 1.7rem;
+    height: 1.7rem;
+    position: absolute;
+    top: 1.25%;
+    right: 1.25%;
+}
+
+#save > svg {
+    width: inherit;
+    height: inherit;
+}`;var yt=O`<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><path d="M173 9.7c-3-3-7-4.7-11.4-4.7H28.3A23.3 23.3 0 0 0 5 28.3v163.4A23.3 23.3 0 0 0 28.3 215h163.4a23.4 23.4 0 0 0 23.3-23.3V58.4c0-4.3-1.7-8.4-4.7-11.5L173 9.7Zm-63 181a32.3 32.3 0 1 1 0-64.5 32.3 32.3 0 0 1 0 64.6h0Zm24.2-113H37.3a8 8 0 0 1-8-8V37.2a8 8 0 0 1 8-8h97a8 8 0 0 1 8 8v32.3a8 8 0 0 1-8 8h0Z" fill="none" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`;var j=class extends L{constructor(){super();this.draggedElement=null;this.dragging=!1;this.addEventListener("pointerdown",e=>e.preventDefault()),this.addEventListener("pointermove",this.DragPoint),this.addEventListener("pointerup",this.EndDrag),this.AddResource("userinfo","userInfo"),g.ListenForDark(e=>{this.barcode?.classList.toggle("outline",e)})}set userInfo(e){let t=e.studentId;t!=null&&(this.studentId=t,this.requestUpdate())}StartDrag(e){e.preventDefault(),this.draggedElement=e.target,this.draggedElement.style.pointerEvents="none",this.style.cursor="move"}DragPoint(e){e.preventDefault(),this.draggedElement!=null&&(this.dragging||(this.dragging=!0,this.draggedElement.style.left=`${(e.clientX-this.offsetLeft)/this.clientWidth*100}%`,this.draggedElement.style.top=`${(e.clientY-this.offsetTop)/this.clientHeight*100}%`,this.SetBarcodePosition(),this.dragging=!1))}EndDrag(){this.draggedElement!=null&&this.draggedElement.style.removeProperty("pointer-events"),this.draggedElement=null,this.removeAttribute("style"),this.RenderBarcode()}SetBarcodePosition(){if(this.barcode===null)return;let e=parseFloat(this.point1?.style.left.substring(0,this.point1.style.left.length-1)||"0"),t=parseFloat(this.point1?.style.top.substring(0,this.point1.style.top.length-1)||"0"),i=parseFloat(this.point2?.style.left.substring(0,this.point2.style.left.length-1)||"0"),r=parseFloat(this.point2?.style.top.substring(0,this.point2.style.top.length-1)||"0"),o=Math.max(e,i),n=Math.min(e,i),c=Math.max(t,r),d=Math.min(t,r);this.barcode.style.left=`${n}%`,this.barcode.style.top=`${d}%`,this.barcode.style.width=`${o-n}%`,this.barcode.style.height=`${c-d}%`}RenderBarcode(){if(this.draggedElement==null&&!(this.barcode===null||this.point1===null||this.point2===null)&&(localStorage.setItem("Barcode Points",JSON.stringify([this.point1.style.left,this.point1.style.top,this.point2.style.left,this.point2.style.top])),typeof JsBarcode=="function"&&JsBarcode(this.barcode,this.studentId,{displayValue:!1,margin:0}),this.saveLink!==null)){let e=this.barcode.toDataURL("image/png");this.saveLink.href=e,this.saveLink.download=`${this.studentId}.png`}}updated(){this.SetBarcodePosition(),this.RenderBarcode()}renderPage(){let e=localStorage.getItem("Barcode Points"),t=["20%","20%","80%","40%"];return e&&(t=JSON.parse(e)),m`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
+        <a id="save" title="Save Barcode">${yt}</a>
 
-        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
-        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
+        <div id="point1" style="left: ${t[0]}; top: ${t[1]};" @pointerdown="${this.StartDrag}"></div>
+        <div id="point2" style="left: ${t[2]}; top: ${t[3]};" @pointerdown="${this.StartDrag}"></div>
 
-        <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
-        `;
-  }
-};
-StudentBarcode.styles = [element_default, full_default, text_default, img_default, barcode_default];
-__decorateClass([
-  i4("#barcodeDisplay")
-], StudentBarcode.prototype, "barcode", 2);
-__decorateClass([
-  i4("#point1")
-], StudentBarcode.prototype, "point1", 2);
-__decorateClass([
-  i4("#point2")
-], StudentBarcode.prototype, "point2", 2);
-StudentBarcode = __decorateClass([
-  n5("student-barcode")
-], StudentBarcode);
+        <canvas id="barcodeDisplay" class="${g.dark?"outline":""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        `}};j.styles=[w,S,R,Q,bt],a([_("#barcodeDisplay")],j.prototype,"barcode",2),a([_("#point1")],j.prototype,"point1",2),a([_("#point2")],j.prototype,"point2",2),a([_("#save")],j.prototype,"saveLink",2),j=a([v("student-barcode")],j);var xt=h`:host {
+    display: flex;
+    justify-content: space-between;
 
-// site/css/default/elements/card.css
-var card_default = r`:host {
-    padding: 2vmin;
+    width: 100%;
+
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+:host(:hover) {
+    background-color: var(--surface3);
+}
+
+p {
+    color: var(--text3);
+}
+
+.changed {
+    color: var(--text2);
+}`;var te=class extends b{render(){return m`
+            <p>${this.title}</p>
+            <p>${this.time}</p>
+        `}};te.styles=[w,xt],a([u()],te.prototype,"title",2),a([u()],te.prototype,"time",2),te=a([v("daily-timetable-bell")],te);var wt=h`:host {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    
+    width: 100%;
+
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+:host(:hover) {
+    background-color: var(--surface3);
+}
+
+.info {
+    font-size: 0.6rem;
+}
+
+.changed {
+    color: var(--text2);
+}`;var N=class extends b{render(){return m`
+            <div>
+                <p>${this.title}</p>
+                <p class="info">at <span class="${this.roomChanged?"changed":""}">${this.room}</span> with <span class="${this.teacherChanged?"changed":""}">${this.teacher}</span></p>
+            </div>
+
+            <p>${this.time}</p>
+        `}};N.styles=[w,wt],a([u()],N.prototype,"title",2),a([u()],N.prototype,"time",2),a([u()],N.prototype,"teacher",2),a([u({type:Boolean})],N.prototype,"teacherChanged",2),a([u()],N.prototype,"room",2),a([u({type:Boolean})],N.prototype,"roomChanged",2),N=a([v("daily-timetable-period")],N);var de=(i=>(i.NO_COVER="nocover",i.REPLACEMENT="replacement",i.NO_VARIATION="novariation",i))(de||{});var ye=h`:host, main {
+    padding: 0.8rem;
 
     margin: auto;
 
     width: 60vw;
     max-width: 60vh;
     min-width: 300px;
-    height: 80%;
+    height: fit-content;
+    min-height: 80%;
 }
 
 @media (max-width: 300px) {
-    :host {
+    :host, main {
         width: 100vw;
         min-width: unset;
     }
-}`;
+}`;var $t=h`:host {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-// site/ts/elements/daily-timetable/daily-timetable.css
-var daily_timetable_default = r``;
+.next-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+}
 
-// site/ts/elements/daily-timetable/daily-timetable.ts
-var SchoolAnnouncements2 = class extends Page2 {
-  constructor() {
-    super();
-    this.AddResource("dailytimetable", "dailyTimetable");
-  }
-  renderPage() {
-    return p`
-        
-        `;
-  }
-};
-SchoolAnnouncements2.styles = [element_default, card_default, text_default, daily_timetable_default];
-__decorateClass([
-  t3()
-], SchoolAnnouncements2.prototype, "dailyTimetable", 2);
-SchoolAnnouncements2 = __decorateClass([
-  n5("daily-timetable")
-], SchoolAnnouncements2);
+.timer-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+}
 
-// site/ts/elements/loader/loader.css
-var loader_default = r`:host {
+.timer {
+    font-size: 2.5rem;
+}
+
+.line {
+    flex: 1;
+    height: 0;
+    border-top: solid 0.05rem var(--text3);
+}
+
+.periods {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+
+    flex: 1;
+
+    width: 80%;
+}`;var ie=class extends L{constructor(){super();this._dailyTimetableChanged=!1;this._savedPeriodsHtml=[];this.AddResource("dailytimetable","dailyTimetable"),setInterval(()=>{this.requestUpdate()},1e3)}set dailyTimetable(e){let t=e.bells;if(t==null){this._dailyTimetable=e;return}let i=e.timetable?.timetable?.periods??{},r=!1,o=[],n=[];for(let c=0;c<t.length;c++){let d=t[c];d.period!==void 0&&d.period!==null&&d.period in i?(r=!0,n=[]):r==!1?o.push(c):n.push(c)}o.push(...n);for(let c=o.length-1;c>=0;c--)t.splice(o[c],1);this._dailyTimetable=e,this._dailyTimetableChanged=!0}static UpdateData(){this.updatingData||(this.updatingData=!0,k.FetchResources().then(e=>{this.updatingData=!e}))}BellDate(e){let t=new Date(this._dailyTimetable.date??""),i=e.time?.split(":")??["00","00"],r=Number.parseInt(i[0]),o=Number.parseInt(i[1]);return t.setHours(r),t.setMinutes(o),t}NextBell(){let e=new Date;for(let t of this._dailyTimetable.bells??[]){if(t.time===void 0||t.time===null)continue;if(this.BellDate(t).getTime()>=e.getTime())return t}}TimeDisplay(e){let t=this.BellDate(e),i=new Date,r=t.getTime()-i.getTime();if(i.getMonth()>t.getMonth()&&i.getDate()>t.getDate()){let n=(t.getMonth()<i.getMonth()?t.getMonth()+12:t.getMonth())-i.getMonth();return{preposition:"in",time:n+(n==1?" Month":" Months")}}else if(r>864e5){var o=Math.round(r/864e5);return o==1?{preposition:"is",time:"Tomorrow"}:{preposition:"in",time:o+" Days"}}else{let n=Math.floor(r/36e5).toString(),c=Math.floor(r%36e5/6e4).toString(),d=Math.floor(r%36e5%6e4/1e3).toString();return n.length<2&&(n="0"+n),c.length<2&&(c="0"+c),d.length<2&&(d="0"+d),n=="00"?{preposition:"in",time:`${c}:${d}`}:{preposition:"in",time:`${n}:${c}:${d}`}}}GetBell(e){return m`<daily-timetable-bell title="${e.bellDisplay??"???"}" time="${e.time??"??:??"}"></daily-timetable-bell>`}GetPeriodTitle(e,t){return(this._dailyTimetable?.timetable?.subjects?.[`${e}${t}`]?.title??t).split(" ").filter(r=>isNaN(parseFloat(r))&&r.length>1||r=="&").join(" ")}FormatTeacherCode(e){return e.length==0?"":e.length==1?e.toUpperCase():e.length==2?`${e[0].toUpperCase()} ${e[1].toUpperCase()}`:`${e[0].toUpperCase()} ${e[1].toUpperCase()}${e.substring(2).toLowerCase()}`}GetPeriod(e,t,i,r){let o=i!=null&&i.type!="novariation",n=r!=null;return m`
+        <daily-timetable-period title="${this.GetPeriodTitle(e.year??"?",e.title??"???")}"
+                                time="${t.time??"??:??"}"
+                                teacher="${i==null||i.type=="novariation"?e.fullTeacher??"???":i.type=="nocover"?"No one":i.casualSurname??this.FormatTeacherCode(i.casual??"????")}"
+                                ?teacherChanged="${o}"
+                                room="${r?.roomTo??e.room??"???"}"
+                                ?roomChanged="${n}"></daily-timetable-period>
+        `}renderPage(){let e=this.NextBell();e===void 0&&this.UpdateData();let t=this._dailyTimetable?.timetable?.timetable?.periods?.[e?.bell??""],i=e?.bellDisplay??"Nothing";t!=null&&"year"in t&&(i=this.GetPeriodTitle(t.year??"?",t.title??"???"));let r={time:"Never",preposition:"in"};e!==void 0&&(r=this.TimeDisplay(e));let o=this._dailyTimetable.bells??[],n=this._dailyTimetable.timetable?.timetable?.periods??{},c=(Array.isArray(this._dailyTimetable.roomVariations)?{}:this._dailyTimetable.roomVariations)??{},d=(Array.isArray(this._dailyTimetable.classVariations)?{}:this._dailyTimetable.classVariations)??{},p=this._dailyTimetableChanged?o.map(f=>{if(f.period!==void 0&&f.period!==null&&f.period in n){let x=n[f.period];return x!=null&&"fullTeacher"in x&&"year"in x?this.GetPeriod(x,f,d[f.period],c[f.period]):this.GetBell(f)}else return this.GetBell(f)}):this._savedPeriodsHtml,A=m`
+            <div class="next-display">
+                <p>${i}</p>
+                <p>${r.preposition}</p>
+                <div class="timer-container">
+                    <span class="line left"></span>
+                    <h1 class="timer">${r.time}</h1>
+                    <span class="line right"></span>
+                </div>
+            </div>
+
+            <div class="periods">
+                ${p}
+            </div>
+        `;return this._dailyTimetableChanged=!1,this._savedPeriodsHtml=p,A}};ie.styles=[w,R,ye,$t],ie.updatingData=!1,a([C()],ie.prototype,"_dailyTimetable",2),ie=a([v("daily-timetable")],ie);var Et=h`:host {
     overflow: hidden;
     display: flex;
     align-items: center;
@@ -2337,148 +747,13 @@ svg {
     to {
         transform: rotate(360deg);
     }
-}`;
-
-// site/images/rings.svg
-var rings_default = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="529px" height="528px" viewBox="0 0 529 528" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_1" />
-    <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_2" />
-    <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_3" />
-    <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_4" />
-    <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_5" />
-    <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_6" />
-    <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_7" />
-    <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_8" />
-    <clipPath id="mask_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
-    <clipPath id="mask_2">
-      <use xlink:href="#path_2" />
-    </clipPath>
-    <clipPath id="mask_3">
-      <use xlink:href="#path_3" />
-    </clipPath>
-    <clipPath id="mask_4">
-      <use xlink:href="#path_4" />
-    </clipPath>
-    <clipPath id="mask_5">
-      <use xlink:href="#path_5" />
-    </clipPath>
-    <clipPath id="mask_6">
-      <use xlink:href="#path_6" />
-    </clipPath>
-    <clipPath id="mask_7">
-      <use xlink:href="#path_7" />
-    </clipPath>
-    <clipPath id="mask_8">
-      <use xlink:href="#path_8" />
-    </clipPath>
-  </defs>
-  <g id="Rings" transform="translate(8 8)">
-    <g id="Green-Solid" transform="translate(7.6293945E-05 0)">
-      <g id="Mask-group">
-        <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_1)">
-          <g id="Group">
-            <path d="M0 256C0 114.615 114.608 0 255.984 0C397.361 0 511.969 114.615 511.969 256C511.969 397.385 397.361 512 255.984 512C114.608 512 0 397.385 0 256L0 256Z" id="path_2" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Green-Transparent" transform="translate(0 0.00030517578)">
-      <g id="Mask-group">
-        <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_2)">
-          <g id="Group">
-            <path d="M256.002 511.994C114.616 511.994 6.16908e-06 397.38 0 255.997C-6.19888e-06 114.614 114.616 0 256.002 0C397.387 -0.00100708 512.003 114.613 512.003 255.997C512.003 397.38 397.387 511.994 256.002 511.994L256.002 511.994Z" id="path_3" fill="none" fill-rule="evenodd" stroke="#78AFA0" stroke-opacity="0.2784314" stroke-width="8" stroke-dasharray="46 2 12 46 2 12" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Yellow-Solid" transform="translate(14.489731 14.490631)">
-      <g id="Mask-group">
-        <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_3)">
-          <g id="Group">
-            <path d="M0 241.509C0 108.127 108.121 0 241.495 0C374.869 0 482.989 108.127 482.989 241.509C482.989 374.891 374.869 483.019 241.495 483.019C108.121 483.019 0 374.891 0 241.509L0 241.509Z" id="path_4" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Yellow-Transparent" transform="translate(14.498611 14.347076)">
-      <g id="Mask-group">
-        <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_4)">
-          <g id="Group">
-            <path d="M380.023 439.471C489.186 362.832 515.752 212.294 439.273 102.971C362.795 -6.35058 212.092 -32.7554 102.929 43.7218C-6.23417 120.199 -32.8002 270.738 43.6788 380.06C119.996 489.383 270.699 515.948 380.023 439.471C379.862 439.471 380.023 439.471 380.023 439.471L380.023 439.471L380.023 439.471Z" id="path_5" fill="none" fill-rule="evenodd" stroke="#DDA131" stroke-opacity="0.6901961" stroke-width="16" stroke-dasharray="56 2 4 56 2 4" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Orange-Solid" transform="translate(28.979431 28.98117)">
-      <g id="Mask-group">
-        <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_5)">
-          <g id="Group">
-            <path d="M0 227.019C0 101.64 101.634 0 227.005 0C352.376 0 454.01 101.64 454.01 227.019C454.01 352.398 352.376 454.038 227.005 454.038C101.634 454.038 0 352.398 0 227.019L0 227.019Z" id="path_6" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Orange-Transparent" transform="translate(28.98436 28.81987)">
-      <g id="Mask-group">
-        <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_6)">
-          <g id="Group">
-            <path d="M262.54 2.83489C138.725 -16.8081 22.4778 67.7209 2.83485 191.534C-16.808 315.347 67.7209 431.755 191.536 451.397C315.35 470.879 431.598 386.512 451.241 262.698L451.241 262.698C470.884 138.724 386.355 22.4779 262.54 2.83489L262.54 2.83489L262.54 2.83489L262.54 2.83489Z" id="path_7" fill="none" fill-rule="evenodd" stroke="#D36F2B" stroke-opacity="0.4392157" stroke-width="8" stroke-dasharray="140 4 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Red-Solid" transform="translate(46.68904 46.691833)">
-      <g id="Mask-group">
-        <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_7)">
-          <g id="Group">
-            <path d="M0 209.308C0 93.7105 93.7048 0 209.295 0C324.886 0 418.591 93.7105 418.591 209.308C418.591 324.906 324.886 418.616 209.295 418.616C93.7048 418.616 0 324.906 0 209.308L0 209.308Z" id="path_8" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-    <g id="Red-Transparent" transform="translate(46.691147 46.691635)">
-      <g id="Mask-group">
-        <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="none" />
-        <g clip-path="url(#mask_8)">
-          <g id="Group">
-            <path d="M209.309 0C324.908 7.62939e-06 418.619 93.7094 418.619 209.306C418.619 324.902 324.908 418.612 209.309 418.612C93.711 418.612 1.52588e-05 324.902 2.28882e-05 209.306C2.67029e-05 93.7094 93.711 0 209.309 0L209.309 0Z" id="path_9" fill="none" fill-rule="evenodd" stroke="#C24127" stroke-opacity="0.2784314" stroke-width="4" stroke-dasharray="35 7 10 80" />
-          </g>
-        </g>
-      </g>
-    </g>
-  </g>
-</svg>`;
-
-// site/ts/elements/loader/loader.ts
-var LoadingIndicator = class extends s4 {
-  render() {
-    return rings_default;
-  }
-};
-LoadingIndicator.styles = loader_default;
-LoadingIndicator = __decorateClass([
-  n5("loading-indicator")
-], LoadingIndicator);
-
-// site/ts/elements/extensions/extensions.css
-var extensions_default = r`:host {
+}`;var kt=O`<svg width="529" height="528" viewBox="0 0 529 528" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="i"><use xlink:href="#a"/></clipPath><clipPath id="j"><use xlink:href="#b"/></clipPath><clipPath id="k"><use xlink:href="#c"/></clipPath><clipPath id="l"><use xlink:href="#d"/></clipPath><clipPath id="m"><use xlink:href="#e"/></clipPath><clipPath id="n"><use xlink:href="#f"/></clipPath><clipPath id="o"><use xlink:href="#g"/></clipPath><clipPath id="p"><use xlink:href="#h"/></clipPath><path d="M0 256a256 256 0 1 1 512 0 256 256 0 0 1-512 0Z" id="a"/><path d="M256 512a256 256 0 1 1 0-512 256 256 0 0 1 0 512Z" id="b"/><path d="M0 241.5a241.5 241.5 0 1 1 483 0 241.5 241.5 0 0 1-483 0Z" id="c"/><path d="M380 439.5a241.5 241.5 0 1 0-277-396 241.5 241.5 0 0 0 277 396c-.1 0 0 0 0 0Z" id="d"/><path d="M0 227a227 227 0 1 1 454 0 227 227 0 0 1-454 0Z" id="e"/><path d="M262.5 2.8a227 227 0 1 0 188.7 259.9A227 227 0 0 0 262.5 2.8Z" id="f"/><path d="M0 209.3a209.3 209.3 0 1 1 418.6 0 209.3 209.3 0 0 1-418.6 0Z" id="g"/><path d="M209.3 0a209.3 209.3 0 1 1 0 418.6 209.3 209.3 0 0 1 0-418.6Z" id="h"/></defs><path d="M8 264a256 256 0 1 1 512 0 256 256 0 0 1-512 0Z" fill="none"/><g clip-path="url(#i)" transform="translate(8 8)"><path d="M0 256a256 256 0 1 1 512 0 256 256 0 0 1-512 0Z" fill="none" stroke="#78AFA0" stroke-width="8" stroke-dasharray="76 4 70 76 4 70"/></g><path d="M264 520a256 256 0 1 1 0-512 256 256 0 0 1 0 512Z" fill="none"/><g clip-path="url(#j)" transform="translate(8 8)"><path d="M256 512a256 256 0 1 1 0-512 256 256 0 0 1 0 512Z" fill="none" stroke="#78AFA0" stroke-opacity=".3" stroke-width="8" stroke-dasharray="46 2 12 46 2 12"/></g><path d="M22.5 264a241.5 241.5 0 1 1 483 0 241.5 241.5 0 0 1-483 0Z" fill="none"/><g clip-path="url(#k)" transform="translate(22.5 22.5)"><path d="M0 241.5a241.5 241.5 0 1 1 483 0 241.5 241.5 0 0 1-483 0Z" fill="none" stroke="#DDA131" stroke-width="16" stroke-dasharray="76 2 40 180"/></g><path d="M402.5 461.8a241.5 241.5 0 1 0-277-396 241.5 241.5 0 0 0 277 396c-.1 0 0 0 0 0Z" fill="none"/><g clip-path="url(#l)" transform="translate(22.5 22.3)"><path d="M380 439.5a241.5 241.5 0 1 0-277-396 241.5 241.5 0 0 0 277 396c-.1 0 0 0 0 0Z" fill="none" stroke="#DDA131" stroke-opacity=".7" stroke-width="16" stroke-dasharray="56 2 4 56 2 4"/></g><path d="M37 264a227 227 0 1 1 454 0 227 227 0 0 1-454 0Z" fill="none"/><g clip-path="url(#m)" transform="translate(37 37)"><path d="M0 227a227 227 0 1 1 454 0 227 227 0 0 1-454 0Z" fill="none" stroke="#D36F2B" stroke-width="8" stroke-dasharray="51 4 10 80"/></g><path d="M299.5 39.7a227 227 0 1 0 188.7 259.8A227 227 0 0 0 299.5 39.7Z" fill="none"/><g clip-path="url(#n)" transform="translate(37 36.8)"><path d="M262.5 2.8a227 227 0 1 0 188.7 259.9A227 227 0 0 0 262.5 2.8Z" fill="none" stroke="#D36F2B" stroke-opacity=".4" stroke-width="8" stroke-dasharray="140 4 10 80"/></g><path d="M54.7 264a209.3 209.3 0 1 1 418.6 0 209.3 209.3 0 0 1-418.6 0Z" fill="none"/><g clip-path="url(#o)" transform="translate(54.7 54.7)"><path d="M0 209.3a209.3 209.3 0 1 1 418.6 0 209.3 209.3 0 0 1-418.6 0Z" fill="none" stroke="#C24127" stroke-width="4" stroke-dasharray="35 7 10 80"/></g><path d="M264 54.7a209.3 209.3 0 1 1 0 418.6 209.3 209.3 0 0 1 0-418.6Z" fill="none"/><g clip-path="url(#p)" transform="translate(54.7 54.7)"><path d="M209.3 0a209.3 209.3 0 1 1 0 418.6 209.3 209.3 0 0 1 0-418.6Z" fill="none" stroke="#C24127" stroke-opacity=".3" stroke-width="4" stroke-dasharray="35 7 10 80"/></g></svg>`;var xe=class extends b{render(){return kt}};xe.styles=Et,xe=a([v("loading-indicator")],xe);var Ct=h`:host {
     width: 100%;
     height: 100%;
 }
 
 loading-indicator {
-    width: 80vmin;
+    width: 30.8rem;
     height: 100%;
     margin: auto;
 }
@@ -2487,53 +762,22 @@ iframe {
     width: inherit;
     height: inherit;
     border: none;
-}`;
-
-// site/ts/elements/extensions/extensions.ts
-var ExtensionPage = class extends s4 {
-  constructor() {
-    super(...arguments);
-    this.src = "";
-  }
-  StopLoading() {
-    this.loader.remove();
-    this.frame.removeAttribute("style");
-  }
-  render() {
-    return p`
+}`;var G=class extends b{constructor(){super(...arguments);this.src=""}StopLoading(){this.loader.remove(),this.frame.removeAttribute("style")}render(){return m`
         <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
-        `;
-  }
-};
-ExtensionPage.styles = extensions_default;
-__decorateClass([
-  e4({ type: String })
-], ExtensionPage.prototype, "src", 2);
-__decorateClass([
-  i4("iframe", true)
-], ExtensionPage.prototype, "frame", 2);
-__decorateClass([
-  i4("loading-indicator", true)
-], ExtensionPage.prototype, "loader", 2);
-ExtensionPage = __decorateClass([
-  n5("extension-page")
-], ExtensionPage);
-
-// site/css/default/button.css
-var button_default = r`a.button {
+        `}};G.styles=Ct,a([u({type:String})],G.prototype,"src",2),a([_("iframe",!0)],G.prototype,"frame",2),a([_("loading-indicator",!0)],G.prototype,"loader",2),G=a([v("extension-page")],G);var we=h`a.button {
     text-decoration: none;
     cursor: default;
 }
 
 :where(button, .button) {
-    border: solid 0.2vmin var(--surface4);
+    border: solid 0.05rem var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);
-    padding: 1vmin 2vmin;
-    border-radius: calc(var(--font-size) / 2.5);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
     box-shadow: var(--small-shadow);
-    font-size: var(--font-size);
+    font-size: 1rem;
 }
 
 :where(button:hover, .button:hover) {
@@ -2542,23 +786,20 @@ var button_default = r`a.button {
 }
 
 :where(button:active, .button:active) {
-    border: solid 0.2vmin transparent;
+    border: solid 0.05rem transparent;
     color: var(--text4);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.1rem 0.1rem var(--shadow-colour);
     background-color: var(--surface4);
-}`;
-
-// site/ts/elements/extensions-marketplace/extension-display.css
-var extension_display_default = r`:host {
+}`;var _t=h`:host {
     display: flex;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 3vmin;
+    gap: 1.2rem;
 }
 
 img {
-    width: calc(var(--font-size) * 4);
-    height: calc(var(--font-size) * 4);
+    width: 4rem;
+    height: 4rem;
 
     border-radius: 100%;
 
@@ -2570,56 +811,22 @@ img {
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: 1vmin;
+    gap: 0.4rem;
 
     flex: 1;
-}`;
-
-// site/ts/elements/extensions-marketplace/extension-display.ts
-var ExtensionDisplay = class extends s4 {
-  async Install() {
-    await Extensions.InstallExtension(this.title);
-    document.getElementById("pages").requestUpdate();
-  }
-  async Uninstall() {
-    await Extensions.UninstallExtension(this.title);
-    document.getElementById("pages").requestUpdate();
-  }
-  render() {
-    return p`
+}`;var B=class extends b{async Install(){await st(this.title),document.getElementById("pages").requestUpdate()}async Uninstall(){await ot(this.title),document.getElementById("pages").requestUpdate()}render(){return m`
         <img src="${this.img}">
         
         <div class="content">
             <h4>${this.title}</h4>
             <p>${this.description}</p>
 
-            <button @click="${this.installed ? this.Uninstall : this.Install}">${this.installed ? "Uninstall" : "Install"}</button>
+            <button @click="${this.installed?this.Uninstall:this.Install}">${this.installed?"Uninstall":"Install"}</button>
         </div>
-        `;
-  }
-};
-ExtensionDisplay.styles = [text_default, button_default, extension_display_default];
-__decorateClass([
-  e4()
-], ExtensionDisplay.prototype, "title", 2);
-__decorateClass([
-  e4()
-], ExtensionDisplay.prototype, "img", 2);
-__decorateClass([
-  e4()
-], ExtensionDisplay.prototype, "description", 2);
-__decorateClass([
-  e4({ type: Boolean })
-], ExtensionDisplay.prototype, "installed", 2);
-ExtensionDisplay = __decorateClass([
-  n5("extension-display")
-], ExtensionDisplay);
-
-// site/ts/elements/extensions-marketplace/extensions-marketplace.css
-var extensions_marketplace_default = r`:host {
+        `}};B.styles=[w,we,_t],a([u()],B.prototype,"title",2),a([u()],B.prototype,"img",2),a([u()],B.prototype,"description",2),a([u({type:Boolean})],B.prototype,"installed",2),B=a([v("extension-display")],B);var Tt=h`:host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
+    gap: 1.2rem;
 
     overscroll-behavior: contain;
 }
@@ -2631,12 +838,13 @@ var extensions_marketplace_default = r`:host {
 
 .content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--font-size) * 20), 1fr));
-    gap: 2vmin;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-rows: max-content;
+    gap: 0.8rem;
 
     flex: 1;
-    overflow-y: auto;
 
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--surface4) transparent;
 }
@@ -2644,12 +852,12 @@ var extensions_marketplace_default = r`:host {
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -2658,65 +866,37 @@ var extensions_marketplace_default = r`:host {
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
-}`;
-
-// site/ts/elements/extensions-marketplace/extensions-marketplace.ts
-var ExtensionsMarketplace = class extends s4 {
-  constructor() {
-    super();
-    this.fetchingExtensions = true;
-    this.extensions = /* @__PURE__ */ new Map();
-    Extensions.GetExtensions((extensions) => {
-      this.fetchingExtensions = false;
-      this.extensions = extensions;
-    });
-  }
-  render() {
-    let installedExtensions = Extensions.installedExtensions;
-    let installedExtensionNames = [];
-    for (var key of installedExtensions.keys())
-      installedExtensionNames.push(key);
-    return p`
+    font-size: 1.4rem;
+}`;var ce=class extends b{constructor(){super();this.fetchingExtensions=!0;this.extensions=new Map;nt(e=>{this.fetchingExtensions=!1,this.extensions=e})}render(){let e=E.installedExtensions,t=[];for(var i of e.keys())t.push(i);return m`
         <div class="header">
-            <input type="search" placeholder="Search..." @input="${(e8) => this.searchFilter = e8.target.value}">
+            <input type="search" placeholder="Search..." @input="${r=>this.searchFilter=r.target.value}">
             <input type="checkbox">
         </div>
 
-        ${this.fetchingExtensions ? T : p`
+        ${this.fetchingExtensions?y:m`
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${c3(this.extensions.keys(), (extensionName) => p`
-        <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(this.extensions.get(extensionName))}"
-                           description="${this.extensions.get(extensionName).description}"
-                           ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
+        <div class="content">${[...this.extensions.keys()].map(r=>m`
+            <extension-display title="${r}" img="${lt(this.extensions.get(r))}"
+                            description="${this.extensions.get(r).description}"
+                            ?installed="${t.includes(r)}"></extension-display>
         `)}</div>
         `}
-        `;
-  }
-};
-ExtensionsMarketplace.styles = [element_default, full_default, text_default, search_default, extensions_marketplace_default];
-__decorateClass([
-  t3()
-], ExtensionsMarketplace.prototype, "extensions", 2);
-ExtensionsMarketplace = __decorateClass([
-  n5("extensions-marketplace")
-], ExtensionsMarketplace);
-
-// site/ts/elements/notification/notification.css
-var notification_default = r`:host {
+        `}};ce.styles=[w,be,R,Q,Tt],a([C()],ce.prototype,"extensions",2),ce=a([v("extensions-marketplace")],ce);var At=h`:host {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    gap: 1.5vmin;
+    gap: 0.6rem;
+
+    max-width: var(--max-width, unset);
 
     background-color: var(--surface2);
-    padding: 1.5vmin;
-    border-radius: 1.5vmin;
+    padding: 0.6rem;
+    border-radius: 0.6rem;
     box-shadow: var(--small-shadow);
 }
 
@@ -2733,61 +913,35 @@ loading-indicator {
 
     display: flex;
 
-    width: calc(var(--font-size) * var(--scale));
-    height: calc(var(--font-size) * var(--scale));
+    width: calc(1rem * var(--scale));
+    height: calc(1rem * var(--scale));
 }
 
 svg {
     width: inherit;
     height: inherit;
-}`;
-
-// site/images/cross.svg
-var cross_default = y`<?xml version="1.0" encoding="utf-8"?>
-<svg width="220px" height="220px" viewBox="0 0 220 220" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Cross" transform="translate(5 5)">
-    <path d="M0 0L210 210" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-    <path d="M210 0L0 210" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-  </g>
-</svg>`;
-
-// site/ts/elements/notification/notification.ts
-var InlineNotification = class extends s4 {
-  render() {
-    return p`
+}`;var St=O`<svg width="220" height="220" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg"><g fill="none" stroke="#323232" stroke-width="10" stroke-linecap="round"><path d="m5 5 210 210M215 5 5 215"/></g></svg>`;var he=class extends b{constructor(){super(...arguments);this.Close=this.remove.bind(this)}render(){return m`
         <slot></slot>
-        ${this.loader ? p`
-        <loading-indicator class="indicator"></loading-indicator>` : p`
+        ${this.loader?m`
+        <loading-indicator class="indicator"></loading-indicator>`:m`
         <button class="indicator"  @click="${this.remove}" title="Close">
-            ${cross_default}
+            ${St}
         </button>`}
-        `;
-  }
-};
-InlineNotification.styles = [img_default, notification_default];
-__decorateClass([
-  e4({ type: Boolean })
-], InlineNotification.prototype, "loader", 2);
-InlineNotification = __decorateClass([
-  n5("inline-notification")
-], InlineNotification);
-
-// site/css/default/range.css
-var range_default = r`:where(input[type=range]) {
+        `}};he.styles=[S,At],a([u({type:Boolean})],he.prototype,"loader",2),he=a([v("inline-notification")],he);var Mt=h`:where(input[type=range]) {
     appearance: none;
-    width: calc(var(--font-size) * 7);
+    width: 7rem;
     background-color: var(--surface1);
-    height: calc(var(--font-size) / 1.5);
+    height: calc(1rem / 1.5);
     box-shadow: var(--small-shadow);
-    border-radius: calc(var(--font-size) / 2.5);
+    border-radius: calc(1rem / 2.5);
 }
 
 :where(input[type=range])::-moz-range-thumb {
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
 }
@@ -2796,33 +950,30 @@ var range_default = r`:where(input[type=range]) {
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
-}`;
-
-// site/ts/elements/settings/settings.css
-var settings_default = r`:host {
+}`;var Rt=h`:host {
     display: flex;
     position: relative;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3vmin;
+    gap: 1.2rem;
 }
 
 span {
     width: 80%;
-    border-bottom: 0.2vmin solid var(--text3);
+    border-bottom: solid 0.05rem var(--text3);
 }
 
 #toggle {
     display: grid;
 
-    padding: 1vmin;
-    width: 8vmin;
-    height: 8vmin;
+    padding: 0.4rem;
+    width: 3.1rem;
+    height: 3.1rem;
 
     appearance: none;
     -webkit-appearance: none;
@@ -2847,42 +998,14 @@ span {
 
 info-popup {
     position: absolute;
-    top: 3vmin;
-    left: 3vmin;
-    width: 5vmin;
-    height: 5vmin;
+    top: 1.2rem;
+    left: 1.2rem;
+    width: 1.9rem;
+    height: 1.9rem;
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     z-index: 2;
-}`;
-
-// site/ts/elements/settings/settings.ts
-var Settings = class extends s4 {
-  constructor() {
-    super();
-    this.version = "0.0.0";
-    Site.GetVersion().then((version) => this.version = version);
-  }
-  Patch() {
-  }
-  ResetColour() {
-    this.hueInput.value = "200";
-    Site.SetHue("200");
-    Site.SaveHue();
-  }
-  ToggleDark(e8) {
-    let darkCheckbox = e8.target;
-    Site.SetDark(darkCheckbox.checked);
-    this.requestUpdate();
-  }
-  ToggleEditNavbar() {
-    let navbar = document.querySelector("nav-bar");
-    if (navbar) {
-      navbar.toggleAttribute("editing");
-    }
-  }
-  render() {
-    return p`
+}`;var re=class extends b{constructor(){super();this.version="0.0.0";g.GetVersion().then(e=>this.version=e)}Patch(){}ResetColour(){this.hueInput.value="200",g.SetHue("200"),g.SaveHue()}ToggleDark(e){let t=e.target;g.SetDark(t.checked),this.requestUpdate()}ToggleEditNavbar(){let e=document.querySelector("nav-bar");e&&e.toggleAttribute("editing")}render(){return m`
         <info-popup>
             Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
             <br>
@@ -2899,51 +1022,40 @@ var Settings = class extends s4 {
 
         <button @click="${this.ResetColour}">Reset</button>
 
-        <input type="range" id="hue" min="0" max="359" value="${Site.hue}"
-               @input="${(e8) => Site.SetHue(e8.target.value)}"
-               @change="${Site.SaveHue.bind(Site)}">
+        <input type="range" id="hue" min="0" max="359" value="${g.hue}"
+               @input="${e=>g.SetHue(e.target.value)}"
+               @change="${g.SaveHue.bind(g)}">
 
         <span></span>
 
-        <p>${Site.dark ? "Dark" : "Light"} Mode</p>
+        <p>${g.dark?"Dark":"Light"} Mode</p>
 
-        <input type="checkbox" ?checked="${Site.dark}" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+        <input type="checkbox" ?checked="${g.dark}" id="toggle" class="button" title="Turn on ${g.dark?"Light":"Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 
         <p>Sidebar</p>
 
         <button @click="${this.ToggleEditNavbar}">Edit</button>
-        `;
-  }
-};
-Settings.styles = [text_default, img_default, button_default, range_default, card_default, element_default, settings_default];
-__decorateClass([
-  i4("#hue", true)
-], Settings.prototype, "hueInput", 2);
-__decorateClass([
-  t3()
-], Settings.prototype, "version", 2);
-Settings = __decorateClass([
-  n5("user-settings")
-], Settings);
 
-// site/ts/elements/timetable/timetable-period.css
-var timetable_period_default = r`:host {
+        <span></span>
+
+        <p>Errors</p>
+
+        <button @click="${()=>{throw new Error("Test Error")}}">Create Error</button>
+        `}};re.styles=[w,S,we,Mt,ye,R,Rt],a([_("#hue",!0)],re.prototype,"hueInput",2),a([C()],re.prototype,"version",2),re=a([v("user-settings")],re);var Pt=h`:host {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.highlighted {
-    border-radius: 1vmin;
-
+:host(.highlighted) > p {
     background-color: var(--surface4);
     color: var(--text4);
 
     box-shadow: var(--shadow);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
 
     animation: appear 0.3s ease-out;
 }
@@ -2959,44 +1071,25 @@ var timetable_period_default = r`:host {
 }
 
 p {
-    width: calc(var(--font-size) * 4);
-    height: calc(var(--font-size) * 1.5);
+    width: 4rem;
+    height: 1.5rem;
     text-align: center;
-    line-height: calc(var(--font-size) * 1.5);
-}
+    line-height: 1.5;
 
-@media (max-aspect-ratio: 3/4) {
-    p {
-        margin-top: 0.5vmax;
-    }
+    border-radius: 0.4rem;
 }
 
 #popup {
     position: absolute;
-    top: calc(var(--font-size) * 2);
-
-    color: var(--text4);
-
-    border-radius: 1vmin;
-    background-color: var(--surface4);
-
-    box-shadow: var(--shadow);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    top: 2rem;
 
     z-index: 97;
-
-    animation: popupAppear 0.3s ease-out;
 
     pointer-events: none;
 }
 
-:host(.highlighted) > #popup {
-    z-index: 98;
-    box-shadow: 0 0 0 0.5vmin var(--text1);
-}
-
 #popup::before {
-    --size: calc(var(--font-size) / 2);
+    --size: 0.5rem;
 
     content: "";
 
@@ -3009,401 +1102,127 @@ p {
     border-left: calc(var(--size) / 1.5) solid transparent;
 }
 
-#popup[reversed] {
-    top: calc(var(--font-size) * -2);
+:host(:hover), :host(:focus) {
+    z-index: 98;
 }
 
-#popup[reversed]::before {
-    top: unset;
-    bottom: calc(-1 * var(--size));
-
-    transform: rotate(180deg);
-}
-
-@keyframes popupAppear {
-    from {
-        filter: opacity(0);
-    }
-
-    to {
-        filter: opacity(1);
-    }
-}`;
-
-// site/ts/elements/timetable/timetable-period.ts
-var TimetablePeriod = class extends s4 {
-  static highlight(name) {
-    this.highlighted = name;
-    for (let instance of this.instances)
-      instance.requestUpdate();
-  }
-  constructor() {
-    super();
-    TimetablePeriod.instances.push(this);
-  }
-  Highlight() {
-    TimetablePeriod.highlight(this.name);
-    this.classList.add("highlighted");
-  }
-  Unhighlight() {
-    TimetablePeriod.highlight("");
-    this.classList.remove("highlighted");
-  }
-  firstUpdated() {
-    if (this.name) {
-      this.tabIndex = 0;
-      this.addEventListener("mouseover", this.Highlight);
-      this.addEventListener("mouseleave", this.Unhighlight);
-      this.addEventListener("click", this.Highlight);
-      this.addEventListener("focus", this.Highlight);
-      this.addEventListener("blur", this.Unhighlight);
-    }
-  }
-  render() {
-    let highlighted = TimetablePeriod.highlighted == this.name && this.name;
-    if (highlighted) {
-      let nextSibling = this.nextElementSibling;
-      let nextNextSibling = nextSibling?.nextElementSibling;
-      let displayPopupTop = nextSibling?.getAttribute("name") == this.name || nextNextSibling?.getAttribute("name") == this.name;
-      return p`
-            <p class="highlighted">${this.name}</p>
-            <p id="popup"
-                ?reversed="${displayPopupTop}">
-                ${this.room}
-            </p>
-            `;
-    } else
-      return p`<p>${this.name}</p>`;
-  }
-};
-TimetablePeriod.styles = [text_default, timetable_period_default];
-TimetablePeriod.instances = [];
-__decorateClass([
-  e4()
-], TimetablePeriod.prototype, "name", 2);
-__decorateClass([
-  e4()
-], TimetablePeriod.prototype, "room", 2);
-TimetablePeriod = __decorateClass([
-  n5("timetable-period")
-], TimetablePeriod);
-
-// site/ts/elements/timetable/timetable-day.css
-var timetable_day_default = r`:host {
-    display: inline-flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: calc(var(--font-size) * 4.5);
-    min-width: 0;
-}
-
-.name {
-    margin-bottom: 1vmin;
-    text-align: center;
-    font-size: calc(var(--font-size) / 1.2);
-    width: calc(var(--font-size) * 3.63);
-    color: var(--text3);
-    border-bottom: solid grey 0.2vmin;
-}
-
-.highlighted {
-    color: var(--text2);
-}`;
-
-// site/ts/elements/timetable/timetable-day.ts
-var TimetableDay = class extends s4 {
-  render() {
-    return p`
-            <p class="name ${this.day == this.name ? "highlighted" : ""}">${this.name}</p>
-            
-            <timetable-period name="${this.periods["1"]?.title}"
-                              room="${this.periods["1"]?.room}">
-            </timetable-period>
-            <timetable-period name="${this.periods["2"]?.title}"
-                              room="${this.periods["2"]?.room}">
-            </timetable-period>
-            <timetable-period name="${this.periods["3"]?.title}"
-                              room="${this.periods["3"]?.room}">
-            </timetable-period>
-            <timetable-period name="${this.periods["4"]?.title}"
-                              room="${this.periods["4"]?.room}">
-            </timetable-period>
-            <timetable-period name="${this.periods["5"]?.title}"
-                              room="${this.periods["5"]?.room}">
-            </timetable-period>
-        `;
-  }
-};
-TimetableDay.styles = [text_default, timetable_day_default];
-__decorateClass([
-  e4()
-], TimetableDay.prototype, "name", 2);
-__decorateClass([
-  e4({ type: Array })
-], TimetableDay.prototype, "periods", 2);
-__decorateClass([
-  e4()
-], TimetableDay.prototype, "day", 2);
-TimetableDay = __decorateClass([
-  n5("timetable-day")
-], TimetableDay);
-
-// site/ts/elements/timetable/timetable-row.css
-var timetable_row_default = r`:host {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-around;
-    padding-top: 1vmin;
-    margin-bottom: 1vmin;
-}
-
-.period-nums {
-    display: inline-flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.period-nums > p {
-    color: var(--text3);
-    height: 3.9vmin;
-    line-height: calc(var(--font-size) * 1.5);
-
-    user-select: none;
-    -ms-user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-}
-
-@media (max-aspect-ratio: 3/4) {
-    .period-nums > p {
-        height: 3vmax;
-        margin-top: 0.5vmax;
-    }
-}`;
-
-// site/ts/elements/timetable/timetable-row.ts
-var TimetableRow = class extends s4 {
-  render() {
-    return p`
-            <div class="period-nums">
-                <p>1</p>
-                <p>2</p>
-                <p>3</p>
-                <p>4</p>
-                <p>5</p>
-            </div>
-
-            <timetable-day name="MON ${this.week}"
-                           .periods="${this.day1.periods}"
-                           day="${this.day}">
-            </timetable-day>
-
-            <timetable-day name="TUE ${this.week}"
-                           .periods="${this.day2.periods}"
-                           day="${this.day}">
-            </timetable-day>
-
-            <timetable-day name="WED ${this.week}"
-                           .periods="${this.day3.periods}"
-                           day="${this.day}">
-            </timetable-day>
-
-            <timetable-day name="THU ${this.week}"
-                           .periods="${this.day4.periods}"
-                           day="${this.day}">
-            </timetable-day>
-
-            <timetable-day name="FRI ${this.week}"
-                           .periods="${this.day5.periods}"
-                           day="${this.day}">
-            </timetable-day>
-        `;
-  }
-};
-TimetableRow.styles = [text_default, timetable_row_default];
-__decorateClass([
-  e4()
-], TimetableRow.prototype, "week", 2);
-__decorateClass([
-  e4({ type: Object })
-], TimetableRow.prototype, "day1", 2);
-__decorateClass([
-  e4({ type: Object })
-], TimetableRow.prototype, "day2", 2);
-__decorateClass([
-  e4({ type: Object })
-], TimetableRow.prototype, "day3", 2);
-__decorateClass([
-  e4({ type: Object })
-], TimetableRow.prototype, "day4", 2);
-__decorateClass([
-  e4({ type: Object })
-], TimetableRow.prototype, "day5", 2);
-__decorateClass([
-  e4()
-], TimetableRow.prototype, "day", 2);
-TimetableRow = __decorateClass([
-  n5("timetable-row")
-], TimetableRow);
-
-// site/ts/elements/timetable/timetable.css
-var timetable_default = r`:host {
+:host(:hover) > p,
+:host(:focus) > p {
+    z-index: 98;
+    box-shadow: 0 0 0 0.2rem var(--text1) !important;
+}`;var T=class extends b{static Highlight(e){if(this.highlighted!=e){this.highlighted=e;for(let t of this.instances)t.requestUpdate()}}constructor(){super();T.instances.push(this)}Highlight(){T.Highlight(this.name),this.classList.add("highlighted")}Unhighlight(){T.Highlight(void 0),this.classList.remove("highlighted")}firstUpdated(){this.room!==void 0&&this.room!==null&&(this.tabIndex=0)}render(){let e=T.highlighted==this.name;return this.classList.toggle("highlighted",e),e||this.blur(),m`
+        <p>${this.name}</p>
+        <p id="popup"
+           style="${e?"":"display: none"}">
+            ${this.room}
+        </p>
+        `}};T.styles=[w,Pt],T.instances=[],a([u()],T.prototype,"name",2),a([u()],T.prototype,"room",2),T=a([v("timetable-period")],T);var Lt=h`:host {
     margin: auto;
-    padding: 4vmin;
+    padding: 1.6rem;
     max-width: 92%;
-    width: calc(var(--font-size) * 23);
-    height: calc(calc(var(--font-size) * 25.5) + 9vmin);
+    width: 25.2rem;
+    min-height: 29rem;
+    max-height: 98%;
+
+    box-sizing: border-box;
 }
 
-@media (max-aspect-ratio: 3/4) {
+table + table {
+    border-top: solid grey 0.05rem;
+}
+
+table {
+    counter-reset: period;
+
+    display: grid;
+    grid-template-columns: 3% repeat(5, calc(97% / 5));
+    grid-template-rows: 0.5fr repeat(5, 1fr);
+
+    width: 100%;
+}
+
+thead, tbody, tr {
+    display: contents;
+}
+
+thead > tr {
+    border-bottom: solid 0.05rem var(--text3);
+}
+
+tbody > tr {
+    padding-top: 0.4rem;
+    margin-bottom: 0.4rem;
+}
+
+tbody > tr::before {
+    counter-increment: period;
+    content: counter(period);
+
+    color: var(--text3);
+
+    line-height: 1.5;
+}
+
+td, th {
+    text-align: center;
+    padding: 0;
+}
+
+th {
+    color: var(--text3);
+    font-size: calc(1rem / 1.2);
+}
+
+th:not(:empty) {
+    border-bottom: solid 0.05rem var(--text3);
+}
+
+.current-day {
+    color: var(--text2);
+}
+
+td {
+    height: 1.5rem;
+    line-height: 1.5;
+}
+
+@media (pointer: coarse) {
     :host {
-        height: calc(calc(calc(var(--font-size) * 25.5) + 9vmin) + 7.5vmax);
+        min-height: 33.5rem;
+    }
+
+    td {
+        height: 1.8rem;
+        line-height: 1.8;
     }
 }
 
-timetable-row + timetable-row {
-    border-top: solid grey 0.2vmin;
-}`;
-
-// site/ts/elements/timetable/timetable.ts
-var FullTimetable = class extends Page2 {
-  set dailyTimetable(value) {
-    this._day = value.timetable.timetable.dayname;
-  }
-  ClearHighlight() {
-    TimetablePeriod.highlight("");
-  }
-  constructor() {
-    super();
-    this.AddResource("timetable", "timetable");
-    this.AddResource("dailytimetable", "dailyTimetable");
-    this.addEventListener("pointerover", (e8) => e8.stopPropagation());
-    document.addEventListener("pointerover", this.ClearHighlight);
-  }
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    document.removeEventListener("pointerover", this.ClearHighlight);
-  }
-  renderPage() {
-    this._day = this._day.slice(0, 3).toUpperCase() + " " + this._day.slice(-1);
-    return p`
-            <timetable-row week="A"
-                           .day1="${this.timetable.days["1"]}"
-                           .day2="${this.timetable.days["2"]}"
-                           .day3="${this.timetable.days["3"]}"
-                           .day4="${this.timetable.days["4"]}"
-                           .day5="${this.timetable.days["5"]}"
-                           day="${this._day}">
-            </timetable-row>
-            <timetable-row week="B"
-                           .day1="${this.timetable.days["6"]}"
-                           .day2="${this.timetable.days["7"]}"
-                           .day3="${this.timetable.days["8"]}"
-                           .day4="${this.timetable.days["9"]}"
-                           .day5="${this.timetable.days["10"]}"
-                           day="${this._day}">
-            </timetable-row>
-            <timetable-row week="C"
-                           .day1="${this.timetable.days["11"]}"
-                           .day2="${this.timetable.days["12"]}"
-                           .day3="${this.timetable.days["13"]}"
-                           .day4="${this.timetable.days["14"]}"
-                           .day5="${this.timetable.days["15"]}"
-                           day="${this._day}">
-            </timetable-row>
-        `;
-  }
-};
-FullTimetable.styles = [element_default, timetable_default];
-__decorateClass([
-  t3()
-], FullTimetable.prototype, "timetable", 2);
-__decorateClass([
-  t3()
-], FullTimetable.prototype, "_day", 2);
-FullTimetable = __decorateClass([
-  n5("full-timetable")
-], FullTimetable);
-
-// site/ts/index.ts
-Main();
-async function Main() {
-  if (location.hash) {
-    NavigateToHash(location.hash);
-  } else {
-    Site.NavigateTo({
-      page: document.querySelector("main").children[0].id,
-      extension: false
-    });
-  }
-  Extensions.AddListeners();
-  window.addEventListener("hashchange", () => {
-    if (location.hash) {
-      NavigateToHash(location.hash);
-    }
-  });
-  var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
-  if (registration)
-    await registration.update();
-  else
-    await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-      scope: "/"
-    });
-  let lastReloadedText = sessionStorage.getItem("Last Reloaded");
-  let resourceNotification = ShowResourceNotification();
-  if (lastReloadedText) {
-    let lastReloaded = new Date(lastReloadedText);
-    if (new Date().getTime() - lastReloaded.getTime() > "3600") {
-      Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
-      sessionStorage.setItem("Last Refreshed", new Date().toISOString());
-    }
-  } else
-    Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
-  var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
-  if (registration)
-    await registration.update();
-  else
-    await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-      scope: "/"
-    });
-  navigator.serviceWorker.addEventListener("message", (e8) => {
-    if (e8.data.command == "metadata-fetched") {
-      Extensions.FireExtensionCallbacks();
-    }
-  });
-  let serviceWorker = await navigator.serviceWorker.ready;
-  if (serviceWorker.periodicSync) {
-    let tags = await serviceWorker.periodicSync.getTags();
-    if (!tags.includes("metadata-fetch")) {
-      try {
-        await serviceWorker.periodicSync.register("metadata-fetch", {
-          minInterval: "2592000000"
-        });
-      } catch (e8) {
-        console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-      }
-    }
-  } else
-    console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-  navigator.serviceWorker.controller?.postMessage({ command: "metadata-fetch" });
-}
-function NavigateToHash(hash) {
-  let extension = hash.indexOf("extension-") == 1;
-  let page = "";
-  if (extension) {
-    page = decodeURIComponent(hash.substring(11));
-  } else {
-    page = decodeURIComponent(hash.substring(1));
-  }
-  Site.NavigateTo({
-    page,
-    extension
-  });
-}
-function ShowResourceNotification() {
-  return Site.ShowNotification("Updating resources...", true);
-}
+timetable-period {
+    width: 100%;
+    height: 100%;
+}`;var se=class extends L{set dailyTimetable(e){let t=e.timetable?.timetable?.dayname;t!=null&&(this._day=t.slice(0,3).toUpperCase()+" "+t.slice(-1).toUpperCase())}constructor(){super();this.AddResource("timetable","timetable"),this.AddResource("dailytimetable","dailyTimetable"),document.addEventListener("pointerover",this.ClearHighlight)}SetHighlight(e){T.Highlight(e.target.name),e.stopPropagation()}ClearHighlight(e){T.Highlight(void 0),e.stopPropagation()}CreateTable(e){let t=[],i=[];for(let r of e){let o=r.dayname??"???";t.push(o);let n=r.periods??{},c=Object.keys(n);for(let d=0;d<c.length;d++){let p=n[c[d]];p!=null&&(d>=i.length?i.push([p]):i[d].push(p))}}return m`
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    ${t.map(r=>{let o=r.split(" "),n=`${o.shift()?.substring(0,3).toUpperCase()??"???"} ${o.map(c=>c.toUpperCase()).join(" ")}`;return m`
+                        <th class="${n==this._day?"current-day":""}">${n}</th>
+                        `})}
+                </tr>
+            </thead>
+            <tbody>
+                ${i.map(r=>m`
+                <tr>
+                    ${r.map(o=>{let n=o.title??"???";return m`
+                        <td>
+                            <timetable-period name="${n}" room="${o.room??"???"}"></timetable-period>
+                        </td>
+                        `})}
+                </tr>
+                `)}
+            </tbody>
+        </table>
+        `}createRenderRoot(){let e=super.createRenderRoot();return e.addEventListener("pointerover",this.SetHighlight),e.addEventListener("focusin",this.SetHighlight),e}disconnectedCallback(){super.disconnectedCallback(),document.removeEventListener("pointerover",this.ClearHighlight)}renderPage(){let e=this.timetable.days??{},t=Object.keys(e),i=[],r=[];for(let o=0;o<t.length;o++){o%5==0&&(r.length>0&&i.push(this.CreateTable(r)),r=[]);let n=e[t[o]];n!=null&&r.push(n)}return r.length>0&&i.push(this.CreateTable(r)),m`${i}`}};se.styles=[w,R,Lt],a([C()],se.prototype,"timetable",2),a([C()],se.prototype,"_day",2),se=a([v("full-timetable")],se);Ft();async function Ft(){location.hash?Nt(location.hash):g.NavigateTo({page:document.querySelector("main").children[0].id,extension:!1}),dt(),window.addEventListener("hashchange",()=>{location.hash&&Nt(location.hash)});var t=await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");t?await t.update():await navigator.serviceWorker.register("dist/service-worker/service-worker.js",{scope:"/"});let s=sessionStorage.getItem("Last Reloaded"),e=Gt();if(s){let r=new Date(s);new Date().getTime()-r.getTime()>"3600"&&(k.FetchResources().then(e.Close),sessionStorage.setItem("Last Refreshed",new Date().toISOString()))}else k.FetchResources().then(e.Close);var t=await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");t?await t.update():await navigator.serviceWorker.register("dist/service-worker/service-worker.js",{scope:"/"}),navigator.serviceWorker.addEventListener("message",r=>{r.data.command=="metadata-fetched"&&at()});let i=await navigator.serviceWorker.ready;if(i.periodicSync){if(!(await i.periodicSync.getTags()).includes("metadata-fetch"))try{await i.periodicSync.register("metadata-fetch",{minInterval:"2592000000"})}catch{console.log("Couldn't register background fetch. Updates will be only occur when app is open.")}}else console.log("Couldn't register background fetch. Updates will be only occur when app is open.");navigator.serviceWorker.controller?.postMessage({command:"metadata-fetch"})}function Nt(s){let e=s.indexOf("extension-")==1,t="";e?t=decodeURIComponent(s.substring(11)):t=decodeURIComponent(s.substring(1)),g.NavigateTo({page:t,extension:e})}function Gt(){return g.ShowNotification("Updating resources...",!0)}
 /**
  * @license
  * Copyright 2017 Google LLC
@@ -3412,10 +1231,5 @@ function ShowResourceNotification() {
 /**
  * @license
  * Copyright 2019 Google LLC
- * SPDX-License-Identifier: BSD-3-Clause
- */
-/**
- * @license
- * Copyright 2020 Google LLC
  * SPDX-License-Identifier: BSD-3-Clause
  */

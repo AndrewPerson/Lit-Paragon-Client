@@ -1,9 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
-
-    overscroll-behavior: contain;
+    gap: 1.2rem;
 }
 
 .header {
@@ -22,12 +20,12 @@
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -36,13 +34,13 @@
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 announcement-post {
-    margin-bottom: 3vmin;
+    margin-bottom: 1.2rem;
 }

@@ -7,7 +7,7 @@ import notificationCss from "./notification.css";
 import imgCss from "default/img.css";
 
 //@ts-ignore
-import crossSvg from "cross.svg";
+import crossSvg from "images/cross.svg";
 
 @customElement("inline-notification")
 export class InlineNotification extends LitElement {
@@ -15,6 +15,8 @@ export class InlineNotification extends LitElement {
 
     @property({ type: Boolean })
     loader: boolean;
+
+    Close = this.remove.bind(this);
 
     render() {
         return html`

@@ -5,7 +5,7 @@ import { customElement } from "lit/decorators.js";
 import loadingCss from "./loader.css";
 
 //@ts-ignore
-import ringsSvg from "rings.svg";
+import ringsSvg from "images/rings.svg";
 
 @customElement("loading-indicator")
 export class LoadingIndicator extends LitElement {

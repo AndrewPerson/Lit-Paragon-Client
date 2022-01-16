@@ -1,7 +1,7 @@
 :host {
     display: flex;
     flex-direction: column;
-    gap: 3vmin;
+    gap: 1.2rem;
 
     overscroll-behavior: contain;
 }
@@ -13,12 +13,13 @@
 
 .content {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(calc(var(--font-size) * 20), 1fr));
-    gap: 2vmin;
+    grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+    grid-template-rows: max-content;
+    gap: 0.8rem;
 
     flex: 1;
-    overflow-y: auto;
 
+    overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: var(--surface4) transparent;
 }
@@ -26,12 +27,12 @@
 .content::-webkit-scrollbar-track {
     background-color: transparent;
 
-    width: 1vmin;
+    width: 0.4rem;
 }
 
 .content::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 1vmin;
+    border-radius: 0.4rem;
 }
 
 .content:empty::after {
@@ -40,9 +41,9 @@
     display: block;
     width: 100%;
 
-    margin-top: 1vmin;
+    margin-top: 0.4rem;
 
     text-align: center;
 
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }

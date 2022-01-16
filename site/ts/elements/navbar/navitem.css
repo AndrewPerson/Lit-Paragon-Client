@@ -3,7 +3,7 @@
     width: 12vmin;
     height: 12vmin;
     position: relative;
-    border-radius: 2vmin;
+    border-radius: 0.8rem;
     overflow: hidden;
     flex-shrink: 0;
 }
@@ -14,8 +14,8 @@
 }
 
 #handle {
-    --size: 2vmin;
-    --padding: 2vmin;
+    --size: 0.8rem;
+    --padding: 0.8rem;
 
     --full-size: calc(calc(var(--padding) * 2) + var(--size));
 

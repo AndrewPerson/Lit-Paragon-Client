@@ -1,18 +1,1 @@
-// <define:REQUIRED_FEATURES>
-var define_REQUIRED_FEATURES_default = ["navigator.serviceWorker", "ShadowRoot", "customElements"];
-
-// site/ts/init.ts
-var dark = localStorage.getItem("Dark") == "true";
-document.documentElement.classList.toggle("dark", dark);
-var hue = localStorage.getItem("Hue") || "200";
-document.documentElement.style.setProperty("--main-hue", hue);
-document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
-for (let feature of define_REQUIRED_FEATURES_default) {
-  let obj = window;
-  for (let part of feature.split(".")) {
-    obj = obj[part];
-    if (obj == null || obj == void 0) {
-      location.href = `${location.origin}/unsupported?feature="${part}"`;
-    }
-  }
-}
+var i=["navigator.serviceWorker","ShadowRoot","customElements"];window.addEventListener("error",async e=>{if(e.error instanceof Error){let o=await(await caches.open("Metadata")).match("Metadata"),n;o!==void 0&&(n=(await o.json()).version);let r=!0;try{r=(await fetch("https://sbhs-random-data.profsmart.repl.co/error",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({error_name:e.error.name,stack_trace:e.error.stack,version:n})})).ok}catch{r=!1}let s=r?"An error occured and has been automatically reported. No personal information is sent.":"An error occured and could not be reported. For obvious reasons, the error while reporting has not been reported.",a=document.createElement("inline-notification");a.innerText=s,document.getElementById("notification-area")?.appendChild(a)}});var u=localStorage.getItem("Dark")=="true";document.documentElement.classList.toggle("dark",u);var c=localStorage.getItem("Hue")||"200";document.documentElement.style.setProperty("--main-hue",c);document.documentElement.style.setProperty("--hue-rotate",`${parseFloat(c)-200}deg`);for(let e of i){let t=window;for(let o of e.split("."))t=t[o],(t==null||t==null)&&(location.href=`${location.origin}/unsupported?feature="${o}"`)}

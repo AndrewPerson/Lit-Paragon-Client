@@ -1,0 +1,68 @@
+:host {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+:host(.highlighted) > p {
+    background-color: var(--surface4);
+    color: var(--text4);
+
+    box-shadow: var(--shadow);
+    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
+
+    animation: appear 0.3s ease-out;
+}
+
+@keyframes appear {
+    from {
+        filter: opacity(0);
+    }
+
+    to {
+        filter: opacity(1);
+    }
+}
+
+p {
+    width: 4rem;
+    height: 1.5rem;
+    text-align: center;
+    line-height: 1.5;
+
+    border-radius: 0.4rem;
+}
+
+#popup {
+    position: absolute;
+    top: 2rem;
+
+    z-index: 97;
+
+    pointer-events: none;
+}
+
+#popup::before {
+    --size: 0.5rem;
+
+    content: "";
+
+    position: absolute;
+    left: calc(50% - calc(var(--size) / 1.5));
+    top: calc(-1 * var(--size));
+
+    border-right: calc(var(--size) / 1.5) solid transparent;
+    border-bottom: var(--size) solid var(--surface4);
+    border-left: calc(var(--size) / 1.5) solid transparent;
+}
+
+:host(:hover), :host(:focus) {
+    z-index: 98;
+}
+
+:host(:hover) > p,
+:host(:focus) > p {
+    z-index: 98;
+    box-shadow: 0 0 0 0.2rem var(--text1) !important;
+}

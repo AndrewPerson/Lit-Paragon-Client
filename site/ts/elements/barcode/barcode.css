@@ -6,7 +6,7 @@
 
 #point1,
 #point2 {
-    --size: 3vmin;
+    --size: 1.2rem;
 
     position: absolute;
 
@@ -29,10 +29,10 @@
 
     display: block;
 
-    width: 3vmax;
-    height: 3vmax;
+    width: calc(var(--size) * 2);
+    height: calc(var(--size) * 2);
 
-    margin: calc(var(--size) / 2 - 1.5vmax);
+    margin: calc(var(--size) / -2);
 }
 
 #barcodeDisplay {
@@ -44,14 +44,32 @@
 }
 
 #barcodeDisplay.outline {
-    border: solid 1vmin var(--text1);
+    border: solid 0.4rem var(--text1);
 }
 
 info-popup {
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     
-    width: 5vmin;
-    height: 5vmin;
+    position: absolute;
+    top: 1%;
+    left: 1%;
+
+    width: 1.9rem;
+    height: 1.9rem;
     z-index: 2;
+}
+
+#save {
+    all: unset;
+    width: 1.7rem;
+    height: 1.7rem;
+    position: absolute;
+    top: 1.25%;
+    right: 1.25%;
+}
+
+#save > svg {
+    width: inherit;
+    height: inherit;
 }

@@ -4,20 +4,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3vmin;
+    gap: 1.2rem;
 }
 
 span {
     width: 80%;
-    border-bottom: 0.2vmin solid var(--text3);
+    border-bottom: solid 0.05rem var(--text3);
 }
 
 #toggle {
     display: grid;
 
-    padding: 1vmin;
-    width: 8vmin;
-    height: 8vmin;
+    padding: 0.4rem;
+    width: 3.1rem;
+    height: 3.1rem;
 
     appearance: none;
     -webkit-appearance: none;
@@ -42,11 +42,11 @@ span {
 
 info-popup {
     position: absolute;
-    top: 3vmin;
-    left: 3vmin;
-    width: 5vmin;
-    height: 5vmin;
+    top: 1.2rem;
+    left: 1.2rem;
+    width: 1.9rem;
+    height: 1.9rem;
     --max-width: 30vmax;
-    --offset: 7vmin;
+    --offset: 2.6rem;
     z-index: 2;
 }

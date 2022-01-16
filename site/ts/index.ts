@@ -2,7 +2,7 @@
 
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
-import { Extensions } from "./site/extensions";
+import { AddExtensionListeners, FireExtensionCallbacks } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
@@ -23,7 +23,7 @@ async function Main() {
         });
     }
 
-    Extensions.AddListeners();
+    AddExtensionListeners();
 
     window.addEventListener("hashchange", () => {
         if (location.hash) {
@@ -53,12 +53,12 @@ async function Main() {
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
             //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
-            Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
+            Resources.FetchResources().then(resourceNotification.Close);
             sessionStorage.setItem("Last Refreshed", new Date().toISOString());
         }
     }
     //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
-    else Resources.FetchResources().then(resourceNotification.remove.bind(resourceNotification));
+    else Resources.FetchResources().then(resourceNotification.Close);
 
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -72,7 +72,7 @@ async function Main() {
 
     navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
         if (e.data.command == "metadata-fetched") {
-            Extensions.FireExtensionCallbacks();
+            FireExtensionCallbacks();
         }
     });
 

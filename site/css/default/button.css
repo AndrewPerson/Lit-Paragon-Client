@@ -4,13 +4,13 @@ a.button {
 }
 
 :where(button, .button) {
-    border: solid 0.2vmin var(--surface4);
+    border: solid 0.05rem var(--surface4);
     background-color: var(--surface2);
     color: var(--text2);
-    padding: 1vmin 2vmin;
-    border-radius: calc(var(--font-size) / 2.5);
+    padding: 0.4rem 0.8rem;
+    border-radius: 0.4rem;
     box-shadow: var(--small-shadow);
-    font-size: var(--font-size);
+    font-size: 1rem;
 }
 
 :where(button:hover, .button:hover) {
@@ -19,8 +19,8 @@ a.button {
 }
 
 :where(button:active, .button:active) {
-    border: solid 0.2vmin transparent;
+    border: solid 0.05rem transparent;
     color: var(--text4);
-    text-shadow: 0.2vmin 0.2vmin var(--shadow-colour);
+    text-shadow: 0.1rem 0.1rem var(--shadow-colour);
     background-color: var(--surface4);
 }

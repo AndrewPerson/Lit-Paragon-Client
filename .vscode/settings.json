@@ -7,7 +7,7 @@
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
         "package-lock.json": true,
-        "node_modules": true,
+        "node_modules": false,
         ".vscode": true
     },
     "explorerExclude.backup": null,

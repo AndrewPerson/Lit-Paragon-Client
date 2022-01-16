@@ -12,7 +12,9 @@ if (Site.dark)
 async function Token(code: string) {
     let tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
         method: "POST",
-        body: code
+        body: JSON.stringify({
+            code: code
+        })
     });
     
     if (tokenResponse.status != 200) return false;

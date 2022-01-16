@@ -85,10 +85,11 @@ let buildPromise = build({
     entryPoints: config.files.map(file => `site/${file}`),
     outdir: "site/dist",
     bundle: true,
-    minify: env.js.minify,
-    treeShaking: env.js.treeShaking,
-    target: "es2020",
+    minify: true,
+    //splitting: true,
+    treeShaking: true,
     format: "esm",
+    target: "es2020",
     define: transformVars(env.vars),
     plugins: [
         clear("./site/dist"),
@@ -105,9 +106,9 @@ let buildPromise = build({
         {
             name: "svg-redirect",
             setup(build) {
-                build.onResolve({ filter: /\.svg$/, namespace: "file" }, args => {
+                build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
                     return {
-                        path: path.resolve(dirname, "site/images", args.path)
+                        path: path.resolve(dirname, "site", args.path)
                     };
                 });
             }
@@ -118,12 +119,21 @@ let buildPromise = build({
             setup(build) {        
                 build.onLoad({ filter: /\.svg$/ }, async args => {
                     let contents = await readFile(args.path, "utf8");
-        
-                    if (env.svg.floatPrecision)
-                        contents = optimize(contents, {
-                            path: args.path,
-                            floatPrecision: env.svg.floatPrecision,
-                        }).data;
+
+                    contents = optimize(contents, {
+                        path: args.path,
+                        floatPrecision: 1,
+                        plugins: [
+                            {
+                                name: "preset-default",
+                                params: {
+                                    overrides: {
+                                        removeViewBox: false
+                                    }
+                                }
+                            }
+                        ]
+                    }).data;
         
                     return {
                         loader: "js",

@@ -1,18 +1,18 @@
 :where(input[type=range]) {
     appearance: none;
-    width: calc(var(--font-size) * 7);
+    width: 7rem;
     background-color: var(--surface1);
-    height: calc(var(--font-size) / 1.5);
+    height: calc(1rem / 1.5);
     box-shadow: var(--small-shadow);
-    border-radius: calc(var(--font-size) / 2.5);
+    border-radius: calc(1rem / 2.5);
 }
 
 :where(input[type=range])::-moz-range-thumb {
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
 }
@@ -21,8 +21,8 @@
     -webkit-appearance: none;
     background-color: var(--surface4);
     border-radius: 100%;
-    width: calc(var(--font-size) / 1.5);
-    height: calc(var(--font-size) / 1.5);
+    width: calc(1rem / 1.5);
+    height: calc(1rem / 1.5);
     border: none;
     box-shadow: var(--small-shadow);
 }

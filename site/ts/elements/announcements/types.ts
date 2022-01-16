@@ -1,17 +1,19 @@
+import { Missing } from "../../missing"
+
 export type Announcements = {
-    notices: Announcement[]
+    notices: Announcement[] | Missing
 }
 
 export type Announcement = {
-    title: string,
-    content: string,
-    years: string[],
-    relativeWeight: number,
-    isMeeting: number,
-    meetingDate: string | null,
+    title: string | Missing,
+    content: string | Missing,
+    years: string[] | Missing,
+    relativeWeight: number | Missing,
+    isMeeting: number | Missing,
+    meetingDate: string | Missing,
     //TODO Check all possible types
-    meetingTimeParsed: string | undefined,
-    meetingTime: string,
-    displayYears: string,
-    authorName: string
+    meetingTimeParsed: string | Missing,
+    meetingTime: string | Missing,
+    displayYears: string | Missing,
+    authorName: string | Missing
 }

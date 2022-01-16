@@ -1,15 +1,17 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { Timetable } from "./types";
+import { TimetablePeriod } from "./period";
+
+import { Timetable, Day, Period } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
 
-import "./timetable-row";
+import { Missing } from "../../missing";
 
-import { TimetablePeriod } from "./timetable-period";
-
+//@ts-ignore
+import textCss from "default/text.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
 //@ts-ignore
@@ -17,21 +19,21 @@ import timetableCss from "./timetable.css";
 
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [pageCss, timetableCss];
+    static styles = [textCss, pageCss, timetableCss];
 
     @state()
     timetable: Timetable;
 
     set dailyTimetable(value: DailyTimetable) {
-        this._day = value.timetable.timetable.dayname;
+        let day = value.timetable?.timetable?.dayname;
+
+        if (day !== undefined && day !== null) {
+            this._day = day.slice(0, 3).toUpperCase() + " " + day.slice(-1).toUpperCase();
+        }
     }
 
     @state()
-    private _day: string;
-
-    ClearHighlight() {
-        TimetablePeriod.highlight("");
-    }
+    private _day: string | undefined;
 
     constructor() {
         super();
@@ -39,8 +41,85 @@ export class FullTimetable extends Page {
         this.AddResource("timetable", "timetable");
         this.AddResource("dailytimetable", "dailyTimetable");
 
-        this.addEventListener("pointerover", e => e.stopPropagation());
         document.addEventListener("pointerover", this.ClearHighlight);
+    }
+
+    SetHighlight(event: Event) {
+        TimetablePeriod.Highlight((event.target as TimetablePeriod).name);
+        event.stopPropagation();
+    }
+
+    ClearHighlight(event: PointerEvent) {
+        TimetablePeriod.Highlight(undefined);
+        event.stopPropagation();
+    }
+
+    CreateTable(dayGroup: Day[]): TemplateResult<1> {
+        let dayNames: string[] = [];
+        let periodRows: Period[][] = [];
+
+        for (let day of dayGroup) {
+            let dayName = day.dayname ?? "???";
+
+            dayNames.push(dayName);
+
+            let periods = day.periods ?? {};
+            let periodIndices = Object.keys(periods);
+
+            for (let i = 0; i < periodIndices.length; i++) {
+                let period = periods[periodIndices[i]];
+
+                if (period === undefined || period === null) continue;
+
+                if (i >= periodRows.length)
+                    periodRows.push([period]);
+                else
+                    periodRows[i].push(period);
+            }
+        }
+
+        return html`
+        <table>
+            <thead>
+                <tr>
+                    <th></th>
+                    ${dayNames.map(fullDayName => {
+                        let parts = fullDayName.split(" ");
+
+                        let dayName: string = `${parts.shift()?.substring(0, 3).toUpperCase() ?? "???"} ${parts.map(part => part.toUpperCase()).join(" ")}`;
+
+                        return html`
+                        <th class="${dayName == this._day ? "current-day" : ""}">${dayName}</th>
+                        `;
+                    })}
+                </tr>
+            </thead>
+            <tbody>
+                ${periodRows.map(periodRow => html`
+                <tr>
+                    ${periodRow.map(period => {
+                        let title = period.title ?? "???";
+
+                        return html`
+                        <td>
+                            <timetable-period name="${title}" room="${period.room ?? "???"}"></timetable-period>
+                        </td>
+                        `;
+                    })}
+                </tr>
+                `)}
+            </tbody>
+        </table>
+        `;
+    }
+
+    createRenderRoot() {
+        let root = super.createRenderRoot();
+
+        root.addEventListener("pointerover", this.SetHighlight);
+        root.addEventListener("focusin", this.SetHighlight);
+
+        return root;
     }
 
     disconnectedCallback() {
@@ -49,34 +128,26 @@ export class FullTimetable extends Page {
         document.removeEventListener("pointerover", this.ClearHighlight);
     }
 
-    renderPage() {        
-        this._day = this._day.slice(0, 3).toUpperCase() + " " + this._day.slice(-1);
+    renderPage() {
+        let days = this.timetable.days ?? {};
+        let dayNames = Object.keys(days);
 
-        return html`
-            <timetable-row week="A"
-                           .day1="${this.timetable.days["1"]}"
-                           .day2="${this.timetable.days["2"]}"
-                           .day3="${this.timetable.days["3"]}"
-                           .day4="${this.timetable.days["4"]}"
-                           .day5="${this.timetable.days["5"]}"
-                           day="${this._day}">
-            </timetable-row>
-            <timetable-row week="B"
-                           .day1="${this.timetable.days["6"]}"
-                           .day2="${this.timetable.days["7"]}"
-                           .day3="${this.timetable.days["8"]}"
-                           .day4="${this.timetable.days["9"]}"
-                           .day5="${this.timetable.days["10"]}"
-                           day="${this._day}">
-            </timetable-row>
-            <timetable-row week="C"
-                           .day1="${this.timetable.days["11"]}"
-                           .day2="${this.timetable.days["12"]}"
-                           .day3="${this.timetable.days["13"]}"
-                           .day4="${this.timetable.days["14"]}"
-                           .day5="${this.timetable.days["15"]}"
-                           day="${this._day}">
-            </timetable-row>
-        `;
+        let rows: TemplateResult<1>[] = [];
+        let dayGroup: Day[] = [];
+        for (let i = 0; i < dayNames.length; i++) {
+            if (i % 5 == 0) {
+                if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup));
+
+                dayGroup = [];
+            }
+
+            let day = days[dayNames[i]];
+
+            if (day !== undefined && day !== null) dayGroup.push(day);
+        }
+
+        if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup));
+
+        return html`${rows}`;
     }
 }

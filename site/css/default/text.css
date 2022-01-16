@@ -1,14 +1,16 @@
+:root {
+    font-size: var(--font-size);
+}
+
 :where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
-
-    /*mix-blend-mode: difference;*/
 }
 
 :where(*) {
     font-weight: 400;
     color: var(--text1);
     cursor: default;
-    font-size: var(--font-size);
+    font-size: inherit;
 
     user-select: var(--user-select, none);
     -ms-user-select: var(--user-select, none);
@@ -17,23 +19,27 @@
 }
 
 :where(h1) {
-    font-size: calc(var(--font-size) * 1.6);
+    font-size: 2rem;
 }
 
 :where(h2) {
-    font-size: calc(var(--font-size) * 1.5);
+    font-size: 1.5rem;
 }
 
 :where(h3) {
-    font-size: calc(var(--font-size) * 1.4);
+    font-size: 1.4rem;
 }
 
 :where(h4) {
-    font-size: calc(var(--font-size) * 1.3);
+    font-size: 1.3rem;
 }
 
 :where(h5) {
-    font-size: calc(var(--font-size) * 1.2);
+    font-size: 1.2rem;
+}
+
+:where(h6) {
+    font-size: 1.1rem;
 }
 
 :where(b, strong) {

@@ -1,8 +1,7 @@
 :host {
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    
+
     width: 100%;
 
     padding: 0.5rem;
@@ -13,8 +12,8 @@
     background-color: var(--surface3);
 }
 
-.info {
-    font-size: 0.6rem;
+p {
+    color: var(--text3);
 }
 
 .changed {

@@ -1,8 +1,7 @@
 import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
 
-import { Extensions, Extension } from "../../site/extensions";
+import { Extensions, Extension, GetExtensionNavIconURL } from "../../site/extensions";
 
 import "./navitem";
 import { NavItem } from "./navitem";
@@ -53,29 +52,11 @@ export class Navbar extends LitElement {
     @query("#items-container", true)
     itemsContainer: HTMLDivElement;
 
-    @query("#top-shadow", true)
-    topShadow: HTMLDivElement;
-
-    @query("#bottom-shadow", true)
-    bottomShadow: HTMLDivElement;
-
-    @query("#left-shadow", true)
-    leftShadow: HTMLDivElement;
-
-    @query("#right-shadow", true)
-    rightShadow: HTMLDivElement;
-
     pages: string[] = [];
     icons: string[] = [];
     order: number[] = [];
 
     draggedNavItemIndex: number = 0;
-
-    constructor() {
-        super();
-
-        matchMedia("(max-aspect-ratio: 1/1)").onchange = this.ShowShadows.bind(this);
-    }
 
     static GetNavbarOrder(): number[] {
         return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
@@ -139,41 +120,6 @@ export class Navbar extends LitElement {
         `;
     }).bind(this);
 
-    ShowShadows(): void {
-        //This function can be called before the element is fully initialised.
-        //This stops it from running if that happens.
-        if (!this.shadowRoot) return;
-
-        if (window.innerWidth <= window.innerHeight) {
-            this.topShadow.style.display = "none";
-            this.bottomShadow.style.display = "none";
-
-            if (this.itemsContainer.scrollLeft == 0)
-                this.leftShadow.style.display = "none";
-            else
-                this.leftShadow.style.removeProperty("display");
-
-            if (this.itemsContainer.scrollLeft >= this.itemsContainer.scrollWidth - this.itemsContainer.clientWidth - 1)
-                this.rightShadow.style.display = "none";
-            else
-                this.rightShadow.style.removeProperty("display");
-        }
-        else {
-            this.leftShadow.style.display = "none";
-            this.rightShadow.style.display = "none";
-
-            if (this.itemsContainer.scrollTop == 0)
-                this.topShadow.style.display = "none";
-            else
-                this.topShadow.style.removeProperty("display");
-
-            if (this.itemsContainer.scrollTop >= this.itemsContainer.scrollHeight - this.itemsContainer.clientHeight - 1)
-                this.bottomShadow.style.display = "none";
-            else
-                this.bottomShadow.style.removeProperty("display");
-        }
-    }
-
     createRenderRoot() {
         let root = super.createRenderRoot();
 
@@ -186,10 +132,6 @@ export class Navbar extends LitElement {
         });
 
         return root;
-    }
-
-    firstUpdated() {
-        this.itemsContainer.addEventListener("scroll", this.ShowShadows.bind(this));
     }
 
     updated() {
@@ -205,21 +147,12 @@ export class Navbar extends LitElement {
 
         for (var key of extensions.keys()) {
             this.pages.push(key);
-            this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
+            this.icons.push(GetExtensionNavIconURL(extensions.get(key) as Extension));
         }
-
-        let mobile = window.innerWidth <= window.innerHeight;
-        let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-        let scrollable = this.order.length * 12 * vmin > window.innerHeight;
 
         return html`
         <div id="items-container">
-            ${repeat(this.order, this.GetNavItem)}
-        
-            <div id="top-shadow" style="display: none"></div>
-            <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
-            <div id="left-shadow" style="display: none"></div>
-            <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
+            ${this.order.map(this.GetNavItem)}
         </div>
         `;
     }

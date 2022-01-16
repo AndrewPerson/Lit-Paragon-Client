@@ -7,7 +7,7 @@ import infoCss from "./info.css";
 import imgCss from "default/img.css";
 
 //@ts-ignore
-import infoSvg from "info.svg";
+import infoSvg from "images/info.svg";
 
 @customElement("info-popup")
 export class Info extends LitElement {

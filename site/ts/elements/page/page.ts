@@ -24,7 +24,7 @@ export class Page extends LitElement {
         let received = false;
         let completed = false;
 
-        Resources.GetResource(resourceName, (resource: any) => {
+        Resources.GetResource(resourceName, resource => {
             if (!received) {
                 this._unreceivedResources--;
                 received = true;
@@ -50,7 +50,7 @@ export class Page extends LitElement {
         if (this._state == PageState.Waiting) return nothing;
         if (this._state == PageState.Loading) {
             return html`
-            <loading-indicator style="width: 80vmin; height: 100%; margin: auto;"></loading-indicator>
+            <loading-indicator style="width: 30.8rem; height: 100%; margin: auto;"></loading-indicator>
             <style>
                 :host {
                     display: flex;
