@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { Resources } from "../../site/resources";
@@ -63,10 +63,14 @@ export class SchoolAnnouncements extends Page {
         }
 
         this._dailyTimetable = value;
+        this._dailyTimetableChanged = true;
     }
 
     @state()
     private _dailyTimetable: DailyTimetable;
+
+    private _dailyTimetableChanged: boolean = false;
+    private _savedPeriodsHtml: TemplateResult<1>[] = [];
 
     static UpdateData() {
         if (this.updatingData) return;
@@ -234,7 +238,21 @@ export class SchoolAnnouncements extends Page {
         let roomVariations = (Array.isArray(this._dailyTimetable.roomVariations) ? {} : this._dailyTimetable.roomVariations) ?? {};
         let classVariations = (Array.isArray(this._dailyTimetable.classVariations) ? {} : this._dailyTimetable.classVariations) ?? {};
 
-        return html`
+        let periodsHtml = this._dailyTimetableChanged ? bells.map(bell => {
+            if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
+                let period = periods[bell.period];
+
+                //Check if the bell is a roll call
+                if (period !== undefined && period !== null && "fullTeacher" in period && "year" in period)
+                    return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
+                else
+                    return this.GetBell(bell);
+            }
+            else
+                return this.GetBell(bell);
+        }) : this._savedPeriodsHtml;
+
+        let result = html`
             <div class="next-display">
                 <p>${nextClassName}</p>
                 <p>${timeDisplay.preposition}</p>
@@ -246,20 +264,12 @@ export class SchoolAnnouncements extends Page {
             </div>
 
             <div class="periods">
-                ${bells.map(bell => {
-                    if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
-                        let period = periods[bell.period];
-
-                        //Check if the bell is a roll call
-                        if (period !== undefined && period !== null && "fullTeacher" in period && "year" in period)
-                            return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
-                        else
-                            return this.GetBell(bell);
-                    }
-                    else
-                        return this.GetBell(bell);
-                })}
+                ${periodsHtml}
             </div>
         `;
+
+        this._dailyTimetableChanged = false;
+        this._savedPeriodsHtml = periodsHtml;
+        return result;
     }
 }
