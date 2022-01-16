@@ -64,7 +64,7 @@
                 "CLIENT_ID": "Paragon_Tools"
             }
         },
-        "rewrite-main": {
+        "rewrite-main-preview": {
             "constants": [
 
             ],
