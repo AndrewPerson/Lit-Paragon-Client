@@ -34,11 +34,14 @@ html.dark {
     --text2: hsl(var(--main-hue) 90% 60%);
     --text3: hsl(var(--main-hue) 10% 50%);
     --text4: hsl(var(--main-hue) 30% 95%);
+
     --surface1: hsl(var(--main-hue) 30% 20%);
     --surface2: hsl(var(--main-hue) 40% 20%);
-    --surface3: hsl(var(--main-hue) 20% 18%);
+    --surface3: hsl(var(--main-hue) 40% 23%);
     --surface4: hsl(var(--main-hue) 50% 30%);
+
     --shadow-colour: hsl(var(--main-hue) 10% 10%);
+    
     --img-invert: 100%;
 }
 

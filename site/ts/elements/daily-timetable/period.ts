@@ -19,14 +19,20 @@ export class Bell extends LitElement {
     @property()
     teacher: string;
 
+    @property({ type: Boolean })
+    teacherChanged: boolean;
+
     @property()
     room: string;
+
+    @property({ type: Boolean })
+    roomChanged: boolean;
 
     render() {
         return html`
             <div>
                 <p>${this.title}</p>
-                <p class="info">at ${this.time} with ${this.teacher}</p>
+                <p class="info">at <span class="${this.roomChanged ? "changed" : ""}">${this.room}</span> with <span class="${this.teacherChanged ? "changed" : ""}">${this.teacher}</span></p>
             </div>
 
             <p>${this.time}</p>

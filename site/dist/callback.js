@@ -7,7 +7,11 @@ var Te=Object.defineProperty;var Ne=Object.getOwnPropertyDescriptor;var y=(n,e,t
     -moz-user-select: none;
     -webkit-user-select: none;
 }
-`;var ke=b`:where(h1, h2, h3, h4, h5, h6, p) {
+`;var ke=b`:root {
+    font-size: var(--font-size);
+}
+
+:where(h1, h2, h3, h4, h5, h6, p) {
     margin: 0;
 }
 
@@ -15,7 +19,7 @@ var Te=Object.defineProperty;var Ne=Object.getOwnPropertyDescriptor;var y=(n,e,t
     font-weight: 400;
     color: var(--text1);
     cursor: default;
-    font-size: var(--font-size);
+    font-size: inherit;
 
     user-select: var(--user-select, none);
     -ms-user-select: var(--user-select, none);

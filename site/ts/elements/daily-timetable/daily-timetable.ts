@@ -89,6 +89,9 @@ export class SchoolAnnouncements extends Page {
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
+        let teacherChanged = classVariation !== undefined && classVariation !== null && classVariation.type != TeacherType.NO_VARIATION;
+        let roomChanged = roomVariation !== undefined && roomVariation !== null;
+
         return html`
         <daily-timetable-period title="${this.GetPeriodTitle(period.year ?? "?", period.title ?? "???")}"
                                 time="${bell.time ?? "??:??"}"
@@ -96,7 +99,9 @@ export class SchoolAnnouncements extends Page {
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_COVER ? "No one" :
                                            classVariation.casualSurname ?? this.FormatTeacherCode(classVariation.casual ?? "????")}"
-                                room="${roomVariation?.roomTo ?? period.room ?? "???"}"></daily-timetable-period>
+                                ?teacherChanged="${teacherChanged}"
+                                room="${roomVariation?.roomTo ?? period.room ?? "???"}"
+                                ?roomChanged="${roomChanged}"></daily-timetable-period>
         `;
     }
 

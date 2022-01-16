@@ -39,7 +39,3 @@
 
     width: 80%;
 }
-
-.periods > :hover {
-    background-color: hsl(var(--main-hue), 100%, 96%);
-}

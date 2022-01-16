@@ -9,6 +9,14 @@
     border-radius: 0.5rem;
 }
 
+:host(:hover) {
+    background-color: var(--surface3);
+}
+
 .info {
     font-size: 0.6rem;
+}
+
+.changed {
+    color: var(--text2);
 }

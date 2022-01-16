@@ -8,6 +8,14 @@
     border-radius: 0.5rem;
 }
 
+:host(:hover) {
+    background-color: var(--surface3);
+}
+
 p {
     color: var(--text3);
+}
+
+.changed {
+    color: var(--text2);
 }
