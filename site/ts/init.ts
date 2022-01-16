@@ -2,8 +2,6 @@ declare const SERVER_ENDPOINT: string;
 declare const METADATA_CACHE: string;
 declare const REQUIRED_FEATURES: string[];
 
-import "./elements/notification/notification";
-
 window.addEventListener("error", async e => {
     if (e.error instanceof Error) {
         let cache = await caches.open(METADATA_CACHE);

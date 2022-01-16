@@ -5,7 +5,8 @@
         "ts/callback.ts",
         "ts/login.ts",
         "ts/unsupported.ts",
-        "ts/service-worker/service-worker.js"
+        "ts/service-worker/service-worker.js",
+        "ts/elements/notification/notification.ts"
     ],
     "metadata": {
         "version": "Development",
