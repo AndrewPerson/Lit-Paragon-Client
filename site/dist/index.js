@@ -656,7 +656,8 @@ p {
     width: 60vw;
     max-width: 60vh;
     min-width: 300px;
-    height: 80%;
+    height: fit-content;
+    min-height: 80%;
 }
 
 @media (max-width: 300px) {
@@ -1036,6 +1037,12 @@ info-popup {
         <p>Sidebar</p>
 
         <button @click="${this.ToggleEditNavbar}">Edit</button>
+
+        <span></span>
+
+        <p>Errors</p>
+
+        <button @click="${()=>{throw new Error("Test Error")}}">Create Error</button>
         `}};re.styles=[w,S,we,Mt,ye,R,Rt],a([_("#hue",!0)],re.prototype,"hueInput",2),a([C()],re.prototype,"version",2),re=a([v("user-settings")],re);var Pt=h`:host {
     position: relative;
     display: flex;

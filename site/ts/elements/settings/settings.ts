@@ -95,6 +95,12 @@ export class Settings extends LitElement {
         <p>Sidebar</p>
 
         <button @click="${this.ToggleEditNavbar}">Edit</button>
+
+        <span></span>
+
+        <p>Errors</p>
+
+        <button @click="${() => { throw new Error("Test Error") }}">Create Error</button>
         `;
     }
 }
