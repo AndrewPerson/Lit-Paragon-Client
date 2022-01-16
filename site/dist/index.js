@@ -887,9 +887,11 @@ img {
         `}};ce.styles=[w,be,R,Q,Tt],a([C()],ce.prototype,"extensions",2),ce=a([v("extensions-marketplace")],ce);var At=h`:host {
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     gap: 0.6rem;
+
+    max-width: var(--max-width, unset);
 
     background-color: var(--surface2);
     padding: 0.6rem;
