@@ -36,9 +36,9 @@ html.dark {
     --text4: hsl(var(--main-hue) 30% 95%);
 
     --surface1: hsl(var(--main-hue) 30% 20%);
-    --surface2: hsl(var(--main-hue) 40% 20%);
-    --surface3: hsl(var(--main-hue) 40% 23%);
-    --surface4: hsl(var(--main-hue) 50% 30%);
+    --surface2: hsl(var(--main-hue) 50% 15%);
+    --surface3: hsl(var(--main-hue) 40% 18%);
+    --surface4: hsl(var(--main-hue) 40% 25%);
 
     --shadow-colour: hsl(var(--main-hue) 10% 10%);
     
