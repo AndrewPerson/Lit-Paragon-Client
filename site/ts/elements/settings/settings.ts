@@ -45,7 +45,7 @@ export class Settings extends LitElement {
 
         await Promise.all(keys.map(key => caches.delete(key)));
 
-        //location.reload();
+        location.reload();
     }
 
     LogOut() {

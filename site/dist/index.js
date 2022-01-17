@@ -1017,7 +1017,7 @@ info-popup {
     --max-width: 30vmax;
     --offset: 2.6rem;
     z-index: 2;
-}`;var re=class extends b{constructor(){super();this.version="0.0.0";g.GetVersion().then(e=>this.version=e)}async Patch(){localStorage.clear(),sessionStorage.clear();let e=await caches.keys();await Promise.all(e.map(t=>caches.delete(t)))}LogOut(){location.href=ue}ResetColour(){this.hueInput.value="200",g.SetHue("200"),g.SaveHue()}ToggleDark(e){let t=e.target;g.SetDark(t.checked),this.requestUpdate()}ToggleEditNavbar(){let e=document.querySelector("nav-bar");e&&e.toggleAttribute("editing")}render(){return m`
+}`;var re=class extends b{constructor(){super();this.version="0.0.0";g.GetVersion().then(e=>this.version=e)}async Patch(){localStorage.clear(),sessionStorage.clear();let e=await caches.keys();await Promise.all(e.map(t=>caches.delete(t))),location.reload()}LogOut(){location.href=ue}ResetColour(){this.hueInput.value="200",g.SetHue("200"),g.SaveHue()}ToggleDark(e){let t=e.target;g.SetDark(t.checked),this.requestUpdate()}ToggleEditNavbar(){let e=document.querySelector("nav-bar");e&&e.toggleAttribute("editing")}render(){return m`
         <info-popup>
             Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
             <br>
