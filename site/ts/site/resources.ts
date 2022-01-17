@@ -21,6 +21,9 @@ export type Token = {
 
 export class Resources {
     private static _resourceCallbacks: Map<string, Callbacks<any>> = new Map();
+    private static _fetchCallbacks: Callbacks<boolean> = new Callbacks();
+
+    private static _fetching: boolean = false;
 
     static ShowLoginNotification() {
         let content = document.createElement("p");
@@ -104,8 +107,10 @@ export class Resources {
     }
 
     static async FetchResources(): Promise<boolean> {
-        let { valid, token } = await this.GetToken();
+        if (this._fetching) return new Promise(resolve => this._fetchCallbacks.AddListener(resolve));
+        this._fetching = true;
 
+        let { valid, token } = await this.GetToken();
         if (!valid) return false;
 
         let resourceNotification = this.ShowResourceNotification();
@@ -119,6 +124,10 @@ export class Resources {
         if (!resourceResponse.ok) {
             resourceNotification.Close();
             this.ShowLoginNotification();
+
+            this._fetchCallbacks.Invoke(false);
+            this._fetching = false;
+
             return false;
         }
 
@@ -136,6 +145,10 @@ export class Resources {
         }));
 
         resourceNotification.Close();
+
+        this._fetchCallbacks.Invoke(true);
+        this._fetching = false;
+
         return true;
     }
 }
