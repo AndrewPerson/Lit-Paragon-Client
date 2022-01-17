@@ -9,6 +9,8 @@ type PeriodicSyncEvent = {
     tag: string
 } & ExtendableMessageEvent;
 
+importScripts("./assets.js");
+
 self.addEventListener("install", e => e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", e => e.respondWith(Fetch(e)));
@@ -64,17 +66,26 @@ async function Fetch(e: FetchEvent) {
         {
             let response = await fetch(request);
 
-            if (!UPDATING) {
-                let cachedResponse = response.clone();
+            if (url.origin == location.origin) {
+                if (response.ok) {
+                    if (!UPDATING) {
+                        let cachedResponse = response.clone();
 
-                if (self.assets.includes(cachedResponse.url.replace(location.origin, ""))) {
-                    cache.keys().then(keys => {
-                        if (!keys.find(key => key.url == cachedResponse.url))
-                            cache.put(cachedResponse.url, cachedResponse);
-                    });
+                        if (self.assets.includes(cachedResponse.url.replace(location.origin, ""))) {
+                            cache.keys().then(keys => {
+                                if (!keys.find(key => key.url == cachedResponse.url))
+                                    cache.put(cachedResponse.url, cachedResponse);
+                            });
+                        }
+                    }
+                }
+                else {
+                    if (response.status == 404) {
+                        return (await cache.match("/404")) ?? response;
+                    }
                 }
             }
-
+            
             return response;
         }
     }

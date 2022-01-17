@@ -7,7 +7,7 @@ const config = require("./build.json");
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile } from "fs/promises";
+import { writeFile, readFile, readdir } from "fs/promises";
 
 import { exec } from "child_process";
 
@@ -57,110 +57,140 @@ function merge() {
     return target;
 }
 
-const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
-                         `${process.env.CF_PAGES_BRANCH}-branch` in config.env ? `${process.env.CF_PAGES_BRANCH}-branch` :
-                         process.argv[2] ?? "default";
+async function walk(dir) {
+    let files = await readdir(dir, { withFileTypes: true });
 
+    let result = [];
 
-const specifiedEnv = config.env[specifiedEnvName] || {};
-const sharedEnv = config.env["shared"] || {};
+    for (let file of files) {
+        if (file.isDirectory()) {
+            result.push(...await walk(path.join(dir, file.name)));
+        }
+        else {
+            result.push(path.resolve(dir, file.name));
+        }
+    }
 
-//Order matters here so values specified in the specified env override those in the sharedEnv
-const env = merge(sharedEnv, specifiedEnv);
+    return result;
+}
 
-const dirname = path.dirname(fileURLToPath(import.meta.url));
+Main()
+async function Main() {
+    const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
+                             `${process.env.CF_PAGES_BRANCH}-branch` in config.env ? `${process.env.CF_PAGES_BRANCH}-branch` :
+                             process.argv[2] ?? "default";
 
-writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
+    const specifiedEnv = config.env[specifiedEnvName] || {};
+    const sharedEnv = config.env["shared"] || {};
 
-let tsPromise = new Promise(res => {
-    exec("npx tsc --noEmit", (err, stdout, stderr) => {
-        console.log(stdout);
-        console.log(stderr);
-        console.log(err || "");
-        res();
+    //Order matters here so values specified in the specified env override those in the sharedEnv
+    const env = merge(sharedEnv, specifiedEnv);
+
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
+
+    let tsPromise = new Promise(res => {
+        exec("npx tsc --noEmit", (err, stdout, stderr) => {
+            console.log(stdout);
+            console.log(stderr);
+            console.log(err || "");
+            res();
+        });
     });
-});
 
-let buildPromise = build({
-    entryPoints: config.files.map(file => `site/${file}`),
-    outdir: "site/dist",
-    bundle: true,
-    minify: true,
-    //splitting: true,
-    treeShaking: true,
-    format: "esm",
-    target: "es2020",
-    define: transformVars(env.vars),
-    plugins: [
-        clear("./site/dist"),
-        {
-            name: "css-redirect",
-            setup(build) {
-                build.onResolve({ filter: /^default\/.*\.css$/, namespace: "file" }, args => {
-                    return {
-                        path: path.resolve(dirname, "site/css", args.path)
-                    };
-                });
-            }
-        },
-        {
-            name: "svg-redirect",
-            setup(build) {
-                build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
-                    return {
-                        path: path.resolve(dirname, "site", args.path)
-                    };
-                });
-            }
-        },
-        conditionalBuild(env.constants),
-        {
-            name: "lit-svg",
-            setup(build) {        
-                build.onLoad({ filter: /\.svg$/ }, async args => {
-                    let contents = await readFile(args.path, "utf8");
+    let buildPromise = build({
+        entryPoints: config.files.map(file => `site/${file}`),
+        outdir: "site/dist",
+        bundle: true,
+        minify: true,
+        //splitting: true,
+        treeShaking: true,
+        format: "esm",
+        target: "es2020",
+        define: transformVars(env.vars),
+        plugins: [
+            clear("./site/dist"),
+            {
+                name: "css-redirect",
+                setup(build) {
+                    build.onResolve({ filter: /^default\/.*\.css$/, namespace: "file" }, args => {
+                        return {
+                            path: path.resolve(dirname, "site/css", args.path)
+                        };
+                    });
+                }
+            },
+            {
+                name: "svg-redirect",
+                setup(build) {
+                    build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
+                        return {
+                            path: path.resolve(dirname, "site", args.path)
+                        };
+                    });
+                }
+            },
+            conditionalBuild(env.constants),
+            {
+                name: "lit-svg",
+                setup(build) {        
+                    build.onLoad({ filter: /\.svg$/ }, async args => {
+                        let contents = await readFile(args.path, "utf8");
 
-                    contents = optimize(contents, {
-                        path: args.path,
-                        floatPrecision: 1,
-                        plugins: [
-                            {
-                                name: "preset-default",
-                                params: {
-                                    overrides: {
-                                        removeViewBox: false
+                        contents = optimize(contents, {
+                            path: args.path,
+                            floatPrecision: 1,
+                            plugins: [
+                                {
+                                    name: "preset-default",
+                                    params: {
+                                        overrides: {
+                                            removeViewBox: false
+                                        }
                                     }
                                 }
-                            }
-                        ]
-                    }).data;
+                            ]
+                        }).data;
+            
+                        return {
+                            loader: "js",
+                            contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
+                        };
+                    });
+                }
+            },
+            {
+                name: "lit-css",
+                setup(build) {
+                    build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
+                        let textContent = await readFile(args.path, "utf8");
+
+                        return {
+                            loader: "js",
+                            contents: `import {css} from "lit"; export default css\`${textContent}\`;`
+                        }
+                    });
+                }
+            }
+        ]
+    })
+    .catch(() => {
+        process.exit(1);
+    });
+
+    await Promise.all([tsPromise, buildPromise]);
+
+    let files = (await walk(path.resolve(dirname, "site"))).filter(file => {
+        return !file.startsWith(path.resolve(dirname, "site/ts"));
+    }).map(file => {
+        file = file.replace(".html", "");
         
-                    return {
-                        loader: "js",
-                        contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
-                    };
-                });
-            }
-        },
-        {
-            name: "lit-css",
-            setup(build) {
-                build.onLoad({ filter: /\.css$/, namespace: "file" }, async args => {
-                    let textContent = await readFile(args.path, "utf8");
+        return `"/${path.relative(path.resolve(dirname, "site"), file)}"`
+    }).join(",");
+    files = `self.assets=["/",${files}];`;
 
-                    return {
-                        loader: "js",
-                        contents: `import {css} from "lit"; export default css\`${textContent}\`;`
-                    }
-                });
-            }
-        }
-    ]
-})
-.catch(() => {
-    process.exit(1);
-});
+    await writeFile(path.resolve(dirname, "site/dist/service-worker/assets.js"), files);
 
-Promise.all([tsPromise, buildPromise]).then(() => {
     console.log(`Time taken: ${(new Date() - start) / 1000}s`);
-});
+}
