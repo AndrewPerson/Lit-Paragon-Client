@@ -60,6 +60,8 @@ async function Fetch(e: FetchEvent) {
 
         let cache = await caches.open(FILE_CACHE);
 
+        console.log(url.origin + url.pathname);
+
         let cachedResource = await cache.match(url.origin + url.pathname);
         if (cachedResource) return cachedResource;
         else
@@ -81,7 +83,7 @@ async function Fetch(e: FetchEvent) {
                 }
                 else {
                     if (response.status == 404) {
-                        return (await cache.match("/404")) ?? response;
+                        return (await cache.match(location.origin + "/404")) ?? response;
                     }
                 }
             }
@@ -114,7 +116,7 @@ async function GetLatestMetadata() {
 
 async function MetadataFetch() {
     let metadataCache = await caches.open(METADATA_CACHE);
-    let currentMetadataResponse = await metadataCache.match("Metadata");
+    let currentMetadataResponse = await metadataCache.match(location.origin + "/Metadata");
 
     let currentMetadata = null;
 
@@ -125,14 +127,13 @@ async function MetadataFetch() {
     if (currentMetadata == null || currentMetadata.version != latestMetadata.version)
         await Update();
 
-    await metadataCache.put("Metadata", new Response(JSON.stringify(latestMetadata)));
-    await metadataCache.put("Last Fetched", new Response(new Date().toISOString()));
+    await metadataCache.put(location.origin + "/Metadata", new Response(JSON.stringify(latestMetadata)));
 }
 
 async function DataFetch() {
     let resourceCache = await caches.open(RESOURCE_CACHE);
 
-    let tokenResponse = await resourceCache.match("Token");
+    let tokenResponse = await resourceCache.match(location.origin + "/Token");
     if (!tokenResponse) return;
     
     let token = await tokenResponse.text();
@@ -141,13 +142,11 @@ async function DataFetch() {
     
     let resources = await resourceResponse.json();
 
-    await resourceCache.put("Last Updated", new Response(new Date().toISOString()));
-
-    await resourceCache.put("Token", new Response(JSON.stringify(resources.token)));
+    await resourceCache.put(location.origin + "/Token", new Response(JSON.stringify(resources.token)));
 
     let promises = [];
     for (let resource in resources.result) {
-        promises.push(resourceCache.put(resource, new Response(JSON.stringify(resources.result[resource]))));
+        promises.push(resourceCache.put(location.origin + "/" + resource, new Response(JSON.stringify(resources.result[resource]))));
     }
 
     await Promise.all(promises);
