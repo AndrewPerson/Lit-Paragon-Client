@@ -29,6 +29,11 @@ export class Resources {
         Site.ShowNotification(content);
     }
 
+
+    static ShowResourceNotification() {
+        return Site.ShowNotification("Updating resources...", true);
+    }
+
     static async GetToken(): Promise<{valid: boolean, token: Token | null}> {
         let cache = await caches.open(RESOURCE_CACHE);
         let tokenResponse = await cache.match("Token");
@@ -103,6 +108,8 @@ export class Resources {
 
         if (!valid) return false;
 
+        let resourceNotification = this.ShowResourceNotification();
+
         let serverUrl = new URL(SERVER_ENDPOINT + "/resources");
         serverUrl.searchParams.append("token", JSON.stringify(token));
 
@@ -110,6 +117,7 @@ export class Resources {
 
         //TODO Add more granular error handling
         if (!resourceResponse.ok) {
+            resourceNotification.Close();
             this.ShowLoginNotification();
             return false;
         }
@@ -127,6 +135,7 @@ export class Resources {
             };
         }));
 
+        resourceNotification.Close();
         return true;
     }
 }

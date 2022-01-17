@@ -1,8 +1,6 @@
 import { html, LitElement } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
-import { Site } from "../../site/site";
-
 import { LoadingIndicator } from "../loader/loader";
 import "../loader/loader";
 

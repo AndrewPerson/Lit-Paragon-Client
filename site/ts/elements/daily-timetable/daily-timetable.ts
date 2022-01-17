@@ -22,7 +22,7 @@ import pageCss from "default/pages/page.css";
 import dailyTimetableCss from "./daily-timetable.css";
 
 @customElement("daily-timetable")
-export class SchoolAnnouncements extends Page {
+export class StudentDailyTimetable extends Page {
     static styles = [textCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
@@ -219,7 +219,7 @@ export class SchoolAnnouncements extends Page {
         let nextBell = this.NextBell();
 
         if (nextBell === undefined) {
-            this.UpdateData();
+            StudentDailyTimetable.UpdateData();
         }
 
         let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBell?.bell ?? ""];

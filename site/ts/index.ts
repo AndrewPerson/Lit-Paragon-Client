@@ -44,21 +44,20 @@ async function Main() {
 
     //This is to stop people who refresh a lot from spamming the server with requests.
     //Session Storage is persisted through reloads, but is cleared once the tab is closed.
-    let lastReloadedText = sessionStorage.getItem("Last Reloaded");
-
-    let resourceNotification = ShowResourceNotification();
+    let lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
     if (lastReloadedText) {
         let lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
-            //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
-            Resources.FetchResources().then(resourceNotification.Close);
+            Resources.FetchResources();
             sessionStorage.setItem("Last Refreshed", new Date().toISOString());
         }
     }
-    //We cannot simply pass in `resourceNotification.remove` as the callback because for some reason, it throws an error if we do that.
-    else Resources.FetchResources().then(resourceNotification.Close);
+    else {
+        Resources.FetchResources();
+        sessionStorage.setItem("Last Refreshed", new Date().toISOString());
+    }
 
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
@@ -118,8 +117,4 @@ function NavigateToHash(hash: string) {
         page: page,
         extension: extension
     });
-}
-
-function ShowResourceNotification() {
-    return Site.ShowNotification("Updating resources...", true);
 }
