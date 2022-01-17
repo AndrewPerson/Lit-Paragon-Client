@@ -16,7 +16,7 @@ self.addEventListener("fetch", e => e.respondWith(Fetch(e)));
 self.addEventListener("periodicsync", e => e.waitUntil(PeriodicSync(e)));
 self.addEventListener("message", e => e.waitUntil(Message(e)));
 
-declare const OFFLINE_CACHE: string;
+declare const FILE_CACHE: string;
 declare const METADATA_CACHE: string;
 declare const RESOURCE_CACHE: string;
 declare const EXTENSION_CACHE: string;
@@ -56,7 +56,7 @@ async function Fetch(e: FetchEvent) {
             }
         }
 
-        let cache = await caches.open(OFFLINE_CACHE);
+        let cache = await caches.open(FILE_CACHE);
 
         let cachedResource = await cache.match(url.origin + url.pathname);
         if (cachedResource) return cachedResource;
@@ -145,7 +145,7 @@ async function DataFetch() {
 async function Update() {
     UPDATING = true;
     
-    let fileCache = await caches.open(OFFLINE_CACHE);
+    let fileCache = await caches.open(FILE_CACHE);
 
     // Fetch and cache all matching items from the assets manifest
     let assetData = self.assets;
