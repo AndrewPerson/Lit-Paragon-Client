@@ -2,7 +2,7 @@ import { Site } from "./site";
 
 import { Callbacks, Callback } from "./callback";
 
-import loginUrl from "../login-url";
+import LOGIN_URL from "../login-url";
 
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
@@ -29,11 +29,10 @@ export class Resources {
 
     static ShowLoginNotification() {
         let content = document.createElement("p");
-        content.innerHTML = `You need to <a href="${loginUrl}">login</a> to see the latest information.`
+        content.innerHTML = `You need to <a href="${LOGIN_URL}">login</a> to see the latest information.`
 
         Site.ShowNotification(content);
     }
-
 
     static ShowResourceNotification() {
         return Site.ShowNotification("Updating resources...", true);

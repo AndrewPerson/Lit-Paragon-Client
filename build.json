@@ -40,8 +40,7 @@
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
-                "BACKGROUND_SYNC_INTERVAL": "2592000000",
-                "MAX_REFRESH_FREQUENCY": "60000"
+                "BACKGROUND_SYNC_INTERVAL": 2592000000
             }
         },
         "default": {
@@ -51,7 +50,8 @@
             "vars": {
                 "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
-                "CLIENT_ID": ""
+                "CLIENT_ID": "",
+                "MAX_REFRESH_FREQUENCY": 0
             }
         },
         "rewrite-preview": {
@@ -61,7 +61,8 @@
             "vars": {
                 "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
-                "CLIENT_ID": "Paragon_Tools"
+                "CLIENT_ID": "Paragon_Tools",
+                "MAX_REFRESH_FREQUENCY": 0
             }
         },
         "rewrite-main-preview": {
@@ -71,7 +72,8 @@
             "vars": {
                 "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata",
                 "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
-                "CLIENT_ID": "MyApp"
+                "CLIENT_ID": "MyApp",
+                "MAX_REFRESH_FREQUENCY": 60000
             }
         }
     }

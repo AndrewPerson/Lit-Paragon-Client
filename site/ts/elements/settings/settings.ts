@@ -2,6 +2,7 @@ import { LitElement, html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
+import LOGIN_URL from "../../login-url";
 
 import { Navbar } from "../navbar/navbar";
 
@@ -36,8 +37,19 @@ export class Settings extends LitElement {
         Site.GetVersion().then(version => this.version = version);
     }
 
-    Patch() {
-        //TODO Implement patching
+    async Patch() {
+        localStorage.clear();
+        sessionStorage.clear();
+        
+        let keys = await caches.keys();
+
+        await Promise.all(keys.map(key => caches.delete(key)));
+
+        //location.reload();
+    }
+
+    LogOut() {
+        location.href = LOGIN_URL;
     }
 
     ResetColour() {
@@ -73,6 +85,7 @@ export class Settings extends LitElement {
         <p id="version">Paragon v${this.version}</p>
 
         <button @click="${this.Patch}">Fix</button>
+        <button @click="${this.LogOut}">Log Out</button>
 
         <span></span>
         
@@ -95,12 +108,6 @@ export class Settings extends LitElement {
         <p>Sidebar</p>
 
         <button @click="${this.ToggleEditNavbar}">Edit</button>
-
-        <span></span>
-
-        <p>Errors</p>
-
-        <button @click="${() => { throw new Error("Test Error") }}">Create Error</button>
         `;
     }
 }
