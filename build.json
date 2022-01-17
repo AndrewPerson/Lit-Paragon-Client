@@ -40,6 +40,7 @@
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
+                "EXTENSION_CACHE": "Extension Resources",
                 "BACKGROUND_SYNC_INTERVAL": 2592000000
             }
         },
@@ -54,7 +55,7 @@
                 "MAX_REFRESH_FREQUENCY": 0
             }
         },
-        "rewrite-preview": {
+        "rewrite-branch": {
             "constants": [
                 "DEVELOPMENT"
             ],
@@ -65,7 +66,7 @@
                 "MAX_REFRESH_FREQUENCY": 0
             }
         },
-        "rewrite-main-preview": {
+        "rewrite-main-branch": {
             "constants": [
 
             ],
