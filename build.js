@@ -58,7 +58,7 @@ function merge() {
 }
 
 const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
-                         `${process.env.CF_PAGES_BRANCH}-preview` in config.env ? `${process.env.CF_PAGES_BRANCH}-preview` :
+                         `${process.env.CF_PAGES_BRANCH}-branch` in config.env ? `${process.env.CF_PAGES_BRANCH}-branch` :
                          process.argv[2] ?? "default";
 
 

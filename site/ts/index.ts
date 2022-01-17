@@ -46,7 +46,7 @@ async function Main() {
     //Session Storage is persisted through reloads, but is cleared once the tab is closed.
     let lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
-    if (lastReloadedText) {
+    if (lastReloadedText !== null) {
         let lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {

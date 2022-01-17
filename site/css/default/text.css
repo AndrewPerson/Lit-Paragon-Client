@@ -1,5 +1,13 @@
 :root {
     font-size: var(--font-size);
+    font-weight: 400;
+    color: var(--text1);
+    cursor: default;
+
+    user-select: none;
+    -ms-user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
 :where(h1, h2, h3, h4, h5, h6, p) {
@@ -7,15 +15,15 @@
 }
 
 :where(*) {
-    font-weight: 400;
-    color: var(--text1);
-    cursor: default;
     font-size: inherit;
+    font-weight: inherit;
+    color: inherit;
+    cursor: inherit;
 
-    user-select: var(--user-select, none);
-    -ms-user-select: var(--user-select, none);
-    -moz-user-select: var(--user-select, none);
-    -webkit-user-select: var(--user-select, none);
+    user-select: var(--user-select, inherit);
+    -ms-user-select: var(--user-select, inherit);
+    -moz-user-select: var(--user-select, inherit);
+    -webkit-user-select: var(--user-select, inherit);
 }
 
 :where(h1) {
