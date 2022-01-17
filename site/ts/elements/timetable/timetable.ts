@@ -8,8 +8,6 @@ import { TimetablePeriod } from "./period";
 import { Timetable, Day, Period } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
 
-import { Missing } from "../../missing";
-
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore

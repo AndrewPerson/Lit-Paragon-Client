@@ -19,7 +19,7 @@ window.addEventListener("error", async e => {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    error_name: e.error.name,
+                    error_message: e.error.message,
                     stack_trace: e.error.stack,
                     version: version,
                 })

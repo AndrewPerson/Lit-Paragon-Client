@@ -41,7 +41,7 @@
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
                 "BACKGROUND_SYNC_INTERVAL": "2592000000",
-                "MAX_REFRESH_FREQUENCY": "3600"
+                "MAX_REFRESH_FREQUENCY": "60000"
             }
         },
         "default": {

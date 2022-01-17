@@ -15,15 +15,15 @@ var Et=Object.defineProperty;var wt=Object.getOwnPropertyDescriptor;var D=(r,t,e
 
 button.indicator {
     --scale: 0.95;
+
+    all: unset;
 }
 
-loading-indicator {
+loading-indicator.indicator {
     --scale: 1.1;
 }
 
 .indicator {
-    all: unset;
-
     display: flex;
 
     width: calc(1rem * var(--scale));
