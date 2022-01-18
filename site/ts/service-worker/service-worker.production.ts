@@ -75,7 +75,7 @@ async function Fetch(e: FetchEvent) {
                         if (self.assets.includes(response.url.replace(location.origin, ""))) {
                             cache.keys().then(keys => {
                                 if (!keys.find(key => key.url == response.url))
-                                    cache.put(clonedResponse.url, clonedResponse);
+                                    cache.put(response.url, clonedResponse);
                             });
                         }
                     }
