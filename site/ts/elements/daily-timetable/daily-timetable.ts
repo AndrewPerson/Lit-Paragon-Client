@@ -39,7 +39,7 @@ export class StudentDailyTimetable extends Page {
 
         let foundStartofDay = false;
 
-        let indicesToRemove: number[] = [];
+        let indicesToIgnore: number[] = [];
 
         let trailingIndices: number[] = [];
 
@@ -51,15 +51,15 @@ export class StudentDailyTimetable extends Page {
                 trailingIndices = [];
             }
             else {
-                if (foundStartofDay == false) indicesToRemove.push(i);
+                if (foundStartofDay == false) indicesToIgnore.push(i);
                 else trailingIndices.push(i);
             }
         }
 
-        indicesToRemove.push(...trailingIndices);
+        indicesToIgnore.push(...trailingIndices);
 
-        for (let i = indicesToRemove.length - 1; i >= 0; i--) {
-            bells.splice(indicesToRemove[i], 1);
+        for (let index in indicesToIgnore) {
+            bells[index].display = false;
         }
 
         this._dailyTimetable = value;
@@ -238,7 +238,7 @@ export class StudentDailyTimetable extends Page {
         let roomVariations = (Array.isArray(this._dailyTimetable.roomVariations) ? {} : this._dailyTimetable.roomVariations) ?? {};
         let classVariations = (Array.isArray(this._dailyTimetable.classVariations) ? {} : this._dailyTimetable.classVariations) ?? {};
 
-        let periodsHtml = this._dailyTimetableChanged ? bells.map(bell => {
+        let periodsHtml = this._dailyTimetableChanged ? bells.filter(bell => bell.display ?? true).map(bell => {
             if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
                 let period = periods[bell.period];
 

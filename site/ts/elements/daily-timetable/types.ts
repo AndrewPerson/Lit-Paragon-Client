@@ -30,7 +30,8 @@ export type Bell = {
     type: string | Missing,
     time: string | Missing,
     bell: string | Missing,
-    bellDisplay: string | Missing
+    bellDisplay: string | Missing,
+    display: boolean | Missing
 }
 
 export type RollCall = {
