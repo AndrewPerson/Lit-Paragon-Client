@@ -36,6 +36,7 @@ if (code) {
 //#endif
     Token(code)
     .then(succeeded => {
+        localStorage.removeItem("Last Refreshed");
         location.href = `${location.origin}/${succeeded ? "" : "login"}`;
     });
 //#if !DEVELOPMENT
