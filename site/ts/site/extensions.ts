@@ -1,7 +1,7 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
 
-import { Callbacks, Callback } from "./callback";
+import { Callback } from "./callback";
 
 import { Navbar } from "../elements/navbar/navbar";
 
@@ -18,8 +18,6 @@ export type Extension = {
 
 export class Extensions {
     static installedExtensions: Map<string, Extension> = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
-
-    static _extensionCallbacks: Callbacks<Map<string, Extension>> = new Callbacks();
 
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 }
@@ -83,18 +81,6 @@ export async function GetExtensionsNow(): Promise<Map<string, Extension>> {
     return extensions;
 }
 
-export async function GetExtensions(callback: Callback<Map<string, Extension>>) {
-    Extensions._extensionCallbacks.AddListener(callback);
-
-    callback(await GetExtensionsNow());
-}
-
-export async function FireExtensionCallbacks() {
-    let extensions = await GetExtensionsNow();
-
-    Extensions._extensionCallbacks.Invoke(extensions);
-}
-
 export function GetExtensionIconURL(extension: Extension) {
     let url = new URL(extension.icon, extension.url);
     url.search = `cache-version=${extension.version}`;
@@ -156,7 +142,7 @@ export function AddExtensionListeners() {
                 data: {
                     dark: Site.dark,
                     hue: Site.hue,
-                    version: await Site.GetVersion()
+                    version: (await Site.GetMetadataNow())?.version
                 }
             }
         }

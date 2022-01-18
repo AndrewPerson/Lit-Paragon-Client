@@ -1,7 +1,8 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { Extensions, Extension, GetExtensions, GetExtensionIconURL } from "../../site/extensions";
+import { Site } from "../../site/site";
+import { Extensions, Extension, GetExtensionIconURL } from "../../site/extensions";
 
 import "./extension-display";
 
@@ -30,9 +31,9 @@ export class ExtensionsMarketplace extends LitElement {
     constructor() {
         super();
 
-        GetExtensions(extensions => {
+        Site.GetMetadata(metadata => {
             this.fetchingExtensions = false;
-            this.extensions = extensions;
+            this.extensions = metadata?.pages ?? new Map();
         });
     }
 

@@ -13,6 +13,11 @@ export type Page = {
     extension: boolean
 };
 
+export type Metadata = {
+    version: string,
+    pages: Map<string, Extension>;
+};
+
 export class Site {
     static page: Page = {
         page: "",
@@ -26,6 +31,7 @@ export class Site {
 
     private static _darkCallbacks: Callbacks<boolean> = new Callbacks();
     private static _hueCallbacks: Callbacks<number> = new Callbacks();
+    private static _metadataCallbacks: Callbacks<Metadata | undefined> = new Callbacks();
 
     //#region Navigation
     static NavigateTo(page: Page): void {
@@ -117,17 +123,17 @@ export class Site {
     }
     //#endregion
 
-    static async GetVersion(): Promise<string | undefined> {
-        var cache = await caches.open(METADATA_CACHE);
+    static async GetMetadataNow(): Promise<Metadata | undefined> {
+        let cache = await caches.open(METADATA_CACHE);
+        return await (await cache.match("Metadata"))?.json();
+    }
 
-        let metadataResponse = await cache.match("Metadata");
+    static async GetMetadata(callback: Callback<Metadata | undefined>) {
+        this._metadataCallbacks.AddListener(callback);
+        callback(await this.GetMetadataNow());
+    }
 
-        if (metadataResponse) {
-            let metadata = await metadataResponse.json();
-
-            return metadata.version;
-        }
-
-        return undefined;
+    static async FireMetadataCallbacks() {
+        this._metadataCallbacks.Invoke(await this.GetMetadataNow());
     }
 }
