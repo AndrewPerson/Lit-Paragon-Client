@@ -64,6 +64,11 @@
     text-decoration: underline;
 }
 
+:where(a:focus-visible) {
+    box-shadow: 0 0 0 0.4rem var(--surface4);
+    border-radius: 0.05rem;
+}
+
 :where(blockquote) {
     border-left: calc(var(--font-size) / 2) solid var(--surface4);
     margin: 0;

@@ -7,6 +7,10 @@
     border-radius: calc(1rem / 2.5);
 }
 
+:where(input[type=range]:focus-visible) {
+    box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow);
+}
+
 :where(input[type=range])::-moz-range-thumb {
     -webkit-appearance: none;
     background-color: var(--surface4);

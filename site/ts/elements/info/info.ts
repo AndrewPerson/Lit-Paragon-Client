@@ -2,9 +2,9 @@ import { html, LitElement } from "lit";
 import { customElement, query } from "lit/decorators.js";
 
 //@ts-ignore
-import infoCss from "./info.css";
-//@ts-ignore
 import imgCss from "default/img.css";
+//@ts-ignore
+import infoCss from "./info.css";
 
 //@ts-ignore
 import infoSvg from "images/info.svg";

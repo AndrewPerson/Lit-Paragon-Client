@@ -34,12 +34,10 @@ async function Main() {
     //#if DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
-    if (registration)
-        await registration.update();
-    else
-        await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-            scope: "/"
-        });
+    if (registration) await registration.update();
+    else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+        scope: "/"
+    });
     //#endif
 
     //This is to stop people who refresh a lot from spamming the server with requests.
@@ -62,14 +60,13 @@ async function Main() {
     //#if !DEVELOPMENT
     var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
-    if (registration)
-        await registration.update();
-    else
-        await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-            scope: "/"
-        });
+    if (registration) await registration.update();
+    else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+        scope: "/"
+    });
 
     navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
+        console.log(e.data);
         if (e.data.command == "metadata-fetched") {
             FireExtensionCallbacks();
         }

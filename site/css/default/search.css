@@ -12,8 +12,9 @@
     height: 2rem;
 }
 
-:where(input[type=search]:focus) {
-    outline: none;
+:where(input[type=search]:focus-visible) {
+    box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow);
+    border-radius: 0.1rem;
 }
 
 :where(input[type=search])::-webkit-input-placeholder {

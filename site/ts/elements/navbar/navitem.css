@@ -4,12 +4,16 @@
     height: 12vmin;
     position: relative;
     border-radius: 0.8rem;
-    overflow: hidden;
     flex-shrink: 0;
 }
 
 :host(:hover:not(:host([editing]))) {
     background-color: var(--surface2);
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
+}
+
+:host(.selected) {
+    background-color: var(--surface4) !important;
     box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
 }
 
@@ -34,22 +38,32 @@
     cursor: move;
 }
 
-:host(.selected) {
-    background-color: var(--surface4) !important;
-    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
-}
-
 a {
     display: flex;
     flex-direction: column;
+
+    border-radius: inherit;
 
     width: 12vmin;
     height: 12vmin;
 }
 
-::slotted(img) {
+a:focus-visible {
+    box-shadow: inset 0 0 0 0.4rem var(--surface4), var(--shadow);
+}
+
+:host(.selected) > a:focus-visible {
+    box-shadow: inset 0 0 0 0.4rem var(--surface2), var(--shadow);
+}
+
+::slotted(*) {
     width: 5.4vmin;
+    height: 5.4vmin;
     margin: auto;
-    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     cursor: pointer;
+    border-radius: inherit;
+}
+
+::slotted(img) {
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
 }
