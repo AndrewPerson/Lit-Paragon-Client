@@ -102,7 +102,7 @@ async function PeriodicSync(e: PeriodicSyncEvent) {
 async function Message(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
         await MetadataFetch();
-        e.source?.postMessage("metadata-fetched");
+        e.source?.postMessage({ command: "metadata-fetched" });
     }
 }
 
