@@ -39,7 +39,6 @@ export class Settings extends LitElement {
 
     async Patch() {
         localStorage.clear();
-        sessionStorage.clear();
         
         let keys = await caches.keys();
 
