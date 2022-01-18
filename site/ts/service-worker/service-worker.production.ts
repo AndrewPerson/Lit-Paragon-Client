@@ -80,7 +80,7 @@ async function Fetch(e: FetchEvent) {
                 }
                 else {
                     if (response.status == 404) {
-                        return (await cache.match(location.origin + "/404")) ?? clonedResponse;
+                        return (await cache.match(`${location.origin}/404`)) ?? clonedResponse;
                     }
                 }
             }
@@ -114,7 +114,7 @@ async function GetLatestMetadata() {
 
 async function MetadataFetch() {
     let metadataCache = await caches.open(METADATA_CACHE);
-    let currentMetadataResponse = await metadataCache.match(location.origin + "/Metadata");
+    let currentMetadataResponse = await metadataCache.match(`${location.origin}/Metadata`);
 
     let currentMetadata = null;
 
@@ -125,13 +125,13 @@ async function MetadataFetch() {
     if (currentMetadata == null || currentMetadata.version != latestMetadata.version)
         await Update();
 
-    await metadataCache.put(location.origin + "/Metadata", new Response(JSON.stringify(latestMetadata)));
+    await metadataCache.put(`${location.origin}/Metadata`, new Response(JSON.stringify(latestMetadata)));
 }
 
 async function DataFetch() {
     let resourceCache = await caches.open(RESOURCE_CACHE);
 
-    let tokenResponse = await resourceCache.match(location.origin + "/Token");
+    let tokenResponse = await resourceCache.match(`${location.origin}/Token`);
     if (!tokenResponse) return;
     
     let token = await tokenResponse.text();
@@ -140,11 +140,11 @@ async function DataFetch() {
     
     let resources = await resourceResponse.json();
 
-    await resourceCache.put(location.origin + "/Token", new Response(JSON.stringify(resources.token)));
+    await resourceCache.put(`${location.origin}/Token`, new Response(JSON.stringify(resources.token)));
 
     let promises = [];
     for (let resource in resources.result) {
-        promises.push(resourceCache.put(location.origin + "/" + resource, new Response(JSON.stringify(resources.result[resource]))));
+        promises.push(resourceCache.put(`${location.origin}/${resource}`, new Response(JSON.stringify(resources.result[resource]))));
     }
 
     await Promise.all(promises);

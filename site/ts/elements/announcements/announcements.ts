@@ -5,9 +5,7 @@ import { customElement, state } from "lit/decorators.js";
 
 import "./post";
 
-import { Announcements, Announcement } from "./types";
-
-import { Missing } from "../../missing";
+import { Announcements } from "./types";
 
 //@ts-ignore
 import textCss from "default/text.css";

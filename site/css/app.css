@@ -4,7 +4,7 @@ html {
 
     --text1: hsl(var(--main-hue) 100% 10%);
     --text2: hsl(var(--main-hue) 90% 40%);
-    --text3: hsl(var(--main-hue) 10% 70%);
+    --text3: hsl(var(--main-hue) 25% 55%);
     --text4: hsl(var(--main-hue) 50% 95%);
     --font-size: 2.6vmin;
 

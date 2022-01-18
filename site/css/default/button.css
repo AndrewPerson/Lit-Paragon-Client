@@ -24,3 +24,7 @@ a.button {
     text-shadow: 0.1rem 0.1rem var(--shadow-colour);
     background-color: var(--surface4);
 }
+
+:where(button:focus-visible, .button:focus-visible) {
+    box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow);
+}

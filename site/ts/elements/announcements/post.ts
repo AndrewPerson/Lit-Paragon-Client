@@ -3,9 +3,9 @@ import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
 //@ts-ignore
-import postCss from "./post.css";
-//@ts-ignore
 import textCss from "default/text.css";
+//@ts-ignore
+import postCss from "./post.css";
 
 @customElement("announcement-post")
 export class AnnouncementPost extends LitElement {

@@ -61,12 +61,12 @@ info-popup {
 }
 
 #save {
-    all: unset;
     width: 1.7rem;
     height: 1.7rem;
     position: absolute;
     top: 1.25%;
     right: 1.25%;
+    border-radius: 0.05rem;
 }
 
 #save > svg {

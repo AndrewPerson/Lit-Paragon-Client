@@ -6,13 +6,11 @@ import { Site, Page } from "../../site/site";
 //@ts-ignore
 import imgCss from "default/img.css";
 //@ts-ignore
-import textCss from "default/text.css"
-//@ts-ignore
 import navItemCss from "./navitem.css";
 
 @customElement("nav-item")
 export class NavItem extends LitElement {
-    static styles = [textCss, imgCss, navItemCss];
+    static styles = [imgCss, navItemCss];
 
     @property({ type: String })
     pageName: string = "";
