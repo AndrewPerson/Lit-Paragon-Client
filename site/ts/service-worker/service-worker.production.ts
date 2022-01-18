@@ -67,28 +67,27 @@ async function Fetch(e: FetchEvent) {
         else
         {
             let response = await fetch(request);
+            let clonedResponse = response.clone();
 
             if (url.origin == location.origin) {
                 if (response.ok) {
                     if (!UPDATING) {
-                        let cachedResponse = response.clone();
-
-                        if (self.assets.includes(cachedResponse.url.replace(location.origin, ""))) {
+                        if (self.assets.includes(response.url.replace(location.origin, ""))) {
                             cache.keys().then(keys => {
-                                if (!keys.find(key => key.url == cachedResponse.url))
-                                    cache.put(cachedResponse.url, cachedResponse);
+                                if (!keys.find(key => key.url == response.url))
+                                    cache.put(clonedResponse.url, clonedResponse);
                             });
                         }
                     }
                 }
                 else {
                     if (response.status == 404) {
-                        return (await cache.match(location.origin + "/404")) ?? response;
+                        return (await cache.match(location.origin + "/404")) ?? clonedResponse;
                     }
                 }
             }
             
-            return response;
+            return clonedResponse;
         }
     }
 
