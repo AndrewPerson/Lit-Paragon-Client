@@ -29,8 +29,6 @@ declare const METADATA_ENDPOINT: string;
 var UPDATING = false;
 
 async function Fetch(e: FetchEvent) {
-    console.log(e.request.url, e.request.method);
-
     if (e.request.method == "GET" && !UPDATING) {
         let request = e.request;
         let url = new URL(request.url);
