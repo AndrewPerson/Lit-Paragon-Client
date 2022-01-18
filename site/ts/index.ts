@@ -2,7 +2,7 @@
 
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
-import { AddExtensionListeners, FireExtensionCallbacks } from "./site/extensions";
+import { AddExtensionListeners } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
@@ -64,9 +64,8 @@ async function Main() {
     });
 
     navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
-        console.log(e.data);
         if (e.data.command == "metadata-fetched") {
-            FireExtensionCallbacks();
+            Site.FireMetadataCallbacks();
         }
     });
 

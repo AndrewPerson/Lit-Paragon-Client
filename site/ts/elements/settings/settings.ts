@@ -29,12 +29,12 @@ export class Settings extends LitElement {
     hueInput: HTMLInputElement;
 
     @state()
-    version: string | undefined = "0.0.0";
+    version: string | undefined = "?.?.?";
 
     constructor() {
         super();
 
-        Site.GetVersion().then(version => this.version = version);
+        Site.GetMetadata(metadata => this.version = metadata?.version ?? "?.?.?");
     }
 
     async Patch() {
