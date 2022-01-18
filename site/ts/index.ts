@@ -41,20 +41,17 @@ async function Main() {
     //#endif
 
     //This is to stop people who refresh a lot from spamming the server with requests.
-    //Session Storage is persisted through reloads, but is cleared once the tab is closed.
-    let lastReloadedText = sessionStorage.getItem("Last Refreshed");
+    let lastReloadedText = localStorage.getItem("Last Refreshed");
 
     if (lastReloadedText !== null) {
         let lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
-            Resources.FetchResources();
-            sessionStorage.setItem("Last Refreshed", new Date().toISOString());
+            Resources.FetchResources().then(() => localStorage.setItem("Last Refreshed", new Date().toISOString()));
         }
     }
     else {
-        Resources.FetchResources();
-        sessionStorage.setItem("Last Refreshed", new Date().toISOString());
+        Resources.FetchResources().then(() => localStorage.setItem("Last Refreshed", new Date().toISOString()));
     }
 
     //#if !DEVELOPMENT
