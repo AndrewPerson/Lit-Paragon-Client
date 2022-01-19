@@ -38,8 +38,6 @@ export class NavItem extends LitElement {
     }
 
     render() {
-        this.draggable = this.editing;
-
         if (Site.page.page == this.page.page && Site.page.extension == this.page.extension)
             this.classList.add("selected");
         else

@@ -67,6 +67,7 @@
 :where(a:focus-visible) {
     box-shadow: 0 0 0 0.4rem var(--surface4);
     border-radius: 0.05rem;
+    outline: none;
 }
 
 :where(blockquote) {

@@ -5,6 +5,8 @@ import { Extensions, Extension, GetExtensionNavIconURL } from "../../site/extens
 
 import "./navitem";
 import { NavItem } from "./navitem";
+import "./dragged-navitem";
+import { DraggedNavItem } from "./dragged-navitem";
 
 //@ts-ignore
 import navbarCss from "./navbar.css";
@@ -56,7 +58,10 @@ export class Navbar extends LitElement {
     icons: string[] = [];
     order: number[] = [];
 
-    draggedNavItemIndex: number = 0;
+    draggedItemIndex: number = 0;
+    draggedItem: DraggedNavItem | null = null;
+    draggedItemOffsetX: number = 0;
+    draggedItemOffsetY: number = 0;
 
     static GetNavbarOrder(): number[] {
         return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
@@ -68,36 +73,91 @@ export class Navbar extends LitElement {
         (document.querySelector("nav-bar") as Navbar).requestUpdate();
     }
 
-    SetDraggedNavItemIndex(e: DragEvent) {  
-        //Not always guaranteed to be a NavItem
-        let target = e.target as NavItem;
+    constructor() {
+        super();
 
-        if (!target.editing) return;
-        if (target.dataset.index === undefined) return;
-
-        this.draggedNavItemIndex = parseInt(target.dataset.index);
-
-        if (e.dataTransfer) e.dataTransfer.effectAllowed = "copyLink";
-        e.dataTransfer?.setData("Text", target.id);
+        this.addEventListener("pointerdown", this.SetDraggedItem.bind(this));
+        document.addEventListener("pointermove", this.DragElement);
+        document.addEventListener("pointerup", this.StopDrag)
     }
 
-    ReorderNavItems(e: DragEvent) {
-        //Not always guaranteed to be a NavItem
-        let target = e.target as NavItem;
+    disconnectedCallback() {
+        document.removeEventListener("pointermove", this.DragElement);
+        document.removeEventListener("pointerup", this.StopDrag);
+    }
 
-        if (!target.editing) return;
-        if (target.dataset.index === undefined) return;
+    GetNavItemAtLocation(x: number, y: number): NavItem | null {
+        let element = this.shadowRoot?.elementFromPoint(x, y);
 
-        let newIndex = parseInt(target.dataset.index);
+        if (element === undefined || element === null) return null;
 
-        this.order.splice(newIndex, 0, this.order.splice(this.draggedNavItemIndex, 1)[0]);
+        while (element.tagName !== "NAV-ITEM") {
+            if (element.parentElement === null) return null;
 
-        this.draggedNavItemIndex = newIndex;
+            element = element.parentElement;
+        }
+
+        return element as NavItem;
+    }
+
+    SetDraggedItem(e: PointerEvent) {
+        if (!this.editing) return;
+
+        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
+        if (element === null) return;
+
+        if (element.dataset.index === undefined) return;
+        this.draggedItemIndex = parseInt(element.dataset.index);
+
+        let clone = document.createElement("dragged-nav-item") as DraggedNavItem;
+        clone.innerHTML = element.innerHTML;
+        document.documentElement.appendChild(clone);
+
+        this.draggedItem = clone;
+
+        let rect = element.getBoundingClientRect();
+
+        this.draggedItemOffsetX = rect.left - e.clientX;
+        this.draggedItemOffsetY = rect.top - e.clientY;
+
+        e.preventDefault();
+    }
+
+    DragElement = ((e: PointerEvent) => {
+        if (!this.editing) return;
+        if (this.draggedItem == null) return;
+
+        this.draggedItem.style.left = `${e.clientX + this.draggedItemOffsetX}px`;
+        this.draggedItem.style.top = `${e.clientY + this.draggedItemOffsetY}px`;
+
+        e.preventDefault();
+
+        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);  
+        if (element === null) return;
+
+        if (element.dataset.index === undefined) return;
+
+        this.ReorderNavItems(parseInt(element.dataset.index));
+    }).bind(this);
+
+    StopDrag = ((e: PointerEvent) => {
+        if (this.draggedItem == null) return;
+
+        this.draggedItem.remove();
+        this.draggedItem = null;
+
+        e.preventDefault();
+    }).bind(this);
+
+    ReorderNavItems(newIndex: number) {
+        this.order.splice(newIndex, 0, this.order.splice(this.draggedItemIndex, 1)[0]);
+
+        this.draggedItemIndex = newIndex;
 
         Navbar.SetNavbarOrder(this.order);
     }
 
-    GetNavItem: (order: number, index: number) => TemplateResult<1> = ((order: number, index: number) => {
+    GetNavItem = ((order: number, index: number) => {
         let page: string;
         let title: string;
         let icon: string;
@@ -112,9 +172,7 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" 
-                      @dragstart="${this.SetDraggedNavItemIndex}" @dragenter="${this.ReorderNavItems}" @dragover="${(e: DragEvent) => e.preventDefault()}"
-                      data-index="${index}">
+            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" data-index="${index}">
                 <img draggable="false" src="${icon}">
             </nav-item>
         `;
