@@ -1,8 +1,6 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
 
-import { Callback } from "./callback";
-
 import { Navbar } from "../elements/navbar/navbar";
 
 declare const METADATA_CACHE: string;
