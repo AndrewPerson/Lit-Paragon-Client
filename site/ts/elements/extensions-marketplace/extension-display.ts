@@ -26,6 +26,9 @@ export class ExtensionDisplay extends LitElement {
     description: string;
     
     @property({ type: Boolean })
+    preview: boolean;
+
+    @property({ type: Boolean })
     installed: boolean;
 
     async Install() {
@@ -45,7 +48,7 @@ export class ExtensionDisplay extends LitElement {
         <img src="${this.img}">
         
         <div class="content">
-            <h4>${this.title}</h4>
+            <h4 class="${this.preview ? "preview" : ""}">${this.title}</h4>
             <p>${this.description}</p>
 
             <button @click="${this.installed ? this.Uninstall : this.Install}">${this.installed ? "Uninstall" : "Install"}</button>

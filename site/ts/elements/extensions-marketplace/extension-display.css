@@ -5,6 +5,20 @@
     gap: 1.2rem;
 }
 
+.preview::after {
+    content: "PREVIEW";
+
+    font-size: 0.8rem;
+
+    margin-left: 0.5rem;
+    
+    background-color: hsl(calc(var(--main-hue) + 175), 100%, 50%);
+    color: var(--text4);
+
+    padding: 0.2rem;
+    border-radius: 0.3rem;
+}
+
 img {
     width: 4rem;
     height: 4rem;

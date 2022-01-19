@@ -11,6 +11,8 @@ import textCss from "default/text.css";
 //@ts-ignore
 import searchCss from "default/search.css";
 //@ts-ignore
+import checkboxCss from "default/checkbox.css";
+//@ts-ignore
 import fullElementCss from "default/pages/full.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
@@ -19,12 +21,16 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [textCss, searchCss, pageCss, fullElementCss, extensionsMarketplaceCss];
+    static styles = [textCss, searchCss, checkboxCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
     @state()
     extensions: Map<string, Extension> = new Map();
 
-    searchFilter: string;
+    @state()
+    searchFilter: string = "";
+
+    @state()
+    allowPreview: boolean = false;
 
     constructor() {
         super();
@@ -34,25 +40,43 @@ export class ExtensionsMarketplace extends LitElement {
         });
     }
 
+    AllowPreviewExtensions(e: InputEvent) {
+        this.allowPreview = (e.target as HTMLInputElement).checked;
+    }
+
     render() {
         let installedExtensions = Extensions.installedExtensions;
 
-        let installedExtensionNames: string[] = [];
-        for (var key of installedExtensions.keys())
-            installedExtensionNames.push(key);
+        let installedExtensionNames: string[] = [...installedExtensions.keys()];
+
+        let extensionNames = [...this.extensions.keys()];
+        extensionNames = this.searchFilter == "" ? extensionNames : extensionNames.filter(name => name.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.extensions.get(name)?.description.toLowerCase().includes(this.searchFilter.toLowerCase()));
+        extensionNames = extensionNames.filter(name => this.allowPreview || !this.extensions.get(name)?.preview);
 
         return html`
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
-            <input type="checkbox">
+            
+            <div class="label-input-group">
+                <label for="preview">
+                    Show Preview Extensions?
+                </label>
+
+                <input type="checkbox" name="preview" title="Show Preview Extensions" @input="${this.AllowPreviewExtensions}">
+            </div>
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${[...this.extensions.keys()].map((extensionName: string) => html`
-            <extension-display title="${extensionName}" img="${GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
-                            description="${(this.extensions.get(extensionName) as Extension).description}"
-                            ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
-        `)}</div>
+        <div class="content">${extensionNames.map((extensionName: string) => {
+            let extension = this.extensions.get(extensionName) as Extension;
+
+            return html`
+                <extension-display title="${extensionName}" img="${GetExtensionIconURL(extension)}"
+                                description="${extension.description}"
+                                ?preview="${extension.preview}"
+                                ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
+            `
+        })}</div>
         `;
     }
 }
