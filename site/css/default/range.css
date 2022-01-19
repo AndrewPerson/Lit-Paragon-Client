@@ -9,6 +9,7 @@
 
 :where(input[type=range]:focus-visible) {
     box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow);
+    outline: none;
 }
 
 :where(input[type=range])::-moz-range-thumb {

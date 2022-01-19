@@ -8,7 +8,7 @@
 
     box-sizing: border-box;
 
-    z-index: 100;
+    z-index: 99;
 
     border-radius: 0.8rem 0.8rem 0 0;
 }

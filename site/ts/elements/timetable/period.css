@@ -59,10 +59,12 @@ p {
 
 :host(:hover), :host(:focus) {
     z-index: 98;
+    outline: none;
 }
 
 :host(:hover) > p,
 :host(:focus) > p {
     z-index: 98;
     box-shadow: 0 0 0 0.2rem var(--text1) !important;
+    outline: none;
 }

@@ -18,6 +18,7 @@
 
 :where(select:focus-visible) {
     box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow);
+    outline: none;
 }
 
 :where(option) {

@@ -85,9 +85,9 @@ export class StudentBarcode extends Page {
     }
 
     DragPoint(e: PointerEvent) {
-        e.preventDefault();
-
         if (this.draggedElement == null) return;
+
+        e.preventDefault();
 
         if (!this.dragging) {
             this.dragging = true;
