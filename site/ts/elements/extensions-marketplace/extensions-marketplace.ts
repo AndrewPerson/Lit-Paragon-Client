@@ -21,8 +21,6 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 export class ExtensionsMarketplace extends LitElement {
     static styles = [textCss, searchCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
-    fetchingExtensions: boolean = true;
-
     @state()
     extensions: Map<string, Extension> = new Map();
 
@@ -32,7 +30,6 @@ export class ExtensionsMarketplace extends LitElement {
         super();
 
         Site.GetMetadata(metadata => {
-            this.fetchingExtensions = !this.fetchingExtensions || metadata !== undefined;
             this.extensions = new Map(Object.entries(metadata?.pages ?? {}));
         });
     }
@@ -50,14 +47,12 @@ export class ExtensionsMarketplace extends LitElement {
             <input type="checkbox">
         </div>
 
-        ${this.fetchingExtensions ? nothing : html`
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
         <div class="content">${[...this.extensions.keys()].map((extensionName: string) => html`
             <extension-display title="${extensionName}" img="${GetExtensionIconURL(this.extensions.get(extensionName) as Extension)}"
                             description="${(this.extensions.get(extensionName) as Extension).description}"
                             ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
         `)}</div>
-        `}
         `;
     }
 }
