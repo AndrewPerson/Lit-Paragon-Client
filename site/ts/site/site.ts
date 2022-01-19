@@ -15,7 +15,9 @@ export type Page = {
 
 export type Metadata = {
     version: string,
-    pages: Map<string, Extension>;
+    pages: {
+        [index: string]: Extension
+    };
 };
 
 export class Site {
