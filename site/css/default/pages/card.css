@@ -3,11 +3,14 @@
 
     margin: auto;
 
-    width: 60vw;
+    width: 65vw;
     max-width: 60vh;
     min-width: 300px;
     height: fit-content;
     min-height: 80%;
+    max-height: 98%;
+
+    box-sizing: border-box;
 }
 
 @media (max-width: 300px) {
