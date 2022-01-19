@@ -32,8 +32,8 @@ export class ExtensionsMarketplace extends LitElement {
         super();
 
         Site.GetMetadata(metadata => {
-            this.fetchingExtensions = false;
-            this.extensions = metadata?.pages ?? new Map();
+            this.fetchingExtensions = !this.fetchingExtensions || metadata !== undefined;
+            this.extensions = new Map(Object.entries(metadata?.pages ?? {}));
         });
     }
 
