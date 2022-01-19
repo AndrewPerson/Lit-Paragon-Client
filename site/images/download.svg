@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg width="210px" height="211px" viewBox="0 0 210 211" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+  <g id="download" transform="translate(5 5)">
+    <path d="M150 0L175 0C188.807 0 200 8.60992 200 19.2308L200 181C200 191.621 188.807 200.231 175 200.231L25 200.231C11.1929 200.231 0 191.621 0 181L0 19.2308C0 8.60991 11.1929 0 25 0L50 0" id="Shape" fill="none" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+    <path d="M50 131.923L100 170.385L150 131.923M100 0.230774L100 169.231" id="Shape" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+</svg>

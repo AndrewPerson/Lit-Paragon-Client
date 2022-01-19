@@ -21,7 +21,7 @@ import pageCss from "default/pages/page.css";
 import barcodeCss from "./barcode.css";
 
 //@ts-ignore
-import saveSvg from "images/save.svg"
+import downloadSvg from "images/download.svg"
 
 declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
     displayValue: boolean
@@ -172,7 +172,7 @@ export class StudentBarcode extends Page {
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-        <a id="save" title="Save Barcode">${saveSvg}</a>
+        <a id="save" title="Save Barcode">${downloadSvg}</a>
 
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
