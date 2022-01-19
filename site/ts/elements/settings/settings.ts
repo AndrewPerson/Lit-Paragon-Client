@@ -38,6 +38,8 @@ export class Settings extends LitElement {
     }
 
     async Patch() {
+        await Promise.all((await navigator.serviceWorker.getRegistrations()).map(reg => reg.unregister()));
+
         localStorage.clear();
         sessionStorage.clear();
         
