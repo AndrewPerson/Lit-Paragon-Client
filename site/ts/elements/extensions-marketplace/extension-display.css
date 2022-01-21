@@ -12,7 +12,7 @@
 
     margin-left: 0.5rem;
     
-    background-color: hsl(calc(var(--main-hue) + 175), 100%, 50%);
+    background-color: hsl(15, 100%, 50%);
     color: var(--text4);
 
     padding: 0.2rem;

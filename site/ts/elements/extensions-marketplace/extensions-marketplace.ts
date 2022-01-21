@@ -51,7 +51,8 @@ export class ExtensionsMarketplace extends LitElement {
 
         let extensionNames = [...this.extensions.keys()];
         extensionNames = this.searchFilter == "" ? extensionNames : extensionNames.filter(name => name.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.extensions.get(name)?.description.toLowerCase().includes(this.searchFilter.toLowerCase()));
-        extensionNames = extensionNames.filter(name => this.allowPreview || !this.extensions.get(name)?.preview);
+        extensionNames = extensionNames.filter(name => this.allowPreview || !this.extensions.get(name)?.preview || installedExtensionNames.includes(name));
+        extensionNames = extensionNames.sort((a, b) => (installedExtensionNames.includes(b) ? 1 : 0) - (installedExtensionNames.includes(a) ? 1 : 0));
 
         return html`
         <div class="header">
