@@ -2,7 +2,7 @@
 
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
-import { AddExtensionListeners } from "./site/extensions";
+import { Extensions } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
@@ -23,7 +23,7 @@ async function Main() {
         });
     }
 
-    AddExtensionListeners();
+    Extensions.Initialise();
 
     window.addEventListener("hashchange", () => {
         if (location.hash) {

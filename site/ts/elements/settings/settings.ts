@@ -68,14 +68,6 @@ export class Settings extends LitElement {
         this.requestUpdate();
     }
 
-    ToggleEditNavbar() {
-        let navbar: Navbar = document.querySelector("nav-bar") as Navbar;
-
-        if (navbar) {
-            navbar.toggleAttribute("editing");
-        }
-    }
-
     render() {
         return html`
         <info-popup>
@@ -109,7 +101,7 @@ export class Settings extends LitElement {
 
         <p>Sidebar</p>
 
-        <button @click="${this.ToggleEditNavbar}">Edit</button>
+        <button @click="${() => Navbar.instance?.toggleAttribute("editing")}">Edit</button>
         `;
     }
 }

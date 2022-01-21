@@ -1,7 +1,7 @@
 import { LitElement, html, TemplateResult } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 
-import { Extensions, Extension, GetExtensionNavIconURL } from "../../site/extensions";
+import { Extensions, Extension } from "../../site/extensions";
 
 import "./navitem";
 import { NavItem } from "./navitem";
@@ -69,16 +69,19 @@ export class Navbar extends LitElement {
 
     static SetNavbarOrder(order: number[]) {
         localStorage.setItem("Nav Order", JSON.stringify(order));
-
-        (document.querySelector("nav-bar") as Navbar).requestUpdate();
+        this.instance?.requestUpdate();
     }
+
+    static instance: Navbar | null;
 
     constructor() {
         super();
 
+        Navbar.instance = this;
+
         this.addEventListener("pointerdown", this.SetDraggedItem.bind(this));
         document.addEventListener("pointermove", this.DragElement);
-        document.addEventListener("pointerup", this.StopDrag)
+        document.addEventListener("pointerup", this.StopDrag);
     }
 
     disconnectedCallback() {
@@ -205,7 +208,7 @@ export class Navbar extends LitElement {
 
         for (var key of extensions.keys()) {
             this.pages.push(key);
-            this.icons.push(GetExtensionNavIconURL(extensions.get(key) as Extension));
+            this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
         }
 
         return html`
