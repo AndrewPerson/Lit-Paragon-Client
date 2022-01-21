@@ -19,11 +19,11 @@
                 "icon": "/icon.svg",
                 "version": "0.0.1"
             },
-            "Calculator": {
+            "Notable": {
                 "navIcon": "/nav-icon.svg",
-                "url": "https://calculator.profsmart.repl.co",
+                "url": "https://notable-paragon.profsmart.repl.co",
                 "preview": true,
-                "description": "A simple calculator.",
+                "description": "A note taking calculator.",
                 "icon": "/icon.svg",
                 "version": "0.0.1"
             }
