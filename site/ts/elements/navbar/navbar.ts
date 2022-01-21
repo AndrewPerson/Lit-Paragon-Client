@@ -132,7 +132,7 @@ export class Navbar extends LitElement {
 
         e.preventDefault();
 
-        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);  
+        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
         if (element === null) return;
 
         if (element.dataset.index === undefined) return;

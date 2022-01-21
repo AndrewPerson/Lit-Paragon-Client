@@ -2,6 +2,7 @@ import { Site } from "./site";
 import { Resources } from "./resources";
 
 import { Navbar } from "../elements/navbar/navbar";
+import { ExtensionPage } from "../elements/extensions/extensions";
 
 declare const METADATA_CACHE: string;
 
@@ -95,30 +96,29 @@ export function GetExtensionNavIconURL(extension: Extension) {
 
 export function AddExtensionListeners() {
     Site.ListenForDark(dark => {
-        for (let i = 0; i < window.frames.length; i++) {
-            let frame = window.frames[i];
+        let extensions = document.querySelectorAll("extension-page") as NodeListOf<ExtensionPage>;
 
-            frame.postMessage({
+        for (let extension of extensions) {
+            extension.PostMessage({
                 command: "Set Dark",
                 data: {
                     dark: dark
                 }
-            }, "*");
+            });
         }
     });
 
     Site.ListenForHue(hue => {
-        for (let i = 0; i < window.frames.length; i++) {
-            let frame = window.frames[i];
-
-            frame.postMessage({
+        let extensions = document.querySelectorAll("extension-page") as NodeListOf<ExtensionPage>;
+        for (let extension of extensions) {
+            extension.PostMessage({
                 command: "Set Hue",
                 data: {
                     hue: hue
                 }
-            }, "*");
+            });
         }
-    })
+    });
 
     window.addEventListener("message", async e => {
         let origin = e.origin;

@@ -24,10 +24,14 @@ export class ExtensionPage extends LitElement {
         this.loader.remove();
         this.frame.removeAttribute("style");
     }
+
+    PostMessage(message: any) {
+        this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
+    }
     
     render() {
         return html`
-        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="display: none"></iframe>
+        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }
