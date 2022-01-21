@@ -2,7 +2,7 @@ import { LitElement, html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
-import { Extensions, Extension, GetExtensionIconURL } from "../../site/extensions";
+import { Extensions, Extension } from "../../site/extensions";
 
 import "./extension-display";
 
@@ -72,7 +72,7 @@ export class ExtensionsMarketplace extends LitElement {
             let extension = this.extensions.get(extensionName) as Extension;
 
             return html`
-                <extension-display title="${extensionName}" img="${GetExtensionIconURL(extension)}"
+                <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(extension)}"
                                 description="${extension.description}"
                                 ?preview="${extension.preview}"
                                 ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
