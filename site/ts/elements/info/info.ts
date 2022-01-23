@@ -22,7 +22,7 @@ export class Info extends LitElement {
     constructor() {
         super();
         
-        this.addEventListener("mouseleave", this.HidePopup);
+        this.addEventListener("pointerover", this.ShowPopup);
         document.addEventListener("pointerover", this.HidePopup);
     }
 
@@ -33,7 +33,7 @@ export class Info extends LitElement {
         e.stopPropagation();
     }
 
-    HidePopup = (() => {
+    HidePopup = ((e: Event) => {
         this.info.style.display = "none";
         this.background.style.display = "none";
     }).bind(this);
@@ -46,7 +46,7 @@ export class Info extends LitElement {
 
     render() {
         return html`
-        <button @click="${this.ShowPopup}" @mouseover="${this.ShowPopup}">
+        <button @click="${this.ShowPopup}">
             ${infoSvg}
         </button>
 

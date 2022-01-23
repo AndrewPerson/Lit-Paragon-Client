@@ -71,9 +71,9 @@ export class Settings extends LitElement {
     render() {
         return html`
         <info-popup>
-            Paragon is written by <a href="https://github.com/AndrewPerson">Andrew Pye</a>.
+            Paragon is written by <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson">Andrew Pye</a>.
             <br>
-            The source code is on <a href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
+            The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
         </info-popup>
 
         <p id="version">Paragon v${this.version}</p>

@@ -169,9 +169,13 @@ export class Extensions {
     
             if (!this.GetExtensionOrigins().includes(origin)) return;
     
-            e.source?.postMessage(await this.HandleCommand(e), {
-                targetOrigin: origin
-            });
+            let result = await this.HandleCommand(e);
+
+            if (result !== undefined && "command" in result) {
+                e.source?.postMessage(result, {
+                    targetOrigin: origin
+                });
+            }
         });
     }
 
@@ -271,7 +275,7 @@ export class Extensions {
         if (command == "Show Notification") {
             if (data.loader && typeof data.id !== "string") return;
 
-            let notification = Site.ShowNotification(data.contents, data.loader ?? false);
+            let notification = Site.ShowNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
             return;
