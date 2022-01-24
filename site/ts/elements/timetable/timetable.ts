@@ -26,7 +26,7 @@ export class FullTimetable extends Page {
         let day = value.timetable?.timetable?.dayname;
 
         if (day !== undefined && day !== null) {
-            this._day = day.slice(0, 3).toUpperCase() + " " + day.slice(-1).toUpperCase();
+            this._day = day;
         }
     }
 
@@ -81,15 +81,7 @@ export class FullTimetable extends Page {
             <thead>
                 <tr>
                     <th></th>
-                    ${dayNames.map(fullDayName => {
-                        let parts = fullDayName.split(" ");
-
-                        let dayName: string = `${parts.shift()?.substring(0, 3).toUpperCase() ?? "???"} ${parts.map(part => part.toUpperCase()).join(" ")}`;
-
-                        return html`
-                        <th class="${dayName == this._day ? "current-day" : ""}">${dayName}</th>
-                        `;
-                    })}
+                    ${dayNames.map(dayName => html`<th class="${dayName == this._day ? "current-day" : ""}">${dayName}</th>`)}
                 </tr>
             </thead>
             <tbody>
@@ -97,6 +89,7 @@ export class FullTimetable extends Page {
                 <tr>
                     ${periodRow.map(period => {
                         let title = period.title ?? "???";
+                        title = title.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
 
                         return html`
                         <td>
