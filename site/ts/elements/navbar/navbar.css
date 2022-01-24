@@ -42,14 +42,14 @@
         overflow-x: hidden;
         overflow-y: auto;
 
+        /*
         background:
-            /* Shadow covers */
             linear-gradient(to bottom, var(--surface3) 33%, transparent) no-repeat local,
             linear-gradient(to top, var(--surface3) 33%, transparent) 0 100% no-repeat local,
             
-            /* Shadows */
             radial-gradient(farthest-side at 50% 0, rgba(0,0,0,.3), transparent) no-repeat scroll,
             radial-gradient(farthest-side at 50% 100%, rgba(0,0,0,.3), transparent) 0 100% no-repeat scroll;
+        */
 
         background-size: 100% 42px, 100% 42px, 100% 14px, 100% 14px;
     }
@@ -69,16 +69,16 @@
         width: 100%;
         height: 12vmin;
 
-        border-radius: 0.8rem0.8rem 0 0;
+        border-radius: 0.8rem 0.8rem 0 0;
     }
 
     #items-container {
         flex-direction: row;
-        justify-content: space-around;
 
         overflow-x: auto;
         overflow-y: hidden;
 
+        /*
         background:
             linear-gradient(to right, var(--surface3) 33%, transparent) no-repeat local,
             linear-gradient(to left, var(--surface3) 33%, transparent) 100% 0 no-repeat local,
@@ -87,10 +87,15 @@
             radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.3), transparent) 100% 0 no-repeat scroll;
 
         background-size: 42px 100%, 42px 100%, 14px 100%, 14px 100%;
+        */
+    }
+
+    #items-container > nav-item {
+        margin: auto;
     }
 }
 
-#items-container:hover, #items-container.hover {
+#items-container:hover, #items-container.scroll {
     scrollbar-color: var(--text3) transparent;
 }
 
@@ -110,4 +115,50 @@
 
 #items-container::-webkit-scrollbar-track {
     background-color: transparent;
+}
+
+
+#top-shadow,
+#bottom-shadow,
+#left-shadow,
+#right-shadow {
+    position: absolute;
+    background-image: linear-gradient(var(--angle), var(--shadow-colour), transparent);
+    z-index: 98;
+}
+
+#top-shadow,
+#bottom-shadow {
+    width: 12vmin;
+    height: 0.8rem;
+    left: 0;
+}
+
+#top-shadow {
+    border-radius: 0.05rem 0 0;
+    top: 0;
+    --angle: 180deg;
+}
+
+#bottom-shadow {
+    bottom: 12vmin;
+    --angle: 0;
+}
+
+#left-shadow,
+#right-shadow {
+    width: 0.8rem;
+    height: 12vmin;
+    bottom: 0;
+}
+
+#left-shadow {
+    left: 0;
+    --angle: 90deg;
+}
+
+#right-shadow {
+    border-radius: 0.05rem 0 0;
+    right: 0;
+    --angle: -90deg;
 }

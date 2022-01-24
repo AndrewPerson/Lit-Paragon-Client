@@ -33,7 +33,7 @@ export class Info extends LitElement {
         e.stopPropagation();
     }
 
-    HidePopup = ((e: Event) => {
+    HidePopup = (() => {
         this.info.style.display = "none";
         this.background.style.display = "none";
     }).bind(this);

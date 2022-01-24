@@ -54,6 +54,20 @@ export class Navbar extends LitElement {
     @query("#items-container", true)
     itemsContainer: HTMLDivElement;
 
+    @query("#top-shadow", true)
+    topShadow: HTMLDivElement;
+
+    @query("#bottom-shadow", true)
+    bottomShadow: HTMLDivElement;
+
+    @query("#left-shadow", true)
+    leftShadow: HTMLDivElement;
+
+    @query("#right-shadow", true)
+    rightShadow: HTMLDivElement;
+
+    mobileMediaQuery: MediaQueryList = matchMedia("(max-aspect-ratio: 1/1)");
+
     pages: string[] = [];
     icons: string[] = [];
     order: number[] = [];
@@ -80,13 +94,60 @@ export class Navbar extends LitElement {
         Navbar.instance = this;
 
         this.addEventListener("pointerdown", this.SetDraggedItem.bind(this));
+        this.addEventListener("pointerdown", this.ShowScrollBar.bind(this));
+        this.addEventListener("pointerup", this.HideScrollBar.bind(this));
         document.addEventListener("pointermove", this.DragElement);
         document.addEventListener("pointerup", this.StopDrag);
+
+        this.mobileMediaQuery.addEventListener("change", this.ShowScrollShadows.bind(this));
     }
 
     disconnectedCallback() {
         document.removeEventListener("pointermove", this.DragElement);
         document.removeEventListener("pointerup", this.StopDrag);
+    }
+
+    ShowScrollBar() {
+        this.itemsContainer.classList.add("scroll");
+    }
+
+    HideScrollBar() {
+        this.itemsContainer.classList.remove("scroll");
+    }
+
+    ShowScrollShadows() {
+        //This function can be called before the element is fully initialised.
+        //This stops it from running if that happens.
+        if (this.shadowRoot === null) return;
+
+        if (window.innerWidth <= window.innerHeight) {
+            this.topShadow.style.display = "none";
+            this.bottomShadow.style.display = "none";
+
+            if (this.itemsContainer.scrollLeft == 0)
+                this.leftShadow.style.display = "none";
+            else
+                this.leftShadow.style.removeProperty("display");
+
+            if (this.itemsContainer.scrollLeft >= this.itemsContainer.scrollWidth - this.itemsContainer.clientWidth - 1)
+                this.rightShadow.style.display = "none";
+            else
+                this.rightShadow.style.removeProperty("display");
+        }
+        else {
+            this.leftShadow.style.display = "none";
+            this.rightShadow.style.display = "none";
+
+            if (this.itemsContainer.scrollTop == 0)
+                this.topShadow.style.display = "none";
+            else
+                this.topShadow.style.removeProperty("display");
+
+            if (this.itemsContainer.scrollTop >= this.itemsContainer.scrollHeight - this.itemsContainer.clientHeight - 1)
+                this.bottomShadow.style.display = "none";
+            else
+                this.bottomShadow.style.removeProperty("display");
+        }
     }
 
     GetNavItemAtLocation(x: number, y: number): NavItem | null {
@@ -181,24 +242,13 @@ export class Navbar extends LitElement {
         `;
     }).bind(this);
 
-    createRenderRoot() {
-        let root = super.createRenderRoot();
-
-        root.addEventListener("pointerdown", () => {
-            this.itemsContainer.classList.add("hover");
-        });
-
-        root.addEventListener("pointerup", () => {
-            this.itemsContainer.classList.remove("hover");
-        });
-
-        return root;
+    firstUpdated() {
+        this.itemsContainer.addEventListener("scroll", this.ShowScrollShadows.bind(this));
     }
 
     updated() {
-        for (let navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>) {
+        for (let navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>)
             navItem.requestUpdate();
-        }
     }
 
     render() {
@@ -206,14 +256,23 @@ export class Navbar extends LitElement {
 
         let extensions = Extensions.installedExtensions;
 
-        for (var key of extensions.keys()) {
+        for (let key of extensions.keys()) {
             this.pages.push(key);
             this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
         }
 
+        let mobile = this.mobileMediaQuery.matches;
+        let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
+        let scrollable = this.order.length * 12 * vmin > window.innerHeight;
+
         return html`
         <div id="items-container">
             ${this.order.map(this.GetNavItem)}
+
+            <div id="top-shadow" style="display: none"></div>
+            <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
+            <div id="left-shadow" style="display: none"></div>
+            <div id="right-shadow" style="${mobile && scrollable ? "" : "display: none"}"></div>
         </div>
         `;
     }

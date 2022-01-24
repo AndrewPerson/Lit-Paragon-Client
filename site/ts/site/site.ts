@@ -81,8 +81,6 @@ export class Site {
     static ShowNotification(content: HTMLElement | string, loader: boolean = false) {
         let notification = document.createElement("inline-notification") as InlineNotification;
 
-        console.log(content);
-
         if (content instanceof HTMLElement) notification.appendChild(content);
         else notification.innerText = content;
 
