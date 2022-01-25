@@ -7,12 +7,23 @@
     gap: 1.2rem;
 }
 
+info-popup {
+    position: absolute;
+    top: 1.2rem;
+    left: 1.2rem;
+    width: 1.9rem;
+    height: 1.9rem;
+    --max-width: 30vmax;
+    --offset: 2.6rem;
+    z-index: 2;
+}
+
 span {
     width: 80%;
     border-bottom: solid 0.05rem var(--text3);
 }
 
-#toggle {
+#colour-mode {
     display: grid;
 
     padding: 0.4rem;
@@ -23,7 +34,7 @@ span {
     -webkit-appearance: none;
 }
 
-#toggle::after {
+#colour-mode::after {
     content: "";
     width: 100%;
     height: 100%;
@@ -36,17 +47,21 @@ span {
     pointer-events: none;
 }
 
-#toggle:checked::after {
+#colour-mode:checked::after {
     background-image: url(/images/sun.svg);
 }
 
-info-popup {
-    position: absolute;
-    top: 1.2rem;
-    left: 1.2rem;
-    width: 1.9rem;
-    height: 1.9rem;
-    --max-width: 30vmax;
-    --offset: 2.6rem;
-    z-index: 2;
+#edit-navbar {
+    display: grid;
+
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#edit-navbar::after {
+    content: "Edit";
+}
+
+#edit-navbar:checked::after {
+    content: "Done";
 }

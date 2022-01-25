@@ -23,6 +23,15 @@ export class Info extends LitElement {
         super();
         
         this.addEventListener("pointerover", this.ShowPopup);
+        //Because, for some reason, moving the mouse doesn't fire the pointerover event
+        this.addEventListener("mouseleave", this.HidePopup);
+        this.addEventListener("focusout", e => {
+            let target = e.relatedTarget as HTMLElement;
+
+            if (target.assignedSlot !== this.info)
+                this.HidePopup();
+        });
+
         document.addEventListener("pointerover", this.HidePopup);
     }
 

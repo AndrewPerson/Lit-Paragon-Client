@@ -170,8 +170,7 @@ export class Navbar extends LitElement {
         let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
         if (element === null) return;
 
-        if (element.dataset.index === undefined) return;
-        this.draggedItemIndex = parseInt(element.dataset.index);
+        this.draggedItemIndex = element.order;
 
         let clone = document.createElement("dragged-nav-item") as DraggedNavItem;
         clone.innerHTML = element.innerHTML;
@@ -199,9 +198,7 @@ export class Navbar extends LitElement {
         let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
         if (element === null) return;
 
-        if (element.dataset.index === undefined) return;
-
-        this.ReorderNavItems(parseInt(element.dataset.index));
+        this.ReorderNavItems(element.order);
     }).bind(this);
 
     StopDrag = ((e: PointerEvent) => {
@@ -236,8 +233,8 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" data-index="${index}">
-                <img draggable="false" src="${icon}">
+            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" order="${index}">
+                <img draggable="false" src="${icon}" alt="">
             </nav-item>
         `;
     }).bind(this);

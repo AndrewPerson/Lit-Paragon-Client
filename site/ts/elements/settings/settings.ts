@@ -95,13 +95,13 @@ export class Settings extends LitElement {
 
         <p>${Site.dark ? "Dark" : "Light"} Mode</p>
 
-        <input type="checkbox" ?checked="${Site.dark}" id="toggle" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+        <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 
         <p>Sidebar</p>
 
-        <button @click="${() => Navbar.instance?.toggleAttribute("editing")}">Edit</button>
+        <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => Navbar.instance?.toggleAttribute("editing")}">
         `;
     }
 }

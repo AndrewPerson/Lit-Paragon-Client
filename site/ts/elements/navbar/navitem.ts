@@ -2,33 +2,80 @@ import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Site, Page } from "../../site/site";
+import { Navbar } from "./navbar";
 
 //@ts-ignore
 import imgCss from "default/img.css";
 //@ts-ignore
 import navItemCss from "./navitem.css";
 
+enum ReorderDirection {
+    UP,
+    DOWN
+}
+
 @customElement("nav-item")
 export class NavItem extends LitElement {
     static styles = [imgCss, navItemCss];
 
     @property({ type: String })
-    pageName: string = "";
+    pageName: string;
 
     @property({type: Boolean})
-    extension: boolean = false;
+    extension: boolean;
 
     @property({ type: String })
-    title: string = "";
+    title: string;
+
+    @property({ type: Number })
+    order: number;
 
     @property({ type: Boolean })
-    editing: boolean = false;
+    editing: boolean;
 
     public get page(): Page {
         return {
             page: this.pageName,
             extension: this.extension
         };
+    }
+    
+    constructor() {
+        super();
+
+        this.addEventListener("keyup", this.Reorder);
+    }
+
+    Reorder(e: KeyboardEvent) {
+        if (e.key.startsWith("Arrow") && this.editing) {
+            let navOrder = Navbar.GetNavbarOrder();
+
+            let dir = e.key == "ArrowUp" || e.key == "ArrowLeft" ? ReorderDirection.UP : ReorderDirection.DOWN;
+
+            if (dir == ReorderDirection.UP) {
+                let index = navOrder.splice(this.order, 1)[0];
+                
+                if (this.order == 0) navOrder.push(index);
+                else navOrder.splice(this.order - 1, 0, index);
+            }
+            else {
+                let index = navOrder.splice(this.order, 1)[0];
+
+                if (this.order == navOrder.length - 1) navOrder.unshift(index);
+                else navOrder.splice(this.order + 1, 0, index);
+            }
+
+            Navbar.SetNavbarOrder(navOrder);
+
+            if (dir == ReorderDirection.UP) {
+                if (this.order == 0) return;
+                else (this.previousElementSibling as HTMLElement | null)?.focus();
+            }
+            else {
+                if (this.order == navOrder.length - 1) return;
+                else (this.nextElementSibling as HTMLElement | null)?.focus();
+            }
+        }
     }
 
     UpdatePage(e: Event) {
