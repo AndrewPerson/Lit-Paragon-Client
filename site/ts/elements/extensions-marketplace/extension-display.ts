@@ -45,7 +45,7 @@ export class ExtensionDisplay extends LitElement {
 
     render() {
         return html`
-        <img src="${this.img}">
+        <img src="${this.img}" alt="Logo for ${this.title} extension">
         
         <div class="content">
             <h4 class="${this.preview ? "preview" : ""}">${this.title}</h4>

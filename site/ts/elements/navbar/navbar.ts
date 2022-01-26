@@ -233,7 +233,7 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" pageName="${page}" ?extension="${extension}" title="${title}" order="${index}">
+            <nav-item ?editing="${this.editing}" page="${page}" ?extension="${extension}" title="${title}" order="${index}">
                 <img draggable="false" src="${icon}" alt="">
             </nav-item>
         `;

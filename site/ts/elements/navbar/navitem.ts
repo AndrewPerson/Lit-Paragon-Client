@@ -1,7 +1,7 @@
 import { LitElement, html, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import { Site, Page } from "../../site/site";
+import { Site } from "../../site/site";
 import { Navbar } from "./navbar";
 
 //@ts-ignore
@@ -19,10 +19,10 @@ export class NavItem extends LitElement {
     static styles = [imgCss, navItemCss];
 
     @property({ type: String })
-    pageName: string;
+    page: string;
 
-    @property({type: Boolean})
-    extension: boolean;
+    @property({ type: Boolean })
+    extension: boolean = false;
 
     @property({ type: String })
     title: string;
@@ -32,13 +32,6 @@ export class NavItem extends LitElement {
 
     @property({ type: Boolean })
     editing: boolean;
-
-    public get page(): Page {
-        return {
-            page: this.pageName,
-            extension: this.extension
-        };
-    }
     
     constructor() {
         super();
@@ -81,17 +74,20 @@ export class NavItem extends LitElement {
     UpdatePage(e: Event) {
         e.preventDefault();
 
-        Site.NavigateTo(this.page);
+        Site.NavigateTo({
+            page: this.page,
+            extension: this.extension
+        });
     }
 
     render() {
-        if (Site.page.page == this.page.page && Site.page.extension == this.page.extension)
+        if (Site.page.page == this.page && Site.page.extension == this.extension)
             this.classList.add("selected");
         else
             this.classList.remove("selected");
 
         return html`
-        <a href="#${this.extension ? "extension-" : ""}${this.pageName}" @click="${this.UpdatePage}" title="${this.title}">
+        <a href="#${this.extension ? "extension-" : ""}${this.page}" @click="${this.UpdatePage}" title="${this.title}">
             <slot></slot>
         </a>
 
