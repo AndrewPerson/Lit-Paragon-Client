@@ -64,7 +64,7 @@ export class SchoolAnnouncements extends Page {
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
 
-            <select @input="${(e: InputEvent) => this.yearFilter = (e.target as HTMLSelectElement).value}">
+            <select title="Select filter year for announcements" @input="${(e: InputEvent) => this.yearFilter = (e.target as HTMLSelectElement).value}">
                 <option value="all">All</option>
                 <option value="Staff">Staff</option>
                 <option value="12">Year 12</option>

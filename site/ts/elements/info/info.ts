@@ -55,7 +55,7 @@ export class Info extends LitElement {
 
     render() {
         return html`
-        <button @click="${this.ShowPopup}">
+        <button title="Click or hover to reveal more information" @click="${this.ShowPopup}">
             ${infoSvg}
         </button>
 

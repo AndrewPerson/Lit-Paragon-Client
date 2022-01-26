@@ -87,7 +87,7 @@ export class Settings extends LitElement {
 
         <button @click="${this.ResetColour}">Reset</button>
 
-        <input type="range" id="hue" min="0" max="359" value="${Site.hue}"
+        <input title="Drag to change main hue for Paragon" type="range" id="hue" min="0" max="359" value="${Site.hue}"
                @input="${(e: InputEvent) => Site.SetHue((e.target as HTMLInputElement).value)}"
                @change="${Site.SaveHue.bind(Site)}">
 
