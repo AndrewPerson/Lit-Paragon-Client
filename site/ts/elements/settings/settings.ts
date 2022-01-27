@@ -76,14 +76,14 @@ export class Settings extends LitElement {
             The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
         </info-popup>
 
-        <p id="version">Paragon v${this.version}</p>
+        <h6 id="version">Paragon v${this.version}</h6>
 
         <button @click="${this.Patch}">Fix</button>
         <button @click="${this.LogOut}">Log Out</button>
 
         <span></span>
         
-        <p>Colour</p>
+        <h6>Colour</h6>
 
         <button @click="${this.ResetColour}">Reset</button>
 
@@ -93,13 +93,13 @@ export class Settings extends LitElement {
 
         <span></span>
 
-        <p>${Site.dark ? "Dark" : "Light"} Mode</p>
+        <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
 
         <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
         
         <span></span>
 
-        <p>Sidebar</p>
+        <h6>Sidebar</h6>
 
         <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => Navbar.instance?.toggleAttribute("editing")}">
         `;
