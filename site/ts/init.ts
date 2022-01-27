@@ -7,7 +7,7 @@ window.addEventListener("error", async e => {
         let cache = await caches.open(METADATA_CACHE);
         let metadataResponse = await cache.match("Metadata");
 
-        let version = undefined;
+        let version = "Unknown";
         if (metadataResponse !== undefined)
             version = (await metadataResponse.json()).version;
 
