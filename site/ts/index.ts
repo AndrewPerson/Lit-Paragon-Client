@@ -96,7 +96,13 @@ async function Main() {
     navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"}); 
     //#endif
 
-    let statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+    try {
+        var statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+    }
+    catch (e) {
+        await fetch(STATUS_SERVER_ENDPOINT);
+        statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+    }
 
     statusSocket.addEventListener("open", () => {
         statusSocket.send("Latest News");
