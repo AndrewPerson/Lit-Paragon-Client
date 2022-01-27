@@ -17,7 +17,7 @@
                 "preview": true,
                 "description": "Displays your award scheme points.",
                 "icon": "/icon.svg",
-                "version": "0.0.1"
+                "version": "0.0.2"
             },
             "Notable": {
                 "navIcon": "/nav-icon.svg",
@@ -25,7 +25,7 @@
                 "preview": true,
                 "description": "A note taking calculator.",
                 "icon": "/icon.svg",
-                "version": "0.0.1"
+                "version": "0.0.2"
             }
         }
     },
