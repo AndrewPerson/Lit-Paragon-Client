@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.0.5",
+        "version": "2.0.6",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -41,7 +41,8 @@
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
                 "EXTENSION_CACHE": "Extension Resources",
-                "BACKGROUND_SYNC_INTERVAL": 2592000000
+                "BACKGROUND_SYNC_INTERVAL": 2592000000,
+                "STATUS_SERVER_ENDPOINT": "wss://paragon-status.profsmart.repl.co"
             }
         },
         "default": {

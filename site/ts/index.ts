@@ -6,6 +6,7 @@ import { Extensions } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
+declare const STATUS_SERVER_ENDPOINT: string;
 
 import "./site/elements";
 import "./site/extensions";
@@ -94,6 +95,18 @@ async function Main() {
 
     navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"}); 
     //#endif
+
+    let statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+
+    statusSocket.addEventListener("open", () => {
+        statusSocket.send("Latest News");
+    });
+
+    statusSocket.addEventListener("message", e => {
+        let news = (e.data as string).trim();
+
+        if (news != "") Site.ShowNotification(e.data);
+    });
 }
 
 function NavigateToHash(hash: string) {
