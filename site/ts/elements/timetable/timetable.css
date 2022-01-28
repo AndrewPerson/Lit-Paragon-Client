@@ -17,8 +17,8 @@ table {
     counter-reset: period;
 
     display: grid;
-    grid-template-columns: 3% repeat(5, calc(97% / 5));
-    grid-template-rows: 0.5fr repeat(5, 1fr);
+    grid-template-columns: 3% repeat(auto-fill, calc(97% / 5));
+    grid-template-rows: 0.5fr repeat(auto-fill, 1fr);
 
     width: 100%;
 }
@@ -43,6 +43,8 @@ tbody > tr::before {
     color: var(--text3);
 
     line-height: 1.5;
+
+    grid-column-start: 1;
 }
 
 td, th {
