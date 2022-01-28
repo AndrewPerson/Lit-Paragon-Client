@@ -14,7 +14,7 @@ table + table {
 }
 
 table {
-    counter-reset: period;
+    counter-reset: period var(--count-start, 0);
 
     display: grid;
     grid-template-columns: 3% repeat(auto-fill, calc(97% / 5));

@@ -68,10 +68,6 @@ export class Navbar extends LitElement {
 
     mobileMediaQuery: MediaQueryList = matchMedia("(max-aspect-ratio: 1/1)");
 
-    pages: string[] = [];
-    icons: string[] = [];
-    order: number[] = [];
-
     draggedItemIndex: number = 0;
     draggedItem: DraggedNavItem | null = null;
     draggedItemOffsetX: number = 0;
@@ -211,24 +207,27 @@ export class Navbar extends LitElement {
     }).bind(this);
 
     ReorderNavItems(newIndex: number) {
-        this.order.splice(newIndex, 0, this.order.splice(this.draggedItemIndex, 1)[0]);
+        let order = Navbar.GetNavbarOrder();
+        order.splice(newIndex, 0, order.splice(this.draggedItemIndex, 1)[0]);
 
         this.draggedItemIndex = newIndex;
 
-        Navbar.SetNavbarOrder(this.order);
+        Navbar.SetNavbarOrder(order);
     }
 
-    GetNavItem = ((order: number, index: number) => {
+    GetNavItem = ((index: number, order: number[], pages: string[], icons: string[]) => {
         let page: string;
         let title: string;
         let icon: string;
         let extension: boolean = false;
 
-        if (order < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[order]);
+        let orderNumber = order[index];
+
+        if (orderNumber < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[orderNumber]);
         else {
-            page = this.pages[order - Navbar.defaultPages.length];
-            title = this.pages[order - Navbar.defaultPages.length];
-            icon = this.icons[order - Navbar.defaultPages.length];
+            page = pages[orderNumber - Navbar.defaultPages.length];
+            title = pages[orderNumber - Navbar.defaultPages.length];
+            icon = icons[orderNumber - Navbar.defaultPages.length];
             extension = true;
         }
         
@@ -249,22 +248,24 @@ export class Navbar extends LitElement {
     }
 
     render() {
-        this.order = Navbar.GetNavbarOrder();
+        let order = Navbar.GetNavbarOrder();
 
         let extensions = Extensions.installedExtensions;
 
+        let pages: string[] = [];
+        let icons: string[] = [];
         for (let key of extensions.keys()) {
-            this.pages.push(key);
-            this.icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
+            pages.push(key);
+            icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
         }
 
         let mobile = this.mobileMediaQuery.matches;
         let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-        let scrollable = this.order.length * 12 * vmin > window.innerHeight;
+        let scrollable = order.length * 12 * vmin > window.innerHeight;
 
         return html`
         <div id="items-container">
-            ${this.order.map(this.GetNavItem)}
+            ${order.map((_, index) => this.GetNavItem(index, order, pages, icons))}
 
             <div id="top-shadow" style="display: none"></div>
             <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>
