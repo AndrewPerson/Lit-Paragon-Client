@@ -54,7 +54,7 @@ export class FullTimetable extends Page {
 
     CreateTable(dayGroup: Day[]): TemplateResult<1> {
         let dayNames: string[] = [];
-        let periodRows: Period[][] = [];
+        let periodRows: (Period | null)[][] = [];
 
         for (let day of dayGroup) {
             let dayName = day.dayname ?? "???";
@@ -63,21 +63,42 @@ export class FullTimetable extends Page {
 
             let periods = day.periods ?? {};
             let periodIndices = Object.keys(periods);
+            let lastIndex = 0;
 
             for (let i = 0; i < periodIndices.length; i++) {
-                let period = periods[periodIndices[i]];
+                let index = parseInt(periodIndices[i]);
 
-                if (period === undefined || period === null) continue;
+                let diff = index - lastIndex;
 
-                if (i >= periodRows.length)
-                    periodRows.push([period]);
+                for (let x = 0; x < diff; x++) {
+                    if (diff + x > periodRows.length - 1)
+                        periodRows.push([null]);
+                    else
+                        periodRows[lastIndex + x].push(null);
+                }
+
+                if (index > periodRows.length - 1)
+                    periodRows.push([periods[periodIndices[i]] ?? null]);
                 else
-                    periodRows[i].push(period);
+                    periodRows[index].push(periods[periodIndices[i]] ?? null);
+
+                lastIndex = index + 1;
             }
         }
 
+        let toRemove = 0;
+        for (let i = 0; i < periodRows.length; i++) {
+            let remove = periodRows[i].filter(period => period !== null).length == 0;
+
+            if (!remove) break;
+            
+            toRemove++;
+        }
+
+        periodRows.splice(0, toRemove);
+
         return html`
-        <table>
+        <table style="--count-start: ${toRemove - 1}">
             <thead>
                 <tr>
                     <th></th>
@@ -88,14 +109,20 @@ export class FullTimetable extends Page {
                 ${periodRows.map(periodRow => html`
                 <tr>
                     ${periodRow.map(period => {
-                        let title = period.title ?? "???";
-                        title = title.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
+                        if (period !== null
+                        && period.title !== undefined && period.title !== null
+                        && period.room !== undefined && period.room !== null) {
+                            let title = period.title;
+                            title = title.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
 
-                        return html`
-                        <td>
-                            <timetable-period name="${title}" room="${period.room ?? "???"}"></timetable-period>
-                        </td>
-                        `;
+                            return html`
+                            <td>
+                                <timetable-period name="${title}" room="${period.room}"></timetable-period>
+                            </td>
+                            `;
+                        }
+
+                        return html`<td></td>`;
                     })}
                 </tr>
                 `)}
