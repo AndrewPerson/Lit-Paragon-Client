@@ -62,10 +62,18 @@ export class Site {
     private static SetPage(page: Page, element: HTMLElement | null) {
         if (element === null) {
             if (this._pageElement === null) {
-                this._pageElement = (document.querySelector("main")?.children?.[0] as HTMLElement | undefined | null) ?? null;
+                let defaultPage = (document.querySelector("main")?.children?.[0] as HTMLElement | undefined | null) ?? null;
+                
+                this.page = {
+                    page: defaultPage?.id ?? "",
+                    extension: false
+                };
 
-                if (this._pageElement !== null)
-                    this._pageElement.classList.remove("hidden");
+                location.hash = this.page.page;
+                
+                defaultPage?.classList.remove("hidden");
+
+                this._pageElement = defaultPage;
             }
         }
         else {
