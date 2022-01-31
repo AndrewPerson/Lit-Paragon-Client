@@ -1,7 +1,7 @@
 {
     "name": "Paragon",
     "short_name": "Paragon",
-    "start_url": "./#dailytimetable",
+    "start_url": "./#daily-timetable",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#ffffff",
