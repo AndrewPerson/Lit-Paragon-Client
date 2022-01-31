@@ -66,7 +66,7 @@ info-popup {
     position: absolute;
     top: 1.25%;
     right: 1.25%;
-    border-radius: 0.05rem;
+    border-radius: 0.25rem;
 }
 
 #save > svg {

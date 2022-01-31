@@ -73,6 +73,8 @@ export class Navbar extends LitElement {
     draggedItemOffsetX: number = 0;
     draggedItemOffsetY: number = 0;
 
+    hoveredElement: NavItem | null = null;
+
     static GetNavbarOrder(): number[] {
         return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
     }
@@ -194,7 +196,14 @@ export class Navbar extends LitElement {
         let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
         if (element === null) return;
 
-        this.ReorderNavItems(element.order);
+        if (this.hoveredElement !== element) {
+            if (this.hoveredElement !== null) this.hoveredElement.hovered = false;
+
+            element.hovered = true;
+            this.hoveredElement = element;
+
+            this.ReorderNavItems(element.order);
+        }
     }).bind(this);
 
     StopDrag = ((e: PointerEvent) => {
