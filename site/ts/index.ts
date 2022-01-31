@@ -14,15 +14,13 @@ import "./site/extensions";
 Main();
 
 async function Main() {
-    if (location.hash) {
+    if (location.hash)
         NavigateToHash(location.hash);
-    }
-    else {
+    else
         Site.NavigateTo({
-            page: (document.querySelector("main") as HTMLElement).children[0].id,
+            page: document.querySelector("main")?.children[0].id ?? "",
             extension: false
         });
-    }
 
     Extensions.Initialise();
 

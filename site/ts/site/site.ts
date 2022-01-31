@@ -60,8 +60,16 @@ export class Site {
     }
 
     private static SetPage(page: Page, element: HTMLElement | null) {
-        if (element) {
-            if (this._pageElement != null) this._pageElement.classList.add("hidden");
+        if (element === null) {
+            if (this._pageElement === null) {
+                this._pageElement = (document.querySelector("main")?.children?.[0] as HTMLElement | undefined | null) ?? null;
+
+                if (this._pageElement !== null)
+                    this._pageElement.classList.remove("hidden");
+            }
+        }
+        else {
+            if (this._pageElement !== null) this._pageElement.classList.add("hidden");
 
             element.classList.remove("hidden");
             this._pageElement = element;
@@ -70,9 +78,10 @@ export class Site {
 
             location.hash = page.extension ? `extension-${page.page}` : page.page;
 
-            let navbar: Navbar = document.querySelector("nav-bar") as Navbar;
-            navbar.removeAttribute("editing");
-            navbar.requestUpdate?.();
+            if (Navbar.instance !== null) {
+                Navbar.instance.editing = false;
+                Navbar.instance.requestUpdate();
+            }
         }
     }
     //#endregion
