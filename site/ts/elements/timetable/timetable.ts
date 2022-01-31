@@ -111,13 +111,14 @@ export class FullTimetable extends Page {
                     ${periodRow.map(period => {
                         if (period !== null
                         && period.title !== undefined && period.title !== null
-                        && period.room !== undefined && period.room !== null) {
+                        && period.room !== undefined && period.room !== null
+                        && period.teacher !== undefined && period.teacher !== null) {
                             let title = period.title;
                             title = title.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
 
                             return html`
                             <td>
-                                <timetable-period name="${title}" room="${period.room}"></timetable-period>
+                                <timetable-period name="${title}" teacher="${period.teacher}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         }

@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import { customElement, property } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -14,7 +14,13 @@ export class TimetablePeriod extends LitElement {
     name: string;
 
     @property()
+    teacher: string;
+
+    @property()
     room: string;
+
+    @state()
+    showDetails: boolean = false;
 
     static highlighted: string | undefined;
 
@@ -32,6 +38,10 @@ export class TimetablePeriod extends LitElement {
         super();
 
         TimetablePeriod.instances.push(this);
+
+        this.addEventListener("focus", () => this.showDetails = true);
+        this.addEventListener("blur", () => this.showDetails = false);
+        this.addEventListener("pointerleave", this.blur);
     }
 
     Highlight() {
@@ -45,7 +55,7 @@ export class TimetablePeriod extends LitElement {
     }
 
     firstUpdated() {
-        //Just to prevent unnecessary tabbing
+        //The if statement is to stop empty periods from being tabbed to
         if (this.room !== undefined && this.room !== null) {
             this.tabIndex = 0;
         }
@@ -58,9 +68,13 @@ export class TimetablePeriod extends LitElement {
 
         return html`
         <p>${this.name}</p>
-        <p id="popup"
-           style="${highlighted ? "" : "display: none"}">
+
+        <p class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
+        </p>
+
+        <p class="popup details" style="${this.showDetails ? "" : "display: none"}">
+            In ${this.room} with ${this.teacher}
         </p>
         `;
     }
