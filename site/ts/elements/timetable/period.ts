@@ -11,7 +11,10 @@ export class TimetablePeriod extends LitElement {
     static styles = [textCss, periodCss];
 
     @property()
-    name: string;
+    title: string;
+
+    @property()
+    fullTitle: string;
 
     @property()
     teacher: string;
@@ -39,13 +42,14 @@ export class TimetablePeriod extends LitElement {
 
         TimetablePeriod.instances.push(this);
 
-        this.addEventListener("focus", () => this.showDetails = true);
-        this.addEventListener("blur", () => this.showDetails = false);
-        this.addEventListener("pointerleave", this.blur);
+        this.addEventListener("pointerleave", () => {
+            this.blur();
+            this.showDetails = false;
+        });
     }
 
     Highlight() {
-        TimetablePeriod.Highlight(this.name);
+        TimetablePeriod.Highlight(this.title);
         this.classList.add("highlighted");
     }
 
@@ -62,19 +66,18 @@ export class TimetablePeriod extends LitElement {
     }
 
     render() {
-        let highlighted = TimetablePeriod.highlighted == this.name;
+        let highlighted = TimetablePeriod.highlighted == this.title;
         this.classList.toggle("highlighted", highlighted);
-        if (!highlighted) this.blur();
 
         return html`
-        <p>${this.name}</p>
+        <p>${this.title}</p>
 
         <p class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
         </p>
 
         <p class="popup details" style="${this.showDetails ? "" : "display: none"}">
-            In ${this.room} with ${this.teacher}
+            ${this.fullTitle} in ${this.room} with ${this.teacher}
         </p>
         `;
     }

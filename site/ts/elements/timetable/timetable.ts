@@ -43,13 +43,30 @@ export class FullTimetable extends Page {
     }
 
     SetHighlight(event: Event) {
-        TimetablePeriod.Highlight((event.target as TimetablePeriod).name);
+        TimetablePeriod.Highlight((event.target as TimetablePeriod).title);
         event.stopPropagation();
     }
 
     ClearHighlight(event: PointerEvent) {
         TimetablePeriod.Highlight(undefined);
         event.stopPropagation();
+    }
+
+    createRenderRoot() {
+        let root = super.createRenderRoot();
+
+        root.addEventListener("pointerover", this.SetHighlight);
+        root.addEventListener("focusin", e => {
+            this.SetHighlight(e);
+            
+            let target = e.target as HTMLElement;
+
+            if (target.tagName == "TIMETABLE-PERIOD") {
+                (target as TimetablePeriod).showDetails = true;
+            }
+        });
+
+        return root;
     }
 
     CreateTable(dayGroup: Day[]): TemplateResult<1> {
@@ -115,10 +132,15 @@ export class FullTimetable extends Page {
                             let title = period.title.split(" ").filter(word => isNaN(parseFloat(word)) && word.length > 1).join(" ");
 
                             let subjectInfo = this.timetable.subjects?.find(subject => subject?.shortTitle == period.title);
+                            let teacher = subjectInfo?.fullTeacher ?? "";
+                            if (teacher.trim() == "") teacher = period.teacher ?? "???";
+
+                            let fullTitle = subjectInfo?.subject ?? "";
+                            if (fullTitle.trim() == "") fullTitle = period.title ?? "???";
 
                             return html`
                             <td>
-                                <timetable-period name="${title}" teacher="${subjectInfo?.fullTeacher ?? period.teacher ?? "???"}" room="${period.room}"></timetable-period>
+                                <timetable-period title="${title}" fullTitle="${fullTitle}" teacher="${teacher}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         }
@@ -130,15 +152,6 @@ export class FullTimetable extends Page {
             </tbody>
         </table>
         `;
-    }
-
-    createRenderRoot() {
-        let root = super.createRenderRoot();
-
-        root.addEventListener("pointerover", this.SetHighlight);
-        root.addEventListener("focusin", this.SetHighlight);
-
-        return root;
     }
 
     disconnectedCallback() {

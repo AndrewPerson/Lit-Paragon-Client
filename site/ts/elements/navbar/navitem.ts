@@ -31,7 +31,10 @@ export class NavItem extends LitElement {
     order: number;
 
     @property({ type: Boolean })
-    editing: boolean;
+    editing: boolean = false;
+
+    @property({ type: Boolean })
+    hovered: boolean = false;
     
     constructor() {
         super();
@@ -74,14 +77,15 @@ export class NavItem extends LitElement {
     UpdatePage(e: Event) {
         e.preventDefault();
 
-        Site.NavigateTo({
-            page: this.page,
-            extension: this.extension
-        });
+        if (!this.editing)
+            Site.NavigateTo({
+                page: this.page,
+                extension: this.extension
+            });
     }
 
     render() {
-        if (Site.page.page == this.page && Site.page.extension == this.extension)
+        if (Site.page.page == this.page && Site.page.extension == this.extension || this.hovered)
             this.classList.add("selected");
         else
             this.classList.remove("selected");
