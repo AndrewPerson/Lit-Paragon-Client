@@ -1,8 +1,6 @@
 import { LitElement, html } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 
-import { FormatTeacherCode } from "../../utils/format-teacher-code";
-
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
@@ -76,7 +74,7 @@ export class TimetablePeriod extends LitElement {
         </p>
 
         <p class="popup details" style="${this.showDetails ? "" : "display: none"}">
-            In ${this.room} with ${FormatTeacherCode(this.teacher)}
+            In ${this.room} with ${this.teacher}
         </p>
         `;
     }
