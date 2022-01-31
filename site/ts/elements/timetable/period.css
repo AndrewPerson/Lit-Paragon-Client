@@ -27,34 +27,43 @@
 
 p {
     width: 4rem;
-    height: 1.5rem;
+    min-height: 1.5rem;
     text-align: center;
     line-height: 1.5;
 
     border-radius: 0.4rem;
+
+    box-sizing: border-box;
+    padding: 0 0.2rem;
+
+    word-break: break-word;
 }
 
-#popup {
+.popup {
+    --triangle-size: 0.5rem;
+
     position: absolute;
-    top: 2rem;
+    top: calc(100% + var(--triangle-size));
 
     z-index: 97;
 
     pointer-events: none;
 }
 
-#popup::before {
-    --size: 0.5rem;
+.popup.details {
+    width: 150%;
+}
 
+.popup::before {
     content: "";
 
     position: absolute;
-    left: calc(50% - calc(var(--size) / 1.5));
-    top: calc(-1 * var(--size));
+    left: calc(50% - calc(var(--triangle-size) / 1.5));
+    top: calc(-1 * var(--triangle-size));
 
-    border-right: calc(var(--size) / 1.5) solid transparent;
-    border-bottom: var(--size) solid var(--surface4);
-    border-left: calc(var(--size) / 1.5) solid transparent;
+    border-right: calc(var(--triangle-size) / 1.5) solid transparent;
+    border-bottom: var(--triangle-size) solid var(--surface4);
+    border-left: calc(var(--triangle-size) / 1.5) solid transparent;
 }
 
 :host(:hover), :host(:focus) {

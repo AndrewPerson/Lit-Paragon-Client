@@ -15,5 +15,6 @@ export type Day = {
 
 export type Period = {
     title: string | Missing;
+    teacher: string | Missing;
     room: string | Missing;
 }
