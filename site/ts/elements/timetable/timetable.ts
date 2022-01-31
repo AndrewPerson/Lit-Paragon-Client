@@ -3,6 +3,8 @@ import { Page } from "../page/page";
 import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
+import { FormatClassName } from "../../utils/format-class-name";
+
 import { TimetablePeriod } from "./period";
 
 import { Timetable, Day, Period } from "./types";
@@ -113,12 +115,9 @@ export class FullTimetable extends Page {
                         && period.title !== undefined && period.title !== null
                         && period.room !== undefined && period.room !== null
                         && period.teacher !== undefined && period.teacher !== null) {
-                            let title = period.title;
-                            title = title.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
-
                             return html`
                             <td>
-                                <timetable-period name="${title}" teacher="${period.teacher}" room="${period.room}"></timetable-period>
+                                <timetable-period name="${FormatClassName(period.title)}" teacher="${period.teacher}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         }
