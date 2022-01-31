@@ -5,6 +5,9 @@ import { customElement, state } from "lit/decorators.js";
 
 import { Resources } from "../../site/resources";
 
+import { FormatClassName } from "../../utils/format-class-name";
+import { FormatTeacherCode } from "../../utils/format-teacher-code";
+
 import "./bell";
 import "./period";
 
@@ -185,17 +188,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     GetPeriodTitle(year: string, title: string) {
-        let fullName = this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title ?? title;
-
-        return fullName.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word =="&").join(" ");
-    }
-
-    FormatTeacherCode(code: string) {
-        if (code.length == 0) return "";
-        if (code.length == 1) return code.toUpperCase();
-        if (code.length == 2) return `${code[0].toUpperCase()} ${code[1].toUpperCase()}`;
-
-        return `${code[0].toUpperCase()} ${code[1].toUpperCase()}${code.substring(2).toLowerCase()}`;
+        return FormatClassName(this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title ?? title)
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
@@ -208,7 +201,7 @@ export class StudentDailyTimetable extends Page {
                                 teacher="${classVariation === undefined || classVariation === null ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_COVER ? "No one" :
-                                           classVariation.casualSurname ?? this.FormatTeacherCode(classVariation.casual ?? "????")}"
+                                           classVariation.casualSurname ?? FormatTeacherCode(classVariation.casual ?? "????")}"
                                 ?teacherChanged="${teacherChanged}"
                                 room="${roomVariation?.roomTo ?? period.room ?? "???"}"
                                 ?roomChanged="${roomChanged}"></daily-timetable-period>

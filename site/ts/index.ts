@@ -113,6 +113,24 @@ async function Main() {
 
         if (news != "") Site.ShowNotification(e.data);
     });
+
+    window.addEventListener("beforeinstallprompt", e => {
+        e.preventDefault();
+
+        let deferredPrompt = e as Event & {
+            prompt: () => void;
+            userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+        };
+
+        let notification = Site.ShowNotification("You can install Paragon by clicking the install button.");
+
+        deferredPrompt.prompt();
+
+        deferredPrompt.userChoice.then(choiceResult => {
+            notification.Close();
+            if (choiceResult.outcome == "accepted") Site.ShowNotification("Thanks for installing Paragon!");
+        });
+    });
 }
 
 function NavigateToHash(hash: string) {
