@@ -1,7 +1,7 @@
 import { Page } from "../page/page";
 
 import { html } from "lit";
-import { customElement, query } from "lit/decorators.js";
+import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 
@@ -51,18 +51,17 @@ export class StudentBarcode extends Page {
     set userInfo(value: {studentId: string | Missing}) {
         let studentId = value.studentId;
 
-        if (studentId !== undefined && studentId !== null) {
+        if (studentId !== undefined && studentId !== null)
             this.studentId = studentId;
-            this.requestUpdate();
-        }
     }
 
+    @state()
     studentId: string;
 
     constructor() {
         super();
 
-        this.addEventListener("pointerdown", e => e.preventDefault());
+        //this.addEventListener("pointerdown", e => e.preventDefault());
 
         this.addEventListener("pointermove", this.DragPoint);
         this.addEventListener("pointerup", this.EndDrag);
@@ -106,8 +105,32 @@ export class StudentBarcode extends Page {
 
         this.draggedElement = null;
         this.removeAttribute("style");
+    }
 
-        this.RenderBarcode();
+    MovePointKeys(e: KeyboardEvent) {
+        let point = e.target as HTMLElement;
+
+        let x = parseFloat(point.style.left.substring(0, point.style.left.length - 1) || "0");
+        let y = parseFloat(point.style.top.substring(0, point.style.top.length - 1) || "0");
+
+        if (e.key == "ArrowUp") {
+            point.style.top = `${y - 2}%`;
+            e.preventDefault();
+        }
+        else if (e.key == "ArrowDown") {
+            point.style.top = `${y + 2}%`;
+            e.preventDefault();
+        }
+        else if (e.key == "ArrowLeft") {
+            point.style.left = `${x - 2}%`;
+            e.preventDefault();
+        }
+        else if (e.key == "ArrowRight") {
+            point.style.left = `${x + 2}%`;
+            e.preventDefault();
+        }
+
+        this.SetBarcodePosition();
     }
 
     SetBarcodePosition() {
@@ -133,6 +156,8 @@ export class StudentBarcode extends Page {
     }
 
     RenderBarcode() {
+        console.log("Rendering!");
+
         if (this.draggedElement != null) return;
         if (this.barcode === null || this.point1 === null || this.point2 === null) return;
 
@@ -174,8 +199,8 @@ export class StudentBarcode extends Page {
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
         <a id="save" title="Save Barcode">${downloadSvg}</a>
 
-        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" @pointerdown="${this.StartDrag}"></div>
-        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" @pointerdown="${this.StartDrag}"></div>
+        <div id="point1" style="left: ${points[0]}; top: ${points[1]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
+        <div id="point2" style="left: ${points[2]}; top: ${points[3]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
 
         <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;
