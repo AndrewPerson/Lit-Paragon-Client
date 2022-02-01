@@ -132,15 +132,13 @@ export class FullTimetable extends Page {
                             let title = period.title.split(" ").filter(word => isNaN(parseFloat(word)) && word.length > 1).join(" ");
 
                             let subjectInfo = this.timetable.subjects?.find(subject => subject?.shortTitle == period.title);
-                            let teacher = subjectInfo?.fullTeacher ?? "";
-                            if (teacher.trim() == "") teacher = period.teacher ?? "???";
 
                             let fullTitle = subjectInfo?.title ?? "";
                             if (fullTitle.trim() == "") fullTitle = period.title ?? "???";
 
                             return html`
                             <td>
-                                <timetable-period title="${title}" fullTitle="${fullTitle}" teacher="${teacher}" room="${period.room}"></timetable-period>
+                                <timetable-period title="${title}" fullTitle="${fullTitle}" teacher="${period.fullTeacher ?? period.teacher ?? subjectInfo?.fullTeacher ?? "???"}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         }

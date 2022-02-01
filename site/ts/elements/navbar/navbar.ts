@@ -207,10 +207,15 @@ export class Navbar extends LitElement {
     }).bind(this);
 
     StopDrag = ((e: PointerEvent) => {
-        if (this.draggedItem == null) return;
+        if (this.draggedItem !== null) {
+            this.draggedItem.remove();
+            this.draggedItem = null;
+        }
 
-        this.draggedItem.remove();
-        this.draggedItem = null;
+        if (this.hoveredElement !== null) {
+            this.hoveredElement.hovered = false;
+            this.hoveredElement = null;
+        }
 
         e.preventDefault();
     }).bind(this);
@@ -247,10 +252,6 @@ export class Navbar extends LitElement {
         `;
     }).bind(this);
 
-    firstUpdated() {
-        this.itemsContainer.addEventListener("scroll", this.ShowScrollShadows.bind(this));
-    }
-
     updated() {
         for (let navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>)
             navItem.requestUpdate();
@@ -273,7 +274,7 @@ export class Navbar extends LitElement {
         let scrollable = order.length * 12 * vmin > window.innerHeight;
 
         return html`
-        <div id="items-container">
+        <div id="items-container" @scroll="${this.ShowScrollShadows.bind(this)}">
             ${order.map((_, index) => this.GetNavItem(index, order, pages, icons))}
 
             <div id="top-shadow" style="display: none"></div>

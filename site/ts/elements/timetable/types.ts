@@ -16,9 +16,10 @@ export type Day = {
 }
 
 export type Period = {
-    title: string | Missing;
-    teacher: string | Missing;
+    fullTeacher: string | Missing;
     room: string | Missing;
+    teacher: string | Missing;
+    title: string | Missing;
 }
 
 export type Subject = {

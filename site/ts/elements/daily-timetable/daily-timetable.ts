@@ -39,27 +39,28 @@ export class StudentDailyTimetable extends Page {
 
         let foundStartofDay = false;
 
-        let indicesToIgnore: number[] = [];
-
-        let trailingIndices: number[] = [];
+        let leadingIndiceCount = 0;
+        let trailingIndiceCount = 0;
 
         for (let i = 0; i < bells.length; i++) {
             let bell: Bell = bells[i];
 
             if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
                 foundStartofDay = true;
-                trailingIndices = [];
+                trailingIndiceCount = 0;
             }
             else {
-                if (foundStartofDay == false) indicesToIgnore.push(i);
-                else trailingIndices.push(i);
+                if (foundStartofDay == false) leadingIndiceCount++;
+                else trailingIndiceCount++;
             }
         }
 
-        indicesToIgnore.push(...trailingIndices);
+        for (let i = 0; i < trailingIndiceCount; i++) {
+            bells[i].display = false;
+        }
 
-        for (let index in indicesToIgnore) {
-            bells[index].display = false;
+        for (let i = 0; i < leadingIndiceCount; i++) {
+            bells.shift();
         }
 
         this._dailyTimetable = value;
