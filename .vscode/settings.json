@@ -8,7 +8,7 @@
         "**/Thumbs.db": true,
         "package-lock.json": true,
         "node_modules": false,
-        ".vscode": true
+        ".vscode": false
     },
     "explorerExclude.backup": null,
     "cSpell.words": [
