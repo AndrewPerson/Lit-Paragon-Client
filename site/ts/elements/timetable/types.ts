@@ -24,5 +24,5 @@ export type Period = {
 export type Subject = {
     fullTeacher: string | Missing;
     shortTitle: string | Missing;
-    subject: string | Missing;
+    title: string | Missing;
 }

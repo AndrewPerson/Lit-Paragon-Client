@@ -135,7 +135,7 @@ export class FullTimetable extends Page {
                             let teacher = subjectInfo?.fullTeacher ?? "";
                             if (teacher.trim() == "") teacher = period.teacher ?? "???";
 
-                            let fullTitle = subjectInfo?.subject ?? "";
+                            let fullTitle = subjectInfo?.title ?? "";
                             if (fullTitle.trim() == "") fullTitle = period.title ?? "???";
 
                             return html`

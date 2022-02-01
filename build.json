@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.1.1",
+        "version": "2.1.2",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
