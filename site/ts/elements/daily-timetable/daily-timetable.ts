@@ -56,7 +56,7 @@ export class StudentDailyTimetable extends Page {
         }
 
         for (let i = 0; i < trailingIndiceCount; i++) {
-            bells[i].display = false;
+            bells[bells.length -  i].display = false;
         }
 
         for (let i = 0; i < leadingIndiceCount; i++) {
