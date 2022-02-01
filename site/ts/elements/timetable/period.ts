@@ -1,5 +1,5 @@
 import { LitElement, html } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, property, state, query } from "lit/decorators.js";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -24,6 +24,9 @@ export class TimetablePeriod extends LitElement {
 
     @state()
     showDetails: boolean = false;
+
+    @query("#details")
+    details: HTMLParagraphElement;
 
     static highlighted: string | undefined;
 
@@ -65,9 +68,25 @@ export class TimetablePeriod extends LitElement {
         }
     }
 
+    updated() {
+        if (this.showDetails) {
+            this.details.classList.remove("top");
+
+            let rect = this.details.getBoundingClientRect();
+            let detailsOffscreen = rect.top + rect.height > window.innerHeight;
+
+            this.details.classList.toggle("top", detailsOffscreen);
+        }
+    }
+
     render() {
         let highlighted = TimetablePeriod.highlighted == this.title;
         this.classList.toggle("highlighted", highlighted);
+
+        if (!highlighted) {
+            this.blur();
+            this.showDetails = false;
+        }
 
         return html`
         <p>${this.title}</p>
@@ -76,7 +95,7 @@ export class TimetablePeriod extends LitElement {
             ${this.room}
         </p>
 
-        <p class="popup details" style="${this.showDetails ? "" : "display: none"}">
+        <p id="details" class="popup details" style="${this.showDetails ? "" : "display: none"}">
             ${this.fullTitle} in ${this.room} with ${this.teacher}
         </p>
         `;
