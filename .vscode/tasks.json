@@ -16,7 +16,8 @@
             "label": "Start dev server",
             "isBackground": true,
             "type": "shell",
-            "command": "node server"
+            "command": "node server",
+            "problemMatcher": []
         }
     ]
 }

@@ -55,6 +55,11 @@ p {
     width: max-content;
 }
 
+.popup.top {
+    top: auto;
+    bottom: calc(100% + var(--triangle-size));
+}
+
 .popup::before {
     content: "";
 
@@ -65,6 +70,12 @@ p {
     border-right: calc(var(--triangle-size) / 1.5) solid transparent;
     border-bottom: var(--triangle-size) solid var(--surface4);
     border-left: calc(var(--triangle-size) / 1.5) solid transparent;
+}
+
+.popup.top::before {
+    top: 100%;
+    border-bottom: none;
+    border-top: var(--triangle-size) solid var(--surface4);
 }
 
 :host(:hover), :host(:focus) {
