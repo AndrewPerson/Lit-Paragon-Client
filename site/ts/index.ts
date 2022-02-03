@@ -112,7 +112,11 @@ async function Main() {
         if (news != "") Site.ShowNotification(e.data);
     });
 
+    let promptedInstall = false;
     window.addEventListener("beforeinstallprompt", e => {
+        if (promptedInstall) return;
+        promptedInstall = true;
+
         e.preventDefault();
 
         let deferredPrompt = e as Event & {
@@ -120,12 +124,24 @@ async function Main() {
             userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
         };
 
-        let notification = Site.ShowNotification("You can install Paragon by clicking the install button.");
+        let text = document.createElement("p");
 
-        deferredPrompt.prompt();
+        let button = document.createElement("button");
+        button.classList.add("a");
+        button.innerText = "Click";
+
+        button.addEventListener("click", e => {
+            deferredPrompt.prompt();
+        });
+
+        text.appendChild(button);
+        text.appendChild(document.createTextNode(" to install Paragon."));
+
+        let notification = Site.ShowNotification(text);
 
         deferredPrompt.userChoice.then(choiceResult => {
             notification.Close();
+
             if (choiceResult.outcome == "accepted") Site.ShowNotification("Thanks for installing Paragon!");
         });
     });

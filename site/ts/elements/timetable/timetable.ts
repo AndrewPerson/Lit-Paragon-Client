@@ -1,7 +1,7 @@
 import { Page } from "../page/page";
 
 import { html, TemplateResult } from "lit";
-import { customElement, state } from "lit/decorators.js";
+import { customElement, property, state } from "lit/decorators.js";
 
 import { TimetablePeriod } from "./period";
 
@@ -18,6 +18,16 @@ import timetableCss from "./timetable.css";
 @customElement("full-timetable")
 export class FullTimetable extends Page {
     static styles = [textCss, pageCss, timetableCss];
+
+    static get observedAttributes(): string[] {
+        return [...super.observedAttributes, "class"];
+    }
+
+    attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
+        super.attributeChangedCallback(name, _old, value);
+
+        if (name == "class") this.requestUpdate();
+    }
 
     @state()
     timetable: Timetable;
@@ -40,6 +50,8 @@ export class FullTimetable extends Page {
         this.AddResource("dailytimetable", "dailyTimetable");
 
         document.addEventListener("pointerover", this.ClearHighlight);
+
+        window.addEventListener("resize", this.Resize);
     }
 
     SetHighlight(event: Event) {
@@ -52,10 +64,31 @@ export class FullTimetable extends Page {
         event.stopPropagation();
     }
 
+    Debounce(func: (...args: any[]) => void, timeout = 300){
+        let timer: number;
+        return (...args: any[]) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
+    Resize = this.Debounce(() => {
+        this.requestUpdate();
+    }).bind(this);
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+        
+        document.removeEventListener("pointerover", this.ClearHighlight);
+
+        window.removeEventListener("resize", this.Resize);
+    }
+
     createRenderRoot() {
         let root = super.createRenderRoot();
 
         root.addEventListener("pointerover", this.SetHighlight);
+
         root.addEventListener("focusin", e => {
             this.SetHighlight(e);
             
@@ -66,10 +99,18 @@ export class FullTimetable extends Page {
             }
         });
 
+        root.addEventListener("focusout", e => {
+            let target = e.target as HTMLElement;
+
+            if (target.tagName == "TIMETABLE-PERIOD") {
+                (target as TimetablePeriod).showDetails = false;
+            }
+        });
+
         return root;
     }
 
-    CreateTable(dayGroup: Day[]): TemplateResult<1> {
+    CreateTable(dayGroup: Day[], minWidth: number, maxWidth: number, maxHeight: number): TemplateResult<1> {
         let dayNames: string[] = [];
         let periodRows: (Period | null)[][] = [];
 
@@ -138,7 +179,10 @@ export class FullTimetable extends Page {
 
                             return html`
                             <td>
-                                <timetable-period title="${title}" fullTitle="${fullTitle}" teacher="${period.fullTeacher ?? period.teacher ?? subjectInfo?.fullTeacher ?? "???"}" room="${period.room}"></timetable-period>
+                                <timetable-period title="${title}" fullTitle="${fullTitle}"
+                                                  teacher="${period.fullTeacher ?? period.teacher ?? subjectInfo?.fullTeacher ?? "???"}"
+                                                  room="${period.room}" minWidth="${minWidth}"
+                                                  maxWidth="${maxWidth}" maxHeight="${maxHeight}"></timetable-period>
                             </td>
                             `;
                         }
@@ -152,21 +196,21 @@ export class FullTimetable extends Page {
         `;
     }
 
-    disconnectedCallback() {
-        super.disconnectedCallback();
-        
-        document.removeEventListener("pointerover", this.ClearHighlight);
-    }
-
     renderPage() {
         let days = this.timetable.days ?? {};
         let dayNames = Object.keys(days);
+
+        let rect = this.getBoundingClientRect();
+
+        let minWidth = rect.left;
+        let maxWidth = rect.right;
+        let maxHeight = rect.bottom;
 
         let rows: TemplateResult<1>[] = [];
         let dayGroup: Day[] = [];
         for (let i = 0; i < dayNames.length; i++) {
             if (i % 5 == 0) {
-                if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup));
+                if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup, minWidth, maxWidth, maxHeight));
 
                 dayGroup = [];
             }
@@ -176,7 +220,7 @@ export class FullTimetable extends Page {
             if (day !== undefined && day !== null) dayGroup.push(day);
         }
 
-        if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup));
+        if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup, minWidth, maxWidth, maxHeight));
 
         return html`${rows}`;
     }

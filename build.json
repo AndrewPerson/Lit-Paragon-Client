@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.1.5",
+        "version": "2.1.6",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -54,6 +54,9 @@
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "",
                 "MAX_REFRESH_FREQUENCY": 0
+            },
+            "js": {
+                "sourcemaps": true
             }
         },
         "rewrite-branch": {
@@ -65,6 +68,9 @@
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "Paragon_Tools",
                 "MAX_REFRESH_FREQUENCY": 0
+            },
+            "js": {
+                "sourcemaps": false
             }
         },
         "rewrite-main-branch": {
@@ -76,6 +82,9 @@
                 "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
                 "CLIENT_ID": "MyApp",
                 "MAX_REFRESH_FREQUENCY": 60000
+            },
+            "js": {
+                "sourcemaps": false
             }
         }
     }

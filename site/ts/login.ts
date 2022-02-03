@@ -6,4 +6,5 @@ if (Site.dark)
 
 let loginLink = document.getElementById("login") as HTMLAnchorElement;
 
+//TODO Implement PKCE
 loginLink.href = LOGIN_URL;

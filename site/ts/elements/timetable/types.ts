@@ -26,4 +26,5 @@ export type Subject = {
     fullTeacher: string | Missing;
     shortTitle: string | Missing;
     title: string | Missing;
+    year: string | Missing;
 }

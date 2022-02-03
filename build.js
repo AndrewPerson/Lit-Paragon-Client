@@ -106,6 +106,7 @@ async function Main() {
         minify: true,
         //splitting: true,
         treeShaking: true,
+        sourcemap: env.js.sourcemaps,
         format: "esm",
         target: "es2020",
         define: transformVars(env.vars),

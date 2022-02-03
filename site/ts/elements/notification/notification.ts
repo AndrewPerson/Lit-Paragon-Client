@@ -16,7 +16,10 @@ export class InlineNotification extends LitElement {
     @property({ type: Boolean })
     loader: boolean;
 
-    Close = this.remove.bind(this);
+    Close = (async () => {
+        await this.updateComplete;
+        this.remove();
+    }).bind(this);
 
     render() {
         return html`
@@ -24,7 +27,7 @@ export class InlineNotification extends LitElement {
         ${this.loader ? html`
         <loading-indicator class="indicator"></loading-indicator>` :
         html`
-        <button class="indicator"  @click="${this.remove}" title="Close">
+        <button class="indicator" @click="${this.Close}" title="Close">
             ${crossSvg}
         </button>`}
         `;

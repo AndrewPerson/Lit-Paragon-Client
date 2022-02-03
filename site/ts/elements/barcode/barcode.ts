@@ -33,16 +33,16 @@ export class StudentBarcode extends Page {
     static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
 
     @query("#barcodeDisplay")
-    private barcode: HTMLCanvasElement | null;
+    barcode: HTMLCanvasElement | null;
 
     @query("#point1")
-    point1: HTMLElement | null;
+    point1: HTMLElement;
 
     @query("#point2")
-    point2: HTMLElement | null;
+    point2: HTMLElement;
 
     @query("#save")
-    saveLink: HTMLAnchorElement | null;
+    saveLink: HTMLAnchorElement;
 
     draggedElement: HTMLElement | null = null;
 
@@ -60,8 +60,6 @@ export class StudentBarcode extends Page {
 
     constructor() {
         super();
-
-        //this.addEventListener("pointerdown", e => e.preventDefault());
 
         this.addEventListener("pointermove", this.DragPoint);
         this.addEventListener("pointerup", this.EndDrag);
@@ -105,6 +103,8 @@ export class StudentBarcode extends Page {
 
         this.draggedElement = null;
         this.removeAttribute("style");
+
+        this.SaveBarcodePosition();
     }
 
     MovePointKeys(e: KeyboardEvent) {
@@ -131,16 +131,17 @@ export class StudentBarcode extends Page {
         }
 
         this.SetBarcodePosition();
+        this.SaveBarcodePosition();
     }
 
     SetBarcodePosition() {
         if (this.barcode === null) return;
 
-        let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1.style.left.length - 1) || "0");
-        let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1.style.top.length - 1) || "0");
+        let x1 = parseFloat(this.point1.style.left.substring(0, this.point1.style.left.length - 1) || "0");
+        let y1 = parseFloat(this.point1.style.top.substring(0, this.point1.style.top.length - 1) || "0");
 
-        let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2.style.left.length - 1) || "0");
-        let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2.style.top.length - 1) || "0");
+        let x2 = parseFloat(this.point2.style.left.substring(0, this.point2.style.left.length - 1) || "0");
+        let y2 = parseFloat(this.point2.style.top.substring(0, this.point2.style.top.length - 1) || "0");
     
         let maxX = Math.max(x1, x2);
         let minX = Math.min(x1, x2);
@@ -156,18 +157,8 @@ export class StudentBarcode extends Page {
     }
 
     RenderBarcode() {
-        console.log("Rendering!");
-
         if (this.draggedElement != null) return;
-        if (this.barcode === null || this.point1 === null || this.point2 === null) return;
-
-        localStorage.setItem("Barcode Points",
-                             JSON.stringify([
-                                 this.point1.style.left,
-                                 this.point1.style.top,
-                                 this.point2.style.left,
-                                 this.point2.style.top
-                             ]));
+        if (this.barcode === null) return;
 
         if (typeof JsBarcode === "function") {
             JsBarcode(this.barcode, this.studentId, {
@@ -176,11 +167,19 @@ export class StudentBarcode extends Page {
             });
         }
 
-        if (this.saveLink !== null) {
-            let url = this.barcode.toDataURL("image/png");
-            this.saveLink.href = url;
-            this.saveLink.download = `${this.studentId}.png`;
-        }
+        let url = this.barcode.toDataURL("image/png");
+        this.saveLink.href = url;
+        this.saveLink.download = `${this.studentId}.png`;
+    }
+
+    SaveBarcodePosition() {
+        localStorage.setItem("Barcode Points",
+                             JSON.stringify([
+                                 this.point1.style.left,
+                                 this.point1.style.top,
+                                 this.point2.style.left,
+                                 this.point2.style.top
+                             ]));
     }
 
     updated() {

@@ -22,11 +22,23 @@ export class TimetablePeriod extends LitElement {
     @property()
     room: string;
 
+    @property({ type: Number })
+    minWidth: number = 0;
+
+    @property({ type: Number })
+    maxWidth: number = 0;
+
+    @property({ type: Number })
+    maxHeight: number = 0;
+
     @state()
     showDetails: boolean = false;
 
     @query("#details")
     details: HTMLParagraphElement;
+
+    @query("#room")
+    roomInfo: HTMLParagraphElement;
 
     static highlighted: string | undefined;
 
@@ -44,11 +56,6 @@ export class TimetablePeriod extends LitElement {
         super();
 
         TimetablePeriod.instances.push(this);
-
-        this.addEventListener("pointerleave", () => {
-            this.blur();
-            this.showDetails = false;
-        });
     }
 
     Highlight() {
@@ -69,13 +76,30 @@ export class TimetablePeriod extends LitElement {
     }
 
     updated() {
-        if (this.showDetails) {
-            this.details.classList.remove("top");
+        if (TimetablePeriod.highlighted == this.title) {
+            if (this.showDetails) {
+                this.details.classList.remove("right");
+                this.details.classList.remove("left");
+                this.details.classList.remove("up");
 
-            let rect = this.details.getBoundingClientRect();
-            let detailsOffscreen = rect.top + rect.height > window.innerHeight;
+                let rect = this.details.getBoundingClientRect();
 
-            this.details.classList.toggle("top", detailsOffscreen);
+                if (rect.left < this.minWidth)
+                    this.details.classList.add("right");
+                else if (rect.right > this.maxWidth)
+                    this.details.classList.add("left");
+                else if (rect.bottom > this.maxHeight)
+                    this.details.classList.add("up");
+            }
+            else {
+                this.roomInfo.classList.remove("up");
+
+                let rect = this.roomInfo.getBoundingClientRect();
+
+                let detailsOffscreen = rect.top + rect.height > this.maxHeight;
+
+                this.roomInfo.classList.toggle("up", detailsOffscreen);
+            }
         }
     }
 
@@ -91,7 +115,7 @@ export class TimetablePeriod extends LitElement {
         return html`
         <p>${this.title}</p>
 
-        <p class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
+        <p id="room" class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
         </p>
 
