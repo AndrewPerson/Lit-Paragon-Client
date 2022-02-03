@@ -12,19 +12,24 @@
     width: 80%;
 }
 
-.timer-container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-    width: 100%;
+#next-class {
+    text-align: center;
 }
 
-.timer {
+#timer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    width: 100%;
+
     font-size: 2.5rem;
 }
 
-.line {
+#timer::before,
+#timer::after {
+    content: "";
+    display: inline-block;
     flex: 1;
     height: 0;
     border-top: solid 0.05rem var(--text3);

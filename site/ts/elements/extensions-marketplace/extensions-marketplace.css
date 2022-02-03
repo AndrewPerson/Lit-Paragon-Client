@@ -35,7 +35,7 @@
     display: block;
 }
 
-.content::-webkit-scrollbar-track {
+.content::-webkit-scrollbar {
     background-color: transparent;
 
     width: 0.4rem;

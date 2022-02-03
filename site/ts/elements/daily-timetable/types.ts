@@ -6,7 +6,6 @@ export type DailyTimetable = {
     timetable: {
         timetable: {
             dayname: string | Missing,
-            rollcall: RollCall | Missing,
             periods: {
                 [index: string]: Period | RollCall | Missing
             } | Missing
@@ -42,31 +41,21 @@ export type RollCall = {
 
 export type Period = {
     title: string | Missing,
-    teacher: string | Missing,
     room: string | Missing,
     fullTeacher: string | Missing,
     year: string | Missing
 }
 
 export type Subject = {
-    title: string | Missing,
-    shortTitle: string | Missing,
-    teacher: string | Missing,
-    subject: string | Missing,
-    fullTeacher: string | Missing,
-    year: string | Missing,
-    colour: string | Missing
+    title: string | Missing
 }
 
 export type RoomVariation = {
-    year: string | Missing,
     roomFrom: string | Missing,
     roomTo: string | Missing
 }
 
 export type ClassVariation = {
-    year: string | Missing,
-    teacher: string | Missing,
     type: TeacherType | Missing,
     casual: string | Missing,
     casualSurname: string | Missing

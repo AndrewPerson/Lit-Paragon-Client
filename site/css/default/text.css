@@ -54,17 +54,21 @@
     font-weight: 600;
 }
 
-:where(a) {
+:where(.a) {
+    all: unset;
+}
+
+:where(a, .a) {
     color: var(--text2);
     text-decoration: none;
     cursor: pointer;
 }
 
-:where(a:hover) {
+:where(a:hover, .a:hover) {
     text-decoration: underline;
 }
 
-:where(a:focus-visible) {
+:where(a:focus-visible, .a:focus-visible) {
     box-shadow: 0 0 0 0.4rem var(--surface4);
     border-radius: 0.05rem;
     outline: none;

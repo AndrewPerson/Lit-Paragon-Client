@@ -1,12 +1,30 @@
 :host {
-    margin: auto;
-    padding: 1.6rem;
-    max-width: 92%;
     width: 25.2rem;
+    max-width: 92%;
     min-height: 29rem;
     max-height: 98%;
 
+    margin: auto;
+
     box-sizing: border-box;
+    padding: 1.6rem;
+
+    overflow-y: auto;
+    overflow-x: visible;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface4) transparent;
+}
+
+:host::-webkit-scrollbar {
+    background-color: transparent;
+
+    width: 0.4rem;
+}
+
+:host::-webkit-scrollbar-thumb {
+    background-color: var(--surface4);
+    border-radius: 0.4rem;
 }
 
 table + table {
