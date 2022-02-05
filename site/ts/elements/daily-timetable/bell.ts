@@ -7,7 +7,7 @@ import bellCss from "./bell.css";
 import textCss from "default/text.css";
 
 @customElement("daily-timetable-bell")
-export class Bell extends LitElement {
+export class DailyTimetableBell extends LitElement {
     static styles = [textCss, bellCss];
 
     @property()

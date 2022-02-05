@@ -7,7 +7,7 @@ import periodCss from "./period.css";
 import textCss from "default/text.css";
 
 @customElement("daily-timetable-period")
-export class Bell extends LitElement {
+export class DailyTimetablePeriod extends LitElement {
     static styles = [textCss, periodCss];
 
     @property()
@@ -35,7 +35,7 @@ export class Bell extends LitElement {
                 <p class="info">at <span class="${this.roomChanged ? "changed" : ""}">${this.room}</span> with <span class="${this.teacherChanged ? "changed" : ""}">${this.teacher}</span></p>
             </div>
 
-            <p>${this.time}</p>
+            <p class="time">${this.time}</p>
         `;
     }
 }
