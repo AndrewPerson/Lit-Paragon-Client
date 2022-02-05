@@ -79,6 +79,11 @@ export class StudentDailyTimetable extends Page {
     @query("#timer", true)
     private _timer: HTMLHeadingElement | null;
 
+    @query("#periods", true)
+    private _periods: HTMLDivElement | null;
+
+    private _nextPeriod: Element | null = null;
+
     static async UpdateData() {
         if (this.updatingData) return;
         this.updatingData = true;
@@ -94,10 +99,22 @@ export class StudentDailyTimetable extends Page {
                 return;
             }
 
-            //TODO Get the rest of this working offline
             return;
 
+            //TODO Get the rest of this working offline
+
+            /*
             let timetable = await Resources.GetResourceNow("timetable") as Timetable;
+
+            let bellResponse: Response | undefined;
+            try {
+                bellResponse = await fetch("https://student.sbhs.net.au/api/timetable/bells.json");
+            }
+            catch (e) {
+                let cache = await caches.open(RESOURCE_CACHE);
+
+                bellResponse = await cache.match("Some bell");
+            }
 
             let bells: {
                 bells: {
@@ -114,7 +131,7 @@ export class StudentDailyTimetable extends Page {
                 weekType: string | Missing,
                 dayNumber: number | Missing,
                 date: string | Missing
-            } = await (await fetch("https://student.sbhs.net.au/api/timetable/bells.json")).json();
+            } = await bellResponse?.json();
 
             let dayNumber = bells.dayNumber;
 
@@ -143,6 +160,7 @@ export class StudentDailyTimetable extends Page {
                 roomVariations: [],
                 classVariations: []
             };
+            */
         }
         else {
             await caches.delete("next-dailytimetable");
@@ -161,14 +179,7 @@ export class StudentDailyTimetable extends Page {
             //We need this because this can run before _dailyTimetable is initialised.
             if (this._dailyTimetable === undefined) return;
 
-            let timerDisplay = this.GetTimerDisplay();
-
-            if (timerDisplay === undefined)
-                StudentDailyTimetable.UpdateData();
-
-            if (this._nextClass !== null) this._nextClass.innerText = timerDisplay?.nextClass ?? "Nothing";
-            if (this._preposition !== null) this._preposition.innerText = timerDisplay?.preposition ?? "in";
-            if (this._timer !== null) this._timer.innerText = timerDisplay?.time ?? "Never";
+            this.RenderNextBell();
         }, 1000);
     }
 
@@ -189,12 +200,17 @@ export class StudentDailyTimetable extends Page {
     NextBell() {
         let now = new Date();
 
-        for (let bell of this._dailyTimetable.bells ?? []) {
-            if (bell.time === undefined || bell.time === null) continue;
+        let bells = this._dailyTimetable.bells ?? [];
 
-            let time = this.BellDate(bell);
+        for (let i = 0; i < bells.length; i++) {
+            if (bells[i].time === undefined || bells[i].time === null) continue;
 
-            if (time.getTime() >= now.getTime()) return bell;
+            let time = this.BellDate(bells[i]);
+
+            if (time.getTime() >= now.getTime()) return {
+                index: i,
+                bell: bells[i]
+            };
         }
 
         return undefined;
@@ -286,38 +302,40 @@ export class StudentDailyTimetable extends Page {
         `;
     }
 
-    GetTimerDisplay() {
-        let nextBell = this.NextBell();
+    RenderNextBell() {
+        let nextBellInfo = this.NextBell();
 
-        if (nextBell === undefined) return undefined;
+        if (nextBellInfo === undefined)
+            StudentDailyTimetable.UpdateData();
 
-        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBell?.bell ?? ""];
-        let nextClassName = nextBell?.bellDisplay ?? "Nothing";
+        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.bell ?? ""];
+        let nextClassName = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
 
         if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
             nextClassName = this.GetPeriodTitle(nextClass.year ?? "?", nextClass.title ?? "???");
 
         let timeDisplay = { time: "Never", preposition: "in" };
-        if (nextBell !== undefined) timeDisplay = this.TimeDisplay(nextBell);
+        if (nextBellInfo?.bell !== undefined) timeDisplay = this.TimeDisplay(nextBellInfo.bell);
 
-        return {
-            nextClass: nextClassName,
-            ...timeDisplay
-        };
+        if (this._nextClass !== null) this._nextClass.innerText = nextClassName ?? "Nothing";
+        if (this._preposition !== null) this._preposition.innerText = timeDisplay?.preposition ?? "in";
+        if (this._timer !== null) this._timer.innerText = timeDisplay?.time ?? "Never";
+
+        let nextPeriod = this._periods?.children[nextBellInfo?.index ?? 0];
+
+        if (nextPeriod !== this._nextPeriod) {
+            this._nextPeriod?.classList.remove("next");
+            this._nextPeriod = nextPeriod ?? null;
+        }
+
+        nextPeriod?.classList.add("next");
     }
 
     updated() {
         //We need this because this can run before _dailyTimetable is initialised.
         if (this._dailyTimetable === undefined) return;
 
-        let timerDisplay = this.GetTimerDisplay();
-
-        if (timerDisplay === undefined)
-            StudentDailyTimetable.UpdateData();
-
-        if (this._nextClass !== null) this._nextClass.innerText = timerDisplay?.nextClass ?? "Nothing";
-        if (this._preposition !== null) this._preposition.innerText = timerDisplay?.preposition ?? "in";
-        if (this._timer !== null) this._timer.innerText = timerDisplay?.time ?? "Never";
+        this.RenderNextBell();
     }
 
     renderPage() {
@@ -334,7 +352,7 @@ export class StudentDailyTimetable extends Page {
                 <h1 id="timer">Never</h1>
             </div>
 
-            <div class="periods">
+            <div id="periods">
                 ${bells.filter(bell => bell.display !== false).map(bell => {
                     if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
                         let period = periods[bell.period];

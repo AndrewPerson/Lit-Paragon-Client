@@ -35,7 +35,7 @@
     border-top: solid 0.05rem var(--text3);
 }
 
-.periods {
+#periods {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
