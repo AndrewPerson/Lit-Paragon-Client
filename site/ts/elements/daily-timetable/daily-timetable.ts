@@ -307,6 +307,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     updated() {
+        //We need this because this can run before _dailyTimetable is initialised.
         if (this._dailyTimetable === undefined) return;
 
         let timerDisplay = this.GetTimerDisplay();
