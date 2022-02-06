@@ -56,7 +56,9 @@
                 "MAX_REFRESH_FREQUENCY": 0
             },
             "js": {
-                "sourcemaps": true
+                "sourcemaps": true,
+                "minify": false,
+                "treeShaking": false
             }
         },
         "rewrite-branch": {
@@ -70,7 +72,9 @@
                 "MAX_REFRESH_FREQUENCY": 0
             },
             "js": {
-                "sourcemaps": false
+                "sourcemaps": false,
+                "minify": true,
+                "treeShaking": true
             }
         },
         "rewrite-main-branch": {
@@ -84,7 +88,9 @@
                 "MAX_REFRESH_FREQUENCY": 60000
             },
             "js": {
-                "sourcemaps": false
+                "sourcemaps": false,
+                "minify": true,
+                "treeShaking": true
             }
         }
     }
