@@ -5,6 +5,7 @@ import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
+declare const INSTALL_PROMPT_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 declare const STATUS_SERVER_ENDPOINT: string;
 
@@ -112,12 +113,15 @@ async function Main() {
         if (news != "") Site.ShowNotification(e.data);
     });
 
-    let promptedInstall = false;
+    let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
+    let promptedInstall = lastPromptedInstall == null ? false : new Date().getTime() - new Date(lastPromptedInstall).getTime() < INSTALL_PROMPT_FREQUENCY;
     window.addEventListener("beforeinstallprompt", e => {
         if (promptedInstall) return;
         promptedInstall = true;
 
         e.preventDefault();
+
+        localStorage.setItem("Last Prompted Install", new Date().toISOString());
 
         let deferredPrompt = e as Event & {
             prompt: () => void;
