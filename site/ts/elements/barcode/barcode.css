@@ -51,7 +51,7 @@
 }
 
 #barcodeDisplay.outline {
-    border: solid 0.4rem var(--text1);
+    border: solid 1.5rem var(--text1);
 }
 
 info-popup {
