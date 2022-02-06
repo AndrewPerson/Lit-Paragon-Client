@@ -99,11 +99,6 @@ export class StudentDailyTimetable extends Page {
                 return;
             }
 
-            return;
-
-            //TODO Get the rest of this working offline
-
-            /*
             let timetable = await Resources.GetResourceNow("timetable") as Timetable;
 
             let bellResponse: Response | undefined;
@@ -113,7 +108,7 @@ export class StudentDailyTimetable extends Page {
             catch (e) {
                 let cache = await caches.open(RESOURCE_CACHE);
 
-                bellResponse = await cache.match("Some bell");
+                bellResponse = await cache.match(`bell-${new Date().getDay()}`);
             }
 
             let bells: {
@@ -160,7 +155,10 @@ export class StudentDailyTimetable extends Page {
                 roomVariations: [],
                 classVariations: []
             };
-            */
+
+            await Resources.SetResource("dailytimetable", JSON.stringify(dailyTimetable));
+
+            this.updatingData = false;
         }
         else {
             await caches.delete("next-dailytimetable");

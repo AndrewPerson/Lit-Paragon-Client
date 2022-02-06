@@ -11,7 +11,6 @@ self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 self.addEventListener("fetch", e => e.respondWith(onFetch(e)));
 self.addEventListener("message", e => e.waitUntil(onMessage(e)));
 
-declare const METADATA_CACHE: string;
 declare const METADATA_ENDPOINT: string;
 
 async function onFetch(e: FetchEvent): Promise<Response> {
@@ -29,10 +28,10 @@ async function onFetch(e: FetchEvent): Promise<Response> {
 
 async function onMessage(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
-        let metadataCache = await caches.open(METADATA_CACHE);
-        
-        await metadataCache.put(`${location.origin}/Metadata`, await fetch(METADATA_ENDPOINT));
-
-        e.source?.postMessage({ command: "metadata-fetched" });
+        e.source?.postMessage({
+            command: "metadata-fetched",
+            metadata: await (await fetch(METADATA_ENDPOINT)).json(),
+            updated: false
+        });
     }
 }

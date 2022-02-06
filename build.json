@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.1.9",
+        "version": "2.2.0",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -42,6 +42,7 @@
                 "METADATA_CACHE": "Metadata",
                 "EXTENSION_CACHE": "Extension Resources",
                 "BACKGROUND_SYNC_INTERVAL": 2592000000,
+                "INSTALL_PROMPT_FREQUENCY": 2592000000,
                 "STATUS_SERVER_ENDPOINT": "wss://paragon-status.profsmart.repl.co"
             }
         },
@@ -56,7 +57,9 @@
                 "MAX_REFRESH_FREQUENCY": 0
             },
             "js": {
-                "sourcemaps": true
+                "sourcemaps": true,
+                "minify": false,
+                "treeShaking": false
             }
         },
         "rewrite-branch": {
@@ -70,7 +73,9 @@
                 "MAX_REFRESH_FREQUENCY": 0
             },
             "js": {
-                "sourcemaps": false
+                "sourcemaps": false,
+                "minify": true,
+                "treeShaking": true
             }
         },
         "rewrite-main-branch": {
@@ -84,7 +89,9 @@
                 "MAX_REFRESH_FREQUENCY": 60000
             },
             "js": {
-                "sourcemaps": false
+                "sourcemaps": false,
+                "minify": true,
+                "treeShaking": true
             }
         }
     }

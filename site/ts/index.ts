@@ -1,10 +1,11 @@
 //#conditional
 
-import { Site } from "./site/site";
+import { Site, Metadata } from "./site/site";
 import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";
 
 declare const MAX_REFRESH_FREQUENCY: number;
+declare const INSTALL_PROMPT_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 declare const STATUS_SERVER_ENDPOINT: string;
 
@@ -62,9 +63,22 @@ async function Main() {
         scope: "/"
     });
 
-    navigator.serviceWorker.addEventListener("message", (e: MessageEvent) => {
+    navigator.serviceWorker.addEventListener("message", async (e: MessageEvent) => {
         if (e.data.command == "metadata-fetched") {
-            Site.FireMetadataCallbacks();
+            await Site.SetMetadata(e.data.metadata);
+
+            if (e.data.updated) {
+                let text = document.createElement("p");
+
+                let link = document.createElement("a");
+                link.innerText = "Reload";
+                link.href = "/";
+
+                text.append(link);
+                text.appendChild(document.createTextNode(" to update Paragon."));
+
+                Site.ShowNotification(text);
+            }
         }
     });
 
@@ -112,12 +126,15 @@ async function Main() {
         if (news != "") Site.ShowNotification(e.data);
     });
 
-    let promptedInstall = false;
+    let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
+    let promptedInstall = lastPromptedInstall == null ? false : new Date().getTime() - new Date(lastPromptedInstall).getTime() < INSTALL_PROMPT_FREQUENCY;
     window.addEventListener("beforeinstallprompt", e => {
         if (promptedInstall) return;
         promptedInstall = true;
 
         e.preventDefault();
+
+        localStorage.setItem("Last Prompted Install", new Date().toISOString());
 
         let deferredPrompt = e as Event & {
             prompt: () => void;

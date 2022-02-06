@@ -156,7 +156,10 @@ export class Site {
         callback(await this.GetMetadataNow());
     }
 
-    static async FireMetadataCallbacks() {
-        this._metadataCallbacks.Invoke(await this.GetMetadataNow());
+    static async SetMetadata(metadata: Metadata) {
+        let cache = await caches.open(METADATA_CACHE);
+        await cache.put("Metadata", new Response(JSON.stringify(metadata)));
+
+        this._metadataCallbacks.Invoke(metadata);
     }
 }
