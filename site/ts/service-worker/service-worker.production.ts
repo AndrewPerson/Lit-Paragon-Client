@@ -94,15 +94,24 @@ async function Fetch(e: FetchEvent) {
 
 async function PeriodicSync(e: PeriodicSyncEvent) {
     if (e.tag == "metadata-fetch") {
-        MetadataFetch();
+        let metadataCache = await caches.open(METADATA_CACHE);
+
+        let metadata = await MetadataFetch();
+
+        await metadataCache.put(`${location.origin}/Metadata`, new Response(JSON.stringify(metadata.metadata)));
+
         DataFetch();
     }
 }
 
 async function Message(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
-        await MetadataFetch();
-        e.source?.postMessage({ command: "metadata-fetched" });
+        let metadata = await MetadataFetch();
+
+        e.source?.postMessage({
+            command: "metadata-fetched",
+            ...metadata
+        });
     }
 }
 
@@ -116,16 +125,19 @@ async function MetadataFetch() {
     let metadataCache = await caches.open(METADATA_CACHE);
     let currentMetadataResponse = await metadataCache.match(`${location.origin}/Metadata`);
 
-    let currentMetadata = null;
-
-    if (currentMetadataResponse) currentMetadata = JSON.parse(await currentMetadataResponse.text());
+    let currentMetadata = currentMetadataResponse === undefined ? undefined : JSON.parse(await currentMetadataResponse.text());
 
     let latestMetadata = await GetLatestMetadata();
 
-    if (currentMetadata == null || currentMetadata.version != latestMetadata.version)
+    let needsUpdating = currentMetadata === undefined || currentMetadata === null || currentMetadata.version != latestMetadata.version;
+
+    if (needsUpdating)
         await Update();
 
-    await metadataCache.put(`${location.origin}/Metadata`, new Response(JSON.stringify(latestMetadata)));
+    return {
+        metadata: latestMetadata,
+        updated: needsUpdating
+    };
 }
 
 async function DataFetch() {
