@@ -243,8 +243,7 @@ export class Extensions {
             return {
                 command: "Token",
                 data: {
-                    token: token.token === null ? null : token.token.access_token,
-                    valid: token.valid
+                    token: token?.access_token,
                 }
             }
         }
@@ -256,8 +255,7 @@ export class Extensions {
                 return {
                     command: "Refreshed Token",
                     data: {
-                        token: null,
-                        valid: false
+                        token: null
                     }
                 }
     
@@ -266,8 +264,7 @@ export class Extensions {
             return {
                 command: "Refreshed Token",
                 data: {
-                    token: token.token === null ? null : token.token.access_token,
-                    valid: token.valid
+                    token: token?.access_token,
                 }
             }
         }
