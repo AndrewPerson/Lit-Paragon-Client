@@ -167,20 +167,22 @@ export class FullTimetable extends Page {
                 ${periodRows.map(periodRow => html`
                 <tr>
                     ${periodRow.map(period => {
-                        if (period !== null
-                        && period.title !== undefined && period.title !== null
-                        && period.room !== undefined && period.room !== null) {
+                        if (period !== null &&
+                            period.title !== undefined && period.title !== null &&
+                            period.room !== undefined && period.room !== null) {
                             let title = period.title.split(" ").filter(word => isNaN(parseFloat(word)) && word.length > 1).join(" ");
 
                             let subjectInfo = this.timetable.subjects?.find(subject => subject?.shortTitle == period.title);
 
                             let fullTitle = subjectInfo?.title ?? "";
-                            if (fullTitle.trim() == "") fullTitle = period.title ?? "???";
+                            if (fullTitle.trim().length == 0) fullTitle = period.title ?? "???";
+
+                            let teacher = period.fullTeacher ?? subjectInfo?.fullTeacher ?? "";
+                            if (teacher.trim().length == 0) teacher = "No one";
 
                             return html`
                             <td>
-                                <timetable-period title="${title}" fullTitle="${fullTitle}"
-                                                  teacher="${period.fullTeacher ?? period.teacher ?? subjectInfo?.fullTeacher ?? "???"}"
+                                <timetable-period title="${title}" fullTitle="${fullTitle}" teacher="${teacher}"
                                                   room="${period.room}" minWidth="${minWidth}"
                                                   maxWidth="${maxWidth}" maxHeight="${maxHeight}"></timetable-period>
                             </td>

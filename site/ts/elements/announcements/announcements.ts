@@ -49,7 +49,7 @@ export class SchoolAnnouncements extends Page {
             return years.includes(this.yearFilter)
         });
 
-        filteredAnnouncements = this.searchFilter == "" ? filteredAnnouncements : filteredAnnouncements.filter(announcement => {
+        filteredAnnouncements = this.searchFilter.length == 0 ? filteredAnnouncements : filteredAnnouncements.filter(announcement => {
             let title = announcement.title;
             let content = announcement.content;
 

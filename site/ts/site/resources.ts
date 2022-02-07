@@ -38,32 +38,23 @@ export class Resources {
         return Site.ShowNotification("Updating resources...", true);
     }
 
-    static async GetToken(): Promise<{valid: boolean, token: Token | null}> {
+    static async GetToken(): Promise<Token | null> {
         let cache = await caches.open(RESOURCE_CACHE);
         let tokenResponse = await cache.match("Token");
 
         if (!tokenResponse) {
             location.href = `${location.origin}/login`;
-            return {
-                valid: false,
-                token: null
-            };
+            return null;
         }
 
         let token: Token = await tokenResponse.json();
 
         if (new Date() > token.termination) {
             this.ShowLoginNotification();
-            return {
-                valid: false,
-                token: null
-            };
+            return null;
         }
 
-        return {
-            valid: true,
-            token: token
-        };
+        return token;
     }
 
     static async SetResources(resources: {name: string, resource: string}[]) {
@@ -111,8 +102,8 @@ export class Resources {
         if (this._fetching) return new Promise(resolve => this._fetchCallbacks.AddListener(resolve));
         this._fetching = true;
 
-        let { valid, token } = await this.GetToken();
-        if (!valid) return false;
+        let token = await this.GetToken();
+        if (token === null) return false;
 
         let resourceNotification = this.ShowResourceNotification();
 

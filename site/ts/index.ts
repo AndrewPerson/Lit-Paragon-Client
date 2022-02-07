@@ -123,7 +123,7 @@ async function Main() {
     statusSocket.addEventListener("message", e => {
         let news = (e.data as string).trim();
 
-        if (news != "") Site.ShowNotification(e.data);
+        if (news.length > 0) Site.ShowNotification(e.data);
     });
 
     let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
