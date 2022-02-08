@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.2.2",
+        "version": "2.2.3",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -33,7 +33,6 @@
         "shared": {
             "vars": {
                 "REQUIRED_FEATURES": [
-                    "navigator.serviceWorker",
                     "ShadowRoot",
                     "customElements"
                 ],

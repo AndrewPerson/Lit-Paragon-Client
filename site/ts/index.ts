@@ -7,6 +7,8 @@ import { Extensions } from "./site/extensions";
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const INSTALL_PROMPT_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
+
+declare const METADATA_ENDPOINT: string;
 declare const STATUS_SERVER_ENDPOINT: string;
 
 import "./site/elements";
@@ -32,12 +34,14 @@ async function Main() {
     });
 
     //#if DEVELOPMENT
-    var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
+    if ("serviceWorker" in navigator) {
+        let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
-    if (registration) await registration.update();
-    else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-        scope: "/"
-    });
+        if (registration) await registration.update();
+        else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+            scope: "/"
+        });
+    }
     //#endif
 
     //This is to stop people who refresh a lot from spamming the server with requests.
@@ -56,56 +60,60 @@ async function Main() {
     }
 
     //#if !DEVELOPMENT
-    var registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
+    if ("serviceWorker" in navigator) {
+        let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
-    if (registration) await registration.update();
-    else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-        scope: "/"
-    });
+        if (registration) await registration.update();
+        else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+            scope: "/"
+        });
 
-    navigator.serviceWorker.addEventListener("message", async (e: MessageEvent) => {
-        if (e.data.command == "metadata-fetched") {
-            await Site.SetMetadata(e.data.metadata);
+        navigator.serviceWorker.addEventListener("message", async (e: MessageEvent) => {
+            if (e.data.command == "metadata-fetched") {
+                await Site.SetMetadata(e.data.metadata);
 
-            if (e.data.updated) {
-                let text = document.createElement("p");
+                if (e.data.updated) {
+                    let text = document.createElement("p");
 
-                let link = document.createElement("a");
-                link.innerText = "Reload";
-                link.href = "/";
+                    let link = document.createElement("a");
+                    link.innerText = "Reload";
+                    link.href = "/";
 
-                text.append(link);
-                text.appendChild(document.createTextNode(" to update Paragon."));
+                    text.append(link);
+                    text.appendChild(document.createTextNode(" to update Paragon."));
 
-                Site.ShowNotification(text);
+                    Site.ShowNotification(text);
+                }
+            }
+        });
+
+        let serviceWorker = await navigator.serviceWorker.ready;
+
+        //A lot of @ts-ignore because TS doesn't have up-to-date definitions.
+        if ("periodicSync" in serviceWorker) {
+            //@ts-ignore
+            let tags = await serviceWorker.periodicSync.getTags();
+
+            if (!tags.includes("metadata-fetch")) {
+                try {
+                    //@ts-ignore
+                    await serviceWorker.periodicSync.register("metadata-fetch", {
+                        // An interval of half a day.
+                        minInterval: BACKGROUND_SYNC_INTERVAL,
+                    });
+                } catch (e) {
+                    console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
+                }
             }
         }
-    });
+        else
+            console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
 
-    let serviceWorker = await navigator.serviceWorker.ready;
-
-    //A lot of @ts-ignore because TS doesn't have up-to-date definitions.
-    //@ts-ignore
-    if (serviceWorker.periodicSync) {
-        //@ts-ignore
-        let tags = await serviceWorker.periodicSync.getTags();
-
-        if (!tags.includes("metadata-fetch")) {
-            try {
-                //@ts-ignore
-                await serviceWorker.periodicSync.register("metadata-fetch", {
-                    // An interval of half a day.
-                    minInterval: BACKGROUND_SYNC_INTERVAL,
-                });
-            } catch (e) {
-                console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-            }
-        }
+        navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"});
     }
-    else
-        console.log("Couldn't register background fetch. Updates will be only occur when app is open.");
-
-    navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"}); 
+    else {
+        await Site.SetMetadata(await (await fetch(METADATA_ENDPOINT)).json());
+    }
     //#endif
 
     try {

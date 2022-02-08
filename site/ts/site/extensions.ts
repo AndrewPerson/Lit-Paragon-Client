@@ -242,9 +242,7 @@ export class Extensions {
     
             return {
                 command: "Token",
-                data: {
-                    token: token?.access_token ?? null,
-                }
+                data: token?.access_token ?? null
             }
         }
     
@@ -254,18 +252,14 @@ export class Extensions {
             if (!fetchedResources)
                 return {
                     command: "Refreshed Token",
-                    data: {
-                        token: null
-                    }
+                    data: null
                 }
     
             let token = await Resources.GetToken();
     
             return {
                 command: "Refreshed Token",
-                data: {
-                    token: token?.access_token ?? null,
-                }
+                data: token?.access_token ?? null
             }
         }
 
