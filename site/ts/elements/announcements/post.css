@@ -53,6 +53,8 @@ summary::after {
 
     transform: rotate(180deg);
 
+    filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
+
     transition: 0.3s;
 }
 
