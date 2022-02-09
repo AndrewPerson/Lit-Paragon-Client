@@ -32,10 +32,10 @@ export class DailyTimetablePeriod extends LitElement {
         return html`
             <div>
                 <p>${this.title}</p>
-                <p class="info">at <span class="${this.roomChanged ? "changed" : ""}">${this.room}</span> with <span class="${this.teacherChanged ? "changed" : ""}">${this.teacher}</span></p>
+                <p class="info">at <span>${this.time}</span> with <span class="${this.teacherChanged ? "changed" : ""}">${this.teacher}</span></p>
             </div>
 
-            <p class="time">${this.time}</p>
+            <p class="${this.roomChanged ? "changed" : ""}">${this.room}</p>
         `;
     }
 }
