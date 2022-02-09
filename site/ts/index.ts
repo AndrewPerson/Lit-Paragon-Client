@@ -74,13 +74,7 @@ async function Main() {
 
                 if (e.data.updated) {
                     let text = document.createElement("p");
-
-                    let link = document.createElement("a");
-                    link.innerText = "Reload";
-                    link.href = "/";
-
-                    text.append(link);
-                    text.appendChild(document.createTextNode(" to update Paragon."));
+                    text.innerHTML = `<a href="/">Reload</a> to update Paragon.`;
 
                     Site.ShowNotification(text);
                 }
