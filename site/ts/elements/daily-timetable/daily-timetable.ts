@@ -447,9 +447,20 @@ export class StudentDailyTimetable extends Page {
     }
 
     GetPeriodTitle(year: string, title: string) {
-        let fullName = this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title ?? title;
+        let fullName = this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title;
         
-        return fullName.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word == "&").join(" ");
+        if (fullName === undefined || fullName === null) {
+            let words = title.split(" ");
+            words.pop();
+            
+            return words.join(" ");
+        }
+
+        let words = fullName.split(" ");
+        words.shift();
+        words.pop();
+
+        return words.join(" ");
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
@@ -459,7 +470,7 @@ export class StudentDailyTimetable extends Page {
         return html`
         <daily-timetable-period title="${this.GetPeriodTitle(period.year ?? "?", period.title ?? "???")}"
                                 time="${bell.time ?? "??:??"}"
-                                teacher="${classVariation === undefined || classVariation === null ? period.fullTeacher ?? "???" :
+                                teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_COVER ? "No one" :
                                            classVariation.casualSurname ?? `${classVariation.casual ?? "????"}.`}"
