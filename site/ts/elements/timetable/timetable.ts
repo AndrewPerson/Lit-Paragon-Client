@@ -170,7 +170,11 @@ export class FullTimetable extends Page {
                         if (period !== null &&
                             period.title !== undefined && period.title !== null &&
                             period.room !== undefined && period.room !== null) {
-                            let title = period.title.split(" ").filter(word => isNaN(parseFloat(word)) && word.length > 1).join(" ");
+                            let words = period.title.split(" ");
+                            
+                            words.pop();
+
+                            let title = words.join(" ");
 
                             let subjectInfo = this.timetable.subjects?.find(subject => subject?.shortTitle == period.title);
 

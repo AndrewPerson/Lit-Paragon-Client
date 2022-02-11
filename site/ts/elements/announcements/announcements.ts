@@ -81,8 +81,8 @@ export class SchoolAnnouncements extends Page {
             let meeting = announcement.isMeeting == 1;
 
             let meetingDate = announcement.meetingDate ?? "";
-            //No need to show the meeting date if it's today.
-            if (new Date().toISOString().split('T')[0] == meetingDate) meetingDate = "";
+            //Say "Today" if the meeting's today.
+            if (new Date().toISOString().split("T")[0] == meetingDate) meetingDate = "Today";
 
             return html`
             <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"

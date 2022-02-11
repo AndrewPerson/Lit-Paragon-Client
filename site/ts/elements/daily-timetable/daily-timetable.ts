@@ -101,48 +101,44 @@ export class StudentDailyTimetable extends Page {
 
             let timetable = await Resources.GetResourceNow("timetable") as Timetable;
 
-            let bellResponse: Response | undefined;
-            try {
-                bellResponse = await fetch("https://student.sbhs.net.au/api/timetable/bells.json");
-            }
-            catch (e) {
-                let cache = await caches.open(RESOURCE_CACHE);
+            let bells = this.GetBells();
 
-                bellResponse = await cache.match(`bell-${new Date().getDay()}`);
-            }
+            let now = new Date();
+            //YYYY-MM-DD
+            let date = now.toISOString().split("T")[0];
 
-            let bells: {
-                bells: {
-                    bell: string | Missing,
-                    endTime: string | Missing,
-                    period: string | Missing,
-                    startTime: string | Missing,
-                    time: string | Missing,
-                    type: string | Missing,
-                    bellDisplay: string | Missing,
-                    display: undefined | Missing
-                }[] | Missing,
-                day: string | Missing,
-                weekType: string | Missing,
-                dayNumber: number | Missing,
-                date: string | Missing
-            } = await bellResponse?.json();
-
-            let dayNumber = bells.dayNumber;
-
-            if (dayNumber === null || dayNumber === undefined)
+            let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | undefined | null;
+            if (currentDailyTimetable === undefined || currentDailyTimetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let day = timetable.days?.[dayNumber ?? -1];
+            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null ||
+                currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+                //Keep updatingData true so we don't keep trying
+                return;
 
+            let dailyTimetableDate = new Date(currentDailyTimetable.date);
+
+            let difference = now.getTime() - dailyTimetableDate.getTime();
+            //Milliseconds in a day = 86400000
+            let differenceInDays = Math.floor(difference / 86400000);
+            let remainder = difference % 86400000;
+
+            //Milliseconds before 3:15 = 51300000
+            if (remainder > 51300000)
+                differenceInDays++;
+
+            //Day number (1 - 15)
+            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + differenceInDays - 1) % 15 + 1;
+
+            let day = timetable.days?.[dayNumber.toString()];
             if (day === null || day === undefined)
                 //Keep updatingData true so we don't keep trying
                 return;
 
             let dailyTimetable: DailyTimetable = {
-                date: bells.date,
-                bells: bells.bells?.map(bell => {
+                date: date,
+                bells: bells.map(bell => {
                     bell.bellDisplay = bell.bell;
                     return bell;
                 }),
@@ -154,18 +150,191 @@ export class StudentDailyTimetable extends Page {
                 },
                 roomVariations: [],
                 classVariations: []
-            };
+            }
 
             await Resources.SetResource("dailytimetable", JSON.stringify(dailyTimetable));
 
             this.updatingData = false;
         }
         else {
-            await caches.delete("next-dailytimetable");
+            await resourceCache.delete("next-dailytimetable");
             await Resources.SetResource("dailytimetable", await nextDailyTimetable.text());
 
             this.updatingData = false;
         }
+    }
+
+
+    static GetBells() {
+        let date = new Date();
+        let day = (date.getDay() + (((date.getHours() == 14 && date.getMinutes() >= 15) || date.getHours() > 14) ? 1 : 0)) % 7;
+
+        let bells: Bell[];
+
+        if (day == 4) {
+            bells = [
+                {
+                    period: "0",
+                    time: "08:00",
+                    bell: "0",
+                    bellDisplay: "Period 0",
+                    display: undefined
+                },
+                {
+                    period: "RC",
+                    time: "09:25",
+                    bell: "RC",
+                    bellDisplay: "Roll Call",
+                    display: undefined
+                },
+                {
+                    period: "1",
+                    time: "09:30",
+                    bell: "1",
+                    bellDisplay: "Period 1",
+                    display: undefined
+                },
+                {
+                    period: "2",
+                    time: "10:30",
+                    bell: "2",
+                    bellDisplay: "Period 2",
+                    display: undefined
+                },
+                {
+                    period: "R",
+                    time: "11:25",
+                    bell: "R",
+                    bellDisplay: "Recess",
+                    display: undefined
+                },
+                {
+                    period: "3",
+                    time: "11:45",
+                    bell: "3",
+                    bellDisplay: "Period 3",
+                    display: undefined
+                },
+                {
+                    period: "WFL1",
+                    time: "12:40",
+                    bell: "WFL1",
+                    bellDisplay: "Lunch 1",
+                    display: undefined
+                },
+                {
+                    period: "WFL2",
+                    time: "13:00",
+                    bell: "WFL2",
+                    bellDisplay: "Lunch 2",
+                    display: undefined
+                },
+                {
+                    period: "4",
+                    time: "13:20",
+                    bell: "4",
+                    bellDisplay: "Period 4",
+                    display: undefined
+                },
+                {
+                    period: "5",
+                    time: "14:20",
+                    bell: "5",
+                    bellDisplay: "Period 5",
+                    display: undefined
+                },
+                {
+                    period: "EoD",
+                    time: "15:15",
+                    bell: "End of Day",
+                    bellDisplay: "",
+                    display: undefined
+                }
+            ];
+        }
+        else {
+            bells = [
+                {
+                    bell: "0",
+                    bellDisplay: "Period 0",
+                    period: "0",
+                    time: "08:00",
+                    display: undefined
+                },
+                {
+                    bell: "RC",
+                    bellDisplay: "Roll Call",
+                    period: "RC",
+                    time: "09:00",
+                    display: undefined
+                },
+                {
+                    bell: "1",
+                    bellDisplay: "Period 1",
+                    period: "1",
+                    time: "09:05",
+                    display: undefined
+                },
+                {
+                    bell: "2",
+                    bellDisplay: "Period 2",
+                    period: "2",
+                    time: "10:10",
+                    display: undefined
+                },
+                {
+                    bell: "R",
+                    bellDisplay: "Recess",
+                    period: "R",
+                    time: "11:10",
+                    display: undefined
+                },
+                {
+                    bell: "3",
+                    bellDisplay: "Period 3",
+                    period: "3",
+                    time: "11:30",
+                    display: undefined
+                },
+                {
+                    bell: "WFL1",
+                    bellDisplay: "Lunch 1",
+                    period: "WFL1",
+                    time: "12:30",
+                    display: undefined
+                },
+                {
+                    bell: "WFL2",
+                    bellDisplay: "Lunch 2",
+                    period: "WFL2",
+                    time: "12:50",
+                    display: undefined
+                },
+                {
+                    bell: "4",
+                    bellDisplay: "Period 4",
+                    period: "4",
+                    time: "13:10",
+                    display: undefined
+                },
+                {
+                    bell: "5",
+                    bellDisplay: "Period 5",
+                    period: "5",
+                    time: "14:15",
+                    display: undefined
+                },
+                {
+                    bell: "EoD",
+                    bellDisplay: "End of Day",
+                    period: "EoD",
+                    time: "15:15",
+                    display: undefined
+                }
+            ];
+        }
+
+        return bells;
     }
 
     constructor() {
@@ -278,9 +447,20 @@ export class StudentDailyTimetable extends Page {
     }
 
     GetPeriodTitle(year: string, title: string) {
-        let fullName = this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title ?? title;
+        let fullName = this._dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title;
         
-        return fullName.split(" ").filter(word => (isNaN(parseFloat(word)) && word.length > 1) || word == "&").join(" ");
+        if (fullName === undefined || fullName === null) {
+            let words = title.split(" ");
+            words.pop();
+            
+            return words.join(" ");
+        }
+
+        let words = fullName.split(" ");
+        words.shift();
+        words.pop();
+
+        return words.join(" ");
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
@@ -290,7 +470,7 @@ export class StudentDailyTimetable extends Page {
         return html`
         <daily-timetable-period title="${this.GetPeriodTitle(period.year ?? "?", period.title ?? "???")}"
                                 time="${bell.time ?? "??:??"}"
-                                teacher="${classVariation === undefined || classVariation === null ? period.fullTeacher ?? "???" :
+                                teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_COVER ? "No one" :
                                            classVariation.casualSurname ?? `${classVariation.casual ?? "????"}.`}"
@@ -357,7 +537,8 @@ export class StudentDailyTimetable extends Page {
 
                         if (period !== undefined && period !== null &&
                             "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
-                            "year" in period && period.year !== undefined && period.year !== null)
+                            "year" in period && period.year !== undefined && period.year !== null &&
+                            period.room !== undefined && period.room !== undefined)
                             return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
                         else
                             return this.GetBell(bell);

@@ -9,6 +9,7 @@ export type Timetable = {
 };
 
 export type Day = {
+    dayNumber: string | Missing;
     dayname: string | Missing;
     periods: {
         [index: string]: Period | Missing;
