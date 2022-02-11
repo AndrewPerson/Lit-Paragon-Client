@@ -5,6 +5,7 @@ export type DailyTimetable = {
     bells: Bell[] | Missing,
     timetable: {
         timetable: {
+            dayNumber: string | Missing,
             dayname: string | Missing,
             periods: {
                 [index: string]: Period | RollCall | Missing
@@ -24,12 +25,11 @@ export type DailyTimetable = {
 
 export type Bell = {
     period: string | Missing,
-    startTime: string | Missing,
-    endTime: string | Missing,
-    type: string | Missing,
     time: string | Missing,
     bell: string | Missing,
     bellDisplay: string | Missing,
+    //Not returned by the API. This is added when processing.
+    //Indicates whether the bell should be displayed by the daily timetable
     display: boolean | Missing
 }
 
