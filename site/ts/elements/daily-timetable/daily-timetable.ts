@@ -130,22 +130,18 @@ export class StudentDailyTimetable extends Page {
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
 
-            let difference = now.getTime() - dailyTimetableDate.getTime();
             //The amount of milliseconds after midnight in the day.
-            let remainder = difference % 86400000;
+            let remainder = (now.getTime() - dailyTimetableDate.getTime()) % 86400000;
 
             //Milliseconds before 3:15pm = 51300000
             if (remainder > 51300000)
                 now.setDate(now.getDate() + 1);
 
-            //Milliseconds in a day = 86400000
-            let differenceInDays = Math.floor(difference / 86400000);
-
             //YYYY-MM-DD
             let date = now.toISOString().split("T")[0];
 
             //Day number (1 - 15)
-            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + differenceInDays - 1) % 15 + 1;
+            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now)) % 15 + 1;
 
             let day = timetable.days?.[dayNumber.toString()];
             if (day === null || day === undefined)
@@ -176,7 +172,6 @@ export class StudentDailyTimetable extends Page {
             this.updatingData = false;
         }
     }
-
 
     static GetBells() {
         let date = new Date();
@@ -348,6 +343,35 @@ export class StudentDailyTimetable extends Page {
         }
 
         return bells;
+    }
+
+    static GetSchoolDayCount(startDate: Date, endDate: Date) {
+        var diff = endDate.getTime() - startDate.getTime();
+        
+        //Milliseconds in a day = 86400000
+        var days = Math.floor(diff / 86400000);
+
+        // Subtract two weekend days for every week in between
+        var weeks = Math.floor(days / 7);
+        days = days - (weeks * 2);
+
+        // Handle special cases
+        var startDay = startDate.getDay();
+        var endDay = endDate.getDay();
+
+        // Remove weekend not previously removed.   
+        if (startDay - endDay > 1)         
+            days = days - 2;      
+
+        // Remove start day if span starts on Sunday but ends before Saturday
+        if (startDay == 0 && endDay != 6)
+            days = days - 1  
+
+        // Remove end day if span ends on Saturday but starts after Sunday
+        if (endDay == 6 && startDay != 0)
+            days = days - 1  
+
+        return days;
     }
 
     constructor() {
