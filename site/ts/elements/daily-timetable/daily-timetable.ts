@@ -94,39 +94,55 @@ export class StudentDailyTimetable extends Page {
         if (nextDailyTimetable === undefined) {
             let succeeded = await Resources.FetchResources();
 
-            if (succeeded) {
-                this.updatingData = false;
-                return;
-            }
-
-            let timetable = await Resources.GetResourceNow("timetable") as Timetable;
-
-            let bells = this.GetBells();
-
-            let now = new Date();
-            //YYYY-MM-DD
-            let date = now.toISOString().split("T")[0];
-
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | undefined | null;
             if (currentDailyTimetable === undefined || currentDailyTimetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null ||
-                currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null)
+                //Keep updatingData true so we don't keep trying
+                return;
+
+                             //Check if the returned date is not today.
+            if (succeeded && new Date(currentDailyTimetable.date) > new Date()) {
+                this.updatingData = false;
+                return;
+            }
+
+            if (currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+                //Keep updatingData true so we don't keep trying
+                return;
+
+            let timetable = await Resources.GetResourceNow("timetable") as Timetable | undefined | null;
+            if (timetable === undefined || timetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
             let dailyTimetableDate = new Date(currentDailyTimetable.date);
 
+            let bells = this.GetBells();
+
+            let now = new Date();
+
+            if (now.getDay() == 6)
+                now.setDate(now.getDate() + 1);
+
+            if (now.getDay() == 0)
+                now.setDate(now.getDate() + 1);
+
             let difference = now.getTime() - dailyTimetableDate.getTime();
-            //Milliseconds in a day = 86400000
-            let differenceInDays = Math.floor(difference / 86400000);
+            //The amount of milliseconds after midnight in the day.
             let remainder = difference % 86400000;
 
-            //Milliseconds before 3:15 = 51300000
+            //Milliseconds before 3:15pm = 51300000
             if (remainder > 51300000)
-                differenceInDays++;
+                now.setDate(now.getDate() + 1);
+
+            //Milliseconds in a day = 86400000
+            let differenceInDays = Math.floor(difference / 86400000);
+
+            //YYYY-MM-DD
+            let date = now.toISOString().split("T")[0];
 
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + differenceInDays - 1) % 15 + 1;
@@ -138,10 +154,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: bells.map(bell => {
-                    bell.bellDisplay = bell.bell;
-                    return bell;
-                }),
+                bells: bells,
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {
@@ -486,7 +499,7 @@ export class StudentDailyTimetable extends Page {
         if (nextBellInfo === undefined)
             StudentDailyTimetable.UpdateData();
 
-        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.bell ?? ""];
+        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
         let nextClassName = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
 
         if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
