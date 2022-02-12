@@ -110,10 +110,16 @@ export class Resources {
         let serverUrl = new URL(`${SERVER_ENDPOINT}/resources`);
         serverUrl.searchParams.append("token", JSON.stringify(token));
 
-        let resourceResponse = await fetch(serverUrl.toString());
+        let resourceResponse: Response | null = null;
+        try {
+            resourceResponse = await fetch(serverUrl.toString());
+        }
+        catch (e) {
+            resourceResponse == null
+        }
 
         //TODO Add more granular error handling
-        if (!resourceResponse.ok) {
+        if (resourceResponse === null || !resourceResponse.ok) {
             resourceNotification.Close();
             this.ShowLoginNotification();
 
