@@ -1,8 +1,10 @@
 //#conditional
 
-import { Site, Metadata } from "./site/site";
+import { Site } from "./site/site";
 import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";
+
+import "./elements";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const INSTALL_PROMPT_FREQUENCY: number;
@@ -10,9 +12,6 @@ declare const BACKGROUND_SYNC_INTERVAL: number;
 
 declare const METADATA_ENDPOINT: string;
 declare const STATUS_SERVER_ENDPOINT: string;
-
-import "./site/elements";
-import "./site/extensions";
 
 Main();
 
@@ -149,7 +148,7 @@ async function Main() {
         button.classList.add("a");
         button.innerText = "Click";
 
-        button.addEventListener("click", e => {
+        button.addEventListener("click", () => {
             deferredPrompt.prompt();
         });
 

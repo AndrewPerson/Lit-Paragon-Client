@@ -27,7 +27,6 @@
     <link href="manifest.json" rel="manifest">
 
     <script src="dist/init.js"></script>
-    <script defer src="dist/index.js"></script>
 </head>
 
 <body>
@@ -44,6 +43,7 @@
         <user-settings id="settings" class="hidden"></user-settings>
     </main>
     
+    <script async src="dist/index.js"></script>
     <script async src="js/jsbarcode.js" onload="document.getElementById('barcode')?.requestUpdate?.()"></script>
 </body>
 

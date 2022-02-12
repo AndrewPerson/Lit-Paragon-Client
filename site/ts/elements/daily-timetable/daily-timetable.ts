@@ -94,42 +94,54 @@ export class StudentDailyTimetable extends Page {
         if (nextDailyTimetable === undefined) {
             let succeeded = await Resources.FetchResources();
 
-            if (succeeded) {
-                this.updatingData = false;
-                return;
-            }
-
-            let timetable = await Resources.GetResourceNow("timetable") as Timetable;
-
-            let bells = this.GetBells();
-
-            let now = new Date();
-            //YYYY-MM-DD
-            let date = now.toISOString().split("T")[0];
-
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | undefined | null;
             if (currentDailyTimetable === undefined || currentDailyTimetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null ||
-                currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null)
+                //Keep updatingData true so we don't keep trying
+                return;
+
+                             //Check if the returned date is not today.
+            if (succeeded && new Date(currentDailyTimetable.date) > new Date()) {
+                this.updatingData = false;
+                return;
+            }
+
+            if (currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+                //Keep updatingData true so we don't keep trying
+                return;
+
+            let timetable = await Resources.GetResourceNow("timetable") as Timetable | undefined | null;
+            if (timetable === undefined || timetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
             let dailyTimetableDate = new Date(currentDailyTimetable.date);
 
-            let difference = now.getTime() - dailyTimetableDate.getTime();
-            //Milliseconds in a day = 86400000
-            let differenceInDays = Math.floor(difference / 86400000);
-            let remainder = difference % 86400000;
+            let bells = this.GetBells();
 
-            //Milliseconds before 3:15 = 51300000
+            let now = new Date();
+
+            if (now.getDay() == 6)
+                now.setDate(now.getDate() + 1);
+
+            if (now.getDay() == 0)
+                now.setDate(now.getDate() + 1);
+
+            //The amount of milliseconds after midnight in the day.
+            let remainder = (now.getTime() - dailyTimetableDate.getTime()) % 86400000;
+
+            //Milliseconds before 3:15pm = 51300000
             if (remainder > 51300000)
-                differenceInDays++;
+                now.setDate(now.getDate() + 1);
+
+            //YYYY-MM-DD
+            let date = now.toISOString().split("T")[0];
 
             //Day number (1 - 15)
-            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + differenceInDays - 1) % 15 + 1;
+            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now)) % 15 + 1;
 
             let day = timetable.days?.[dayNumber.toString()];
             if (day === null || day === undefined)
@@ -138,10 +150,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: bells.map(bell => {
-                    bell.bellDisplay = bell.bell;
-                    return bell;
-                }),
+                bells: bells,
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {
@@ -163,7 +172,6 @@ export class StudentDailyTimetable extends Page {
             this.updatingData = false;
         }
     }
-
 
     static GetBells() {
         let date = new Date();
@@ -337,6 +345,35 @@ export class StudentDailyTimetable extends Page {
         return bells;
     }
 
+    static GetSchoolDayCount(startDate: Date, endDate: Date) {
+        var diff = endDate.getTime() - startDate.getTime();
+        
+        //Milliseconds in a day = 86400000
+        var days = Math.floor(diff / 86400000);
+
+        // Subtract two weekend days for every week in between
+        var weeks = Math.floor(days / 7);
+        days = days - (weeks * 2);
+
+        // Handle special cases
+        var startDay = startDate.getDay();
+        var endDay = endDate.getDay();
+
+        // Remove weekend not previously removed.   
+        if (startDay - endDay > 1)         
+            days = days - 2;      
+
+        // Remove start day if span starts on Sunday but ends before Saturday
+        if (startDay == 0 && endDay != 6)
+            days = days - 1  
+
+        // Remove end day if span ends on Saturday but starts after Sunday
+        if (endDay == 6 && startDay != 0)
+            days = days - 1  
+
+        return days;
+    }
+
     constructor() {
         super();
 
@@ -486,7 +523,7 @@ export class StudentDailyTimetable extends Page {
         if (nextBellInfo === undefined)
             StudentDailyTimetable.UpdateData();
 
-        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.bell ?? ""];
+        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
         let nextClassName = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
 
         if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
