@@ -101,7 +101,10 @@ export class Settings extends LitElement {
 
         <h6>Sidebar</h6>
 
-        <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => Navbar.instance?.toggleAttribute("editing")}">
+        <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => {
+            if (Navbar.instance !== null)
+                Navbar.instance.editing = !Navbar.instance.editing;
+        }}">
         `;
     }
 }
