@@ -65,7 +65,7 @@ export class PayloadBellItem extends LitElement {
                 <p class="time">at ${this.time} with <span class="${teacherClass}">${this.teacher}</span></p>
             </div>
             
-            <p class="end ${roomClass}">${isNaN(this.room) ? "Unknown" : this.room}</p>
+            <p class="end ${roomClass}">${this.room}</p>
         `;
     }
 }
