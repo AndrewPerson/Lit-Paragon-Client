@@ -500,6 +500,13 @@ export class StudentDailyTimetable extends Page {
         return words.join(" ");
     }
 
+    FormatCasualCode(code: string) {
+        if (code.length == 0) return code;
+        if (code.length == 1) return `${code.toUpperCase()}.`;
+        
+        return `${code[code.length - 1].toUpperCase()} ${code[0].toUpperCase()}${code.substring(1, code.length - 1).toLowerCase()}.`;
+    }
+
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
         let teacherChanged = classVariation !== undefined && classVariation !== null && classVariation.type != TeacherType.NO_VARIATION;
         let roomChanged = roomVariation !== undefined && roomVariation !== null;
@@ -510,7 +517,7 @@ export class StudentDailyTimetable extends Page {
                                 teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                            classVariation.type == TeacherType.NO_COVER ? "No one" :
-                                           classVariation.casualSurname ?? `${classVariation.casual ?? "????"}.`}"
+                                           classVariation.casualSurname ?? this.FormatCasualCode(classVariation.casual ?? "????")}"
                                 ?teacherChanged="${teacherChanged}"
                                 room="${roomVariation?.roomTo ?? period.room ?? "???"}"
                                 ?roomChanged="${roomChanged}"></daily-timetable-period>
