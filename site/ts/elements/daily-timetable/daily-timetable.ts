@@ -504,7 +504,7 @@ export class StudentDailyTimetable extends Page {
         if (code.length == 0) return code;
         if (code.length == 1) return `${code.toUpperCase()}.`;
         
-        return `${code[0].toUpperCase()} ${code[1].toUpperCase()}${code.substring(2).toLowerCase()}.`;
+        return `${code[code.length - 1].toUpperCase()} ${code[0].toUpperCase()}${code.substring(1, code.length - 1).toLowerCase()}.`;
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
