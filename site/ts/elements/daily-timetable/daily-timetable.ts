@@ -130,8 +130,11 @@ export class StudentDailyTimetable extends Page {
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
 
+            let millisecondsElapsed = now.getTime() % 86400000;
+
             //Milliseconds before 3:15pm (AEST to UTC) = 15300000
-            if (now.getTime() % 86400000 > 15300000)
+            //Milliseconds before 12am (AEST to UTC) = 46800000
+            if (millisecondsElapsed >= 15300000 && millisecondsElapsed <= 46800000)
                 now.setDate(now.getDate() + 1);
 
             //YYYY-MM-DD
