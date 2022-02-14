@@ -130,15 +130,17 @@ export class StudentDailyTimetable extends Page {
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
 
-            //The amount of milliseconds after midnight in the day.
-            let remainder = (now.getTime() - dailyTimetableDate.getTime()) % 86400000;
-
-            //Milliseconds before 3:15pm = 51300000
-            if (remainder > 51300000)
+            //Milliseconds before 3:15pm = 54900000
+            if (now.getTime() % 86400000 > 54900000)
                 now.setDate(now.getDate() + 1);
 
             //YYYY-MM-DD
             let date = now.toISOString().split("T")[0];
+
+            if (date == currentDailyTimetable.date) {
+                now.setDate(now.getDate() + 1);
+                date = now.toISOString().split("T")[0];
+            }
 
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now)) % 15 + 1;
