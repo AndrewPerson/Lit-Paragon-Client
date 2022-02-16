@@ -98,44 +98,22 @@ export class Extensions {
             let extensions = new Map(Object.entries(metadata?.pages || {}));
 
             let entries = [...this.installedExtensions.entries()];
-            let toUpdate: {
-                index: number,
-                extension: Extension
-            }[] = [];
 
-            entries = entries.filter((entry, index) => {
-                if (!extensions.has(entry[0])) return;
-
+            let updatedEntries = entries.map(entry => {
                 let extension = extensions.get(entry[0]);
 
-                if (extension === undefined) return;
+                if (extension === undefined) return undefined;
 
-                if (extension.version != entry[1].version) {
-                    toUpdate.push({
-                        index: index,
-                        extension: extension
-                    });
-
-                    return true;
-                }
-
-                for (let key of Object.keys(extension))
-                // @ts-ignore
-                    if (extension[key] != entry[1][key])
-                        return false;
-
-                return true;
+                return [entry[0], extension];
             });
 
-            for (let updateEntry of toUpdate) {
-                entries[updateEntry.index][1] = updateEntry.extension;
-            }
+            let filteredEntries = updatedEntries.filter(entry => entry !== undefined) as [string, Extension][];
 
-            this.installedExtensions = new Map(entries);
-            localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions.entries())));
+            this.installedExtensions = new Map(filteredEntries);
+            localStorage.setItem("Installed Extensions", JSON.stringify(filteredEntries));
 
             let order = Navbar.GetNavbarOrder();
-            order.filter(index => index >= Navbar.defaultPages.length + entries.length);
+            order.filter(index => index < Navbar.defaultPages.length + filteredEntries.length);
             Navbar.SetNavbarOrder(order);
         });
     
