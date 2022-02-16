@@ -79,9 +79,9 @@ export class Navbar extends LitElement {
         return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
     }
 
-    static SetNavbarOrder(order: number[]) {
+    static SetNavbarOrder(order: number[], update: boolean = true) {
         localStorage.setItem("Nav Order", JSON.stringify(order));
-        this.instance?.requestUpdate();
+        if (update) this.instance?.requestUpdate();
     }
 
     static instance: Navbar | null;
@@ -261,6 +261,15 @@ export class Navbar extends LitElement {
         let order = Navbar.GetNavbarOrder();
 
         let extensions = Extensions.installedExtensions;
+
+        if (order.length >= Navbar.defaultPages.length + extensions.size) {
+            for (let i = order.length - 1; i >= 0; i--) {
+                if (order[i] >= extensions.size + Navbar.defaultPages.length)
+                    order.splice(i, 1);
+            }
+
+            Navbar.SetNavbarOrder(order, false);
+        }
 
         let pages: string[] = [];
         let icons: string[] = [];
