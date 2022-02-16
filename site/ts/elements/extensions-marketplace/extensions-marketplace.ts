@@ -52,7 +52,37 @@ export class ExtensionsMarketplace extends LitElement {
         let extensionNames = [...this.extensions.keys()];
         extensionNames = this.searchFilter.length == 0 ? extensionNames : extensionNames.filter(name => name.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.extensions.get(name)?.description.toLowerCase().includes(this.searchFilter.toLowerCase()));
         extensionNames = extensionNames.filter(name => this.allowPreview || !this.extensions.get(name)?.preview || installedExtensionNames.includes(name));
-        extensionNames = extensionNames.sort((a, b) => (installedExtensionNames.includes(b) ? 1 : 0) - (installedExtensionNames.includes(a) ? 1 : 0));
+        //Sort extensions by whether they're installed, then by whether they're in preview, then by lexical order of the name.
+        extensionNames = extensionNames.sort((a, b) => {
+            let first = true;
+
+            if (installedExtensionNames.includes(a)) {
+                if (installedExtensionNames.includes(b)) {
+                    if (this.extensions.get(a)?.preview === false) {
+                        if (this.extensions.get(b)?.preview === false)
+                            first = a >= b;
+                        else
+                            first = true;
+                    }
+                    else if (this.extensions.get(b)?.preview === false)
+                        first = false;
+                }
+                else
+                    first = true;
+            }
+            else if (installedExtensionNames.includes(b))
+                first = false;
+            else if (this.extensions.get(a)?.preview === false) {
+                if (this.extensions.get(b)?.preview === false)
+                    first = a >= b;
+                else
+                    first = true;
+            }
+            else if (this.extensions.get(b)?.preview === false)
+                first = false;
+
+            return first ? -1 : 1;
+        });
 
         return html`
         <div class="header">
