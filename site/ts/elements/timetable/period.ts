@@ -14,7 +14,7 @@ export class TimetablePeriod extends LitElement {
     title: string;
 
     @property()
-    fullTitle: string;
+    shortTitle: string;
 
     @property()
     teacher: string;
@@ -113,14 +113,14 @@ export class TimetablePeriod extends LitElement {
         }
 
         return html`
-        <p>${this.title}</p>
+        <p>${this.shortTitle}</p>
 
         <p id="room" class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
         </p>
 
         <p id="details" class="popup details" style="${this.showDetails ? "" : "display: none"}">
-            ${this.fullTitle} in ${this.room} with ${this.teacher}
+            ${this.title} in ${this.room} with ${this.teacher}
         </p>
         `;
     }

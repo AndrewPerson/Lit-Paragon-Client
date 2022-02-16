@@ -146,7 +146,7 @@ export class StudentDailyTimetable extends Page {
             }
 
             //Day number (1 - 15)
-            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now)) % 15 + 1;
+            let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
 
             let day = timetable.days?.[dayNumber.toString()];
             if (day === null || day === undefined)
@@ -586,7 +586,6 @@ export class StudentDailyTimetable extends Page {
 
                         if (period !== undefined && period !== null &&
                             "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
-                            "year" in period && period.year !== undefined && period.year !== null &&
                             period.room !== undefined && period.room !== undefined)
                             return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
                         else
