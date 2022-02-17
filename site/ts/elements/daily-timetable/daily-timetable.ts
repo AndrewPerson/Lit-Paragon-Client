@@ -120,31 +120,28 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetableDate = new Date(currentDailyTimetable.date);
 
-            let bells = this.GetBells();
-
             let now = new Date();
-
+            
+            //Milliseconds before 3:15pm (UTC) = 54900000
+            if ((now.getHours() == 15 && now.getMinutes() >= 15) || now.getHours() > 15)
+                now.setDate(now.getDate() + 1);
+            
             if (now.getDay() == 6)
                 now.setDate(now.getDate() + 1);
-
+            
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
-
-            let millisecondsElapsed = now.getTime() % 86400000;
-
-            //Milliseconds before 3:15pm (AEST to UTC) = 15300000
-            //Milliseconds before 12am (AEST to UTC) = 46800000
-            if (millisecondsElapsed >= 15300000 && millisecondsElapsed <= 46800000)
-                now.setDate(now.getDate() + 1);
-
+            
+            //Prepare for UTC
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
             //YYYY-MM-DD
             let date = now.toISOString().split("T")[0];
-
+            
             if (date == currentDailyTimetable.date) {
                 now.setDate(now.getDate() + 1);
                 date = now.toISOString().split("T")[0];
             }
-
+            
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
 
@@ -155,7 +152,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: bells,
+                bells: this.GetBells(),
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {
@@ -351,10 +348,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     static GetSchoolDayCount(startDate: Date, endDate: Date) {
-        var diff = endDate.getTime() - startDate.getTime();
-        
-        //Milliseconds in a day = 86400000
-        var days = Math.floor(diff / 86400000);
+        var days = endDate.getDate() - startDate.getDate();
 
         // Subtract two weekend days for every week in between
         var weeks = Math.floor(days / 7);
@@ -366,15 +360,15 @@ export class StudentDailyTimetable extends Page {
 
         // Remove weekend not previously removed.   
         if (startDay - endDay > 1)         
-            days = days - 2;      
+            days = days - 2;
 
         // Remove start day if span starts on Sunday but ends before Saturday
         if (startDay == 0 && endDay != 6)
-            days = days - 1  
+            days = days - 1
 
         // Remove end day if span ends on Saturday but starts after Sunday
         if (endDay == 6 && startDay != 0)
-            days = days - 1  
+            days = days - 1
 
         return days;
     }
