@@ -31,7 +31,7 @@ export class ExtensionPage extends LitElement {
     
     render() {
         return html`
-        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-forms allow-modals allow-popups allow-scripts allow-same-origin" style="display: none"></iframe>
+        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }

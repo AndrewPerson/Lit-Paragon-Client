@@ -9,7 +9,7 @@
         "ts/elements/notification/notification.ts"
     ],
     "metadata": {
-        "version": "2.2.14",
+        "version": "2.2.15",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -58,7 +58,7 @@
                 "DEVELOPMENT"
             ],
             "vars": {
-                "METADATA_ENDPOINT": "http://127.0.0.1:5555/metadata",
+                "METADATA_ENDPOINT": "http://localhost:5555/metadata",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "",
                 "MAX_REFRESH_FREQUENCY": 0
