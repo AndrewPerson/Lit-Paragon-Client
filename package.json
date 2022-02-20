@@ -15,6 +15,6 @@
         "typescript": "^4.5.4"
     },
     "scripts": {
-        "serve": "npx ws -d site --static.extensions html --log.format dev --stack mw-serviceworker.js mw-metadata.js lws-log lws-static -p 5555 --https"
+        "serve": "npx ws -d site --static.extensions html --stack mw-serviceworker.js mw-metadata.js lws-static -p 5555"
     }
 }
