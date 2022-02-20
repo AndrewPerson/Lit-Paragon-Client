@@ -132,10 +132,12 @@ export class StudentDailyTimetable extends Page {
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
             
-            //Prepare for UTC
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            //Double offset so when converting to UTC, date comes out as AEST.
+            //I know it's a terrible workaround.
+            let utcAdjustedNow = new Date(now);
+            utcAdjustedNow.setMinutes(utcAdjustedNow.getMinutes() - utcAdjustedNow.getTimezoneOffset());
             //YYYY-MM-DD
-            let date = now.toISOString().split("T")[0];
+            let date = utcAdjustedNow.toISOString().split("T")[0];
             
             if (date == currentDailyTimetable.date) {
                 now.setDate(now.getDate() + 1);

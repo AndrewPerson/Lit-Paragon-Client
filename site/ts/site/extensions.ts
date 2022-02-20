@@ -16,7 +16,7 @@ export type Extension = {
 };
 
 export class Extensions {
-    static installedExtensions: Map<string, Extension> = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") || "{}")));
+    static installedExtensions: Map<string, Extension> = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") ?? "{}")));
 
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 
@@ -74,7 +74,7 @@ export class Extensions {
     
         if (!response) return new Map();
     
-        let extensions: Map<string, Extension> = new Map(Object.entries((await response.json()).pages || {}));
+        let extensions: Map<string, Extension> = new Map(Object.entries((await response.json()).pages ?? {}));
     
         return extensions;
     }
@@ -95,7 +95,7 @@ export class Extensions {
 
     static Initialise() {
         Site.GetMetadata(metadata => {
-            let extensions = new Map(Object.entries(metadata?.pages || {}));
+            let extensions = new Map(Object.entries(metadata?.pages ?? {}));
 
             let entries = [...this.installedExtensions.entries()];
 
@@ -110,7 +110,7 @@ export class Extensions {
             let filteredEntries = updatedEntries.filter(entry => entry !== undefined) as [string, Extension][];
 
             this.installedExtensions = new Map(filteredEntries);
-            localStorage.setItem("Installed Extensions", JSON.stringify(filteredEntries));
+            localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(filteredEntries)));
 
             let order = Navbar.GetNavbarOrder();
             order.filter(index => index < Navbar.defaultPages.length + filteredEntries.length);
