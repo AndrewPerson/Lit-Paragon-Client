@@ -27,41 +27,54 @@ async function Token(code: string) {
     return true;
 }
 
-let params = new URLSearchParams(window.location.search);
+function ShowError(error: string) {
+    let words = error.split(/ |_|-/);
 
-let code = params.get("code");
-
-//#if !DEVELOPMENT
-if (code) {
-//#endif
-    Token(code)
-    .then(succeeded => {
-        sessionStorage.removeItem("Last Refreshed");
-        location.href = `${location.origin}/${succeeded ? "" : "login"}`;
-    });
-//#if !DEVELOPMENT
-}
-else {
-    let error = params.get("error");
-
-    if (error) {
-        error = error.replace("_", " ");
-
-        let words = error.split(" ");
-
-        let formattedError = "";
-        for (let word of words) {
-            formattedError += word[0].toUpperCase() + word.substring(1) + " ";
-        }
-
-        (document.getElementById("message") as HTMLParagraphElement).innerText = `Error: ${formattedError.substring(0, formattedError.length - 1)}`;
+    let formattedError = "";
+    for (let word of words) {
+        formattedError += word[0].toUpperCase() + word.substring(1) + " ";
     }
-    else
-        (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
+
+    formattedError = formattedError.substring(0, formattedError.length - 1);
+
+    let bold = document.createElement("b");
+    bold.innerText = formattedError;
+
+    (document.getElementById("message") as HTMLParagraphElement).innerText = "Error: ";
+    (document.getElementById("message") as HTMLParagraphElement).appendChild(bold);
 
     let loginLink = document.getElementById("login") as HTMLAnchorElement;
 
     loginLink.href = LOGIN_URL;
     loginLink.removeAttribute("style");
+}
+
+let params = new URLSearchParams(window.location.search);
+
+//#if DEVELOPMENT
+let error = params.get("error");
+
+if (error) ShowError(error)
+else {
+    Token("").then(succeeded => {
+        if (succeeded) location.href = location.origin;
+        else ShowError("Could not get token");
+    });
+}
+//#else
+let code = params.get("code");
+
+if (code) {
+    Token(code)
+    .then(succeeded => {
+        sessionStorage.removeItem("Last Refreshed");
+        location.href = `${location.origin}/${succeeded ? "" : "login"}`;
+    });
+}
+else {
+    let error = params.get("error");
+
+    if (error) ShowError(error)
+    else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }
 //#endif
