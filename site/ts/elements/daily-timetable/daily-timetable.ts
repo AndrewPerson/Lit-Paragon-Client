@@ -582,7 +582,7 @@ export class StudentDailyTimetable extends Page {
 
                         if (period !== undefined && period !== null &&
                             "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
-                            period.room !== undefined && period.room !== undefined)
+                            period.room !== undefined && period.room !== null)
                             return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
                         else
                             return this.GetBell(bell);
