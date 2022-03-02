@@ -5,11 +5,10 @@
         "ts/callback.ts",
         "ts/login.ts",
         "ts/unsupported.ts",
-        "ts/service-worker/service-worker.js",
-        "ts/elements/notification/notification.ts"
+        "ts/service-worker/service-worker.js"
     ],
     "metadata": {
-        "version": "2.2.17",
+        "version": "2.2.18",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
