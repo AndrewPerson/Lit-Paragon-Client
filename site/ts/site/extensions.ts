@@ -4,6 +4,8 @@ import { Resources } from "./resources";
 import { Navbar } from "../elements/navbar/navbar";
 import { ExtensionPage } from "../elements/extensions/extensions";
 
+import { InlineNotification } from "../elements/notification/notification";
+
 declare const METADATA_CACHE: string;
 
 export type Extension = {
@@ -251,9 +253,9 @@ export class Extensions {
         }
 
         if (command == "Close Notification") {
-            let notification = document.getElementById(data.id) as any | null;
+            let notification = document.getElementById(data.id) as InlineNotification | null;
 
-            if (notification !== null && "Close" in notification && typeof notification.Close === "function") notification.Close();
+            if (notification !== null) notification.Close();
         
             return;
         }
