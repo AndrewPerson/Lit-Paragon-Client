@@ -97,7 +97,9 @@ export class Navbar extends LitElement {
         document.addEventListener("pointermove", this.DragElement);
         document.addEventListener("pointerup", this.StopDrag);
 
-        this.mobileMediaQuery.addEventListener("change", this.ShowScrollShadows.bind(this));
+        //Because sometimes addEventListener is undefined.
+        //TODO Find out why
+        this.mobileMediaQuery.addEventListener?.("change", this.ShowScrollShadows.bind(this));
     }
 
     disconnectedCallback() {
