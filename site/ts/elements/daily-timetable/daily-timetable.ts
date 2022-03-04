@@ -154,7 +154,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: this.GetBells(),
+                bells: this.GetBells(dayNumber),
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {
@@ -177,10 +177,7 @@ export class StudentDailyTimetable extends Page {
         }
     }
 
-    static GetBells() {
-        let date = new Date();
-        let day = (date.getDay() + (((date.getHours() == 14 && date.getMinutes() >= 15) || date.getHours() > 14) ? 1 : 0)) % 7;
-
+    static GetBells(day: number) {
         let bells: Bell[];
 
         if (day == 4) {
@@ -366,11 +363,11 @@ export class StudentDailyTimetable extends Page {
 
         // Remove start day if span starts on Sunday but ends before Saturday
         if (startDay == 0 && endDay != 6)
-            days = days - 1
+            days = days - 1;
 
         // Remove end day if span ends on Saturday but starts after Sunday
         if (endDay == 6 && startDay != 0)
-            days = days - 1
+            days = days - 1;
 
         return days;
     }
