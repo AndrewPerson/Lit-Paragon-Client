@@ -70,7 +70,7 @@ export class Settings extends LitElement {
 
     render() {
         return html`
-        <info-popup>
+        <info-popup class="credits">
             Paragon is written by <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson">Andrew Pye</a>.
             <br>
             The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
@@ -99,7 +99,12 @@ export class Settings extends LitElement {
         
         <span></span>
 
-        <h6>Sidebar</h6>
+        <h6 class="navbar-header">
+            Sidebar
+            <info-popup class="navbar-info">
+                Click on "Reorder" and drag on the navbar icons to reorder them.
+            </info-popup>
+        </h6>
 
         <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => {
             if (Navbar.instance !== null)

@@ -7,15 +7,32 @@
     gap: 1.2rem;
 }
 
-info-popup {
+info-popup.credits {
     position: absolute;
     top: 1.2rem;
     left: 1.2rem;
+
     width: 1.9rem;
     height: 1.9rem;
+
     --max-width: 30vmax;
     --offset: 2.6rem;
     z-index: 2;
+}
+
+.navbar-header {
+    display: flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+info-popup.navbar-info {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+
+    --max-width: 30vmax;
+    --offset: 1rem;
 }
 
 span {
@@ -59,7 +76,7 @@ span {
 }
 
 #edit-navbar::after {
-    content: "Edit";
+    content: "Reorder";
 }
 
 #edit-navbar:checked::after {

@@ -8,7 +8,7 @@
         "ts/service-worker/service-worker.js"
     ],
     "metadata": {
-        "version": "2.2.18",
+        "version": "2.2.19",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
