@@ -121,7 +121,7 @@ async function Main() {
 
         navigator.serviceWorker.addEventListener("message", async (e: MessageEvent) => {
             if (e.data.command == "metadata-fetched") {
-                await Site.SetMetadata(e.data.metadata);
+                await Site.SetMetadata(e.data.metadata, !e.data.updated);
 
                 if (e.data.updated) {
                     let text = document.createElement("p");
@@ -134,7 +134,7 @@ async function Main() {
 
         let serviceWorker = await navigator.serviceWorker.ready;
 
-        //A lot of @ts-ignore because TS doesn't have up-to-date definitions.
+        //A lot of @ts-ignore because TS doesn't have up-to-date definitions for serviceWorker syncing.
         if ("periodicSync" in serviceWorker) {
             //@ts-ignore
             let tags = await serviceWorker.periodicSync.getTags();
