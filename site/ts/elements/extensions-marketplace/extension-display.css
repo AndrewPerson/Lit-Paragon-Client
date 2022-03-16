@@ -19,13 +19,22 @@
     border-radius: 0.3rem;
 }
 
-img {
+.icon-wrapper {
     width: 4rem;
     height: 4rem;
 
     border-radius: 100%;
 
     box-shadow: var(--small-shadow);
+}
+
+.icon {
+    --size: 60%;
+
+    width: var(--size);
+    height: var(--size);
+
+    margin: calc((100% - var(--size)) / 2);
 }
 
 .content {

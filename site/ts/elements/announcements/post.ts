@@ -20,6 +20,9 @@ export class AnnouncementPost extends LitElement {
     @property()
     years: string;
 
+    @property()
+    published: string | null;
+
     @property({ type: Boolean })
     meeting: boolean;
 
@@ -40,7 +43,7 @@ export class AnnouncementPost extends LitElement {
         <details>
             <summary>
                 <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | ${this.meetingDate} ${this.meetingTime}` : ""}</p>
+                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | Meeting at ${this.meetingTime}, ${this.meetingDate}` : ""}${this.published === null ? "" : ` | Published on ${this.published}`}</p>
             </summary>
 
             ${unsafeHTML(this.content)}

@@ -23,12 +23,12 @@
     position: absolute;
 
     display: block;
-    width: 0.8rem;
-    height: 0.8rem;
+    width: 80%;
+    height: 80%;
 
     background-color: var(--surface4);
 
-    border-radius: 0.2rem;
+    border-radius: 25%;
 }
 
 :where(input[type="checkbox"]:focus-visible) {
