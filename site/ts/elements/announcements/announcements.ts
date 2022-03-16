@@ -2,10 +2,12 @@ import { Page } from "../page/page";
 
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { ifDefined } from "lit-html/directives/if-defined.js";
 
 import "./post";
 
 import { Announcements } from "./types";
+import { Missing } from "../../missing";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -29,8 +31,16 @@ export class SchoolAnnouncements extends Page {
     @state()
     announcements: Announcements;
 
+    set userInfo(value: {yearGroup: string | Missing}) {
+        let yearGroup = value.yearGroup;
+
+        if (yearGroup !== undefined && yearGroup !== null)
+            if (localStorage.getItem("Announcement Year Filter") === null)
+                this.yearFilter = yearGroup;
+    }
+
     @state()
-    yearFilter: string = "all";
+    yearFilter: string = localStorage.getItem("Announcement Year Filter") ?? "all";
 
     @state()
     searchFilter: string = "";
@@ -39,6 +49,19 @@ export class SchoolAnnouncements extends Page {
         super();
 
         this.AddResource("announcements", "announcements");
+        this.AddResource("userinfo", "userInfo");
+    }
+
+    ChangeSearchFilter(e: InputEvent) {
+        this.searchFilter = (e.target as HTMLInputElement).value;
+    }
+
+    ChangeYearFilter(e: InputEvent) {
+        let filter = (e.target as HTMLInputElement).value;
+
+        localStorage.setItem("Announcement Year Filter", filter);
+
+        this.yearFilter = filter;
     }
 
     renderPage() {
@@ -62,17 +85,17 @@ export class SchoolAnnouncements extends Page {
 
         return html`
         <div class="header">
-            <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
+            <input type="search" placeholder="Search..." @input="${this.ChangeSearchFilter.bind(this)}">
 
-            <select title="Select filter year for announcements" @input="${(e: InputEvent) => this.yearFilter = (e.target as HTMLSelectElement).value}">
-                <option value="all">All</option>
-                <option value="Staff">Staff</option>
-                <option value="12">Year 12</option>
-                <option value="11">Year 11</option>
-                <option value="10">Year 10</option>
-                <option value="9">Year 9</option>
-                <option value="8">Year 8</option>
-                <option value="7">Year 7</option>
+            <select title="Select filter year for announcements" @input="${this.ChangeYearFilter.bind(this)}">
+                <option value="all" ?selected="${this.yearFilter == "all"}">All</option>
+                <option value="Staff" ?selected="${this.yearFilter == "Staff"}">Staff</option>
+                <option value="12" ?selected="${this.yearFilter == "12"}">Year 12</option>
+                <option value="11" ?selected="${this.yearFilter == "11"}">Year 11</option>
+                <option value="10" ?selected="${this.yearFilter == "10"}">Year 10</option>
+                <option value="9" ?selected="${this.yearFilter == "9"}">Year 9</option>
+                <option value="8" ?selected="${this.yearFilter == "8"}">Year 8</option>
+                <option value="7" ?selected="${this.yearFilter == "7"}">Year 7</option>
             </select>
         </div>
 
@@ -87,7 +110,8 @@ export class SchoolAnnouncements extends Page {
             return html`
             <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"
                                author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
-                               ?meeting="${meeting}" meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
+                               published="${ifDefined(announcement.dates?.[0])}" ?meeting="${meeting}"
+                               meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
                                weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"></announcement-post>
             `;
         })}</div>

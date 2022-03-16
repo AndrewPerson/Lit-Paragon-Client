@@ -8,6 +8,7 @@ export type Announcement = {
     title: string | Missing,
     content: string | Missing,
     years: string[] | Missing,
+    dates: string[] | Missing,
     relativeWeight: number | Missing,
     isMeeting: number | Missing,
     meetingDate: string | Missing,
