@@ -29,8 +29,3 @@ loading-indicator.indicator {
     width: calc(1rem * var(--scale));
     height: calc(1rem * var(--scale));
 }
-
-svg {
-    width: inherit;
-    height: inherit;
-}
