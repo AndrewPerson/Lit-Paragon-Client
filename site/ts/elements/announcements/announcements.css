@@ -12,20 +12,6 @@
 .content {
     flex: 1;
     overflow: hidden auto;
-
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface4) transparent;
-}
-
-.content::-webkit-scrollbar {
-    background-color: transparent;
-
-    width: 0.4rem;
-}
-
-.content::-webkit-scrollbar-thumb {
-    background-color: var(--surface4);
-    border-radius: 0.4rem;
 }
 
 .content:empty::after {

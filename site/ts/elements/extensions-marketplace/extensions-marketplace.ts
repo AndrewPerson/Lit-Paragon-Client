@@ -13,6 +13,8 @@ import searchCss from "default/search.css";
 //@ts-ignore
 import checkboxCss from "default/checkbox.css";
 //@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
+//@ts-ignore
 import fullElementCss from "default/pages/full.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
@@ -21,7 +23,7 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [textCss, searchCss, checkboxCss, pageCss, fullElementCss, extensionsMarketplaceCss];
+    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
     @state()
     extensions: Map<string, Extension> = new Map();

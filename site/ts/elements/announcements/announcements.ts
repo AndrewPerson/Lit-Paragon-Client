@@ -18,6 +18,8 @@ import searchCss from "default/search.css";
 //@ts-ignore
 import selectCss from "default/select.css";
 //@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
+//@ts-ignore
 import fullElementCss from "default/pages/full.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
@@ -26,7 +28,7 @@ import announcementCss from "./announcements.css";
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [textCss, imgCss, searchCss, selectCss, pageCss, fullElementCss, announcementCss];
+    static styles = [textCss, imgCss, searchCss, selectCss, scrollbarCss, pageCss, fullElementCss, announcementCss];
 
     @state()
     announcements: Announcements;

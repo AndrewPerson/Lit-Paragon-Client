@@ -11,13 +11,15 @@ import { DailyTimetable } from "../daily-timetable/types";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
+//@ts-ignore
 import pageCss from "default/pages/page.css";
 //@ts-ignore
 import timetableCss from "./timetable.css";
 
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [textCss, pageCss, timetableCss];
+    static styles = [textCss, scrollbarCss, pageCss, timetableCss];
 
     static get observedAttributes(): string[] {
         return [...super.observedAttributes, "class"];
