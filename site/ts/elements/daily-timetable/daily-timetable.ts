@@ -16,6 +16,8 @@ import { Missing } from "../../missing";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
+//@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
 import cardElementCss from "default/pages/card.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
@@ -26,7 +28,7 @@ declare const RESOURCE_CACHE: string;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, pageCss, cardElementCss, dailyTimetableCss];
+    static styles = [textCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
 
