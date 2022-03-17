@@ -6,8 +6,7 @@
 }
 
 svg {
-    width: inherit;
-    height: inherit;
+    filter: none;
     animation: 3s infinite spin;
 }
 

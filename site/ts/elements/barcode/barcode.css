@@ -75,8 +75,3 @@ info-popup {
     right: 1.25%;
     border-radius: 0.25rem;
 }
-
-#save > svg {
-    width: inherit;
-    height: inherit;
-}

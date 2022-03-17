@@ -2,8 +2,6 @@
     display: flex;
     flex-direction: column;
     gap: 1.2rem;
-
-    overscroll-behavior: contain;
 }
 
 .header {
@@ -27,23 +25,10 @@
     flex: 1;
 
     overflow-y: auto;
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface4) transparent;
 }
 
 .content:empty {
     display: block;
-}
-
-.content::-webkit-scrollbar {
-    background-color: transparent;
-
-    width: 0.4rem;
-}
-
-.content::-webkit-scrollbar-thumb {
-    background-color: var(--surface4);
-    border-radius: 0.4rem;
 }
 
 .content:empty::after {

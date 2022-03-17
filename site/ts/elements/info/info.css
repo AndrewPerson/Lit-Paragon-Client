@@ -15,11 +15,6 @@ button:focus-visible {
     outline: none;
 }
 
-svg {
-    width: inherit;
-    height: inherit;
-}
-
 slot {
     position: absolute;
     display: block;

@@ -190,7 +190,7 @@ export class StudentBarcode extends Page {
     renderPage() {
         let storedPoints = localStorage.getItem("Barcode Points");
 
-        let points: string[] = ["20%", "20%", "80%", "40%"];
+        let points: string[] = ["10%", "10%", "90%", "50%"];
 
         if (storedPoints) points = JSON.parse(storedPoints);
 

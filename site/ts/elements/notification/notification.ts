@@ -2,9 +2,9 @@ import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 //@ts-ignore
-import notificationCss from "./notification.css";
-//@ts-ignore
 import imgCss from "default/img.css";
+//@ts-ignore
+import notificationCss from "./notification.css";
 
 //@ts-ignore
 import crossSvg from "images/cross.svg";

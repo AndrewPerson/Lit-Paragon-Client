@@ -7,3 +7,8 @@
     -moz-user-select: none;
     -webkit-user-select: none;
 }
+
+svg {
+    width: inherit;
+    height: inherit;
+}

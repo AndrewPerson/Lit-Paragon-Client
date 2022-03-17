@@ -5,6 +5,8 @@ import { customElement, state, query } from "lit/decorators.js";
 
 import { Resources } from "../../site/resources";
 
+import { bells } from "./bells";
+
 import "./bell";
 import "./period";
 
@@ -16,6 +18,8 @@ import { Missing } from "../../missing";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
+//@ts-ignore
 import cardElementCss from "default/pages/card.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
@@ -26,7 +30,7 @@ declare const RESOURCE_CACHE: string;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, pageCss, cardElementCss, dailyTimetableCss];
+    static styles = [textCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
 
@@ -154,7 +158,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: this.GetBells(dayNumber),
+                bells: bells.get(dayNumber),
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {
@@ -175,175 +179,6 @@ export class StudentDailyTimetable extends Page {
 
             this.updatingData = false;
         }
-    }
-
-    static GetBells(day: number) {
-        let bells: Bell[];
-
-        if (day == 4) {
-            bells = [
-                {
-                    period: "0",
-                    time: "08:00",
-                    bell: "0",
-                    bellDisplay: "Period 0",
-                    display: undefined
-                },
-                {
-                    period: "RC",
-                    time: "09:25",
-                    bell: "RC",
-                    bellDisplay: "Roll Call",
-                    display: undefined
-                },
-                {
-                    period: "1",
-                    time: "09:30",
-                    bell: "1",
-                    bellDisplay: "Period 1",
-                    display: undefined
-                },
-                {
-                    period: "2",
-                    time: "10:30",
-                    bell: "2",
-                    bellDisplay: "Period 2",
-                    display: undefined
-                },
-                {
-                    period: "R",
-                    time: "11:25",
-                    bell: "R",
-                    bellDisplay: "Recess",
-                    display: undefined
-                },
-                {
-                    period: "3",
-                    time: "11:45",
-                    bell: "3",
-                    bellDisplay: "Period 3",
-                    display: undefined
-                },
-                {
-                    period: "WFL1",
-                    time: "12:40",
-                    bell: "WFL1",
-                    bellDisplay: "Lunch 1",
-                    display: undefined
-                },
-                {
-                    period: "WFL2",
-                    time: "13:00",
-                    bell: "WFL2",
-                    bellDisplay: "Lunch 2",
-                    display: undefined
-                },
-                {
-                    period: "4",
-                    time: "13:20",
-                    bell: "4",
-                    bellDisplay: "Period 4",
-                    display: undefined
-                },
-                {
-                    period: "5",
-                    time: "14:20",
-                    bell: "5",
-                    bellDisplay: "Period 5",
-                    display: undefined
-                },
-                {
-                    period: "EoD",
-                    time: "15:15",
-                    bell: "End of Day",
-                    bellDisplay: "",
-                    display: undefined
-                }
-            ];
-        }
-        else {
-            bells = [
-                {
-                    bell: "0",
-                    bellDisplay: "Period 0",
-                    period: "0",
-                    time: "08:00",
-                    display: undefined
-                },
-                {
-                    bell: "RC",
-                    bellDisplay: "Roll Call",
-                    period: "RC",
-                    time: "09:00",
-                    display: undefined
-                },
-                {
-                    bell: "1",
-                    bellDisplay: "Period 1",
-                    period: "1",
-                    time: "09:05",
-                    display: undefined
-                },
-                {
-                    bell: "2",
-                    bellDisplay: "Period 2",
-                    period: "2",
-                    time: "10:10",
-                    display: undefined
-                },
-                {
-                    bell: "R",
-                    bellDisplay: "Recess",
-                    period: "R",
-                    time: "11:10",
-                    display: undefined
-                },
-                {
-                    bell: "3",
-                    bellDisplay: "Period 3",
-                    period: "3",
-                    time: "11:30",
-                    display: undefined
-                },
-                {
-                    bell: "WFL1",
-                    bellDisplay: "Lunch 1",
-                    period: "WFL1",
-                    time: "12:30",
-                    display: undefined
-                },
-                {
-                    bell: "WFL2",
-                    bellDisplay: "Lunch 2",
-                    period: "WFL2",
-                    time: "12:50",
-                    display: undefined
-                },
-                {
-                    bell: "4",
-                    bellDisplay: "Period 4",
-                    period: "4",
-                    time: "13:10",
-                    display: undefined
-                },
-                {
-                    bell: "5",
-                    bellDisplay: "Period 5",
-                    period: "5",
-                    time: "14:15",
-                    display: undefined
-                },
-                {
-                    bell: "EoD",
-                    bellDisplay: "End of Day",
-                    period: "EoD",
-                    time: "15:15",
-                    display: undefined
-                }
-            ];
-        }
-
-        return bells;
     }
 
     static GetSchoolDayCount(startDate: Date, endDate: Date) {

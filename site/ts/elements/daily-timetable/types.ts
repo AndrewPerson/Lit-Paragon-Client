@@ -28,9 +28,7 @@ export type Bell = {
     time: string | Missing,
     bell: string | Missing,
     bellDisplay: string | Missing,
-    //Not returned by the API. This is added when processing.
-    //Indicates whether the bell should be displayed by the daily timetable
-    display: boolean | Missing
+    display?: boolean | Missing
 }
 
 export type RollCall = {
