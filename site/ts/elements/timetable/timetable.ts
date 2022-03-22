@@ -8,6 +8,8 @@ import { TimetablePeriod } from "./period";
 import { Timetable, Day, Period } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
 
+import { Debounce } from "../../utils";
+
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
@@ -66,17 +68,9 @@ export class FullTimetable extends Page {
         event.stopPropagation();
     }
 
-    Debounce(func: (...args: any[]) => void, timeout = 300){
-        let timer: number;
-        return (...args: any[]) => {
-            clearTimeout(timer);
-            timer = setTimeout(() => { func.apply(this, args); }, timeout);
-        };
-    }
-
-    Resize = this.Debounce(() => {
+    Resize = Debounce(() => {
         this.requestUpdate();
-    }).bind(this);
+    }, 300).bind(this);
 
     disconnectedCallback() {
         super.disconnectedCallback();
