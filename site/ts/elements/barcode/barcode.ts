@@ -7,6 +7,8 @@ import { Site } from "../../site/site";
 
 import { Missing } from "../../missing";
 
+import { Debounce } from "../../utils";
+
 import "../info/info";
 
 //@ts-ignore
@@ -44,6 +46,8 @@ export class StudentBarcode extends Page {
     @query("#save")
     saveLink: HTMLAnchorElement;
 
+    rect: DOMRect = this.getBoundingClientRect();
+
     draggedElement: HTMLElement | null = null;
 
     dragging: boolean = false;
@@ -58,17 +62,27 @@ export class StudentBarcode extends Page {
     @state()
     studentId: string;
 
+    Resize = Debounce(() => {
+        this.rect = this.getBoundingClientRect();
+    }, 300).bind(this);
+
     constructor() {
         super();
 
         this.addEventListener("pointermove", this.DragPoint);
         this.addEventListener("pointerup", this.EndDrag);
 
+        window.addEventListener("resize", this.Resize);
+
         this.AddResource("userinfo", "userInfo");
 
         Site.ListenForDark(dark => {
             this.barcode?.classList.toggle("outline", dark);
         });
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener("resize", this.Resize);
     }
 
     StartDrag(e: PointerEvent) {
@@ -89,9 +103,12 @@ export class StudentBarcode extends Page {
         if (!this.dragging) {
             this.dragging = true;
 
-            this.draggedElement.style.left = `${(e.clientX - this.offsetLeft) / this.clientWidth * 100}%`;
-            this.draggedElement.style.top = `${(e.clientY - this.offsetTop) / this.clientHeight * 100}%`;
-            
+            let x = Math.max(0, Math.min(100, (e.clientX - this.rect.left) / this.rect.width * 100));
+            let y = Math.max(0, Math.min(100, (e.clientY - this.rect.top) / this.rect.height * 100));
+
+            this.draggedElement.style.left = `${x}%`;
+            this.draggedElement.style.top = `${y}%`;
+
             this.SetBarcodePosition();
 
             this.dragging = false;
@@ -185,6 +202,8 @@ export class StudentBarcode extends Page {
     updated() {
         this.SetBarcodePosition();
         this.RenderBarcode();
+
+        this.rect = this.getBoundingClientRect();
     }
 
     renderPage() {
