@@ -66,11 +66,35 @@ export class StudentBarcode extends Page {
         this.rect = this.getBoundingClientRect();
     }, 300).bind(this);
 
+    DragPoint = ((e: PointerEvent) => {
+        if (this.draggedElement == null) return;
+
+        e.preventDefault();
+
+        if (!this.dragging) {
+            this.dragging = true;
+
+            let x = (e.clientX - this.rect.left) / this.rect.width * 100;
+            let y = (e.clientY - this.rect.top) / this.rect.height * 100;
+
+            x = Math.max(0, Math.min(100, x));
+            y = Math.max(0, Math.min(100, y));
+
+            this.draggedElement.style.left = `${x}%`;
+            this.draggedElement.style.top = `${y}%`;
+
+            this.SetBarcodePosition();
+
+            this.dragging = false;
+        }
+    }).bind(this);
+
     constructor() {
         super();
 
-        this.addEventListener("pointermove", this.DragPoint);
         this.addEventListener("pointerup", this.EndDrag);
+
+        document.addEventListener("pointermove", this.DragPoint);
 
         window.addEventListener("resize", this.Resize);
 
@@ -82,6 +106,7 @@ export class StudentBarcode extends Page {
     }
 
     disconnectedCallback() {
+        document.removeEventListener("pointermove", this.DragPoint);
         window.removeEventListener("resize", this.Resize);
     }
 
@@ -93,26 +118,6 @@ export class StudentBarcode extends Page {
         this.draggedElement.style.pointerEvents = "none";
 
         this.style.cursor = "move";
-    }
-
-    DragPoint(e: PointerEvent) {
-        if (this.draggedElement == null) return;
-
-        e.preventDefault();
-
-        if (!this.dragging) {
-            this.dragging = true;
-
-            let x = Math.max(0, Math.min(100, (e.clientX - this.rect.left) / this.rect.width * 100));
-            let y = Math.max(0, Math.min(100, (e.clientY - this.rect.top) / this.rect.height * 100));
-
-            this.draggedElement.style.left = `${x}%`;
-            this.draggedElement.style.top = `${y}%`;
-
-            this.SetBarcodePosition();
-
-            this.dragging = false;
-        }
     }
 
     EndDrag() {
