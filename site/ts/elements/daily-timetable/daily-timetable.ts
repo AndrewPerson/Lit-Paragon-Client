@@ -125,29 +125,25 @@ export class StudentDailyTimetable extends Page {
             let dailyTimetableDate = new Date(currentDailyTimetable.date);
 
             let now = new Date();
-            
-            //Milliseconds before 3:15pm (UTC) = 54900000
-            if ((now.getHours() == 15 && now.getMinutes() >= 15) || now.getHours() > 15)
+            let checkBells = currentDailyTimetable.bells ?? undefined;
+
+            if (checkBells === undefined || now.getTime() > this.BellDate(checkBells[checkBells.length], currentDailyTimetable).getTime())
                 now.setDate(now.getDate() + 1);
-            
+
+            if (now.getFullYear() == dailyTimetableDate.getFullYear() &&
+                now.getMonth() == dailyTimetableDate.getMonth() &&
+                now.getDate() == dailyTimetableDate.getDate())
+                now.setDate(now.getDate() + 1);
+
             if (now.getDay() == 6)
                 now.setDate(now.getDate() + 1);
-            
+        
             if (now.getDay() == 0)
                 now.setDate(now.getDate() + 1);
             
-            //Double offset so when converting to UTC, date comes out as AEST.
-            //I know it's a terrible workaround.
-            let utcAdjustedNow = new Date(now);
-            utcAdjustedNow.setMinutes(utcAdjustedNow.getMinutes() - utcAdjustedNow.getTimezoneOffset());
             //YYYY-MM-DD
-            let date = utcAdjustedNow.toISOString().split("T")[0];
-            
-            if (date == currentDailyTimetable.date) {
-                now.setDate(now.getDate() + 1);
-                date = now.toISOString().split("T")[0];
-            }
-            
+            let date = `${now.getFullYear().toString().padStart(2, "0")}-${now.getMonth().toString().padStart(2, "0")}-${now.getDay().toString().padStart(2, "0")}`
+
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
 
@@ -207,6 +203,20 @@ export class StudentDailyTimetable extends Page {
         return days;
     }
 
+    static BellDate(bell: Bell, dailyTimetable: DailyTimetable) {
+        let time = new Date(dailyTimetable.date ?? "");
+
+        let parts = bell.time?.split(":") ?? ["00", "00"];
+
+        let hours = Number.parseInt(parts[0]);
+        let minutes = Number.parseInt(parts[1]);
+
+        time.setHours(hours);
+        time.setMinutes(minutes);
+
+        return time;
+    }
+
     constructor() {
         super();
 
@@ -220,20 +230,6 @@ export class StudentDailyTimetable extends Page {
         }, 1000);
     }
 
-    BellDate(bell: Bell) {
-        let time = new Date(this._dailyTimetable.date ?? "");
-
-        let parts = bell.time?.split(":") ?? ["00", "00"];
-
-        let hours = Number.parseInt(parts[0]);
-        let minutes = Number.parseInt(parts[1]);
-
-        time.setHours(hours);
-        time.setMinutes(minutes);
-
-        return time;
-    }
-
     NextBell() {
         let now = new Date();
 
@@ -242,7 +238,7 @@ export class StudentDailyTimetable extends Page {
         for (let i = 0; i < bells.length; i++) {
             if (bells[i].time === undefined || bells[i].time === null) continue;
 
-            let time = this.BellDate(bells[i]);
+            let time = StudentDailyTimetable.BellDate(bells[i], this._dailyTimetable);
 
             if (time.getTime() >= now.getTime()) return {
                 index: i,
@@ -254,7 +250,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     TimeDisplay(bell: Bell) {
-        let time = this.BellDate(bell);
+        let time = StudentDailyTimetable.BellDate(bell, this._dailyTimetable);
         let now = new Date();
 
         let timeDifference = time.getTime() - now.getTime();
