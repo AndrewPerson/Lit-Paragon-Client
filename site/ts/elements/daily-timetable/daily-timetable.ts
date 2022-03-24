@@ -98,7 +98,7 @@ export class StudentDailyTimetable extends Page {
         if (nextDailyTimetable === undefined) {
             let succeeded = await Resources.FetchResources();
 
-            let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | undefined | null;
+            let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
             if (currentDailyTimetable === undefined || currentDailyTimetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
@@ -107,7 +107,7 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
-                             //Check if the returned date is not today.
+            //Check if the returned date is not today.
             if (succeeded && new Date(currentDailyTimetable.date) > new Date()) {
                 this.updatingData = false;
                 return;
@@ -125,9 +125,9 @@ export class StudentDailyTimetable extends Page {
             let dailyTimetableDate = new Date(currentDailyTimetable.date);
 
             let now = new Date();
-            let checkBells = currentDailyTimetable.bells ?? undefined;
+            let currentBells = currentDailyTimetable.bells ?? undefined;
 
-            if (checkBells === undefined || now.getTime() > this.BellDate(checkBells[checkBells.length], currentDailyTimetable).getTime())
+            if (currentBells === undefined || now.getTime() > this.BellDate(currentBells[currentBells.length], currentDailyTimetable).getTime())
                 now.setDate(now.getDate() + 1);
 
             if (now.getFullYear() == dailyTimetableDate.getFullYear() &&
