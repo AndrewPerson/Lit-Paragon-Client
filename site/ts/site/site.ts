@@ -91,6 +91,10 @@ export class Site {
                 Navbar.instance.requestUpdate();
             }
         }
+
+        //TODO Find a way to get rid of the @ts-ignore
+        //@ts-ignore
+        this._pageElement?.requestUpdate?.();
     }
     //#endregion
 
