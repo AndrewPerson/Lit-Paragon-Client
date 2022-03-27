@@ -22,6 +22,8 @@ export class Extensions {
 
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 
+    static extensionNotificationIds: Map<string, string[]> = new Map();
+
     static GetExtensionOrigins() {
         let origins: string[] = [];
 
@@ -249,13 +251,27 @@ export class Extensions {
             let notification = Site.ShowNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
+            let ids = this.extensionNotificationIds.get(e.origin) ?? [];
+            ids.push(notification.id);
+
+            this.extensionNotificationIds.set(e.origin, ids);
+
             return;
         }
 
         if (command == "Close Notification") {
             let notification = document.getElementById(data.id) as InlineNotification | null;
 
-            if (notification !== null) notification.Close();
+            if (notification !== null) {
+                notification.Close();
+
+                let ids = this.extensionNotificationIds.get(e.origin);
+
+                if (ids !== undefined) {
+                    ids.slice(ids.indexOf(data.id), 1);
+                    this.extensionNotificationIds.set(e.origin, ids);
+                }
+            }
         
             return;
         }

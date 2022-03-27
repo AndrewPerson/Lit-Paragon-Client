@@ -1,6 +1,10 @@
 import { html, LitElement } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
+import { Extensions } from "../../site/extensions";
+
+import { InlineNotification } from "../notification/notification";
+
 import { LoadingIndicator } from "../loader/loader";
 import "../loader/loader";
 
@@ -27,6 +31,24 @@ export class ExtensionPage extends LitElement {
 
     PostMessage(message: any) {
         this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
+    }
+
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        this.frame.removeEventListener("load", this.StopLoading);
+
+        let ids = Extensions.extensionNotificationIds.get(new URL(this.src).origin);
+
+        if (ids === undefined) return;
+
+        for (let id of ids) {
+            let element = document.getElementById(id);
+
+            if (element instanceof InlineNotification) element.remove();
+        }
+
+        Extensions.extensionNotificationIds.delete(new URL(this.src).origin);
     }
     
     render() {
