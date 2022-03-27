@@ -135,22 +135,28 @@ export class StudentBarcode extends Page {
         let x = parseFloat(point.style.left.substring(0, point.style.left.length - 1) || "0");
         let y = parseFloat(point.style.top.substring(0, point.style.top.length - 1) || "0");
 
-        if (e.key == "ArrowUp") {
-            point.style.top = `${y - 2}%`;
-            e.preventDefault();
-        }
-        else if (e.key == "ArrowDown") {
-            point.style.top = `${y + 2}%`;
-            e.preventDefault();
-        }
-        else if (e.key == "ArrowLeft") {
-            point.style.left = `${x - 2}%`;
+        if (e.key == "ArrowLeft") {
+            x -= 2;
             e.preventDefault();
         }
         else if (e.key == "ArrowRight") {
-            point.style.left = `${x + 2}%`;
+            x += 2;
             e.preventDefault();
         }
+        else if (e.key == "ArrowUp") {
+            y -= 2;
+            e.preventDefault();
+        }
+        else if (e.key == "ArrowDown") {
+            y += 2;
+            e.preventDefault();
+        }
+
+        x = Math.max(0, Math.min(100, x));
+        y = Math.max(0, Math.min(100, y));
+
+        point.style.left = `${x}%`;
+        point.style.top = `${y}%`;
 
         this.SetBarcodePosition();
         this.SaveBarcodePosition();
