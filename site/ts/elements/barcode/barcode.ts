@@ -38,13 +38,13 @@ export class StudentBarcode extends Page {
     barcode: HTMLCanvasElement | null;
 
     @query("#point1")
-    point1: HTMLElement;
+    point1: HTMLElement | null;
 
     @query("#point2")
-    point2: HTMLElement;
+    point2: HTMLElement | null;
 
     @query("#save")
-    saveLink: HTMLAnchorElement;
+    saveLink: HTMLAnchorElement | null;
 
     rect: DOMRect = this.getBoundingClientRect();
 
@@ -159,11 +159,11 @@ export class StudentBarcode extends Page {
     SetBarcodePosition() {
         if (this.barcode === null) return;
 
-        let x1 = parseFloat(this.point1.style.left.substring(0, this.point1.style.left.length - 1) || "0");
-        let y1 = parseFloat(this.point1.style.top.substring(0, this.point1.style.top.length - 1) || "0");
+        let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1?.style.left.length - 1) || "0");
+        let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1?.style.top.length - 1) || "0");
 
-        let x2 = parseFloat(this.point2.style.left.substring(0, this.point2.style.left.length - 1) || "0");
-        let y2 = parseFloat(this.point2.style.top.substring(0, this.point2.style.top.length - 1) || "0");
+        let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2?.style.left.length - 1) || "0");
+        let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2?.style.top.length - 1) || "0");
     
         let maxX = Math.max(x1, x2);
         let minX = Math.min(x1, x2);
@@ -179,7 +179,7 @@ export class StudentBarcode extends Page {
     }
 
     RenderBarcode() {
-        if (this.draggedElement != null) return;
+        if (this.draggedElement !== null) return;
         if (this.barcode === null) return;
 
         if (typeof JsBarcode === "function") {
@@ -190,11 +190,17 @@ export class StudentBarcode extends Page {
         }
 
         let url = this.barcode.toDataURL("image/png");
+
+        if (this.saveLink === null) return;
+
         this.saveLink.href = url;
         this.saveLink.download = `${this.studentId}.png`;
     }
 
     SaveBarcodePosition() {
+        if (this.point1 === null) return;
+        if (this.point2 === null) return;
+
         localStorage.setItem("Barcode Points",
                              JSON.stringify([
                                  this.point1.style.left,
