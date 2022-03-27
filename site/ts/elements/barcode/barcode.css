@@ -18,7 +18,7 @@
 
     transform: translate(-50%, -50%);
 
-    z-index: 1;
+    z-index: 3;
 
     cursor: move;
 }
@@ -48,6 +48,8 @@
     box-sizing: border-box;
 
     filter: contrast(5);
+
+    z-index: 2;
 }
 
 #barcodeDisplay.outline {
@@ -64,7 +66,6 @@ info-popup {
 
     width: 1.9rem;
     height: 1.9rem;
-    z-index: 2;
 }
 
 #save {
