@@ -22,7 +22,7 @@ export class Extensions {
 
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 
-    static extensionNotificationIds: Map<string, string> = new Map();
+    static extensionNotificationIds: Map<string, string[]> = new Map();
 
     static GetExtensionOrigins() {
         let origins: string[] = [];
@@ -251,7 +251,10 @@ export class Extensions {
             let notification = Site.ShowNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
-            this.extensionNotificationIds.set(e.origin, data.id);
+            let ids = this.extensionNotificationIds.get(e.origin) ?? [];
+            ids.push(notification.id);
+
+            this.extensionNotificationIds.set(e.origin, ids);
 
             return;
         }
