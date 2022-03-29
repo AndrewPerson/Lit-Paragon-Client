@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export type Token = {
     access_token: string,
     refresh_token: string,
@@ -11,19 +9,17 @@ export type Token = {
 
 export class TokenFactory {
     static async Refresh(token: Token, client_id: string, client_secret: string): Promise<Token> {
-        let response = await axios.post("https://student.sbhs.net.au/api/token", new URLSearchParams({
-            refresh_token: token.refresh_token,
-            grant_type: "refresh_token",
-            client_id: client_id,
-            client_secret: client_secret
-        }),
-        {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded"
-            }
+        let response = await fetch("https://student.sbhs.net.au/api/token", {
+            method: "POST",
+            body: new URLSearchParams({
+                refresh_token: token.refresh_token,
+                grant_type: "refresh_token",
+                client_id: client_id,
+                client_secret: client_secret
+            })
         });
 
-        return this.Create(response.data, token.iteration + 1);
+        return this.Create(await response.json(), token.iteration + 1, token);
     }
 
     static Create(unformatted: any, iteration: number = 1, previousToken?: Token): Token {

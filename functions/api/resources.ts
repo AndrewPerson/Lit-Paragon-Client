@@ -1,4 +1,3 @@
-import axios from "axios";
 import { Token, TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 
@@ -10,13 +9,13 @@ const RESOURCES: Map<string, string> = new Map([
 ]);
 
 async function getResource(resource: string, token: Token) {
-    let response = await axios.get(`https://student.sbhs.net.au/api/${resource}`, {
+    let response = await fetch(`https://student.sbhs.net.au/api/${resource}`, {
         headers: {
             "Authorization": `Bearer ${token.access_token}`
         }
     });
 
-    return response.data;
+    return await response.json();
 }
 
 export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
@@ -25,13 +24,7 @@ export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
         request
     } = context;
 
-    let json: unknown = await request.json();
-
-    if (typeof json !== "object") return new Response("Body must be JSON object.", { status: 400 });
-    if (!("token" in json)) return new Response("You must provide a token.", { status: 200 });
-    if (typeof json["token"] !== "string") return new Response("Token must be a JSON string.", { status: 400 });
-
-    let token = JSON.parse(json["token"]);
+    let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     console.log(`Token iteration: ${token.iteration}`);
     console.log(`Previous token: ${JSON.stringify(token.previousToken)}`);

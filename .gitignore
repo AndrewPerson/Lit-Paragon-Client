@@ -1,5 +1,7 @@
-/node_modules
+**/node_modules
 /.devcontainer
 /site/dist
 /site/metadata
 /test-data
+
+/tmp
