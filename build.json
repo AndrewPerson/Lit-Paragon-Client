@@ -8,7 +8,7 @@
         "ts/service-worker/service-worker.js"
     ],
     "metadata": {
-        "version": "2.2.31",
+        "version": "2.2.32",
         "pages": {
             "Award Scheme Points": {
                 "navIcon": "/nav-icon.svg",
@@ -82,7 +82,7 @@
             ],
             "vars": {
                 "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata",
-                "SERVER_ENDPOINT": "https://au-syd.functions.appdomain.cloud/api/v1/web/6bbc35c7-dc9e-4df5-9708-71beb3b96f36/default",
+                "SERVER_ENDPOINT": "https://paragon.pages.dev/api",
                 "CLIENT_ID": "MyApp",
                 "MAX_REFRESH_FREQUENCY": 60000
             },
