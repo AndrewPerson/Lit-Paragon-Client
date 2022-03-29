@@ -1,9 +1,13 @@
 import axios from "axios";
-import { Token, TokenFactory } from "../lib/token";
+import { TokenFactory } from "../lib/token";
+import { SBHSEnv } from "../lib/env";
 
-declare const env: {[index: string]: any};
-
-export async function onRequestGet(request: Request): Promise<Response> {
+export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
+    const {
+        env,
+        request
+    } = context;
+    
     let json: unknown = await request.json();
 
     if (typeof json !== "object") return new Response("Body must be JSON object.", { status: 400 });
