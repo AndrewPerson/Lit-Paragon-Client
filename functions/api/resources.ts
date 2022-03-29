@@ -1,3 +1,4 @@
+import { create } from "../lib/function";
 import { Token, TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 
@@ -18,16 +19,13 @@ async function getResource(resource: string, token: Token) {
     return await response.json();
 }
 
-export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
+export const onRequestGet = create<SBHSEnv>(async (context) => {
     const {
         env,
         request
     } = context;
 
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
-
-    console.log(`Token iteration: ${token.iteration}`);
-    console.log(`Previous token: ${JSON.stringify(token.previousToken)}`);
 
     if (new Date() > token.termination)
         return new Response("The token is terminated.", { status: 422 });
@@ -74,4 +72,4 @@ export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
             "Content-Type": "application/json"
         }
     });
-}
+});

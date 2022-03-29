@@ -2,9 +2,7 @@ export type Token = {
     access_token: string,
     refresh_token: string,
     expiry: Date,
-    termination: Date,
-    iteration: number,
-    previousToken?: Token;
+    termination: Date
 }
 
 export class TokenFactory {
@@ -19,10 +17,10 @@ export class TokenFactory {
             })
         });
 
-        return this.Create(await response.json(), token.iteration + 1, token);
+        return this.Create(await response.json());
     }
 
-    static Create(unformatted: any, iteration: number = 1, previousToken?: Token): Token {
+    static Create(unformatted: any): Token {
         if ("error" in unformatted)
             throw new Error(unformatted.error);
 
@@ -63,9 +61,7 @@ export class TokenFactory {
             access_token: access_token,
             refresh_token: refresh_token,
             expiry: expiry,
-            termination: termination,
-            iteration: iteration,
-            previousToken: previousToken
+            termination: termination
         }
     }
 }

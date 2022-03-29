@@ -1,7 +1,8 @@
+import { create } from "../lib/function";
 import { TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 
-export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
+export const onRequestPost = create<SBHSEnv>(async (context) => {
     const {
         env,
         request
@@ -22,10 +23,7 @@ export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
             client_secret: env.CLIENT_SECRET,
             //TODO Change this to paragon.au if I get that domain
             redirect_uri: "https://paragon.pages.dev/callback"
-        }),
-        headers: {
-            "Content-Type": "application/x-www-form-urlencoded"
-        }
+        })
     });
 
     let token = TokenFactory.Create(await response.json());
@@ -35,4 +33,4 @@ export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
             "Content-Type": "application/json"
         }
     });
-}
+});
