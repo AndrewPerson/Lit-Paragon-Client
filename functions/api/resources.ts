@@ -1,7 +1,6 @@
 import axios from "axios";
 import { Token, TokenFactory } from "../lib/token";
-
-declare const env: {[index: string]: any};
+import { SBHSEnv } from "../lib/env";
 
 const RESOURCES: Map<string, string> = new Map([
     ["dailynews/list.json", "announcements"],
@@ -20,7 +19,12 @@ async function getResource(resource: string, token: Token) {
     return response.data;
 }
 
-export async function onRequestGet(request: Request): Promise<Response> {
+export const onRequestGet: PagesFunction<SBHSEnv> = async (context) => {
+    const {
+        env,
+        request
+    } = context;
+
     let json: unknown = await request.json();
 
     if (typeof json !== "object") return new Response("Body must be JSON object.", { status: 400 });
@@ -48,7 +52,7 @@ export async function onRequestGet(request: Request): Promise<Response> {
 
     let promises = [];
 
-    for (let [url, name] of RESOURCES) {
+    for (let [url, name] of RESOURCES.entries()) {
         promises.push(getResource(url, token).then(resourceResponse => {
             result.result[name] = resourceResponse;
         }));
