@@ -1,6 +1,4 @@
-/// <reference lib="WebWorker" />
-
-//Shady hack to get typescript to accept the `declare const self` part.
+//Shady hack tso get typescript to accept the `declare const self` part.
 export default undefined;
 
 declare const self: ServiceWorkerGlobalScope;
