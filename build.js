@@ -7,7 +7,7 @@ const config = require("./build.json");
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile, readdir } from "fs/promises";
+import { writeFile, readFile, readdir, copyFile } from "fs/promises";
 
 import { exec } from "child_process";
 
@@ -88,7 +88,7 @@ async function Main() {
 
     const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-    writeFile(path.resolve(dirname, "site/metadata"), JSON.stringify(config.metadata));
+    let metadataPromise = copyFile(path.resolve(dirname, "metadata.json"), path.resolve(dirname, "site/metadata.json"));
 
     let tsPromise = new Promise(res => {
         exec("npx tsc --noEmit", (err, stdout, stderr) => {
@@ -180,7 +180,7 @@ async function Main() {
         process.exit(1);
     });
 
-    await Promise.all([tsPromise, buildPromise]);
+    await Promise.all([metadataPromise, tsPromise, buildPromise]);
 
     let files = (await walk(path.resolve(dirname, "site"))).filter(file => {
         return !file.startsWith(path.resolve(dirname, "site/ts")) && file != path.resolve(dirname, "site/metadata") &&

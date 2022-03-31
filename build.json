@@ -7,27 +7,6 @@
         "ts/unsupported.ts",
         "ts/service-worker/service-worker.js"
     ],
-    "metadata": {
-        "version": "2.2.33",
-        "pages": {
-            "Award Scheme Points": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://awardschemepoints.profsmart.repl.co",
-                "preview": false,
-                "description": "Displays your award scheme points.",
-                "icon": "/icon.svg",
-                "version": "0.0.2"
-            },
-            "Timetable Export": {
-                "navIcon": "/nav-icon.svg",
-                "url": "https://timetable-export.profsmart.repl.co",
-                "preview": true,
-                "description": "Export your timetable, and other useful data, as a PDF or image.",
-                "icon": "/icon.svg",
-                "version": "0.0.1"
-            }
-        }
-    },
     "env": {
         "shared": {
             "vars": {
@@ -49,7 +28,7 @@
                 "DEVELOPMENT"
             ],
             "vars": {
-                "METADATA_ENDPOINT": "http://localhost:5555/metadata",
+                "METADATA_ENDPOINT": "http://localhost:5555/metadata.json",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "",
                 "MAX_REFRESH_FREQUENCY": 0
@@ -65,7 +44,7 @@
                 "DEVELOPMENT"
             ],
             "vars": {
-                "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata",
+                "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata.json",
                 "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
                 "CLIENT_ID": "Paragon_Tools",
                 "MAX_REFRESH_FREQUENCY": 0
@@ -81,7 +60,7 @@
 
             ],
             "vars": {
-                "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata",
+                "METADATA_ENDPOINT": "https://paragon.pages.dev/metadata.json",
                 "SERVER_ENDPOINT": "https://paragon.pages.dev/api",
                 "CLIENT_ID": "MyApp",
                 "MAX_REFRESH_FREQUENCY": 60000
