@@ -1,0 +1,21 @@
+{
+    "version": "2.2.35",
+    "pages": {
+        "Award Scheme Points": {
+            "navIcon": "/nav-icon.svg",
+            "url": "https://awardschemepoints.profsmart.repl.co",
+            "preview": false,
+            "description": "Displays your award scheme points.",
+            "icon": "/icon.svg",
+            "version": "0.0.2"
+        },
+        "Timetable Export": {
+            "navIcon": "/nav-icon.svg",
+            "url": "https://timetable-export.profsmart.repl.co",
+            "preview": true,
+            "description": "Export your timetable, and other useful data, as a PDF or image.",
+            "icon": "/icon.svg",
+            "version": "0.0.1"
+        }
+    }
+}

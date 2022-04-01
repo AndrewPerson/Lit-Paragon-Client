@@ -9,7 +9,6 @@
         "strictPropertyInitialization": false
     },
     "references": [
-        { "path": "./functions/tsconfig.json" },
-        { "path": "./site/ts/service-worker/tsconfig.json"}
+        { "path": "./functions/tsconfig.json" }
     ]
 }

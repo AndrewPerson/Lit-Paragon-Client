@@ -66,6 +66,10 @@ export class SchoolAnnouncements extends Page {
         this.yearFilter = filter;
     }
 
+    IsSameDay(a: Date, b: Date) {
+        return a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear();
+    }
+
     renderPage() {
         let notices = this.announcements.notices ?? [];
 
@@ -106,13 +110,12 @@ export class SchoolAnnouncements extends Page {
             let meeting = announcement.isMeeting == 1;
 
             let meetingDate = announcement.meetingDate ?? "";
-            //Say "Today" if the meeting's today.
-            if (new Date().toISOString().split("T")[0] == meetingDate) meetingDate = "Today";
+            if (this.IsSameDay(new Date(meetingDate), new Date())) meetingDate = "Today";
 
             return html`
             <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"
                                author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
-                               published="${ifDefined(announcement.dates?.[0])}" ?meeting="${meeting}"
+                               published="${ifDefined(this.IsSameDay(new Date(announcement.dates?.[0] ?? ""), new Date()) ? "Today" : announcement.dates?.[0] ?? "")}" ?meeting="${meeting}"
                                meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
                                weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"></announcement-post>
             `;

@@ -127,7 +127,7 @@ export class StudentDailyTimetable extends Page {
             let now = new Date();
             let currentBells = currentDailyTimetable.bells ?? undefined;
 
-            if (currentBells === undefined || now.getTime() > this.BellDate(currentBells[currentBells.length], currentDailyTimetable).getTime())
+            if (currentBells === undefined || now.getTime() > this.BellDate(currentBells[currentBells.length - 1], currentDailyTimetable).getTime())
                 now.setDate(now.getDate() + 1);
 
             if (now.getFullYear() == dailyTimetableDate.getFullYear() &&
