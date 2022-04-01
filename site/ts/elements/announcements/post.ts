@@ -43,7 +43,7 @@ export class AnnouncementPost extends LitElement {
         <details>
             <summary>
                 <h3>${this.title}</h3>
-                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? ` | Meeting at ${this.meetingTime}, ${this.meetingDate}` : ""}${this.published === null ? "" : ` | Published on ${this.published}`}</p>
+                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}${this.published === null ? "" : ` | Published ${this.published}`}</p>
             </summary>
 
             ${unsafeHTML(this.content)}
