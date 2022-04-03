@@ -84,7 +84,7 @@ export class AnnouncementPost extends LitElement {
         <input type="checkbox" id="read" ?checked="${this.GetRead()}" @input="${(e: InputEvent) => this.SaveRead((e.target as HTMLInputElement).checked)}">
         <details @toggle="${this.MarkRead.bind(this)}">
             <summary>
-                <h3>${this._title}</h3>
+                <h1>${this._title}</h1>
                 <p class="info">By ${this.author} | For ${this.years}${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}${this.published === null ? "" : ` | Published ${this.published}`}</p>
             </summary>
 

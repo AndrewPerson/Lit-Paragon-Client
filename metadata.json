@@ -1,13 +1,13 @@
 {
-    "version": "2.2.34",
+    "version": "2.2.36",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
-            "url": "https://awardschemepoints.profsmart.repl.co",
+            "url": "https://award-scheme-points-paragon-pages.pages.dev",
             "preview": false,
             "description": "Displays your award scheme points.",
             "icon": "/icon.svg",
-            "version": "0.0.2"
+            "version": "0.0.3"
         },
         "Timetable Export": {
             "navIcon": "/nav-icon.svg",
