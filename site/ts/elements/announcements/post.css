@@ -35,8 +35,8 @@ summary > * {
     cursor: pointer;
 }
 
-summary > h3 {
-    padding-right: 2rem;
+summary > h1 {
+    font-size: 1.4rem;
 }
 
 summary::after {
