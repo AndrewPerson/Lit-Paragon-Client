@@ -10,6 +10,8 @@
     font-family: monospace;
 
     height: 2rem;
+
+    user-select: text;
 }
 
 :where(input[type=search]:focus-visible) {
