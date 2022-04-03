@@ -1,6 +1,14 @@
 :host {
-    display: block;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.3rem;
+
     margin: 0.4rem;
+    margin-bottom: 1.2rem;
+}
+
+details {
+    width: 100%;
 }
 
 details, summary {
@@ -70,4 +78,33 @@ details[open] > summary::after {
     padding: 0.1rem;
     border-radius: 0.3rem;
     background-color: var(--surface4);
+}
+
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+input[type="checkbox"]::after {
+    content: "";
+
+    display: block;
+    width: 0.5rem;
+    height: 0.5rem;
+
+    margin-top: 0.5rem;
+
+    background-color: var(--surface4);
+
+    border-radius: 100%;
+
+    cursor: pointer;
+
+    box-sizing: border-box;
+}
+
+input[type="checkbox"]:checked::after {
+    background-color: transparent;
+    border: 0.08rem solid var(--surface4);
 }
