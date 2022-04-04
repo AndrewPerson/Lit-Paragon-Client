@@ -28,7 +28,7 @@ export class NavItem extends LitElement {
     title: string;
 
     @property({ type: Number })
-    order: number;
+    childIndex: number;
 
     @property({ type: Boolean })
     editing: boolean = false;
@@ -49,28 +49,23 @@ export class NavItem extends LitElement {
             let dir = e.key == "ArrowUp" || e.key == "ArrowLeft" ? ReorderDirection.UP : ReorderDirection.DOWN;
 
             if (dir == ReorderDirection.UP) {
-                let index = navOrder.splice(this.order, 1)[0];
+                let first = this.childIndex == 0;
+
+                let index = navOrder.splice(this.childIndex, 1)[0];
                 
-                if (this.order == 0) navOrder.push(index);
-                else navOrder.splice(this.order - 1, 0, index);
+                if (first) navOrder.push(index);
+                else navOrder.splice(this.childIndex - 1, 0, index);
             }
             else {
-                let index = navOrder.splice(this.order, 1)[0];
+                let last = this.childIndex == navOrder.length - 1;
 
-                if (this.order == navOrder.length - 1) navOrder.unshift(index);
-                else navOrder.splice(this.order + 1, 0, index);
+                let index = navOrder.splice(this.childIndex, 1)[0];
+
+                if (last) navOrder.unshift(index);
+                else navOrder.splice(this.childIndex + 1, 0, index);
             }
 
             Navbar.SetNavbarOrder(navOrder);
-
-            if (dir == ReorderDirection.UP) {
-                if (this.order == 0) return;
-                else (this.previousElementSibling as HTMLElement | null)?.focus();
-            }
-            else {
-                if (this.order == navOrder.length - 1) return;
-                else (this.nextElementSibling as HTMLElement | null)?.focus();
-            }
         }
     }
 

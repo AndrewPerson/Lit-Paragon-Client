@@ -2,7 +2,8 @@ import { Page } from "../page/page";
 
 import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { ifDefined } from "lit-html/directives/if-defined.js";
+import { ifDefined } from "lit/directives/if-defined.js";
+import { repeat } from "lit/directives/repeat.js";
 
 import "./post";
 
@@ -106,7 +107,8 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${filteredAnnouncements.map(announcement => {
+        <!--Also, trust me that this bit will always generate a unique ID for every announcement. (Assuming that no one makes the exact same announcement twice.)-->
+        <div class="content">${repeat(filteredAnnouncements, (announcement) => `${announcement.title}${announcement.title?.length ?? 0}Year:${announcement.displayYears}`, announcement => {
             let meeting = announcement.isMeeting == 1;
 
             let meetingDate = announcement.meetingDate ?? "";
