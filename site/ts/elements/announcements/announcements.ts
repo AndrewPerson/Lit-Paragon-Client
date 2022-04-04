@@ -7,7 +7,7 @@ import { repeat } from "lit/directives/repeat.js";
 
 import "./post";
 
-import { Announcements } from "./types";
+import { Announcements, Announcement } from "./types";
 import { Missing } from "../../missing";
 
 //@ts-ignore
@@ -71,6 +71,10 @@ export class SchoolAnnouncements extends Page {
         return a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear();
     }
 
+    AnnouncementKey(announcement: Announcement) {
+        return announcement.content ?? announcement.title ?? "";
+    }
+
     renderPage() {
         let notices = this.announcements.notices ?? [];
 
@@ -107,8 +111,7 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <!--Also, trust me that this bit will always generate a unique ID for every announcement. (Assuming that no one makes the exact same announcement twice.)-->
-        <div class="content">${repeat(filteredAnnouncements, (announcement) => `${announcement.title}${announcement.title?.length ?? 0}Year:${announcement.displayYears}`, announcement => {
+        <div class="content">${repeat(filteredAnnouncements, (announcement) => this.AnnouncementKey(announcement), announcement => {
             let meeting = announcement.isMeeting == 1;
 
             let meetingDate = announcement.meetingDate ?? "";
@@ -119,7 +122,7 @@ export class SchoolAnnouncements extends Page {
                                author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
                                published="${ifDefined(this.IsSameDay(new Date(announcement.dates?.[0] ?? ""), new Date()) ? "Today" : announcement.dates?.[0] ?? "")}" ?meeting="${meeting}"
                                meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
-                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"></announcement-post>
+                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}" key="${this.AnnouncementKey(announcement)}"></announcement-post>
             `;
         })}</div>
         `;

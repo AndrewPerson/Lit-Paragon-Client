@@ -1,8 +1,3 @@
-import { Site } from "./site/site";
-
-if (Site.dark)
-    (document.getElementById("logo-p") as HTMLImageElement).src = "images/logo-dark.svg";
-
 let missingFeature = new URLSearchParams(window.location.search).get("feature");
 
 if (missingFeature !== null) {

@@ -38,6 +38,9 @@ export class AnnouncementPost extends LitElement {
     @property({ type: Number })
     weight: number;
 
+    @property()
+    key: string;
+
     @query("#read")
     readIndicator: HTMLInputElement;
 
@@ -58,7 +61,7 @@ export class AnnouncementPost extends LitElement {
             }
         }
 
-        announcements.set(this.title, read);
+        announcements.set(this.key, read);
 
         localStorage.setItem("Read Announcements", JSON.stringify([...announcements.entries()]));
     }
@@ -66,7 +69,7 @@ export class AnnouncementPost extends LitElement {
     GetRead(): boolean {
         let announcements = new Map<string, boolean>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
 
-        return announcements.get(this.title) ?? false;
+        return announcements.get(this.key) ?? false;
     }
 
     render() {

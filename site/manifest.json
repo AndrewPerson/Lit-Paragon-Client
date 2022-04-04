@@ -10,19 +10,23 @@
     "icons": [
         {
             "src": "./icons/512.webp",
-            "sizes": "512x512"
+            "sizes": "512x512",
+            "type": "image/webp"
         },
         {
             "src": "./icons/256.webp",
-            "sizes": "256x256"
+            "sizes": "256x256",
+            "type": "image/webp"
         },
         {
             "src": "./icons/128.webp",
-            "sizes": "128x128"
+            "sizes": "128x128",
+            "type": "image/webp"
         },
         {
             "src": "./icons/64.webp",
-            "sizes": "64x64"
+            "sizes": "64x64",
+            "type": "image/webp"
         }
     ],
     "screenshots": [],
@@ -35,7 +39,8 @@
             "icons": [
                 {
                     "src": "./images/dailytimetable.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         },
@@ -47,7 +52,8 @@
             "icons": [
                 {
                     "src": "./images/barcode.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         },
@@ -59,7 +65,8 @@
             "icons": [
                 {
                     "src": "./images/announcements.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         },
@@ -71,7 +78,8 @@
             "icons": [
                 {
                     "src": "./images/timetable.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         },
@@ -83,7 +91,8 @@
             "icons": [
                 {
                     "src": "./images/marketplace.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         },
@@ -95,7 +104,8 @@
             "icons": [
                 {
                     "src": "./images/settings.webp",
-                    "sizes": "200x200"
+                    "sizes": "200x200",
+                    "type": "image/webp"
                 }
             ]
         }
