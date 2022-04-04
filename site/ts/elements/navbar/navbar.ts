@@ -1,5 +1,6 @@
-import { LitElement, html, TemplateResult } from "lit";
+import { LitElement, html } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
+import { repeat } from "lit/directives/repeat.js";
 
 import { Extensions, Extension } from "../../site/extensions";
 
@@ -170,7 +171,7 @@ export class Navbar extends LitElement {
         let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
         if (element === null) return;
 
-        this.draggedItemIndex = element.order;
+        this.draggedItemIndex = element.childIndex;
 
         let clone = document.createElement("dragged-nav-item") as DraggedNavItem;
         clone.innerHTML = element.innerHTML;
@@ -204,7 +205,7 @@ export class Navbar extends LitElement {
             element.hovered = true;
             this.hoveredElement = element;
 
-            this.ReorderNavItems(element.order);
+            this.ReorderNavItems(element.childIndex);
         }
     }).bind(this);
 
@@ -248,7 +249,7 @@ export class Navbar extends LitElement {
         }
         
         return html`
-            <nav-item ?editing="${this.editing}" page="${page}" ?extension="${extension}" title="${title}" order="${index}">
+            <nav-item ?editing="${this.editing}" page="${page}" ?extension="${extension}" title="${title}" childIndex="${index}">
                 <img draggable="false" src="${icon}" alt="">
             </nav-item>
         `;
@@ -286,7 +287,7 @@ export class Navbar extends LitElement {
 
         return html`
         <div id="items-container" @scroll="${this.ShowScrollShadows.bind(this)}">
-            ${order.map((_, index) => this.GetNavItem(index, order, pages, icons))}
+            ${repeat(order, (order) => order, (_, index) => this.GetNavItem(index, order, pages, icons))}
 
             <div id="top-shadow" style="display: none"></div>
             <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>

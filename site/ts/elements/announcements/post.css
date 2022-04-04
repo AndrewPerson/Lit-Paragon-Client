@@ -37,6 +37,7 @@ summary > * {
 
 summary > h1 {
     font-size: 1.4rem;
+    padding-right: 2rem;
 }
 
 summary::after {
