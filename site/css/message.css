@@ -38,9 +38,17 @@ h1, p {
     height: var(--size);
 }
 
-.logo > img:first-child {
+.logo > .logo-p {
     margin-left: calc(var(--size) / 10);
 
     width: calc(var(--size) * 0.7);
     height: calc(var(--size) * 0.7);
+}
+
+html.dark .logo > .logo-p.light {
+    display: none;
+}
+
+html:not(.dark) .logo > .logo-p.dark {
+    display: none;
 }

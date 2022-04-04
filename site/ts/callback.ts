@@ -1,13 +1,9 @@
 //#conditional
 
-import { Site } from "./site/site";
 import LOGIN_URL from "./login-url";
 
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
-
-if (Site.dark)
-    (document.getElementById("logo-p") as HTMLImageElement).src = "images/logo-dark.svg";
 
 async function Token(code: string) {
     let tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
