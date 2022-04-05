@@ -2,6 +2,8 @@ import { html, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
+import { EscapeCss } from "../../utils";
+
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
@@ -52,24 +54,30 @@ export class AnnouncementPost extends LitElement {
     }
 
     SaveRead(read: boolean) {
-        let announcements = new Map<string, boolean>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
+        let announcements = new Set<string>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
 
         if (this.parentElement !== null) {
-            for (let announcement of announcements.keys()) {
-                if (this.parentElement.querySelector(`announcement-post[title="${announcement}"]`) === null)
-                    announcements.delete(announcement);
+            for (let announcement of announcements) {
+                //This type comparison is because an older version of storing whether the announcement was read or not used to be used.
+                //This stops the code breaking if it encounters that.
+                if (typeof announcement === "string") {
+                    if (this.parentElement.querySelector(`announcement-post[key="${EscapeCss(announcement)}"]`) === null)
+                        announcements.delete(announcement);
+                }
+                else announcements.delete(announcement);
             }
         }
 
-        announcements.set(this.key, read);
+        if (read) announcements.add(this.key);
+        else announcements.delete(this.key);
 
-        localStorage.setItem("Read Announcements", JSON.stringify([...announcements.entries()]));
+        localStorage.setItem("Read Announcements", JSON.stringify([...announcements]));
     }
 
     GetRead(): boolean {
-        let announcements = new Map<string, boolean>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
+        let announcements: Set<string> = new Set<string>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
 
-        return announcements.get(this.key) ?? false;
+        return announcements.has(this.key);
     }
 
     render() {
