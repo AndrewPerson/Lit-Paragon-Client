@@ -36,6 +36,10 @@
     background-color: var(--surface4);
 }
 
+:host(.cancelled) {
+    text-decoration: line-through;
+}
+
 .info {
     font-size: 0.6rem;
 }
