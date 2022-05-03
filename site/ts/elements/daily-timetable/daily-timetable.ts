@@ -341,7 +341,7 @@ export class StudentDailyTimetable extends Page {
         let roomChanged = roomVariation !== undefined && roomVariation !== null;
 
         return html`
-        <daily-timetable-period title="${this.GetPeriodTitle(period.year ?? "?", period.title ?? "???")}"
+        <daily-timetable-period title="${this.GetPeriodTitle(period.year ?? "?", period.title ?? "???")}" class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""}"
                                 time="${bell.time ?? "??:??"}"
                                 teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
