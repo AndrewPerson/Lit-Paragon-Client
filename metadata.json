@@ -23,7 +23,7 @@
             "preview": false,
             "description": "Displays the latest news from Paragon.",
             "icon": "/icon.svg",
-            "version": "0.0.1"
+            "version": "0.0.2"
         }
     }
 }
