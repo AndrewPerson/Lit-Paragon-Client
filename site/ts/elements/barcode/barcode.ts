@@ -25,10 +25,10 @@ import barcodeCss from "./barcode.css";
 //@ts-ignore
 import downloadSvg from "images/download.svg"
 
-declare const JsBarcode: (canvas: HTMLCanvasElement, data: string, options: {
+declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
     displayValue: boolean
     margin: number
-}) => void;
+}) => void) | undefined;
 
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
