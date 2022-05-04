@@ -3,6 +3,8 @@ var version = undefined;
 var resourceCallbacks = new Map();
 var tokenCallbacks = [];
 var refreshTokenCallbacks = [];
+var darkCallbacks = [];
+var hueCallbacks = [];
 
 var initialised = false;
 
@@ -59,6 +61,9 @@ export function Init() {
 
             if (command == "Set Dark") {
                 document.documentElement.classList.toggle("dark", data.dark);
+                
+                for (let callback of darkCallbacks)
+                    callback(data.dark);
 
                 return;
             }
@@ -66,6 +71,9 @@ export function Init() {
             if (command == "Set Hue") {
                 document.documentElement.style.setProperty("--main-hue", data.hue);
                 document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(data.hue) - 200}deg`);
+
+                for (let callback of hueCallbacks)
+                    callback(data.hue);
 
                 return;
             }
@@ -140,4 +148,12 @@ export function CloseNotification(id) {
             id: id
         }
     }, "*");
+}
+
+export function ListenForDark(callback) {
+    darkCallbacks.push(callback);
+}
+
+export function ListenForHue(callback) {
+    hueCallbacks.push(callback);
 }
