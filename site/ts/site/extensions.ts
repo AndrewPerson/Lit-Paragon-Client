@@ -14,6 +14,7 @@ export type Extension = {
     preview: boolean,
     description: string,
     icon: string,
+    darkIcon: string,
     version: string
 };
 
@@ -83,8 +84,8 @@ export class Extensions {
         return extensions;
     }
 
-    static GetExtensionIconURL(extension: Extension) {
-        let url = new URL(extension.icon, extension.url);
+    static GetExtensionIconURL(extension: Extension, dark: boolean) {
+        let url = new URL(dark ? extension.darkIcon : extension.icon, extension.url);
         url.search = `cache-version=${extension.version}`;
     
         return url.toString();

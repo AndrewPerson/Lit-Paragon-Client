@@ -104,7 +104,7 @@ export class ExtensionsMarketplace extends LitElement {
             let extension = this.extensions.get(extensionName) as Extension;
 
             return html`
-                <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(extension)}"
+                <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
                                 description="${extension.description}"
                                 ?preview="${extension.preview}"
                                 ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
