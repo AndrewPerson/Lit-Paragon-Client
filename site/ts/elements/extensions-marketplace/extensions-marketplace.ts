@@ -40,6 +40,8 @@ export class ExtensionsMarketplace extends LitElement {
         Site.GetMetadata(metadata => {
             this.extensions = new Map(Object.entries(metadata?.pages ?? {}));
         });
+
+        Site.ListenForDark(_ => this.requestUpdate());
     }
 
     AllowPreviewExtensions(e: InputEvent) {
