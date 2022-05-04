@@ -1,5 +1,5 @@
 {
-    "version": "2.2.41",
+    "version": "2.2.42",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -7,6 +7,7 @@
             "preview": false,
             "description": "Displays your award scheme points.",
             "icon": "/icon.svg",
+            "darkIcon": "/dark-icon.svg",
             "version": "0.0.3"
         },
         "Timetable Export": {
@@ -15,6 +16,7 @@
             "preview": true,
             "description": "Export your timetable, and other useful data, as a PDF or image.",
             "icon": "/icon.svg",
+            "darkIcon": "/dark-icon.svg",
             "version": "0.0.1"
         },
         "Paragon News": {
@@ -23,6 +25,7 @@
             "preview": false,
             "description": "Displays the latest news from Paragon.",
             "icon": "/icon.svg",
+            "darkIcon": "/dark-icon.svg",
             "version": "0.0.2"
         }
     }
