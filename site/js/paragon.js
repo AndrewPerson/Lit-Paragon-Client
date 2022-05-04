@@ -6,6 +6,9 @@ var refreshTokenCallbacks = [];
 var darkCallbacks = [];
 var hueCallbacks = [];
 
+var dark = false;
+var hue = 200;
+
 var initialised = false;
 
 export function Init() {
@@ -61,6 +64,7 @@ export function Init() {
 
             if (command == "Set Dark") {
                 document.documentElement.classList.toggle("dark", data.dark);
+                dark = data.dark;
                 
                 for (let callback of darkCallbacks)
                     callback(data.dark);
@@ -71,6 +75,7 @@ export function Init() {
             if (command == "Set Hue") {
                 document.documentElement.style.setProperty("--main-hue", data.hue);
                 document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(data.hue) - 200}deg`);
+                hue = data.hue;
 
                 for (let callback of hueCallbacks)
                     callback(data.hue);
@@ -150,8 +155,16 @@ export function CloseNotification(id) {
     }, "*");
 }
 
+export function GetDark() {
+    return dark;
+}
+
 export function ListenForDark(callback) {
     darkCallbacks.push(callback);
+}
+
+export function GetHue() {
+    return hue;
 }
 
 export function ListenForHue(callback) {
