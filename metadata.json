@@ -27,6 +27,15 @@
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
             "version": "0.0.2"
+        },
+        "Barcodes": {
+            "navIcon": "/nav-icon.svg",
+            "url": "https://barcodes-paragon-pages.pages.dev",
+            "preview": false,
+            "description": "Allows you to create and scan multiple student ID barcodes.",
+            "icon": "/icon.svg",
+            "darkIcon": "/dark-icon.svg",
+            "version": "0.0.1"
         }
     }
 }
