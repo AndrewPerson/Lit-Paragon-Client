@@ -19,7 +19,7 @@
 .content {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    grid-template-rows: max-content;
+    grid-auto-rows: min-content;
     gap: 0.8rem;
 
     flex: 1;
