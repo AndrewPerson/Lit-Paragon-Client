@@ -212,5 +212,15 @@ export const bells = new Map<number, Bell[]>([
     [1, bells1],
     [2, bells2],
     [3, bells2],
-    [4, bells3]
+    [4, bells3],
+    [5, bells1],
+    [6, bells1],
+    [7, bells2],
+    [8, bells2],
+    [9, bells3],
+    [10, bells1],
+    [11, bells1],
+    [12, bells2],
+    [13, bells2],
+    [14, bells3]
 ]);

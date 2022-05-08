@@ -117,7 +117,7 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let timetable = await Resources.GetResourceNow("timetable") as Timetable | undefined | null;
+            let timetable = await Resources.GetResourceNow("timetable") as Timetable | Missing;
             if (timetable === undefined || timetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
@@ -147,6 +147,11 @@ export class StudentDailyTimetable extends Page {
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
 
+            let newBells = bells.get(dayNumber);
+            if (newBells === null || newBells === undefined)
+                //Keep updatingData true so we don't keep trying
+                return;
+
             let day = timetable.days?.[dayNumber.toString()];
             if (day === null || day === undefined)
                 //Keep updatingData true so we don't keep trying
@@ -154,7 +159,7 @@ export class StudentDailyTimetable extends Page {
 
             let dailyTimetable: DailyTimetable = {
                 date: date,
-                bells: bells.get(dayNumber),
+                bells: newBells,
                 timetable: {
                     timetable: day,
                     subjects: Object.fromEntries(timetable.subjects?.map(subject => {

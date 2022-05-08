@@ -51,17 +51,10 @@ export const onRequestGet = create<SBHSEnv>(async (context) => {
 
     let now = new Date();
 
-    let year = (now.getFullYear()).toString();
+    let month = (now.getMonth() + 1).toString().padStart(2, "0");
+    let day = (now.getDate() + 1).toString().padStart(2, "0");
 
-    let month: string;
-    if (now.getMonth() + 1 < 10) month = `0${now.getMonth() + 1}`;
-    else month = (now.getMonth() + 1).toString();
-
-    let day: string;
-    if (now.getDate() + 1 < 10) day = `0${now.getDate() + 1}`;
-    else day = (now.getDate() + 1).toString();
-
-    promises.push(getResource(`timetable/daytimetable.json?date=${year}-${month}-${day}`, token).then(resourceResponse => {
+    promises.push(getResource(`timetable/daytimetable.json?date=${now.getFullYear()}-${month}-${day}`, token).then(resourceResponse => {
         result.result["next-dailytimetable"] = resourceResponse;
     }));
 
