@@ -199,3 +199,5 @@ async function Update() {
 
     await Promise.all(deletePromises);
 }
+
+//This is just to force a service worker update

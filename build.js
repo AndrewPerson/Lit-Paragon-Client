@@ -183,7 +183,7 @@ async function Main() {
     await Promise.all([metadataPromise, tsPromise, buildPromise]);
 
     let files = (await walk(path.resolve(dirname, "site"))).filter(file => {
-        return !file.startsWith(path.resolve(dirname, "site/ts")) && file != path.resolve(dirname, "site/metadata") &&
+        return !file.startsWith(path.resolve(dirname, "site/ts")) && file != path.resolve(dirname, "site/metadata.json") &&
                file != path.resolve(dirname, "site/index.html");
     }).map(file => {
         file = file.replace(".html", "");
