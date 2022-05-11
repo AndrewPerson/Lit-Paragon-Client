@@ -99,19 +99,19 @@ async function Main() {
     //Session storage is persisted between reloads but is cleared when the tab is closed.
     let lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
-    if (lastReloadedText !== null) {
+    if (lastReloadedText === null) {
+        Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
+    }
+    else {
         let lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
             Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
         }
     }
-    else {
-        Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
-    }
 
     //#if !DEVELOPMENT
-    if ("serviceWorker" in navigator) {
+    try {
         let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
         if (registration) await registration.update();
@@ -156,28 +156,10 @@ async function Main() {
 
         navigator.serviceWorker.controller?.postMessage({command: "metadata-fetch"});
     }
-    else {
+    catch(_) {
         await Site.SetMetadata(await (await fetch(METADATA_ENDPOINT)).json());
     }
     //#endif
-
-    try {
-        var statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
-    }
-    catch (e) {
-        await fetch(STATUS_SERVER_ENDPOINT);
-        statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
-    }
-
-    statusSocket.addEventListener("open", () => {
-        statusSocket.send("Latest News");
-    });
-
-    statusSocket.addEventListener("message", e => {
-        let news = (e.data as string).trim();
-
-        if (news.length > 0) Site.ShowNotification(e.data);
-    });
 
     let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
     let promptedInstall = lastPromptedInstall == null ? false : new Date().getTime() - new Date(lastPromptedInstall).getTime() < INSTALL_PROMPT_FREQUENCY;
@@ -214,6 +196,24 @@ async function Main() {
 
             if (choiceResult.outcome == "accepted") Site.ShowNotification("Thanks for installing Paragon!");
         });
+    });
+
+    try {
+        var statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+    }
+    catch (e) {
+        await fetch(STATUS_SERVER_ENDPOINT);
+        statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
+    }
+
+    statusSocket.addEventListener("open", () => {
+        statusSocket.send("Latest News");
+    });
+
+    statusSocket.addEventListener("message", e => {
+        let news = (e.data as string).trim();
+
+        if (news.length > 0) Site.ShowNotification(e.data);
     });
 }
 
