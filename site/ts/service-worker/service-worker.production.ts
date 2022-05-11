@@ -107,6 +107,7 @@ async function PeriodicSync(e: PeriodicSyncEvent) {
 async function Message(e: ExtendableMessageEvent) {
     if (e.data.command == "metadata-fetch") {
         let metadata = await MetadataFetch();
+        console.log(metadata);
 
         e.source?.postMessage({
             command: "metadata-fetched",
