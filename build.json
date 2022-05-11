@@ -20,7 +20,8 @@
                 "EXTENSION_CACHE": "Extension Resources",
                 "BACKGROUND_SYNC_INTERVAL": 2592000000,
                 "INSTALL_PROMPT_FREQUENCY": 2592000000,
-                "STATUS_SERVER_ENDPOINT": "wss://paragon-status.profsmart.repl.co"
+                "STATUS_SERVER_ENDPOINT": "wss://paragon-status.profsmart.repl.co",
+                "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000
             }
         },
         "default": {

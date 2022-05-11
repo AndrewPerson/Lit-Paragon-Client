@@ -27,6 +27,7 @@ import pageCss from "default/pages/page.css";
 import dailyTimetableCss from "./daily-timetable.css";
 
 declare const RESOURCE_CACHE: string;
+declare const MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY: number;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
@@ -88,14 +89,27 @@ export class StudentDailyTimetable extends Page {
 
     private _nextPeriod: Element | null = null;
 
+    private static _lastUpdatedData?: Date;
+
     static async UpdateData() {
+        if (this._lastUpdatedData !== undefined) {
+            let now = new Date();
+            if (this._lastUpdatedData.getTime() + MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY > now.getTime()) {
+                this._lastUpdatedData = now;
+                return;
+            }
+        }
+
         if (this.updatingData) return;
         this.updatingData = true;
 
-        let resourceCache = await caches.open(RESOURCE_CACHE);
-        let nextDailyTimetable = await resourceCache.match("next-dailytimetable");
+        this._lastUpdatedData = new Date();
 
-        if (nextDailyTimetable === undefined) {
+        let nextDailyTimetable = await Resources.GetResourceNow("next-dailytimetable") as DailyTimetable | Missing;
+
+        let firstBell = nextDailyTimetable?.bells?.[nextDailyTimetable.bells?.length ?? 0];
+
+        if (nextDailyTimetable === undefined || nextDailyTimetable === null || firstBell === undefined || this.BellToDate(firstBell, nextDailyTimetable).getTime() <= new Date().getTime()) {
             let succeeded = await Resources.FetchResources();
 
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
@@ -107,8 +121,10 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
+            let firstBell = currentDailyTimetable?.bells?.[currentDailyTimetable.bells?.length ?? 0];
+
             //Check if the returned date is not today.
-            if (succeeded && new Date(currentDailyTimetable.date) > new Date()) {
+            if (succeeded && firstBell !== undefined && this.BellToDate(firstBell, currentDailyTimetable).getTime() > new Date().getTime()) {
                 this.updatingData = false;
                 return;
             }
@@ -117,17 +133,16 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let timetable = await Resources.GetResourceNow("timetable") as Timetable | Missing;
-            if (timetable === undefined || timetable === null)
+            let dailyTimetableDate = new Date(currentDailyTimetable.date);
+
+            let currentBells = currentDailyTimetable.bells;
+            if (currentBells === undefined || currentBells === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let dailyTimetableDate = new Date(currentDailyTimetable.date);
-
             let now = new Date();
-            let currentBells = currentDailyTimetable.bells ?? undefined;
 
-            if (currentBells === undefined || now.getTime() > this.BellDate(currentBells[currentBells.length - 1], currentDailyTimetable).getTime())
+            if (now.getTime() > this.BellToDate(currentBells[currentBells.length - 1], currentDailyTimetable).getTime())
                 now.setDate(now.getDate() + 1);
 
             if (now.getFullYear() == dailyTimetableDate.getFullYear() &&
@@ -147,8 +162,13 @@ export class StudentDailyTimetable extends Page {
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
 
-            let newBells = bells.get(dayNumber);
+            let newBells = bells[dayNumber - 1];
             if (newBells === null || newBells === undefined)
+                //Keep updatingData true so we don't keep trying
+                return;
+
+            let timetable = await Resources.GetResourceNow("timetable") as Timetable | Missing;
+            if (timetable === undefined || timetable === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
@@ -175,40 +195,48 @@ export class StudentDailyTimetable extends Page {
             this.updatingData = false;
         }
         else {
+            let resourceCache = await caches.open(RESOURCE_CACHE);
             await resourceCache.delete("next-dailytimetable");
-            await Resources.SetResource("dailytimetable", await nextDailyTimetable.text());
+
+            await Resources.SetResource("dailytimetable", JSON.stringify(nextDailyTimetable));
 
             this.updatingData = false;
         }
     }
 
+    //Not my code, I just cleaned it up a bit. Code from https://snipplr.com/view/4086/calculate-business-days-between-two-dates
     static GetSchoolDayCount(startDate: Date, endDate: Date) {
-        var days = endDate.getDate() - startDate.getDate();
+        if (endDate.getTime() < startDate.getTime()) return -1;
 
-        // Subtract two weekend days for every week in between
-        var weeks = Math.floor(days / 7);
-        days = days - (weeks * 2);
+        let startDay = startDate.getDay();
+        let endDay = endDate.getDay();
 
-        // Handle special cases
-        var startDay = startDate.getDay();
-        var endDay = endDate.getDay();
+        // change Sunday from 0 to 7
+        startDay = (startDay == 0) ? 7 : startDay;
+        endDay = (endDay == 0) ? 7 : endDay;
 
-        // Remove weekend not previously removed.   
-        if (startDay - endDay > 1)         
-            days = days - 2;
+        // adjustment if both days on weekend
+        let adjust = 0;
+        if ((startDay > 5) && (endDay > 5)) adjust = 1;
 
-        // Remove start day if span starts on Sunday but ends before Saturday
-        if (startDay == 0 && endDay != 6)
-            days = days - 1;
+        // only count weekdays
+        startDay = (startDay > 5) ? 5 : startDay;
+        endDay = (endDay > 5) ? 5 : endDay;
 
-        // Remove end day if span ends on Saturday but starts after Sunday
-        if (endDay == 6 && startDay != 0)
-            days = days - 1;
+        // calculate difference in weeks (1000ms * 60sec * 60min * 24hrs * 7 days = 604800000)
+        let weeks = Math.floor((endDate.getTime() - startDate.getTime()) / 604800000);
 
-        return days;
+        let dateDiff;
+        if (startDay <= endDay) dateDiff = weeks * 5 + endDay - startDay;
+        else dateDiff = (weeks + 1) * 5 + endDay - startDay;
+
+        // take into account both days on weekend
+        dateDiff -= adjust;
+
+        return dateDiff;
     }
 
-    static BellDate(bell: Bell, dailyTimetable: DailyTimetable) {
+    static BellToDate(bell: Bell, dailyTimetable: DailyTimetable) {
         let time = new Date(dailyTimetable.date ?? "");
 
         let parts = bell.time?.split(":") ?? ["00", "00"];
@@ -243,7 +271,7 @@ export class StudentDailyTimetable extends Page {
         for (let i = 0; i < bells.length; i++) {
             if (bells[i].time === undefined || bells[i].time === null) continue;
 
-            let time = StudentDailyTimetable.BellDate(bells[i], this._dailyTimetable);
+            let time = StudentDailyTimetable.BellToDate(bells[i], this._dailyTimetable);
 
             if (time.getTime() >= now.getTime()) return {
                 index: i,
@@ -255,7 +283,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     TimeDisplay(bell: Bell) {
-        let time = StudentDailyTimetable.BellDate(bell, this._dailyTimetable);
+        let time = StudentDailyTimetable.BellToDate(bell, this._dailyTimetable);
         let now = new Date();
 
         let timeDifference = time.getTime() - now.getTime();
