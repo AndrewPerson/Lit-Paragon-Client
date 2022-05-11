@@ -26,7 +26,7 @@ declare const EXTENSION_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 declare const METADATA_ENDPOINT: string;
 
-var UPDATING = false;
+let UPDATING = false;
 
 async function Fetch(e: FetchEvent) {
     if (e.request.method == "GET" && !UPDATING) {
@@ -199,5 +199,3 @@ async function Update() {
 
     await Promise.all(deletePromises);
 }
-
-//This is just to force a service worker update

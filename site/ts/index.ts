@@ -84,17 +84,6 @@ async function Main() {
         }
     });
 
-    //#if DEVELOPMENT
-    if ("serviceWorker" in navigator) {
-        let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
-
-        if (registration) await registration.update();
-        else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
-            scope: "/"
-        });
-    }
-    //#endif
-
     //This is to stop people who refresh a lot from spamming the server with requests.
     //Session storage is persisted between reloads but is cleared when the tab is closed.
     let lastReloadedText = sessionStorage.getItem("Last Refreshed");
@@ -110,7 +99,6 @@ async function Main() {
         }
     }
 
-    //#if !DEVELOPMENT
     try {
         let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
@@ -159,7 +147,6 @@ async function Main() {
     catch(_) {
         await Site.SetMetadata(await (await fetch(METADATA_ENDPOINT)).json());
     }
-    //#endif
 
     let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
     let promptedInstall = lastPromptedInstall == null ? false : new Date().getTime() - new Date(lastPromptedInstall).getTime() < INSTALL_PROMPT_FREQUENCY;
