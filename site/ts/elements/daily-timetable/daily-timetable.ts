@@ -121,10 +121,10 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let firstBell = currentDailyTimetable?.bells?.[currentDailyTimetable.bells?.length ?? 0];
+            let lastBell = currentDailyTimetable?.bells?.[(currentDailyTimetable?.bells?.length ?? 1) - 1];
 
             //Check if the returned date is not today.
-            if (succeeded && firstBell !== undefined && this.BellToDate(firstBell, currentDailyTimetable).getTime() > new Date().getTime()) {
+            if (succeeded && lastBell !== undefined && this.BellToDate(lastBell, currentDailyTimetable).getTime() > new Date().getTime()) {
                 this.updatingData = false;
                 return;
             }
@@ -157,7 +157,7 @@ export class StudentDailyTimetable extends Page {
                 now.setDate(now.getDate() + 1);
             
             //YYYY-MM-DD
-            let date = `${now.getFullYear().toString().padStart(2, "0")}-${now.getMonth().toString().padStart(2, "0")}-${now.getDay().toString().padStart(2, "0")}`
+            let date = `${now.getFullYear().toString().padStart(2, "0")}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${(now.getDay() + 1).toString().padStart(2, "0")}`
 
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
