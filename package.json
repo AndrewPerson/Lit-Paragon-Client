@@ -1,7 +1,6 @@
 {
     "type": "module",
     "dependencies": {
-        "@cloudflare/workers-types": "^3.4.0",
         "esbuild-linux-64": "^0.14.2",
         "svgo": "^2.8.0"
     },
