@@ -190,6 +190,7 @@ async function Main() {
         
         return `"/${path.relative(path.resolve(dirname, "site"), file)}"`
     }).join(",");
+    
     files = `self.assets=["/",${files}];`;
 
     await writeFile(path.resolve(dirname, "site/dist/service-worker/assets.js"), files);
