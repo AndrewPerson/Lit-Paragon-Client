@@ -157,7 +157,7 @@ export class StudentDailyTimetable extends Page {
                 now.setDate(now.getDate() + 1);
             
             //YYYY-MM-DD
-            let date = `${now.getFullYear().toString().padStart(2, "0")}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${(now.getDay() + 1).toString().padStart(2, "0")}`
+            let date = `${now.getFullYear().toString().padStart(2, "0")}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${(now.getDate() + 1).toString().padStart(2, "0")}`
 
             //Day number (1 - 15)
             let dayNumber = (parseInt(currentDailyTimetable.timetable.timetable.dayNumber) + this.GetSchoolDayCount(dailyTimetableDate, now) - 1) % 15 + 1;
