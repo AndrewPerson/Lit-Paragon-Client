@@ -59,7 +59,7 @@ async function Main() {
         }
 
         let notificationText = ok ? "An error occured and has been automatically reported. No personal information is sent." :
-                                    "An error occured and could not be reported. For obvious reasons, the error while reporting has not been reported.";
+                                    "An error occured and could not be reported. The error while reporting cannot be reported.";
 
         let notification = document.createElement("inline-notification");
 
