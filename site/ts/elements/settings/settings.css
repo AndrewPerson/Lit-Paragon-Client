@@ -41,14 +41,15 @@ span {
 }
 
 #colour-mode {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
     display: grid;
 
     padding: 0.4rem;
     width: 3.1rem;
     height: 3.1rem;
-
-    appearance: none;
-    -webkit-appearance: none;
 }
 
 #colour-mode::after {
@@ -69,10 +70,11 @@ span {
 }
 
 #edit-navbar {
-    display: grid;
-
     appearance: none;
     -webkit-appearance: none;
+    -moz-appearance: none;
+    
+    display: grid;
 }
 
 #edit-navbar::after {

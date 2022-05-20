@@ -1,29 +1,17 @@
-:where(*) {
-    scrollbar-width: thin;
-    scrollbar-color: var(--surface4) transparent;
-}
-
+:where(*),
 :host {
     scrollbar-width: thin;
     scrollbar-color: var(--surface4) transparent;
 }
 
-:where(*)::-webkit-scrollbar {
-    background-color: transparent;
-    width: 0.4rem;
-}
-
+:where(*)::-webkit-scrollbar,
 :host::-webkit-scrollbar {
     background-color: transparent;
-    width: 0.4rem;
+    width: 0.2rem;
 }
 
-:where(*)::-webkit-scrollbar-thumb {
-    background-color: var(--surface4);
-    border-radius: 0.4rem;
-}
-
+:where(*)::-webkit-scrollbar-thumb,
 :host::-webkit-scrollbar-thumb {
     background-color: var(--surface4);
-    border-radius: 0.4rem;
+    border-radius: 0.2rem;
 }

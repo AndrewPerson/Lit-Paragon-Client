@@ -1,4 +1,8 @@
 :where(input[type=search]) {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
     border: none;
     border-bottom: solid 0.05rem var(--text2);
     border-radius: 0;
@@ -11,7 +15,7 @@
 
     height: 2rem;
 
-    user-select: text;
+    --user-select: text;
 }
 
 :where(input[type=search]:focus-visible) {
@@ -29,5 +33,6 @@
 }
 
 :where(input[type=search])::-webkit-search-cancel-button {
+    appearance: none;
     -webkit-appearance: none;
 }
