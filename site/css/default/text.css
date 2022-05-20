@@ -15,8 +15,7 @@
 }
 
 :where(*) {
-    font-size: inherit;
-    font-weight: inherit;
+    font: inherit;
     color: inherit;
     cursor: inherit;
 

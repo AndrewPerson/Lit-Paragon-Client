@@ -1,10 +1,13 @@
 :where(select) {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
     border: solid 0.05rem var(--text2);
     background-color: var(--surface2);
     color: var(--text2);
 
-    padding: 0.4rem 0;
-    padding-right: 2.3rem;
+    padding: 0.4rem 2.3rem 0.4rem 0.2rem;
 
     border-radius: 0.4rem;
 
