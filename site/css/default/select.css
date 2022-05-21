@@ -3,6 +3,8 @@
     -webkit-appearance: none;
     -moz-appearance: none;
 
+    position: relative;
+
     border: solid 0.05rem var(--text2);
     background-color: var(--surface2);
     color: var(--text2);
@@ -12,6 +14,12 @@
     border-radius: 0.4rem;
 
     font-size: calc(1rem / 1.2);
+
+    background-image: url(/images/select-toggle.svg);
+    background-blend-mode: difference;
+    background-repeat: no-repeat;
+    background-position: calc(100% - 0.2rem) 50%;
+    background-size: 0.6rem;
 
     user-select: none;
     -ms-user-select: none;
