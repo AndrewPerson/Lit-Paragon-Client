@@ -115,13 +115,15 @@ export class Resources {
             resourceResponse = await fetch(serverUrl.toString());
         }
         catch (e) {
-            resourceResponse == null
+            resourceResponse = null
         }
 
         //TODO Add more granular error handling
         if (resourceResponse === null || !resourceResponse.ok) {
             resourceNotification.Close();
-            this.ShowLoginNotification();
+            
+            //Because when the response is null, it represents a network error
+            if (resourceResponse !== null) this.ShowLoginNotification();
 
             this._fetchCallbacks.Invoke(false);
             this._fetching = false;
