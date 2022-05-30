@@ -29,7 +29,7 @@ slot {
     box-shadow: var(--shadow);
     padding: 0.8rem;
 
-    z-index: inherit;
+    z-index: 99;
 
     box-sizing: border-box;
 }
