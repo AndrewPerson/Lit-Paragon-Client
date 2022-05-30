@@ -13,6 +13,7 @@ export class DailyTimetableUtils {
 
         time.setHours(hours);
         time.setMinutes(minutes);
+        time.setSeconds(0);
 
         return time;
     }
@@ -68,8 +69,8 @@ export class DailyTimetableUtils {
         else {
             let hours = Math.floor(timeDifference / 3600000).toString();
             let minutes = Math.floor((timeDifference % 3600000) / 60000).toString();
-            let seconds = Math.floor(((timeDifference % 3600000) % 60000) / 1000).toString();
-
+            let seconds = Math.floor((timeDifference % 60000) / 1000).toString();
+            
             if (hours.length < 2)
                 hours = "0" + hours;
 
