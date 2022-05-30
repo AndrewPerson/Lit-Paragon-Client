@@ -58,13 +58,31 @@
 }
 
 :where(a, .a) {
+    position: relative;
     color: var(--text2);
-    text-decoration: none;
+    transition: color 0.2s ease-in-out;
+    text-decoration: underline;
     cursor: pointer;
 }
 
 :where(a:hover, .a:hover) {
-    text-decoration: underline;
+    color: var(--text4);
+    text-decoration: none;
+}
+
+:where(a, .a)::before {
+    background: var(--text2);
+    content: "";
+    inset: 0;
+    position: absolute;
+    transform: scaleY(0);
+    transform-origin: bottom;
+    transition: transform 0.2s ease-in-out;
+    z-index: -1;
+}
+
+:where(a:hover, .a:hover)::before {
+    transform: scaleY(1);
 }
 
 :where(a:focus-visible, .a:focus-visible) {

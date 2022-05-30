@@ -80,9 +80,9 @@ details[open] > summary::after {
 }
 
 .meeting {
-    padding: 0.1rem;
+    padding: 0.1rem 0.2rem;
     border-radius: 0.3rem;
-    background-color: var(--surface4);
+    border: 0.1rem solid var(--surface4);
 }
 
 input[type="checkbox"] {
