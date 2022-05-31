@@ -19,12 +19,14 @@ export class DailyTimetableUtils {
     }
 
     static GetCurrentBell(dailyTimetable: DailyTimetable, now: Date) {
+        let dailyTimetableDate = new Date(dailyTimetable.date ?? "");
+
         let bells = dailyTimetable.bells ?? [];
 
         for (let i = 0; i < bells.length; i++) {
             if (bells[i].time === undefined || bells[i].time === null) continue;
 
-            let time = DailyTimetableUtils.BellToDate(bells[i], now);
+            let time = DailyTimetableUtils.BellToDate(bells[i], dailyTimetableDate);
 
             if (time.getTime() >= now.getTime()) return {
                 index: i,
@@ -35,8 +37,8 @@ export class DailyTimetableUtils {
         return undefined;
     }
 
-    static HumanTimeDisplay(bell: Bell, now: Date) {
-        let time = DailyTimetableUtils.BellToDate(bell, now);
+    static HumanTimeDisplay(bell: Bell, dailyTimetableDate: Date, now: Date) {
+        let time = DailyTimetableUtils.BellToDate(bell, dailyTimetableDate);
 
         let timeDifference = time.getTime() - now.getTime();
 

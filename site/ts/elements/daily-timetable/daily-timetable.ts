@@ -149,19 +149,21 @@ export class StudentDailyTimetable extends Page {
             let now = new Date();
 
             while (now.getTime() > DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
-                if (now.getFullYear() == currentDailyTimetableDate.getFullYear() &&
-                    now.getMonth() == currentDailyTimetableDate.getMonth() &&
-                    now.getDate() == currentDailyTimetableDate.getDate())
-                    now.setDate(now.getDate() + 1);
+                let adjustedNow = new Date(now);
 
-                if (now.getDay() == 6)
-                    now.setDate(now.getDate() + 1);
+                if (adjustedNow.getFullYear() == currentDailyTimetableDate.getFullYear() &&
+                    adjustedNow.getMonth() == currentDailyTimetableDate.getMonth() &&
+                    adjustedNow.getDate() == currentDailyTimetableDate.getDate())
+                    adjustedNow.setDate(adjustedNow.getDate() + 1);
 
-                if (now.getDay() == 0)
-                    now.setDate(now.getDate() + 1);
+                if (adjustedNow.getDay() == 6)
+                    adjustedNow.setDate(adjustedNow.getDate() + 1);
+
+                if (adjustedNow.getDay() == 0)
+                    adjustedNow.setDate(adjustedNow.getDate() + 1);
 
                 //YYYY-MM-DD
-                let date = `${now.getFullYear().toString().padStart(2, "0")}-${(now.getMonth() + 1).toString().padStart(2, "0")}-${now.getDate().toString().padStart(2, "0")}`
+                let date = `${adjustedNow.getFullYear().toString().padStart(2, "0")}-${(adjustedNow.getMonth() + 1).toString().padStart(2, "0")}-${adjustedNow.getDate().toString().padStart(2, "0")}`
 
                 //Day number (1 - 15)
                 let dayNumber: number = (parseInt(currentDailyTimetable.timetable!.timetable.dayNumber) + DailyTimetableUtils.GetSchoolDayCount(currentDailyTimetableDate, now) - 1) % 15 + 1;
@@ -193,7 +195,7 @@ export class StudentDailyTimetable extends Page {
                     classVariations: []
                 }
 
-                currentDailyTimetableDate = new Date(date);
+                currentDailyTimetableDate = new Date(adjustedNow);
                 lastBell = newBells[newBells.length - 1];
             }
             
@@ -258,7 +260,7 @@ export class StudentDailyTimetable extends Page {
             nextClassName = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
 
         let timeDisplay = { time: "Never", preposition: "in" };
-        if (nextBellInfo?.bell !== undefined) timeDisplay = DailyTimetableUtils.HumanTimeDisplay(nextBellInfo.bell, new Date());
+        if (nextBellInfo?.bell !== undefined) timeDisplay = DailyTimetableUtils.HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date());
 
         if (this._nextClass !== null) this._nextClass.innerText = nextClassName ?? "Nothing";
         if (this._preposition !== null) this._preposition.innerText = timeDisplay?.preposition ?? "in";
