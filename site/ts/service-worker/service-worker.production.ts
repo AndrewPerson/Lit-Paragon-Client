@@ -12,7 +12,7 @@ type PeriodicSyncEvent = {
 importScripts("./assets.js");
 
 self.addEventListener("install", e => e.waitUntil(self.skipWaiting()));
-self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
+self.addEventListener("activate", e => e.waitUntil(Activate()));
 self.addEventListener("fetch", e => e.respondWith(Fetch(e)));
 //@ts-ignore
 self.addEventListener("periodicsync", e => e.waitUntil(PeriodicSync(e)));
@@ -26,7 +26,25 @@ declare const EXTENSION_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 declare const METADATA_ENDPOINT: string;
 
+//TODO Make this generated at build time
+const BAD_VERSIONS = ["2.2.56", "2.2.57"];
+
 let UPDATING = false;
+
+async function Activate() {
+    await self.clients.claim();
+
+    let cache = await caches.open(METADATA_CACHE);
+    let metadataResponse = await cache.match(`${location.origin}/Metadata`);
+
+    if (metadataResponse === undefined) return;
+
+    let metadata = await metadataResponse.json();
+
+    if (BAD_VERSIONS.includes(metadata.version)) {
+        await Update();
+    }
+}
 
 async function Fetch(e: FetchEvent) {
     if (e.request.method == "GET" && !UPDATING) {
