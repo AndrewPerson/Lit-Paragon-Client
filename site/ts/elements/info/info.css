@@ -15,7 +15,12 @@ button:focus-visible {
     outline: none;
 }
 
-slot {
+button > slot {
+    width: 100%;
+    height: 100%;
+}
+
+.info {
     position: absolute;
     display: block;
     top: var(--offset);
