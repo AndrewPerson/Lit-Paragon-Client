@@ -96,7 +96,7 @@ export class SchoolAnnouncements extends Page {
         <div class="header">
             <input type="search" placeholder="Search..." @input="${this.ChangeSearchFilter.bind(this)}">
 
-            <select title="Select filter year for announcements" @input="${this.ChangeYearFilter.bind(this)}">
+            <select title="Select year filter for announcements" @input="${this.ChangeYearFilter.bind(this)}">
                 <option value="all" ?selected="${this.yearFilter == "all"}">All</option>
                 <option value="Staff" ?selected="${this.yearFilter == "Staff"}">Staff</option>
                 <option value="12" ?selected="${this.yearFilter == "12"}">Year 12</option>
