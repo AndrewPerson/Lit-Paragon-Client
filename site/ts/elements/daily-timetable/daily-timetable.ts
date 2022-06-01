@@ -37,43 +37,6 @@ export class StudentDailyTimetable extends Page {
 
     static updatingData: boolean = false;
 
-    set dailyTimetable(value: DailyTimetable) {
-        let bells = value.bells;
-
-        if (bells === undefined || bells === null) {
-            this._dailyTimetable = value;
-            return;
-        }
-
-        let periods = value.timetable?.timetable?.periods ?? {};
-
-        let foundStartofDay = false;
-
-        let leadingIndiceCount = 0;
-        let trailingIndiceCount = 0;
-
-        for (let i = 0; i < bells.length; i++) {
-            let bell: Bell = bells[i];
-
-            if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
-                foundStartofDay = true;
-                trailingIndiceCount = 0;
-            }
-            else {
-                if (foundStartofDay == false) leadingIndiceCount++;
-                else trailingIndiceCount++;
-            }
-        }
-
-        for (let i = 0; i < trailingIndiceCount; i++)
-            bells[bells.length - i - 1].display = false;
-
-        for (let i = 0; i < leadingIndiceCount; i++)
-            bells.shift();
-
-        this._dailyTimetable = value;
-    }
-
     @state()
     private _dailyTimetable: DailyTimetable;
 
@@ -216,7 +179,42 @@ export class StudentDailyTimetable extends Page {
     constructor() {
         super();
 
-        this.AddResource("dailytimetable", "dailyTimetable");
+        this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => {
+            let bells = dailyTimetable.bells;
+
+            if (bells === undefined || bells === null) {
+                this._dailyTimetable = dailyTimetable;
+                return;
+            }
+
+            let periods = dailyTimetable.timetable?.timetable?.periods ?? {};
+
+            let foundStartofDay = false;
+
+            let leadingIndiceCount = 0;
+            let trailingIndiceCount = 0;
+
+            for (let i = 0; i < bells.length; i++) {
+                let bell: Bell = bells[i];
+
+                if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
+                    foundStartofDay = true;
+                    trailingIndiceCount = 0;
+                }
+                else {
+                    if (foundStartofDay == false) leadingIndiceCount++;
+                    else trailingIndiceCount++;
+                }
+            }
+
+            for (let i = 0; i < trailingIndiceCount; i++)
+                bells[bells.length - i - 1].display = false;
+
+            for (let i = 0; i < leadingIndiceCount; i++)
+                bells.shift();
+
+            this._dailyTimetable = dailyTimetable;
+        });
 
         setInterval(() => {
             //We need this because this can run before _dailyTimetable is initialised.

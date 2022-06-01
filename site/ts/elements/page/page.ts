@@ -17,7 +17,7 @@ export class Page extends LitElement {
     private _unreceivedResources: number = 0;
     private _uncompletedResources: number = 0;
 
-    AddResource(resourceName: string, property: string) {
+    AddResource(resourceName: string, callback: (result: any) => any) {
         this._unreceivedResources++;
         this._uncompletedResources++;
 
@@ -36,7 +36,7 @@ export class Page extends LitElement {
                     completed = true;
                 }
 
-                this[property] = resource;
+                callback(resource);
             }
 
             if (this._uncompletedResources == 0)

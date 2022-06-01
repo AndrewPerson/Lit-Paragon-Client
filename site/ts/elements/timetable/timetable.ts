@@ -50,8 +50,8 @@ export class FullTimetable extends Page {
     constructor() {
         super();
 
-        this.AddResource("timetable", "timetable");
-        this.AddResource("dailytimetable", "dailyTimetable");
+        this.AddResource("timetable", (timetable: Timetable) => this.timetable = timetable);
+        this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => this.dailyTimetable = dailyTimetable);
 
         document.addEventListener("pointerover", this.ClearHighlight);
 
