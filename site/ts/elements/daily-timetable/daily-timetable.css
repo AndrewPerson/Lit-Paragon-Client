@@ -1,9 +1,23 @@
 :host {
+    position: relative;
+
     display: flex;
     flex-direction: column;
     align-items: center;
 
     overflow-y: auto;
+}
+
+info-popup {
+    --max-width: 40vmax;
+    --offset: 2.6rem;
+    
+    position: absolute;
+    top: 3%;
+    left: 3%;
+
+    width: 1.5rem;
+    height: 1.5rem;
 }
 
 .next-display {

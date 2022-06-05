@@ -34,14 +34,6 @@ export class SchoolAnnouncements extends Page {
     @state()
     announcements: Announcements;
 
-    set userInfo(value: {yearGroup: string | Missing}) {
-        let yearGroup = value.yearGroup;
-
-        if (yearGroup !== undefined && yearGroup !== null)
-            if (localStorage.getItem("Announcement Year Filter") === null)
-                this.yearFilter = yearGroup;
-    }
-
     @state()
     yearFilter: string = localStorage.getItem("Announcement Year Filter") ?? "all";
 
@@ -51,8 +43,14 @@ export class SchoolAnnouncements extends Page {
     constructor() {
         super();
 
-        this.AddResource("announcements", "announcements");
-        this.AddResource("userinfo", "userInfo");
+        this.AddResource("announcements", (announcements: Announcements) => this.announcements = announcements);
+        this.AddResource("userinfo", (userInfo: {yearGroup: string | Missing}) => {
+            let yearGroup = userInfo.yearGroup;
+
+            if (yearGroup !== undefined && yearGroup !== null)
+                if (localStorage.getItem("Announcement Year Filter") === null)
+                    this.yearFilter = yearGroup;
+        });
     }
 
     ChangeSearchFilter(e: InputEvent) {
@@ -98,7 +96,7 @@ export class SchoolAnnouncements extends Page {
         <div class="header">
             <input type="search" placeholder="Search..." @input="${this.ChangeSearchFilter.bind(this)}">
 
-            <select title="Select filter year for announcements" @input="${this.ChangeYearFilter.bind(this)}">
+            <select title="Select year filter for announcements" @input="${this.ChangeYearFilter.bind(this)}">
                 <option value="all" ?selected="${this.yearFilter == "all"}">All</option>
                 <option value="Staff" ?selected="${this.yearFilter == "Staff"}">Staff</option>
                 <option value="12" ?selected="${this.yearFilter == "12"}">Year 12</option>

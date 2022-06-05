@@ -52,13 +52,6 @@ export class StudentBarcode extends Page {
 
     dragging: boolean = false;
 
-    set userInfo(value: {studentId: string | Missing}) {
-        let studentId = value.studentId;
-
-        if (studentId !== undefined && studentId !== null)
-            this.studentId = studentId;
-    }
-
     @state()
     studentId: string;
 
@@ -98,7 +91,12 @@ export class StudentBarcode extends Page {
 
         window.addEventListener("resize", this.Resize);
 
-        this.AddResource("userinfo", "userInfo");
+        this.AddResource("userinfo", (userInfo: {studentId: string | Missing}) => {
+            let studentId = userInfo.studentId;
+
+            if (studentId !== undefined && studentId !== null)
+                this.studentId = studentId;
+        });
 
         Site.ListenForDark(dark => {
             this.barcode?.classList.toggle("outline", dark);

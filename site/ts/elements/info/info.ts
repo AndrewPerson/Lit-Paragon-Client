@@ -13,7 +13,7 @@ import infoSvg from "images/info.svg";
 export class Info extends LitElement {
     static styles = [imgCss, infoCss];
 
-    @query("slot")
+    @query(".info")
     info: HTMLElement;
 
     @query(".background")
@@ -56,10 +56,12 @@ export class Info extends LitElement {
     render() {
         return html`
         <button title="Click or hover to reveal more information" @click="${this.ShowPopup}">
-            ${infoSvg}
+            <slot name="icon">
+                ${infoSvg}
+            </slot>
         </button>
 
-        <slot style="display: none"></slot>
+        <slot class="info" style="display: none"></slot>
 
         <div class="background" style="display: none"></div>
         `;
