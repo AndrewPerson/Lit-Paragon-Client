@@ -20,16 +20,16 @@ const bells1: Bell[] = [
         time: "09:05"
     },
     {
-        bell: "R",
-        bellDisplay: "Recess",
-        period: "R",
-        time: "11:10"
-    },
-    {
         bell: "2",
         bellDisplay: "Period 2",
         period: "2",
         time: "10:10"
+    },
+    {
+        bell: "R",
+        bellDisplay: "Recess",
+        period: "R",
+        time: "11:10"
     },
     {
         bell: "3",
