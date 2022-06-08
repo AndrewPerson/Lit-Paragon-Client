@@ -14,6 +14,8 @@ import "./period";
 
 import "../info/info";
 
+import LOGIN_URL from "../../login-url";
+
 import { DailyTimetable, Bell, Period, RoomVariation, ClassVariation, TeacherType } from "./types";
 import { Day, Timetable } from "../timetable/types";
 
@@ -299,7 +301,7 @@ export class StudentDailyTimetable extends Page {
                 <div slot="icon">
                     ${warningSvg}
                 </div>
-                <p>This timetable was automatically generated and may be innacurate. Login for the latest information.</p>
+                <p>This timetable was automatically generated and may be innacurate. <a href="${LOGIN_URL}">Login</a> for the latest information.</p>
             </info-popup>
             
             <div class="next-display">
