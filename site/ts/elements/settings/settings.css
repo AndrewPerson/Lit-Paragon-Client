@@ -59,6 +59,7 @@ span {
 
     background-image: url(/images/moon.svg);
     background-size: contain;
+    background-repeat: no-repeat;
 
     filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
 
