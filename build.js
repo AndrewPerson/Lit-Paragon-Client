@@ -108,7 +108,7 @@ async function Main() {
         treeShaking: env.js.treeShaking,
         sourcemap: env.js.sourcemaps,
         format: "esm",
-        target: "es2020",
+        target: "es2016",
         define: transformVars(env.vars),
         plugins: [
             clear("./site/dist"),
