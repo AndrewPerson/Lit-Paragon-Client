@@ -197,28 +197,28 @@ export class StudentDailyTimetable extends Page {
 
             let periods = dailyTimetable.timetable?.timetable?.periods ?? {};
 
-            let foundStartofDay = false;
+            let foundStartOfDay = false;
 
-            let leadingIndiceCount = 0;
-            let trailingIndiceCount = 0;
+            let leadingIndexCount = 0;
+            let trailingIndexCount = 0;
 
             for (let i = 0; i < bells.length; i++) {
                 let bell: Bell = bells[i];
 
                 if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
-                    foundStartofDay = true;
-                    trailingIndiceCount = 0;
+                    foundStartOfDay = true;
+                    trailingIndexCount = 0;
                 }
                 else {
-                    if (foundStartofDay == false) leadingIndiceCount++;
-                    else trailingIndiceCount++;
+                    if (foundStartOfDay == false) leadingIndexCount++;
+                    else trailingIndexCount++;
                 }
             }
 
-            for (let i = 0; i < trailingIndiceCount; i++)
+            for (let i = 0; i < trailingIndexCount; i++)
                 bells[bells.length - i - 1].display = false;
 
-            for (let i = 0; i < leadingIndiceCount; i++)
+            for (let i = 0; i < leadingIndexCount; i++)
                 bells.shift();
 
             this._dailyTimetable = dailyTimetable;
@@ -233,7 +233,7 @@ export class StudentDailyTimetable extends Page {
     }
 
     GetBell(bell: Bell) {
-        return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" time="${bell.time ?? "??:??"}"></daily-timetable-bell>`;
+        return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" time="${bell.time ?? "??:??"}" part="bell"></daily-timetable-bell>`;
     }
 
     GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
@@ -249,7 +249,8 @@ export class StudentDailyTimetable extends Page {
                                            classVariation.casualSurname ?? DailyTimetableUtils.FormatCasualCode(classVariation.casual ?? "????")}"
                                 ?teacherChanged="${teacherChanged}"
                                 room="${roomVariation?.roomTo ?? period.room ?? "???"}"
-                                ?roomChanged="${roomChanged}"></daily-timetable-period>
+                                ?roomChanged="${roomChanged}"
+                                part="period"></daily-timetable-period>
         `;
     }
 
@@ -301,7 +302,7 @@ export class StudentDailyTimetable extends Page {
                 <div slot="icon">
                     ${warningSvg}
                 </div>
-                <p>This timetable was automatically generated and may be innacurate. <a href="${LOGIN_URL}">Login</a> for the latest information.</p>
+                <p>This timetable was automatically generated and may be inaccurate. <a href="${LOGIN_URL}">Login</a> for the latest information.</p>
             </info-popup>
             
             <div class="next-display">
