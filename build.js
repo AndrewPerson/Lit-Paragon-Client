@@ -1,5 +1,3 @@
-const start = new Date();
-
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const config = require("./build.json");
@@ -194,6 +192,4 @@ async function Main() {
     files = `self.assets=["/",${files}];`;
 
     await writeFile(path.resolve(dirname, "site/dist/service-worker/assets.js"), files);
-
-    console.log(`Time taken: ${(new Date() - start) / 1000}s`);
 }
