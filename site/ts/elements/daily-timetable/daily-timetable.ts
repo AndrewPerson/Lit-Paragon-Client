@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement, state, query } from "lit/decorators.js";
 
 import { DailyTimetableUtils } from "./daily-timetable-utils";
@@ -47,19 +47,8 @@ export class StudentDailyTimetable extends Page {
     @state()
     private _dailyTimetable: DailyTimetable;
 
-    @query("#next-class", true)
-    private _nextClass: HTMLParagraphElement | null;
-
-    @query("#preposition", true)
-    private _preposition: HTMLParagraphElement | null;
-
-    @query("#timer", true)
-    private _timer: HTMLHeadingElement | null;
-
-    @query("#periods", true)
-    private _periods: HTMLDivElement | null;
-
-    private _nextPeriod: Element | null = null;
+    private _previousBell: Bell | null = null;
+    private _cachedBells: TemplateResult<1>[] | null = null;
 
     private static _lastUpdatedData?: Date;
 
@@ -188,6 +177,8 @@ export class StudentDailyTimetable extends Page {
         super();
 
         this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => {
+            this._cachedBells = null;
+
             let bells = dailyTimetable.bells;
 
             if (bells === undefined || bells === null) {
@@ -228,20 +219,21 @@ export class StudentDailyTimetable extends Page {
             //We need this because this can run before _dailyTimetable is initialised.
             if (this._dailyTimetable === undefined) return;
 
-            this.RenderNextBell();
+            this.requestUpdate();
         }, 1000);
     }
 
-    GetBell(bell: Bell) {
-        return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" time="${bell.time ?? "??:??"}" part="bell"></daily-timetable-bell>`;
+    GetBell(bell: Bell, next: boolean) {
+        return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" class="${next ? "next" : ""}" time="${bell.time ?? "??:??"}"></daily-timetable-bell>`;
     }
 
-    GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing) {
+    GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing, next: boolean) {
         let teacherChanged = classVariation !== undefined && classVariation !== null && classVariation.type != TeacherType.NO_VARIATION;
         let roomChanged = roomVariation !== undefined && roomVariation !== null;
 
         return html`
-        <daily-timetable-period title="${DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, period.year ?? "?", period.title ?? "???")}" class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""}"
+        <daily-timetable-period title="${DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, period.year ?? "?", period.title ?? "???")}"
+                                class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""} ${next ? "next" : ""}"
                                 time="${bell.time ?? "??:??"}"
                                 teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                            classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
@@ -250,44 +242,8 @@ export class StudentDailyTimetable extends Page {
                                 ?teacherChanged="${teacherChanged}"
                                 room="${roomVariation?.roomTo ?? period.room ?? "???"}"
                                 ?roomChanged="${roomChanged}"
-                                part="period"></daily-timetable-period>
+                               ></daily-timetable-period>
         `;
-    }
-
-    RenderNextBell() {
-        let nextBellInfo = DailyTimetableUtils.GetCurrentBell(this._dailyTimetable, new Date());
-
-        if (nextBellInfo === undefined)
-            StudentDailyTimetable.UpdateData();
-
-        let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
-        let nextClassName = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
-
-        if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
-            nextClassName = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
-
-        let timeDisplay = { time: "Never", preposition: "in" };
-        if (nextBellInfo?.bell !== undefined) timeDisplay = DailyTimetableUtils.HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date());
-
-        if (this._nextClass !== null) this._nextClass.innerText = nextClassName ?? "Nothing";
-        if (this._preposition !== null) this._preposition.innerText = timeDisplay?.preposition ?? "in";
-        if (this._timer !== null) this._timer.innerText = timeDisplay?.time ?? "Never";
-
-        let nextPeriod = this._periods?.children[nextBellInfo?.index ?? 0];
-
-        if (nextPeriod !== this._nextPeriod) {
-            this._nextPeriod?.classList.remove("next");
-            this._nextPeriod = nextPeriod ?? null;
-        }
-
-        nextPeriod?.classList.add("next");
-    }
-
-    updated() {
-        //We need this because this can run before _dailyTimetable is initialised.
-        if (this._dailyTimetable === undefined) return;
-
-        this.RenderNextBell();
     }
 
     renderPage() {
@@ -297,6 +253,53 @@ export class StudentDailyTimetable extends Page {
         let roomVariations = (Array.isArray(this._dailyTimetable.roomVariations) ? {} : this._dailyTimetable.roomVariations) ?? {};
         let classVariations = (Array.isArray(this._dailyTimetable.classVariations) ? {} : this._dailyTimetable.classVariations) ?? {};
 
+        //TODO Change timer display here
+        let nextBellInfo = DailyTimetableUtils.GetCurrentBell(this._dailyTimetable, new Date());
+
+        let timeDisplay = { class: "Nothing", preposition: "in", time: "Never" };
+        if (nextBellInfo === undefined) {
+            StudentDailyTimetable.UpdateData();
+        }
+        else {
+            if ((nextBellInfo?.bell ?? null) !== this._previousBell) {
+                this._previousBell = nextBellInfo?.bell ?? null;
+                this._cachedBells = null;
+            }
+
+            if (nextBellInfo?.bell !== undefined) {
+                timeDisplay = {
+                    class: "Nothing",
+                    ...DailyTimetableUtils.HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date())
+                }
+            }
+
+            let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
+            
+            if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
+                timeDisplay.class = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
+            else
+                timeDisplay.class = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
+        }
+
+        if (this._cachedBells === null) {
+            this._cachedBells = bells.map(bell => {
+                if (!(bell.display ?? true)) return null;
+
+                if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
+                    let period = periods[bell.period];
+
+                    if (period !== undefined && period !== null &&
+                        "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
+                        period.room !== undefined && period.room !== null)
+                        return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period], bell === nextBellInfo?.bell);
+                    else
+                        return this.GetBell(bell, bell === nextBellInfo?.bell);
+                }
+                else
+                    return this.GetBell(bell, bell === nextBellInfo?.bell);
+            }).filter(x => x !== null) as TemplateResult<1>[];
+        }
+
         return html`
             <info-popup style="${(this._dailyTimetable.autoGenerated ?? false) ? "" : "display: none"}">
                 <div slot="icon">
@@ -305,27 +308,14 @@ export class StudentDailyTimetable extends Page {
                 <p>This timetable was automatically generated and may be inaccurate. <a href="${LOGIN_URL}">Login</a> for the latest information.</p>
             </info-popup>
             
-            <div class="next-display">
-                <p id="next-class">Nothing</p>
-                <p id="preposition">in</p>
-                <h1 id="timer">Never</h1>
+            <div class="time-display">
+                <p>${timeDisplay.class}</p>
+                <p>${timeDisplay.preposition}</p>
+                <h1 class="time">${timeDisplay.time}</h1>
             </div>
 
-            <div id="periods">
-                ${bells.filter(bell => bell.display !== false).map(bell => {
-                    if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
-                        let period = periods[bell.period];
-
-                        if (period !== undefined && period !== null &&
-                            "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
-                            period.room !== undefined && period.room !== null)
-                            return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period]);
-                        else
-                            return this.GetBell(bell);
-                    }
-                    else
-                        return this.GetBell(bell);
-                })}
+            <div class="periods">
+                ${this._cachedBells}
             </div>
         `;
     }

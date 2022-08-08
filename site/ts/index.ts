@@ -11,63 +11,10 @@ declare const INSTALL_PROMPT_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 
 declare const METADATA_ENDPOINT: string;
-declare const STATUS_SERVER_ENDPOINT: string;
 
 Main();
 
 async function Main() {
-    window.addEventListener("error", async e => {
-        let cache = await caches.open(METADATA_CACHE);
-        let metadataResponse = await cache.match("Metadata");
-
-        let version = "Unknown";
-        if (metadataResponse !== undefined)
-            version = (await metadataResponse.json()).version;
-
-        let ok = true;
-
-        let error;
-        if (e.error instanceof Error) {
-            error = {
-                error_message: e.error.message,
-                stack_trace: e.error.stack
-            }
-        }
-        else {
-            error = {
-                error_message: "",
-                stack_trace: JSON.stringify(e.error)
-            }
-        }
-
-        try {
-            let response = await fetch(`${SERVER_ENDPOINT}/error`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    ...error,
-                    version: version
-                })
-            });
-
-            ok = response.ok;
-        }
-        catch (e) {
-            ok = false;
-        }
-
-        let notificationText = ok ? "An error occured and has been automatically reported. No personal information is sent." :
-                                    "An error occured and could not be reported. The error while reporting cannot be reported.";
-
-        let notification = document.createElement("inline-notification");
-
-        notification.innerText = notificationText;
-
-        document.getElementById("notification-area")?.appendChild(notification);
-    });
-
     if (location.hash)
         NavigateToHash(location.hash);
     else
@@ -183,24 +130,6 @@ async function Main() {
 
             if (choiceResult.outcome == "accepted") Site.ShowNotification("Thanks for installing Paragon!");
         });
-    });
-
-    try {
-        var statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
-    }
-    catch (e) {
-        await fetch(STATUS_SERVER_ENDPOINT);
-        statusSocket = new WebSocket(STATUS_SERVER_ENDPOINT);
-    }
-
-    statusSocket.addEventListener("open", () => {
-        statusSocket.send("Latest News");
-    });
-
-    statusSocket.addEventListener("message", e => {
-        let news = (e.data as string).trim();
-
-        if (news.length > 0) Site.ShowNotification(e.data);
     });
 }
 

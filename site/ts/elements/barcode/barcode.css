@@ -42,7 +42,7 @@
     margin: calc(var(--size) / -2);
 }
 
-#barcodeDisplay {
+#barcode {
     position: absolute;
 
     box-sizing: border-box;
@@ -52,7 +52,7 @@
     z-index: 2;
 }
 
-#barcodeDisplay.outline {
+#barcode.outline {
     border: solid 1.5rem var(--text1);
 }
 

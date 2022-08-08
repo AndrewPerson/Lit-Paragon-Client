@@ -86,7 +86,7 @@ export class AnnouncementPost extends LitElement {
         <details @toggle="${this.MarkRead.bind(this)}">
             <summary>
                 <h1>${this.title}</h1>
-                <p class="info">By ${this.author} | For ${this.years}${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}${this.published === null ? "" : ` | Published ${this.published}`}</p>
+                <p class="subtitle">By ${this.author} | For ${this.years}${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}${this.published === null ? "" : ` | Published ${this.published}`}</p>
             </summary>
 
             ${unsafeHTML(this.content)}

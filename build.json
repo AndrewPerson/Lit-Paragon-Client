@@ -18,10 +18,8 @@
                 "RESOURCE_CACHE": "User Resources",
                 "METADATA_CACHE": "Metadata",
                 "EXTENSION_CACHE": "Extension Resources",
-                "SKIN_CACHE": "Skin Resources",
                 "BACKGROUND_SYNC_INTERVAL": 2592000000,
                 "INSTALL_PROMPT_FREQUENCY": 2592000000,
-                "STATUS_SERVER_ENDPOINT": "wss://paragon-status.profsmart.repl.co",
                 "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000
             }
         },

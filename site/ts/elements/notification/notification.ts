@@ -24,12 +24,16 @@ export class InlineNotification extends LitElement {
     render() {
         return html`
         <slot></slot>
-        ${this.loader ? html`
-        <loading-indicator class="indicator"></loading-indicator>` :
-        html`
-        <button class="indicator" @click="${this.Close}" title="Close">
-            ${crossSvg}
-        </button>`}
+
+        ${
+            this.loader ?
+            html`<loading-indicator class="indicator"></loading-indicator>` :
+            html`
+                <button class="indicator" @click="${this.Close}" title="Close">
+                    ${crossSvg}
+                </button>
+            `
+        }
         `;
     }
 }

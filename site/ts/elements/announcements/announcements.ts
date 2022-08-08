@@ -116,11 +116,21 @@ export class SchoolAnnouncements extends Page {
             if (this.IsSameDay(new Date(meetingDate), new Date())) meetingDate = "Today";
 
             return html`
-            <announcement-post title="${announcement.title ?? "???"}" content="${announcement.content ?? "???"}"
-                               author="${announcement.authorName ?? "???"}" years="${announcement.displayYears ?? "???"}"
-                               published="${ifDefined(this.IsSameDay(new Date(announcement.dates?.[0] ?? ""), new Date()) ? "Today" : announcement.dates?.[0] ?? "")}" ?meeting="${meeting}"
-                               meetingDate="${meetingDate}" meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
-                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}" key="${this.AnnouncementKey(announcement)}"></announcement-post>
+            <announcement-post
+                               title="${announcement.title ?? "???"}"
+                               content="${announcement.content ?? "???"}"
+                               author="${announcement.authorName ?? "???"}"
+                               years="${announcement.displayYears ?? "???"}"
+                               published="${
+                                    this.IsSameDay(new Date(announcement.dates?.[0] ?? ""), new Date()) ?
+                                    "Today" :
+                                    announcement.dates?.[0] ?? ""
+                               }"
+                               ?meeting="${meeting}"
+                               meetingDate="${meetingDate}"
+                               meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
+                               weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"
+                               key="${this.AnnouncementKey(announcement)}"></announcement-post>
             `;
         })}</div>
         `;
