@@ -11,10 +11,19 @@
     padding: 0.6rem;
     border-radius: 0.6rem;
     box-shadow: var(--small-shadow);
+
+    pointer-events: all;
+}
+
+:host(.hover) {
+    opacity: 0.5;
+    backdrop-filter: blur(0.1rem);
+    pointer-events: none;
 }
 
 button.indicator {
     --scale: 0.95;
+    pointer-events: all;
 }
 
 loading-indicator.indicator {
