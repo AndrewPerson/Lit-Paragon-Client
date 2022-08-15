@@ -58,16 +58,6 @@ export class TimetablePeriod extends LitElement {
         TimetablePeriod.instances.push(this);
     }
 
-    Highlight() {
-        TimetablePeriod.Highlight(this.title);
-        this.classList.add("highlighted");
-    }
-
-    Unhighlight() {
-        TimetablePeriod.Highlight(undefined);
-        this.classList.remove("highlighted");
-    }
-
     firstUpdated() {
         //The if statement is to stop empty periods from being tabbed to
         if (this.room !== undefined && this.room !== null) {
@@ -113,15 +103,15 @@ export class TimetablePeriod extends LitElement {
         }
 
         return html`
-        <p>${this.shortTitle}</p>
+        <p class="info">${this.shortTitle}</p>
 
-        <p id="room" class="popup" style="${highlighted && !this.showDetails ? "" : "display: none"}">
+        <p id="room" class="popup info" style="${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
         </p>
 
-        <p id="details" class="popup details" style="${this.showDetails ? "" : "display: none"}">
+        <div id="details" class="popup details info" style="${this.showDetails ? "" : "display: none"}">
             ${this.title} in ${this.room} with ${this.teacher}
-        </p>
+        </div>
         `;
     }
 }

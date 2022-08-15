@@ -5,7 +5,7 @@
     justify-content: center;
 }
 
-:host(.highlighted) > p {
+:host(.highlighted) > .info {
     background-color: var(--surface4);
     color: var(--text4);
 
@@ -25,7 +25,7 @@
     }
 }
 
-p {
+.info {
     width: 4rem;
     min-height: 1.5rem;
     text-align: center;
@@ -115,9 +115,8 @@ p {
     outline: none;
 }
 
-:host(:hover) > p,
-:host(:focus) > p {
-    z-index: 98;
-    box-shadow: 0 0 0 0.2rem var(--text1) !important;
-    outline: none;
+:host(:hover) > .info,
+:host(:focus) > .info {
+    border: solid 0.1rem black !important;
+    margin: -0.1rem;
 }

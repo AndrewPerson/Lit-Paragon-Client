@@ -92,7 +92,7 @@ export class ExtensionsMarketplace extends LitElement {
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
             
-            <div class="label-input-group">
+            <div class="preview-input-container">
                 <label for="preview">
                     Show Preview Extensions?
                 </label>
@@ -106,10 +106,11 @@ export class ExtensionsMarketplace extends LitElement {
             let extension = this.extensions.get(extensionName) as Extension;
 
             return html`
-                <extension-display title="${extensionName}" img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
-                                description="${extension.description}"
-                                ?preview="${extension.preview}"
-                                ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
+                <extension-display title="${extensionName}"
+                                   img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
+                                   description="${extension.description}"
+                                   ?preview="${extension.preview}"
+                                   ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
             `
         })}</div>
         `;

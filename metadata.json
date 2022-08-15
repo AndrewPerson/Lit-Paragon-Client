@@ -1,5 +1,5 @@
 {
-    "version": "2.2.62",
+    "version": "2.2.63",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -33,15 +33,6 @@
             "url": "https://barcodes-paragon-pages.pages.dev",
             "preview": true,
             "description": "Allows you to create and scan multiple student ID barcodes.",
-            "icon": "/icon.svg",
-            "darkIcon": "/dark-icon.svg",
-            "version": "0.0.1"
-        },
-        "Skins": {
-            "navIcon": "/nav-icon.svg",
-            "url": "https://skins-paragon-pages.pages.dev",
-            "preview": true,
-            "description": "Allows you to create and manage skins for Paragon.",
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
             "version": "0.0.1"

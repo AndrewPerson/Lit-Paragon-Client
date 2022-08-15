@@ -6,7 +6,6 @@ import "./elements/extensions-marketplace/extensions-marketplace";
 import "./elements/info/info";
 import "./elements/loader/loader";
 import "./elements/notification/notification";
-import "./elements/notification-area/notification-area";
 import "./elements/navbar/navbar";
 import "./elements/settings/settings"
 import "./elements/timetable/timetable";

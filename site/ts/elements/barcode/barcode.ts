@@ -34,7 +34,7 @@ declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
 export class StudentBarcode extends Page {
     static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
 
-    @query("#barcodeDisplay")
+    @query("#barcode")
     barcode: HTMLCanvasElement | null;
 
     @query("#point1")
@@ -235,7 +235,7 @@ export class StudentBarcode extends Page {
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
 
-        <canvas id="barcodeDisplay" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        <canvas id="barcode" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
         `;
     }
 }

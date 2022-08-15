@@ -170,14 +170,3 @@ export function GetHue() {
 export function ListenForHue(callback) {
     hueCallbacks.push(callback);
 }
-
-export function RegisterSkin(name, css, icons) {
-    window.parent.postMessage({
-        command: "Register Skin",
-        data: {
-            name: name,
-            css: css,
-            icons: icons
-        }
-    }, "*");
-}

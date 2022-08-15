@@ -20,30 +20,23 @@ info-popup {
     height: 1.5rem;
 }
 
-.next-display {
+.time-display {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    width: 80%;
+
+    width: 100%;
 }
 
-#next-class {
-    text-align: center;
-}
-
-#timer {
+.time {
     display: flex;
     align-items: center;
     gap: 1rem;
-
-    width: 100%;
-
-    font-size: 2.5rem;
+    width: 80%;
 }
 
-#timer::before,
-#timer::after {
+.time::before,
+.time::after {
     content: "";
     display: inline-block;
     flex: 1;
@@ -51,7 +44,7 @@ info-popup {
     border-top: solid 0.05rem var(--text3);
 }
 
-#periods {
+.periods {
     display: flex;
     flex-direction: column;
     justify-content: space-around;
