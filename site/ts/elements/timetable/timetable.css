@@ -71,6 +71,7 @@ th:not(:empty) {
 }
 
 td {
+    margin: 0.1rem 0;
     height: fit-content;
     line-height: 1.5;
 }
