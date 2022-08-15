@@ -112,11 +112,11 @@
 
 :host(:hover), :host(:focus) {
     z-index: 98;
+    outline: none;
 }
 
 :host(:hover) > .info,
 :host(:focus) > .info {
-    outline: none;
     border: solid 0.1rem black !important;
     margin: -0.1rem;
 }
