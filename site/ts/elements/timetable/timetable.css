@@ -44,6 +44,8 @@ tbody > tr::before {
     counter-increment: period;
     content: counter(period);
 
+    margin: 0.1rem 0;
+
     color: var(--text3);
 
     line-height: 1.5;
