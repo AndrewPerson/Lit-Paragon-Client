@@ -38,3 +38,7 @@ loading-indicator.indicator {
     width: calc(1rem * var(--scale));
     height: calc(1rem * var(--scale));
 }
+
+::slotted(a) {
+    pointer-events: all;
+}
