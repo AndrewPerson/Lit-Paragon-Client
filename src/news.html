@@ -27,14 +27,19 @@
 
     <script type="module" src="elements/main-elements.js"></script>
     <script type="module" src="elements/announcement-elements.js"></script>
+    <script type="module" src="elements/migrate-elements.js"></script>
 </head>
 
 <body>
     <script src="main.js"></script>
 
+    <migrate-banner></migrate-banner>
+
     <nav-bar></nav-bar>
 
     <main>
+        <migrate-banner></migrate-banner>
+
         <div id="container">
             <loading-element style="margin: auto; width: 80vmin;" id="loading"></loading-element>
         </div>
