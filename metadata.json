@@ -1,5 +1,5 @@
 {
-    "version": "2.2.66",
+    "version": "2.2.67",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -35,7 +35,7 @@
             "description": "Allows you to create and scan multiple student ID barcodes.",
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
-            "version": "0.0.1"
+            "version": "1.0.0"
         }
     }
 }
