@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg class="ionicon" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+<svg class="ionicon" viewBox="0 0 200 200" width="200px" height="200px" xmlns="http://www.w3.org/2000/svg">
   <title>Warning</title>
-  <path d="M85.57 446.25h340.86a32 32 0 0028.17-47.17L284.18 82.58c-12.09-22.44-44.27-22.44-56.36 0L57.4 399.08a32 32 0 0028.17 47.17z" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" style="stroke: rgb(50, 50, 50);"/>
-  <path d="M250.26 195.39l5.74 122 5.73-121.95a5.74 5.74 0 00-5.79-6h0a5.74 5.74 0 00-5.68 5.95z" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" style="stroke: rgb(50, 50, 50);"/>
-  <path d="M256 397.25a20 20 0 1120-20 20 20 0 01-20 20z" style="stroke: rgb(50, 50, 50);"/>
+  <path d="M 19.987 187.5 L 179.921 187.5 C 191.281 187.498 198.524 175.61 193.139 165.806 L 113.176 20.241 C 107.504 9.92 92.405 9.92 86.732 20.241 L 6.769 165.806 C 1.384 175.61 8.627 187.498 19.987 187.5 Z" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: rgb(50, 50, 50); stroke-width: 10px;"/>
+  <path d="M 97.261 72.124 L 99.954 128.236 L 102.643 72.148 C 102.713 70.633 101.472 69.373 99.926 69.387 C 98.41 69.403 97.206 70.639 97.261 72.124 Z" fill="none" stroke-linecap="round" stroke-linejoin="round" style="stroke: rgb(50, 50, 50); stroke-width: 10px;"/>
+  <path d="M 99.954 164.964 C 92.73 164.964 88.215 157.299 91.827 151.166 C 95.439 145.034 104.469 145.034 108.081 151.166 C 108.905 152.565 109.338 154.151 109.338 155.766 C 109.338 160.846 105.137 164.964 99.954 164.964 Z" style="fill: rgb(50, 50, 50); stroke-width: 10px;"/>
 </svg>

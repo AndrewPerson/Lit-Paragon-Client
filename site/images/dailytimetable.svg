@@ -1,22 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="210px" height="210px" viewBox="0 0 210 210" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
   <defs>
-    <path d="M0 100C0 44.7715 44.7715 0 100 0C155.228 0 200 44.7715 200 100C200 155.228 155.228 200 100 200C44.7715 200 0 155.228 0 100Z" id="path_1" />
-    <clipPath id="clip_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
+    <symbol id="line" viewBox="0 0 10 65" bx:pinned="true">
+      <path d="M 5 5 L 5 60" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" bx:origin="0 1"/>
+    </symbol>
+    <symbol id="circle" viewBox="0 0 10 10" bx:pinned="true">
+      <ellipse style="fill: rgb(50, 50, 50);" cx="100" cy="25" rx="5" ry="5" transform="matrix(1, 0, 0, 1, -95, -20)"/>
+    </symbol>
   </defs>
-  <g id="Clock" transform="translate(5 5)">
-    <g id="Body">
-      <g clip-path="url(#clip_1)">
-        <use xlink:href="#path_1" fill="none" stroke="#323232" stroke-width="20" />
-      </g>
-    </g>
-    <path d="M0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5Z" transform="translate(95 20)" id="12" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5Z" transform="translate(170 95)" id="3" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5Z" transform="translate(95 170)" id="6" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M0 5C0 2.23858 2.23858 0 5 0C7.76142 0 10 2.23858 10 5C10 7.76142 7.76142 10 5 10C2.23858 10 0 7.76142 0 5Z" transform="translate(20 95)" id="9" fill="#323232" fill-rule="evenodd" stroke="none" />
-    <path d="M1 0L1 55" transform="translate(99 45)" id="Minute-Hand" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-    <path d="M40 1L0 1" transform="translate(100 99)" id="Hour-Hand" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-  </g>
+  <ellipse style="stroke: rgb(50, 50, 50); stroke-width: 10px; fill: none;" cx="100" cy="100" rx="95" ry="95"/>
+  <use width="10" height="65" transform="matrix(1, 0, 0, 0.9230769872665405, 95, 45)" xlink:href="#line" bx:origin="0.5 0.916667"/>
+  <use width="10" height="65" transform="matrix(0, 0.9000000357627869, -0.8307690620422363, 0, 148.99998474121094, 96)" bx:origin="0.5 0.916667" xlink:href="#line"/>
+  <use width="10" height="10" transform="matrix(1, 0, 0, 1, 95, 20)" xlink:href="#circle" bx:origin="0.5 8.5"/>
+  <use width="10" height="10" transform="matrix(0, 1, -1, 0, 180, 95)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+  <use width="10" height="10" transform="matrix(-1, 0, 0, -1, 105, 180)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+  <use width="10" height="10" transform="matrix(0, -1, 1, 0, 20, 105)" bx:origin="0.5 8.5" xlink:href="#circle"/>
 </svg>
