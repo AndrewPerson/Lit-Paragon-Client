@@ -29,7 +29,7 @@
             ],
             "vars": {
                 "METADATA_ENDPOINT": "http://localhost:5555/metadata.json",
-                "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
+                "SERVER_ENDPOINT": "http://localhost:8080",
                 "CLIENT_ID": "",
                 "MAX_REFRESH_FREQUENCY": 0
             },
