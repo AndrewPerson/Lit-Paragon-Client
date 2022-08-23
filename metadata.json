@@ -35,7 +35,7 @@
             "description": "Allows you to create and scan multiple student ID barcodes.",
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
-            "version": "1.0.0"
+            "version": "1.0.1"
         }
     }
 }
