@@ -5,13 +5,13 @@
       <path d="M 0 4 L 0 0" stroke="#323232" stroke-linecap="round"/>
     </symbol>
   </defs>
-  <path d="M 6.5 16.5 C 6.5 10.977 10.977 6.5 16.5 6.5 C 22.023 6.5 26.5 10.977 26.5 16.5 C 26.5 22.023 22.023 26.5 16.5 26.5 C 10.977 26.5 6.5 22.023 6.5 16.5 Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" style=""/>
+  <path d="M 7.5 16.5 C 7.5 11.529 11.529 7.5 16.5 7.5 C 21.471 7.5 25.5 11.529 25.5 16.5 C 25.5 21.471 21.471 25.5 16.5 25.5 C 11.529 25.5 7.5 21.471 7.5 16.5 Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" style=""/>
   <use width="1" height="4" transform="matrix(1, 0, 0, 1.25, 16, 0.5)" style="" xlink:href="#line" bx:origin="0.5 3.2"/>
-  <use width="1" height="4" transform="matrix(0, 1, -1.249999, 0, 32.499996, 16)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
+  <use width="1" height="4" transform="matrix(0, 1, -1.2499990463256836, 0, 32.499996185302734, 16)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
   <use width="1" height="4" transform="matrix(1, 0, 0, 1.25, 16, 27.5)" style="" xlink:href="#line" bx:origin="0.5 -2.2"/>
-  <use width="1" height="4" transform="matrix(0, 1, -1.249999, 0, 5.499996, 16)" style="" xlink:href="#line" bx:origin="0.5 -2.200002"/>
-  <use width="1" height="4" transform="matrix(0.707107, 0.707107, -0.883883, 0.883883, 27.460154, 4.832738)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
-  <use width="1" height="4" transform="matrix(-0.707107, 0.707107, -0.883882, -0.883883, 28.167259, 27.46015)" style="" bx:origin="0.5 3.200002" xlink:href="#line"/>
-  <use width="1" height="4" transform="matrix(-0.707107, -0.707107, 0.883883, -0.883883, 5.539845, 28.167261)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
-  <use width="1" height="4" transform="matrix(0.707107, -0.707107, 0.883884, 0.883883, 4.832736, 5.53985)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
+  <use width="1" height="4" transform="matrix(0, 1, -1.2499990463256836, 0, 5.499996185302734, 16)" style="" xlink:href="#line" bx:origin="0.5 -2.200002"/>
+  <use width="1" height="4" transform="matrix(0.7071070075035095, 0.7071070075035095, -0.883882999420166, 0.883882999420166, 27.460153579711914, 4.832737922668457)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
+  <use width="1" height="4" transform="matrix(-0.7071070075035095, 0.7071070075035095, -0.8838820457458496, -0.883882999420166, 28.167259216308594, 27.46014976501465)" style="" bx:origin="0.5 3.200002" xlink:href="#line"/>
+  <use width="1" height="4" transform="matrix(-0.7071070075035095, -0.7071070075035095, 0.883882999420166, -0.883882999420166, 5.539844989776611, 28.167261123657227)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
+  <use width="1" height="4" transform="matrix(0.7071070075035095, -0.7071070075035095, 0.8838840126991272, 0.883882999420166, 4.832736015319824, 5.539850234985352)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
 </svg>
