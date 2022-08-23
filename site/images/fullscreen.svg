@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="221px" height="221px" viewBox="0 0 221 221" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
-  <g id="Fullscreen" transform="translate(5 5)">
-    <path d="M0 0L40 0L40 40" transform="matrix(-1 2.2967631E-06 -2.2967631E-06 -1 40.00009 209.99995)" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
-    <path d="M0 80L80 0" transform="translate(130.00003 0)" id="Arrow" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-    <path d="M80 0L0 80" transform="translate(3.0517578E-05 130)" id="Arrow-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" />
-    <path d="M0 0L40 0L40 40" transform="translate(170.00003 0)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" />
-  </g>
+<svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M 5 158.809 L 41.191 158.809 L 41.191 195" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round" transform="matrix(-1, 0.000003, -0.000003, -1, 46.191533, 353.808936)"/>
+  <path d="M 122.619 77.381 L 195 5" id="Arrow" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round"/>
+  <path d="M 77.381 122.619 L 5 195" id="Arrow-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round"/>
+  <path d="M 158.81 5 L 195 5 L 195 41.19" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>

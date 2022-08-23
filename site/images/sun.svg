@@ -1,31 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<svg width="33px" height="33px" viewBox="0 0 33 33" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg">
+<svg width="33px" height="33px" viewBox="0 0 33 33" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
   <defs>
-    <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" />
-    <clipPath id="mask_1">
-      <use xlink:href="#path_1" />
-    </clipPath>
+    <symbol id="line" viewBox="-0.5 -0.5 1 5" bx:pinned="true">
+      <path d="M 0 4 L 0 0" stroke="#323232" stroke-linecap="round"/>
+    </symbol>
   </defs>
-  <g id="sun" transform="translate(1.000001 1)">
-    <g id="Group">
-      <g id="Ellipse" transform="translate(5.774308 5.5712147)">
-        <g id="Mask-group">
-          <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="none" />
-          <g clip-path="url(#mask_1)">
-            <g id="Group">
-              <path d="M0 10.1295C0 4.53512 4.44643 0 9.93138 0C15.4163 0 19.8628 4.53512 19.8628 10.1295C19.8628 15.7238 15.4163 20.259 9.93138 20.259C4.44643 20.259 0 15.7238 0 10.1295L0 10.1295Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="2" />
-            </g>
-          </g>
-        </g>
-      </g>
-      <path d="M0 4.05179L0 0" transform="translate(15.705684 0)" id="Line" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 2.86505L2.80902 0" transform="translate(24.218447 4.0517807)" id="Line-2" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 2.86505L2.80902 0" transform="translate(3.9866457 24.079388)" id="Line-8" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L2.80902 2.86505" transform="translate(23.91343 24.010275)" id="Line-4" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L7.57704e-06 4.0518" transform="translate(15.790706 26.948204)" id="Line-5" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M0 0L3.97255 0" transform="translate(27.027449 16.207167)" id="Line-3" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M3.97255 3.86409e-06L0 0" transform="translate(0 15.599411)" id="Line-6" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-      <path d="M2.80902 2.86506L0 0" transform="translate(3.9725513 4.051792)" id="Line-7" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="1" stroke-linecap="round" />
-    </g>
-  </g>
+  <path d="M 7.5 16.5 C 7.5 11.529 11.529 7.5 16.5 7.5 C 21.471 7.5 25.5 11.529 25.5 16.5 C 25.5 21.471 21.471 25.5 16.5 25.5 C 11.529 25.5 7.5 21.471 7.5 16.5 Z" id="path_1" fill="none" fill-rule="evenodd" stroke="#323232" style=""/>
+  <use width="1" height="4" transform="matrix(1, 0, 0, 1.25, 16, 0.5)" style="" xlink:href="#line" bx:origin="0.5 3.2"/>
+  <use width="1" height="4" transform="matrix(0, 1, -1.2499990463256836, 0, 32.499996185302734, 16)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
+  <use width="1" height="4" transform="matrix(1, 0, 0, 1.25, 16, 27.5)" style="" xlink:href="#line" bx:origin="0.5 -2.2"/>
+  <use width="1" height="4" transform="matrix(0, 1, -1.2499990463256836, 0, 5.499996185302734, 16)" style="" xlink:href="#line" bx:origin="0.5 -2.200002"/>
+  <use width="1" height="4" transform="matrix(0.7071070075035095, 0.7071070075035095, -0.883882999420166, 0.883882999420166, 27.460153579711914, 4.832737922668457)" style="" xlink:href="#line" bx:origin="0.5 3.200002"/>
+  <use width="1" height="4" transform="matrix(-0.7071070075035095, 0.7071070075035095, -0.8838820457458496, -0.883882999420166, 28.167259216308594, 27.46014976501465)" style="" bx:origin="0.5 3.200002" xlink:href="#line"/>
+  <use width="1" height="4" transform="matrix(-0.7071070075035095, -0.7071070075035095, 0.883882999420166, -0.883882999420166, 5.539844989776611, 28.167261123657227)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
+  <use width="1" height="4" transform="matrix(0.7071070075035095, -0.7071070075035095, 0.8838840126991272, 0.883882999420166, 4.832736015319824, 5.539850234985352)" style="" bx:origin="0.5 3.2" xlink:href="#line"/>
 </svg>
