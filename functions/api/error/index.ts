@@ -1,4 +1,4 @@
-import { create } from "../lib/function";
+import { create } from "../../lib/function";
 
 export const onRequestPost = create(async (context) => {
     //Workaround until I work out how to connect to the database from Cloudflare Workers
