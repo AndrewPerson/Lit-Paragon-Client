@@ -1,6 +1,7 @@
 {
     "type": "module",
     "dependencies": {
+        "@cloudflare/pages-plugin-honeycomb": "^1.0.0",
         "@cloudflare/workers-types": "^3.10.0",
         "esbuild-linux-64": "^0.14.2",
         "sbhs-random-data": "^1.0.0",
