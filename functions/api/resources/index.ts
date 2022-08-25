@@ -21,8 +21,6 @@ async function getResource(resource: string, token: Token, tracer: RequestTracer
 }
 
 export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honeycomb: { tracer } } }) => {
-    tracer.start();
-    
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     if (new Date() > token.termination) {
@@ -34,7 +32,7 @@ export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honey
         tracer.addData({ tokenRefreshed: true });
 
         try {
-            token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET);
+            token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
         }
         catch (e) {
             tracer.addData({ tokenFailedToRefresh: true });
