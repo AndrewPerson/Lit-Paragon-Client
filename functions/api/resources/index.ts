@@ -26,7 +26,7 @@ export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honey
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     if (new Date() > token.termination) {
-        tracer.addData({ tokenExpired: true });
+        tracer.addData({ tokenTerminated: true });
         return new Response("The token is terminated.", { status: 422 });
     }
 
