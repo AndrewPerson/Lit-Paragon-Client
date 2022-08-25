@@ -1,3 +1,5 @@
+import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
+
 export type Token = {
     access_token: string,
     refresh_token: string,
@@ -6,8 +8,8 @@ export type Token = {
 }
 
 export class TokenFactory {
-    static async Refresh(token: Token, client_id: string, client_secret: string): Promise<Token> {
-        let response = await fetch("https://student.sbhs.net.au/api/token", {
+    static async Refresh(token: Token, client_id: string, client_secret: string, tracer: RequestTracer): Promise<Token> {
+        let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
             method: "POST",
             body: new URLSearchParams({
                 refresh_token: token.refresh_token,
