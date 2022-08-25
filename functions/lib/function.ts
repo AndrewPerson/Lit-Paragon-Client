@@ -1,4 +1,6 @@
-export function create<Env>(func: PagesFunction<Env>): PagesFunction<Env> {
+import { PluginData } from "@cloudflare/pages-plugin-honeycomb";
+
+export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFunction<Env, any, PluginData> {
     return async (context) => {
         try {
             return await func(context);
