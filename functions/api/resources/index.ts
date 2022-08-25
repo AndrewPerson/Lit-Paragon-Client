@@ -24,20 +24,37 @@ export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honey
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     if (new Date() > token.termination) {
-        tracer.addData({ tokenTerminated: true });
+        tracer.addData({
+            token: {
+                termination: {
+                    terminated: true,
+                    date: token.termination
+                }
+            }
+        });
+
         return new Response("The token is terminated.", { status: 422 });
     }
+    
+    tracer.addData({
+        token: {
+            termination: {
+                terminated: false
+            }
+        }
+    });
 
     if (new Date() > token.expiry) {
-        tracer.addData({ tokenRefreshed: true });
-
-        try {
-            token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
-        }
-        catch (e) {
-            tracer.addData({ tokenFailedToRefresh: true });
-            throw e;
-        }
+        token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
+    }
+    else {
+        tracer.addData({
+            token: {
+                refresh: {
+                    attempted: false
+                }
+            }
+        });
     }
 
     let result: {

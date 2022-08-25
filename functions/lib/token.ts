@@ -9,6 +9,14 @@ export type Token = {
 
 export class TokenFactory {
     static async Refresh(token: Token, client_id: string, client_secret: string, tracer: RequestTracer): Promise<Token> {
+        tracer.addData({
+            token: {
+                refresh: {
+                    attempted: true
+                }
+            }
+        });
+        
         let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
             method: "POST",
             body: new URLSearchParams({
@@ -19,7 +27,30 @@ export class TokenFactory {
             })
         });
 
-        return this.Create(await response.json());
+        try {
+            let token = this.Create(await response.json());
+
+            tracer.addData({
+                token: {
+                    refresh: {
+                        error: false
+                    }
+                }
+            });
+
+            return token;
+        }
+        catch (e) {
+            tracer.addData({
+                token: {
+                    refresh: {
+                        error: true
+                    }
+                }
+            });
+
+            throw e;
+        }
     }
 
     static Create(unformatted: any): Token {
