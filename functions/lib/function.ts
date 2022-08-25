@@ -7,6 +7,7 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
         try {
             let result = await func(context);
             context.data.honeycomb.tracer.addResponse(result);
+            context.data.honeycomb.tracer.addData({ error: !result.ok });
 
             return result;
         }
@@ -20,6 +21,7 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                 });
 
                 context.data.honeycomb.tracer.addResponse(result);
+                context.data.honeycomb.tracer.addData({ error: true });
 
                 return result;
             }
@@ -29,6 +31,7 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                 });
 
                 context.data.honeycomb.tracer.addResponse(result);
+                context.data.honeycomb.tracer.addData({ error: true });
 
                 return result;
             }
