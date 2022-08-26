@@ -22,12 +22,7 @@
 }
 
 button.indicator {
-    --scale: 0.95;
     pointer-events: all;
-}
-
-loading-indicator.indicator {
-    --scale: 1.1;
 }
 
 .indicator {
@@ -35,10 +30,6 @@ loading-indicator.indicator {
 
     display: flex;
 
-    width: calc(1rem * var(--scale));
-    height: calc(1rem * var(--scale));
-}
-
-::slotted(a) {
-    pointer-events: all;
+    width: calc(1rem * 1.1);
+    height: calc(1rem * 1.1);
 }
