@@ -1,4 +1,5 @@
 import { create } from "../../lib/function";
+import { ErrorResponse } from "../../lib/error";
 import { Token, TokenFactory } from "../../lib/token";
 import { SBHSEnv } from "../../lib/env";
 import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
@@ -16,6 +17,22 @@ async function getResource(resource: string, token: Token, tracer: RequestTracer
             "Authorization": `Bearer ${token.access_token}`
         }
     });
+
+    if (!response.ok) {
+        if (response.status >= 500) {
+            throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
+        }
+
+        if (response.status == 401) {
+            throw new ErrorResponse("Unauthorised.", 401);
+        }
+
+        if (response.status >= 400) {
+            throw new ErrorResponse("An error occurred on the Paragon servers.", 500);
+        }
+
+        throw new ErrorResponse("An unknown error occurred.", 500);
+    }
 
     return await response.json();
 }

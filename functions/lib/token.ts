@@ -1,3 +1,4 @@
+import { ErrorResponse } from "./error";
 import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
 
 export type Token = {
@@ -26,6 +27,30 @@ export class TokenFactory {
                 client_secret: client_secret
             })
         });
+
+        if (!response.ok) {
+            tracer.addData({
+                token: {
+                    refresh: {
+                        error: true
+                    }
+                }
+            });
+            
+            if (response.status >= 500) {
+                throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
+            }
+
+            if (response.status == 401) {
+                throw new ErrorResponse("Unauthorised.", 401);
+            }
+
+            if (response.status >= 400) {
+                throw new ErrorResponse("An error occurred on the Paragon servers.", 500);
+            }
+
+            throw new ErrorResponse("An unknown error occurred.", 500);
+        }
 
         try {
             let token = this.Create(await response.json());
