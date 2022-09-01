@@ -110,20 +110,29 @@ export class Resources {
         let serverUrl = new URL(`${SERVER_ENDPOINT}/resources`);
         serverUrl.searchParams.append("token", JSON.stringify(token));
 
-        let resourceResponse: Response | null = null;
+        let resourceResponse: Response;
         try {
             resourceResponse = await fetch(serverUrl.toString());
         }
         catch (e) {
-            resourceResponse = null
+            Site.ShowNotification("No network connection.");
+
+            this._fetchCallbacks.Invoke(false);
+            this._fetching = false;
+
+            return false;
         }
 
         //TODO Add more granular error handling
-        if (resourceResponse === null || !resourceResponse.ok) {
+        if (!resourceResponse.ok) {
             resourceNotification.Close();
-            
-            //Because when the response is null, it represents a network error
-            if (resourceResponse !== null) this.ShowLoginNotification();
+
+            if (resourceResponse.status == 401) {
+                this.ShowLoginNotification();
+            }
+            else {
+                Site.ShowNotification(await resourceResponse.text());
+            }
 
             this._fetchCallbacks.Invoke(false);
             this._fetching = false;
