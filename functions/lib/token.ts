@@ -41,11 +41,11 @@ export class TokenFactory {
                 throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
             }
 
-            if (response.status == 401) {
+            if (response.status == 401 || response.status == 400) {
                 throw new ErrorResponse("Unauthorised.", 401);
             }
 
-            if (response.status >= 400) {
+            if (response.status >= 402) {
                 throw new ErrorResponse("An error occurred on the Paragon servers.", 500);
             }
 
