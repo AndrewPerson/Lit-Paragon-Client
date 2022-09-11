@@ -115,6 +115,7 @@ export class Resources {
             resourceResponse = await fetch(serverUrl.toString());
         }
         catch (e) {
+            resourceNotification.Close();
             Site.ShowNotification("No network connection.");
 
             this._fetchCallbacks.Invoke(false);
