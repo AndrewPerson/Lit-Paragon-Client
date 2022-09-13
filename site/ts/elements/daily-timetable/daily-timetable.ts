@@ -24,6 +24,8 @@ import { Missing } from "../../missing";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
+import imgCss from "default/img.css";
+//@ts-ignore
 import scrollbarCss from "default/scrollbar.css";
 //@ts-ignore
 import cardElementCss from "default/pages/card.css";
@@ -32,15 +34,12 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import dailyTimetableCss from "./daily-timetable.css";
 
-//@ts-ignore
-import warningSvg from "images/warning.svg";
-
 declare const RESOURCE_CACHE: string;
 declare const MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY: number;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
+    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
 
