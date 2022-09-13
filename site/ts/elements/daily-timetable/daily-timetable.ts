@@ -67,10 +67,11 @@ export class StudentDailyTimetable extends Page {
 
         let nextDailyTimetable = await Resources.GetResourceNow("next-dailytimetable") as DailyTimetable | Missing;
 
-        let firstBell = nextDailyTimetable?.bells?.[nextDailyTimetable.bells?.length ?? 0];
+        let lastBell = nextDailyTimetable?.bells?.[(nextDailyTimetable?.bells?.length ?? 1) - 1];
 
-        if (nextDailyTimetable === undefined || nextDailyTimetable === null || firstBell === undefined ||
-            DailyTimetableUtils.BellToDate(firstBell, new Date(nextDailyTimetable.date ?? "")).getTime() <= new Date().getTime()) {
+        if (nextDailyTimetable === undefined || nextDailyTimetable === null || lastBell === undefined ||
+            nextDailyTimetable.date === undefined || nextDailyTimetable.date === null ||
+            new Date().getTime() > DailyTimetableUtils.BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
             let succeeded = await Resources.FetchResources();
 
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
@@ -94,7 +95,7 @@ export class StudentDailyTimetable extends Page {
             let lastBell = currentDailyTimetable.bells[currentDailyTimetable.bells.length - 1];
 
             //Check if the returned date is not today.
-            if (succeeded && lastBell !== undefined && DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime() > new Date().getTime()) {
+            if (succeeded && lastBell !== undefined && new Date().getTime() < DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
                 this.updatingData = false;
                 return;
             }
