@@ -24,6 +24,8 @@ import { Missing } from "../../missing";
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
+import imgCss from "default/img.css";
+//@ts-ignore
 import scrollbarCss from "default/scrollbar.css";
 //@ts-ignore
 import cardElementCss from "default/pages/card.css";
@@ -32,15 +34,12 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import dailyTimetableCss from "./daily-timetable.css";
 
-//@ts-ignore
-import warningSvg from "images/warning.svg";
-
 declare const RESOURCE_CACHE: string;
 declare const MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY: number;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
+    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
 
@@ -68,10 +67,11 @@ export class StudentDailyTimetable extends Page {
 
         let nextDailyTimetable = await Resources.GetResourceNow("next-dailytimetable") as DailyTimetable | Missing;
 
-        let firstBell = nextDailyTimetable?.bells?.[nextDailyTimetable.bells?.length ?? 0];
+        let lastBell = nextDailyTimetable?.bells?.[(nextDailyTimetable?.bells?.length ?? 1) - 1];
 
-        if (nextDailyTimetable === undefined || nextDailyTimetable === null || firstBell === undefined ||
-            DailyTimetableUtils.BellToDate(firstBell, new Date(nextDailyTimetable.date ?? "")).getTime() <= new Date().getTime()) {
+        if (nextDailyTimetable === undefined || nextDailyTimetable === null || lastBell === undefined ||
+            nextDailyTimetable.date === undefined || nextDailyTimetable.date === null ||
+            new Date().getTime() > DailyTimetableUtils.BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
             let succeeded = await Resources.FetchResources();
 
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
@@ -95,7 +95,7 @@ export class StudentDailyTimetable extends Page {
             let lastBell = currentDailyTimetable.bells[currentDailyTimetable.bells.length - 1];
 
             //Check if the returned date is not today.
-            if (succeeded && lastBell !== undefined && DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime() > new Date().getTime()) {
+            if (succeeded && lastBell !== undefined && new Date().getTime() < DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
                 this.updatingData = false;
                 return;
             }
