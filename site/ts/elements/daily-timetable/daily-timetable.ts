@@ -125,7 +125,7 @@ export class StudentDailyTimetable extends Page {
                 let date = `${adjustedNow.getFullYear().toString().padStart(2, "0")}-${(adjustedNow.getMonth() + 1).toString().padStart(2, "0")}-${adjustedNow.getDate().toString().padStart(2, "0")}`
 
                 //Day number (1 - 15)
-                let dayNumber: number = (parseInt(currentDailyTimetable!.timetable!.timetable.dayNumber) + DailyTimetableUtils.GetSchoolDayCount(currentDailyTimetableDate, now) - 1) % 15 + 1;
+                let dayNumber: number = (parseInt(currentDailyTimetable!.timetable!.timetable.dayNumber) + DailyTimetableUtils.GetSchoolDayCount(currentDailyTimetableDate, adjustedNow) - 1) % 15 + 1;
 
                 let newBells = bells[dayNumber - 1];
                 if (newBells === undefined)
