@@ -11,7 +11,7 @@
     font-size: 0.8rem;
 
     margin-left: 0.5rem;
-    
+
     background-color: hsl(calc(var(--main-hue) - 3), 44.3%, 45.1%);
     color: var(--text4);
 

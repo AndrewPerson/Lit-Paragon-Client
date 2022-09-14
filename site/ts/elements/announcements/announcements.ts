@@ -87,7 +87,7 @@ export class SchoolAnnouncements extends Page {
 
             if (title === undefined || title === null ||
                 content === undefined || content === null) return false;
-            
+
             return title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
                    content.toLowerCase().includes(this.searchFilter.toLowerCase())
         });

@@ -21,7 +21,7 @@ export class Info extends LitElement {
 
     constructor() {
         super();
-        
+
         this.addEventListener("pointerover", this.ShowPopup);
         //Because, for some reason, moving the mouse doesn't fire the pointerover event
         this.addEventListener("mouseleave", this.HidePopup);

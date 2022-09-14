@@ -24,7 +24,7 @@ export class ExtensionDisplay extends LitElement {
 
     @property()
     description: string;
-    
+
     @property({ type: Boolean })
     preview: boolean;
 
@@ -48,7 +48,7 @@ export class ExtensionDisplay extends LitElement {
         <div class="icon-wrapper">
             <img class="icon" src="${this.img}" alt="Logo for ${this.title} extension">
         </div>
-        
+
         <div class="content">
             <h4 class="${this.preview ? "preview" : ""}">${this.title}</h4>
             <p>${this.description}</p>

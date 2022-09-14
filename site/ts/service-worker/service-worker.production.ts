@@ -102,7 +102,7 @@ async function Fetch(e: FetchEvent) {
                     }
                 }
             }
-            
+
             return clonedResponse;
         }
     }
@@ -164,11 +164,11 @@ async function DataFetch() {
 
     let tokenResponse = await resourceCache.match(`${location.origin}/Token`);
     if (!tokenResponse) return;
-    
+
     let token = await tokenResponse.text();
 
     let resourceResponse = await fetch(`${SERVER_ENDPOINT}/resources?token=${token}`);
-    
+
     let resources = await resourceResponse.json();
 
     await resourceCache.put(`${location.origin}/Token`, new Response(JSON.stringify(resources.token)));
@@ -183,12 +183,12 @@ async function DataFetch() {
 
 async function Update() {
     UPDATING = true;
-    
+
     let fileCache = await caches.open(FILE_CACHE);
 
     // Fetch and cache all matching items from the assets manifest
     let assetData = self.assets;
-    
+
     let filePromises: Promise<Response>[] = [];
     assetData.forEach(asset =>
         filePromises.push(fetch(asset))
@@ -203,14 +203,14 @@ async function Update() {
 
     await Promise.all(putPromises);
     UPDATING = false;
-    
+
     let keys = await fileCache.keys();
 
     let toDelete = keys.filter(key =>  {
         let url = key.url.replace(location.origin, "");
         return !self.assets.includes(url);
     });
-    
+
     let deletePromises: Promise<boolean>[] = [];
     toDelete.forEach(key =>
         deletePromises.push(fileCache.delete(key))

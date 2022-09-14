@@ -35,7 +35,7 @@ export class NavItem extends LitElement {
 
     @property({ type: Boolean })
     hovered: boolean = false;
-    
+
     constructor() {
         super();
 
@@ -52,7 +52,7 @@ export class NavItem extends LitElement {
                 let first = this.childIndex == 0;
 
                 let index = navOrder.splice(this.childIndex, 1)[0];
-                
+
                 if (first) navOrder.push(index);
                 else navOrder.splice(this.childIndex - 1, 0, index);
             }

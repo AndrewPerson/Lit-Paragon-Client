@@ -158,7 +158,7 @@ export class StudentDailyTimetable extends Page {
                 currentDailyTimetableDate = new Date(adjustedNow);
                 lastBell = newBells[newBells.length - 1];
             }
-            
+
             await Resources.SetResource("dailytimetable", JSON.stringify(currentDailyTimetable));
 
             this.updatingData = false;
@@ -274,7 +274,7 @@ export class StudentDailyTimetable extends Page {
             }
 
             let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
-            
+
             if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
                 timeDisplay.class = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
             else
@@ -305,7 +305,7 @@ export class StudentDailyTimetable extends Page {
                 <img slot="icon" src="/images/warning.svg">
                 This timetable was automatically generated and may be inaccurate. <a href="${LOGIN_URL}">Login</a> for the latest information.
             </info-popup>
-            
+
             <div class="time-display">
                 <p>${timeDisplay.class}</p>
                 <p>${timeDisplay.preposition}</p>

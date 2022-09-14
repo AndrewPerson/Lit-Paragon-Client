@@ -247,7 +247,7 @@ export class Navbar extends LitElement {
             icon = icons[orderNumber - Navbar.defaultPages.length];
             extension = true;
         }
-        
+
         return html`
             <nav-item ?editing="${this.editing}" page="${page}" ?extension="${extension}" title="${title}" childIndex="${index}">
                 <img draggable="false" src="${icon}" alt="">

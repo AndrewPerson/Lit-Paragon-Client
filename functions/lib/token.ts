@@ -17,7 +17,7 @@ export class TokenFactory {
                 }
             }
         });
-        
+
         let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
             method: "POST",
             body: new URLSearchParams({
@@ -36,7 +36,7 @@ export class TokenFactory {
                     }
                 }
             });
-            
+
             if (response.status >= 500) {
                 throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
             }

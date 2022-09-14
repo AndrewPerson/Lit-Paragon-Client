@@ -52,7 +52,7 @@ export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honey
 
         return new Response("The token is terminated.", { status: 422 });
     }
-    
+
     tracer.addData({
         token: {
             termination: {

@@ -168,7 +168,7 @@ export class StudentBarcode extends Page {
 
         let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2?.style.left.length - 1) || "0");
         let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2?.style.top.length - 1) || "0");
-    
+
         let maxX = Math.max(x1, x2);
         let minX = Math.min(x1, x2);
 

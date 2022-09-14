@@ -11,7 +11,7 @@ document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 
 
 for (let feature of REQUIRED_FEATURES) {
     let obj: any = window;
-    for (let part of feature.split(".")) {        
+    for (let part of feature.split(".")) {
         obj = obj[part];
 
         if (obj == null || obj == undefined) {

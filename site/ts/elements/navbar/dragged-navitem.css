@@ -26,7 +26,7 @@
     left: calc(calc(calc(3.3vmin - var(--size)) / 2) - var(--padding));
 
     display: block;
-    
+
     height: var(--full-size);
 
     padding: var(--padding);

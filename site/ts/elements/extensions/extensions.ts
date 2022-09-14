@@ -50,7 +50,7 @@ export class ExtensionPage extends LitElement {
 
         Extensions.extensionNotificationIds.delete(new URL(this.src).origin);
     }
-    
+
     render() {
         return html`
         <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation allow-top-navigation" style="display: none"></iframe>

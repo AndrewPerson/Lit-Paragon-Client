@@ -56,7 +56,7 @@ summary::after {
     height: 1.5rem;
 
     margin-left: auto;
-    
+
     background-image: url(images/toggle.svg);
     background-size: contain;
     background-repeat: no-repeat;

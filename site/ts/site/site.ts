@@ -63,14 +63,14 @@ export class Site {
         if (element === null) {
             if (this._pageElement === null) {
                 let defaultPage = (document.querySelector("main")?.children?.[0] as HTMLElement | undefined | null) ?? null;
-                
+
                 this.page = {
                     page: defaultPage?.id ?? "",
                     extension: false
                 };
 
                 location.hash = this.page.page;
-                
+
                 defaultPage?.classList.remove("hidden");
 
                 this._pageElement = defaultPage;
@@ -81,7 +81,7 @@ export class Site {
 
             element.classList.remove("hidden");
             this._pageElement = element;
-            
+
             this.page = page;
 
             location.hash = page.extension ? `extension-${page.page}` : page.page;

@@ -24,7 +24,7 @@ export function Init() {
                 document.documentElement.classList.toggle("dark", data.dark);
                 document.documentElement.style.setProperty("--main-hue", data.hue);
                 document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(data.hue) - 200}deg`);
-                
+
                 version = data.version;
 
                 if (!initialised) {
@@ -65,7 +65,7 @@ export function Init() {
             if (command == "Set Dark") {
                 document.documentElement.classList.toggle("dark", data.dark);
                 dark = data.dark;
-                
+
                 for (let callback of darkCallbacks)
                     callback(data.dark);
 

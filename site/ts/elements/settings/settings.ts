@@ -42,7 +42,7 @@ export class Settings extends LitElement {
 
         localStorage.clear();
         sessionStorage.clear();
-        
+
         let keys = await caches.keys();
 
         await Promise.all(keys.map(key => caches.delete(key)));
@@ -82,7 +82,7 @@ export class Settings extends LitElement {
         <button @click="${this.LogOut}">Log Out</button>
 
         <span></span>
-        
+
         <h6>Colour</h6>
 
         <button @click="${this.ResetColour}">Reset</button>
@@ -96,7 +96,7 @@ export class Settings extends LitElement {
         <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
 
         <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
-        
+
         <span></span>
 
         <h6 class="navbar-header">

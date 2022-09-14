@@ -12,7 +12,7 @@ async function Token(code: string) {
             code: code
         })
     });
-    
+
     if (tokenResponse.status != 200) return false;
 
     if (!tokenResponse) return false;
