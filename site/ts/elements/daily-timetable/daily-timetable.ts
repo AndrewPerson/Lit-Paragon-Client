@@ -1,7 +1,7 @@
 import { Page } from "../page/page";
 
 import { html, TemplateResult } from "lit";
-import { customElement, state, query } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 
 import { DailyTimetableUtils } from "./daily-timetable-utils";
 
