@@ -212,6 +212,22 @@ export class StudentDailyTimetable extends Page {
             for (let i = 0; i < leadingIndexCount; i++)
                 bells.shift();
 
+            for (let i = bells.length - 1; i >= 0; i--) {
+                let bell = bells[i];
+
+                if (bell.endTime != bells[i + 1]?.startTime) {
+                    bells.splice(i + 1, 0, {
+                        period: "",
+                        startTime: bell.endTime,
+                        endTime: bells[i + 1]?.startTime,
+                        time: bell.endTime,
+                        bell: "Transition",
+                        bellDisplay: "Transition",
+                        display: false
+                    });
+                }
+            }
+
             this._dailyTimetable = dailyTimetable;
         });
 
@@ -282,7 +298,17 @@ export class StudentDailyTimetable extends Page {
         }
 
         if (this._cachedBells === null) {
-            this._cachedBells = bells.map(bell => {
+            let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
+            for (let i = nextVisibleBellIndex; i < bells.length; i++) {
+                if (bells[i].display === false) {
+                    nextVisibleBellIndex++;
+                    continue;
+                }
+
+                break;
+            }
+
+            this._cachedBells = bells.map((bell, index) => {
                 if (!(bell.display ?? true)) return null;
 
                 if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
@@ -293,10 +319,10 @@ export class StudentDailyTimetable extends Page {
                         period.room !== undefined && period.room !== null)
                         return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period], bell === nextBellInfo?.bell);
                     else
-                        return this.GetBell(bell, bell === nextBellInfo?.bell);
+                        return this.GetBell(bell, index == nextVisibleBellIndex);
                 }
                 else
-                    return this.GetBell(bell, bell === nextBellInfo?.bell);
+                    return this.GetBell(bell, index == nextVisibleBellIndex);
             }).filter(x => x !== null) as TemplateResult<1>[];
         }
 
