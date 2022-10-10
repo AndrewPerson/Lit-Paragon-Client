@@ -1,12 +1,14 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 
 //@ts-ignore
 import notificationAreaCss from "./notification-area.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("notification-area")
 export class NotificationArea extends LitElement {
-    static styles = [notificationAreaCss];
+    static styles = [notificationAreaCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     dragging: boolean = false;
     processingDrag: boolean = false;

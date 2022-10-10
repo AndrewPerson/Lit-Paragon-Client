@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, query } from "lit/decorators.js";
 
 //@ts-ignore
@@ -9,9 +9,11 @@ import infoCss from "./info.css";
 //@ts-ignore
 import infoSvg from "images/info.svg";
 
+declare const SKIN_CSS: string;
+
 @customElement("info-popup")
 export class Info extends LitElement {
-    static styles = [imgCss, infoCss];
+    static styles = [imgCss, infoCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @query(".info")
     info: HTMLElement;

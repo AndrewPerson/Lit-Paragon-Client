@@ -7,6 +7,7 @@ import { ExtensionPage } from "../elements/extensions/extensions";
 import { InlineNotification } from "../elements/notification/notification";
 
 declare const METADATA_CACHE: string;
+declare const SKIN_CACHE: string;
 
 export type Extension = {
     navIcon: string,
@@ -275,6 +276,45 @@ export class Extensions {
             }
 
             return;
+        }
+
+        if (command == "Register Skin") {
+            let cache = await caches.open(SKIN_CACHE);
+
+            let promises: Promise<void>[] = [];
+
+            if (typeof data.css === "string") {
+                promises.push(cache.put("skin.css", new Response(data.css, {
+                    headers: {
+                        "Content-Type": "text/css"
+                    }
+                })).then(() => {
+                    document.getElementById("skin")?.remove();
+
+                    let newSkin = document.createElement("style");
+                    newSkin.id = "skin";
+                    newSkin.textContent = data.css;
+
+                    document.body.append(newSkin);
+                }));
+            }
+
+            try {
+                for (let icon of data.icons.entries()) {
+                    if (typeof icon[1] === "string") {
+                        promises.push(cache.put(icon[0], new Response(icon[1], {
+                            headers: {
+                                "Content-Type": "image/svg+xml"
+                            }
+                        })));
+                    }
+                }
+            }
+            catch(e) { }
+
+            await Promise.all(promises);
+
+            location.reload();
         }
 
         if (command == "Ping") {

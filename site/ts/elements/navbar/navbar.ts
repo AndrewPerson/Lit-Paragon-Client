@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
@@ -12,9 +12,11 @@ import { DraggedNavItem } from "./dragged-navitem";
 //@ts-ignore
 import navbarCss from "./navbar.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("nav-bar")
 export class Navbar extends LitElement {
-    static styles = navbarCss;
+    static styles = [navbarCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     static defaultPages = [
         {

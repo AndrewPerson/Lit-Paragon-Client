@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -21,9 +21,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
+    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @state()
     extensions: Map<string, Extension> = new Map();

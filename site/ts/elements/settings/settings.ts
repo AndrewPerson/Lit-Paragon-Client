@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -21,9 +21,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("user-settings")
 export class Settings extends LitElement {
-    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss];
+    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @query("#hue", true)
     hueInput: HTMLInputElement;

@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 //@ts-ignore
@@ -9,9 +9,11 @@ import notificationCss from "./notification.css";
 //@ts-ignore
 import crossSvg from "images/cross.svg";
 
+declare const SKIN_CSS: string;
+
 @customElement("inline-notification")
 export class InlineNotification extends LitElement {
-    static styles = [imgCss, notificationCss];
+    static styles = [imgCss, notificationCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @property({ type: Boolean })
     loader: boolean;

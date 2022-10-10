@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -30,9 +30,11 @@ declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
     margin: number
 }) => void) | undefined;
 
+declare const SKIN_CSS: string;
+
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
-    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
+    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @query("#barcode")
     barcode: HTMLCanvasElement | null;

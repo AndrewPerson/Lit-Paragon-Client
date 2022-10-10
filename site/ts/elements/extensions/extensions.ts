@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
 import { Extensions } from "../../site/extensions";
@@ -11,9 +11,11 @@ import "../loader/loader";
 //@ts-ignore
 import extensionsCss from "./extensions.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("extension-page")
 export class ExtensionPage extends LitElement {
-    static styles = extensionsCss;
+    static styles = [extensionsCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @property({type: String})
     src: string = "";

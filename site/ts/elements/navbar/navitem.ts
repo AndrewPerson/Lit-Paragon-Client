@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { html, unsafeCSS, nothing, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -9,6 +9,8 @@ import imgCss from "default/img.css";
 //@ts-ignore
 import navItemCss from "./navitem.css";
 
+declare const SKIN_CSS: string;
+
 enum ReorderDirection {
     UP,
     DOWN
@@ -16,7 +18,7 @@ enum ReorderDirection {
 
 @customElement("nav-item")
 export class NavItem extends LitElement {
-    static styles = [imgCss, navItemCss];
+    static styles = [imgCss, navItemCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     @property({ type: String })
     page: string;

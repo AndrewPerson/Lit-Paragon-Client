@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, TemplateResult } from "lit";
+import { html, unsafeCSS, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { TimetablePeriod } from "./period";
@@ -19,9 +19,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import timetableCss from "./timetable.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [textCss, scrollbarCss, pageCss, timetableCss];
+    static styles = [textCss, scrollbarCss, pageCss, timetableCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
 
     static get observedAttributes(): string[] {
         return [...super.observedAttributes, "class"];
