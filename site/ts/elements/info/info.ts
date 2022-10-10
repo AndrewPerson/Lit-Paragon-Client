@@ -6,9 +6,6 @@ import imgCss from "default/img.css";
 //@ts-ignore
 import infoCss from "./info.css";
 
-//@ts-ignore
-import infoSvg from "images/info.svg";
-
 declare const SKIN_CSS: string;
 
 @customElement("info-popup")
@@ -59,7 +56,7 @@ export class Info extends LitElement {
         return html`
         <button title="Click or hover to reveal more information" @click="${this.ShowPopup}">
             <slot name="icon">
-                ${infoSvg}
+                <img src="/images/info.svg">
             </slot>
         </button>
 

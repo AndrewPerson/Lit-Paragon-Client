@@ -6,9 +6,6 @@ import imgCss from "default/img.css";
 //@ts-ignore
 import notificationCss from "./notification.css";
 
-//@ts-ignore
-import crossSvg from "images/cross.svg";
-
 declare const SKIN_CSS: string;
 
 @customElement("inline-notification")
@@ -32,7 +29,7 @@ export class InlineNotification extends LitElement {
             html`<loading-indicator class="indicator"></loading-indicator>` :
             html`
                 <button class="indicator" @click="${this.Close}" title="Close">
-                    ${crossSvg}
+                    <img src="/images/cross.svg">
                 </button>
             `
         }

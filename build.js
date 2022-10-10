@@ -120,45 +120,7 @@ async function Main() {
                     });
                 }
             },
-            {
-                name: "svg-redirect",
-                setup(build) {
-                    build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
-                        return {
-                            path: path.resolve(dirname, "site", args.path)
-                        };
-                    });
-                }
-            },
             conditionalBuild(env.constants),
-            {
-                name: "lit-svg",
-                setup(build) {
-                    build.onLoad({ filter: /\.svg$/ }, async args => {
-                        let contents = await readFile(args.path, "utf8");
-
-                        contents = optimize(contents, {
-                            path: args.path,
-                            floatPrecision: 1,
-                            plugins: [
-                                {
-                                    name: "preset-default",
-                                    params: {
-                                        overrides: {
-                                            removeViewBox: false
-                                        }
-                                    }
-                                }
-                            ]
-                        }).data;
-
-                        return {
-                            loader: "js",
-                            contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
-                        };
-                    });
-                }
-            },
             {
                 name: "lit-css",
                 setup(build) {
