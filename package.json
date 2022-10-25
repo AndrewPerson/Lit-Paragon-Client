@@ -2,19 +2,19 @@
     "type": "module",
     "dependencies": {
         "@cloudflare/pages-plugin-honeycomb": "^1.0.0",
-        "@cloudflare/workers-types": "^3.10.0",
-        "esbuild-linux-64": "^0.14.2",
-        "sbhs-random-data": "^1.0.0",
-        "svgo": "^2.8.0"
+        "lit": "^2.0.2"
     },
     "devDependencies": {
-        "@types/service-worker-mock": "^2.0.1",
+        "sbhs-random-data": "^1.0.0",
         "esbuild": "^0.14.8",
         "esbuild-plugin-clear": "^1.0.1",
         "esbuild-plugin-conditional-build": "^1.0.2",
-        "lit": "^2.0.2",
         "local-web-server": "^5.1.1",
-        "typescript": "^4.5.4"
+        "typescript": "^4.5.4",
+        "svgo": "^2.8.0",
+        "@types/service-worker-mock": "^2.0.1",
+        "@cloudflare/workers-types": "^3.10.0",
+        "esbuild-linux-64": "^0.14.2"
     },
     "scripts": {
         "serve": "npx ws -d site --static.extensions html --stack dev-server/mw-serviceworker.js dev-server/mw-metadata.js dev-server/mw-login.js lws-static -p 5555 & npx sbhs-random-data"
