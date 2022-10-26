@@ -1,6 +1,6 @@
 //#conditional
 
-const SKIN_CSS = "";
+window.SKIN_CSS = "";
 
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
