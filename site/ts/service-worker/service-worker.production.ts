@@ -42,7 +42,7 @@ async function Activate() {
     let metadata = await metadataResponse.json();
 
     if (BAD_VERSIONS.includes(metadata.version)) {
-        await Update();
+        await caches.delete(FILE_CACHE);
     }
 }
 
