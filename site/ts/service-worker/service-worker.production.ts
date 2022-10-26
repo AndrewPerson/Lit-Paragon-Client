@@ -27,7 +27,7 @@ declare const SERVER_ENDPOINT: string;
 declare const METADATA_ENDPOINT: string;
 
 //TODO Make this generated at build time
-const BAD_VERSIONS = ["2.2.56", "2.2.57", "2.2.75"];
+const BAD_VERSIONS = ["2.2.56", "2.2.57", "2.2.75", "2.2.76"];
 
 let UPDATING = false;
 
