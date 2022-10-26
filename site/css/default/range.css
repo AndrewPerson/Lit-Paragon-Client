@@ -22,12 +22,12 @@
 :where(input[type=range])::-moz-range-thumb {
     appearance: none;
     -moz-appearance: none;
-    
+
     width: calc(1rem / 1.5);
     height: calc(1rem / 1.5);
-    
+
     background-color: var(--surface2);
-    
+
     border-radius: 100%;
     border: solid 0.05rem var(--text2);
 
@@ -40,9 +40,9 @@
 
     width: calc(1rem / 1.5);
     height: calc(1rem / 1.5);
-    
+
     background-color: var(--surface2);
-    
+
     border-radius: 100%;
     border: solid 0.05rem var(--text2);
 

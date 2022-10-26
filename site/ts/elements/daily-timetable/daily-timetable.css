@@ -11,7 +11,7 @@
 info-popup {
     --max-width: 40vmin;
     --offset: 2rem;
-    
+
     position: absolute;
     top: 3%;
     left: 3%;

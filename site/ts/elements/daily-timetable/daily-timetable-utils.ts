@@ -72,7 +72,7 @@ export class DailyTimetableUtils {
             let hours = Math.floor(timeDifference / 3600000).toString();
             let minutes = Math.floor((timeDifference % 3600000) / 60000).toString();
             let seconds = Math.floor((timeDifference % 60000) / 1000).toString();
-            
+
             if (hours.length < 2)
                 hours = "0" + hours;
 
@@ -81,7 +81,7 @@ export class DailyTimetableUtils {
 
             if (seconds.length < 2)
                 seconds = "0" + seconds;
-            
+
             if (hours == "00")
                 return {
                     preposition: "in",
@@ -97,11 +97,11 @@ export class DailyTimetableUtils {
 
     static GetPeriodTitle(dailyTimetable: DailyTimetable | Missing, year: string, title: string) {
         let fullName = dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title;
-        
+
         if (fullName === undefined || fullName === null) {
             let words = title.split(" ");
             words.pop();
-            
+
             return words.join(" ");
         }
 
@@ -115,7 +115,7 @@ export class DailyTimetableUtils {
     static FormatCasualCode(code: string) {
         if (code.length == 0) return code;
         if (code.length == 1) return `${code.toUpperCase()}.`;
-        
+
         return `${code[code.length - 1].toUpperCase()} ${code[0].toUpperCase()}${code.substring(1, code.length - 1).toLowerCase()}.`;
     }
 

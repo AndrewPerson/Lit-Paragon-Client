@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, query } from "lit/decorators.js";
 
 //@ts-ignore
@@ -6,12 +6,11 @@ import imgCss from "default/img.css";
 //@ts-ignore
 import infoCss from "./info.css";
 
-//@ts-ignore
-import infoSvg from "images/info.svg";
+declare const SKIN_CSS: string;
 
 @customElement("info-popup")
 export class Info extends LitElement {
-    static styles = [imgCss, infoCss];
+    static styles = [imgCss, infoCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @query(".info")
     info: HTMLElement;
@@ -21,7 +20,7 @@ export class Info extends LitElement {
 
     constructor() {
         super();
-        
+
         this.addEventListener("pointerover", this.ShowPopup);
         //Because, for some reason, moving the mouse doesn't fire the pointerover event
         this.addEventListener("mouseleave", this.HidePopup);
@@ -57,7 +56,7 @@ export class Info extends LitElement {
         return html`
         <button title="Click or hover to reveal more information" @click="${this.ShowPopup}">
             <slot name="icon">
-                ${infoSvg}
+                <img src="/images/info.svg">
             </slot>
         </button>
 

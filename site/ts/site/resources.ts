@@ -144,7 +144,7 @@ export class Resources {
         let resourceResult: ResourceResult = await resourceResponse.json();
 
         let cache = await caches.open(RESOURCE_CACHE);
-        
+
         await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
 
         await this.SetResources(Object.keys(resourceResult.result).map(key => {

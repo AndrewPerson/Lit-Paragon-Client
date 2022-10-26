@@ -7,6 +7,7 @@ import { ExtensionPage } from "../elements/extensions/extensions";
 import { InlineNotification } from "../elements/notification/notification";
 
 declare const METADATA_CACHE: string;
+declare const SKIN_CACHE: string;
 
 export type Extension = {
     navIcon: string,
@@ -51,50 +52,50 @@ export class Extensions {
 
     static async UninstallExtension(extensionName: string) {
         let installedExtensions = this.installedExtensions;
-    
+
         let order = Navbar.GetNavbarOrder();
-    
+
         let index = order.indexOf(Object.keys(installedExtensions).indexOf(extensionName)) + Navbar.defaultPages.length;
         let position = order.splice(index, 1)[0];
-    
+
         for (let i = 0; i < order.length; i++) {
             if (order[i] > position) {
                 order[i]--;
             }
         }
-    
+
         Navbar.SetNavbarOrder(order);
-    
+
         var extensionPage = document.getElementById(`extension-${extensionName}`);
         if (extensionPage !== null) extensionPage.remove();
-    
+
         this.installedExtensions.delete(extensionName);
-    
+
         localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions)));
     }
 
     static async GetExtensionsNow(): Promise<Map<string, Extension>> {
         let cache = await caches.open(METADATA_CACHE);
         let response = await cache.match("Metadata");
-    
+
         if (!response) return new Map();
-    
+
         let extensions: Map<string, Extension> = new Map(Object.entries((await response.json()).pages ?? {}));
-    
+
         return extensions;
     }
 
     static GetExtensionIconURL(extension: Extension, dark: boolean) {
         let url = new URL(dark ? extension.darkIcon : extension.icon, extension.url);
         url.search = `cache-version=${extension.version}`;
-    
+
         return url.toString();
     }
 
     static GetExtensionNavIconURL(extension: Extension) {
         let url = new URL(extension.navIcon, extension.url);
         url.searchParams.set("cache-version", extension.version);
-    
+
         return url.toString();
     }
 
@@ -121,10 +122,10 @@ export class Extensions {
             order.filter(index => index < Navbar.defaultPages.length + filteredEntries.length);
             Navbar.SetNavbarOrder(order);
         });
-    
+
         Site.ListenForDark(dark => {
             let extensions = document.querySelectorAll("extension-page") as NodeListOf<ExtensionPage>;
-    
+
             for (let extension of extensions) {
                 extension.PostMessage({
                     command: "Set Dark",
@@ -134,7 +135,7 @@ export class Extensions {
                 });
             }
         });
-    
+
         Site.ListenForHue(hue => {
             let extensions = document.querySelectorAll("extension-page") as NodeListOf<ExtensionPage>;
             for (let extension of extensions) {
@@ -146,12 +147,12 @@ export class Extensions {
                 });
             }
         });
-    
+
         window.addEventListener("message", async e => {
             let origin = e.origin;
-    
+
             if (!this.GetExtensionOrigins().includes(origin)) return;
-    
+
             let result = await this.HandleCommand(e);
 
             if (result !== undefined && "command" in result) {
@@ -165,7 +166,7 @@ export class Extensions {
     private static async HandleCommand(e: MessageEvent) {
         let command = e.data.command;
         let data = e.data.data;
-    
+
         if (command == "Initialise") {
             return {
                 command: "Initialise",
@@ -176,25 +177,25 @@ export class Extensions {
                 }
             }
         }
-    
+
         if (command == "Get Resource") {
             let listeners = this._resourceListeners.get(data.name);
-    
+
             let firstTime = false;
-    
+
             if (listeners === undefined) {
                 firstTime = true;
                 listeners = [];
             }
-    
+
             listeners.push(e);
-    
+
             this._resourceListeners.set(data.name, listeners);
-    
+
             if (firstTime) {
                 Resources.GetResource(data.name, resource => {
                     let listeners = this._resourceListeners.get(data.name) ?? [];
-    
+
                     for (let listener of listeners) {
                         listener.source?.postMessage({
                             command: "Resource",
@@ -208,9 +209,9 @@ export class Extensions {
                     }
                 });
             }
-    
+
             let resource = await Resources.GetResourceNow(data.name);
-    
+
             return {
                 command: "Resource",
                 data: {
@@ -219,27 +220,27 @@ export class Extensions {
                 }
             }
         }
-    
+
         if (command == "Get Token") {
             let token = await Resources.GetToken();
-    
+
             return {
                 command: "Token",
                 data: token?.access_token ?? null
             }
         }
-    
+
         if (command == "Refresh Token") {
             let fetchedResources = await Resources.FetchResources();
-    
+
             if (!fetchedResources)
                 return {
                     command: "Refreshed Token",
                     data: null
                 }
-    
+
             let token = await Resources.GetToken();
-    
+
             return {
                 command: "Refreshed Token",
                 data: token?.access_token ?? null
@@ -273,8 +274,47 @@ export class Extensions {
                     this.extensionNotificationIds.set(e.origin, ids);
                 }
             }
-        
+
             return;
+        }
+
+        if (command == "Register Skin") {
+            let cache = await caches.open(SKIN_CACHE);
+
+            let promises: Promise<void>[] = [];
+
+            if (typeof data.css === "string") {
+                promises.push(cache.put("skin.css", new Response(data.css, {
+                    headers: {
+                        "Content-Type": "text/css"
+                    }
+                })).then(() => {
+                    document.getElementById("skin")?.remove();
+
+                    let newSkin = document.createElement("style");
+                    newSkin.id = "skin";
+                    newSkin.textContent = data.css;
+
+                    document.body.append(newSkin);
+                }));
+            }
+
+            try {
+                for (let icon of data.icons.entries()) {
+                    if (typeof icon[1] === "string") {
+                        promises.push(cache.put(icon[0], new Response(icon[1], {
+                            headers: {
+                                "Content-Type": "image/svg+xml"
+                            }
+                        })));
+                    }
+                }
+            }
+            catch(e) { }
+
+            await Promise.all(promises);
+
+            location.reload();
         }
 
         if (command == "Ping") {
@@ -282,7 +322,7 @@ export class Extensions {
                 command: "Pong"
             }
         }
-    
+
         return {
             command: "Unknown Command",
             data: {

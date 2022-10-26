@@ -1,4 +1,4 @@
-import { LitElement, html, nothing } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -21,9 +21,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
+    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @state()
     extensions: Map<string, Extension> = new Map();
@@ -91,7 +93,7 @@ export class ExtensionsMarketplace extends LitElement {
         return html`
         <div class="header">
             <input type="search" placeholder="Search..." @input="${(e: InputEvent) => this.searchFilter = (e.target as HTMLInputElement).value}">
-            
+
             <div class="preview-input-container">
                 <label for="preview">
                     Show Preview Extensions?

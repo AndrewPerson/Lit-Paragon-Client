@@ -1,4 +1,4 @@
-import { LitElement, html, nothing, TemplateResult } from "lit";
+import { html, nothing, TemplateResult, LitElement } from "lit";
 import { state } from "lit/decorators.js";
 import { Resources } from "../../site/resources";
 
@@ -9,8 +9,6 @@ export enum PageState {
 }
 
 export class Page extends LitElement {
-    [index: string]: any;
-
     @state()
     private _state: PageState = PageState.Waiting;
 

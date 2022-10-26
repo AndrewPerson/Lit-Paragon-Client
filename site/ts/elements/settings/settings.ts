@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -21,9 +21,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("user-settings")
 export class Settings extends LitElement {
-    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss];
+    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @query("#hue", true)
     hueInput: HTMLInputElement;
@@ -42,7 +44,7 @@ export class Settings extends LitElement {
 
         localStorage.clear();
         sessionStorage.clear();
-        
+
         let keys = await caches.keys();
 
         await Promise.all(keys.map(key => caches.delete(key)));
@@ -82,7 +84,7 @@ export class Settings extends LitElement {
         <button @click="${this.LogOut}">Log Out</button>
 
         <span></span>
-        
+
         <h6>Colour</h6>
 
         <button @click="${this.ResetColour}">Reset</button>
@@ -96,7 +98,7 @@ export class Settings extends LitElement {
         <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
 
         <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
-        
+
         <span></span>
 
         <h6 class="navbar-header">

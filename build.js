@@ -46,7 +46,7 @@ function merge() {
         }
     }
 
-    // iterate through all objects and 
+    // iterate through all objects and
     // deep merge them with target
     for (let i = 0; i < arguments.length; i++) {
         merger(arguments[i]);
@@ -120,45 +120,7 @@ async function Main() {
                     });
                 }
             },
-            {
-                name: "svg-redirect",
-                setup(build) {
-                    build.onResolve({ filter: /^images\/.*.svg$/, namespace: "file" }, args => {
-                        return {
-                            path: path.resolve(dirname, "site", args.path)
-                        };
-                    });
-                }
-            },
             conditionalBuild(env.constants),
-            {
-                name: "lit-svg",
-                setup(build) {        
-                    build.onLoad({ filter: /\.svg$/ }, async args => {
-                        let contents = await readFile(args.path, "utf8");
-
-                        contents = optimize(contents, {
-                            path: args.path,
-                            floatPrecision: 1,
-                            plugins: [
-                                {
-                                    name: "preset-default",
-                                    params: {
-                                        overrides: {
-                                            removeViewBox: false
-                                        }
-                                    }
-                                }
-                            ]
-                        }).data;
-            
-                        return {
-                            loader: "js",
-                            contents: `import {svg} from "lit"; export default svg\`${contents}\`;`
-                        };
-                    });
-                }
-            },
             {
                 name: "lit-css",
                 setup(build) {
@@ -185,10 +147,10 @@ async function Main() {
                file != path.resolve(dirname, "site/index.html");
     }).map(file => {
         file = file.replace(".html", "");
-        
+
         return `"/${path.relative(path.resolve(dirname, "site"), file)}"`
     }).join(",");
-    
+
     files = `self.assets=["/",${files}];`;
 
     await writeFile(path.resolve(dirname, "site/dist/service-worker/assets.js"), files);

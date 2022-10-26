@@ -24,7 +24,7 @@ button > slot {
     position: absolute;
     display: block;
     top: var(--offset);
-    
+
     width: max-content;
     max-width: var(--max-width);
 

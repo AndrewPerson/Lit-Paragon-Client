@@ -1,7 +1,7 @@
 import { Page } from "../page/page";
 
-import { html, TemplateResult } from "lit";
-import { customElement, state, query } from "lit/decorators.js";
+import { html, unsafeCSS, TemplateResult } from "lit";
+import { customElement, state } from "lit/decorators.js";
 
 import { DailyTimetableUtils } from "./daily-timetable-utils";
 
@@ -36,10 +36,11 @@ import dailyTimetableCss from "./daily-timetable.css";
 
 declare const RESOURCE_CACHE: string;
 declare const MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY: number;
+declare const SKIN_CSS: string;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
+    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss, unsafeCSS(SKIN_CSS ?? "")];
 
     static updatingData: boolean = false;
 
@@ -158,7 +159,7 @@ export class StudentDailyTimetable extends Page {
                 currentDailyTimetableDate = new Date(adjustedNow);
                 lastBell = newBells[newBells.length - 1];
             }
-            
+
             await Resources.SetResource("dailytimetable", JSON.stringify(currentDailyTimetable));
 
             this.updatingData = false;
@@ -211,6 +212,22 @@ export class StudentDailyTimetable extends Page {
 
             for (let i = 0; i < leadingIndexCount; i++)
                 bells.shift();
+
+            for (let i = bells.length - 1; i >= 0; i--) {
+                let bell = bells[i];
+
+                if (bell.endTime != bells[i + 1]?.startTime) {
+                    bells.splice(i + 1, 0, {
+                        period: "",
+                        startTime: bell.endTime,
+                        endTime: bells[i + 1]?.startTime,
+                        time: bell.endTime,
+                        bell: "Transition",
+                        bellDisplay: "Transition",
+                        display: false
+                    });
+                }
+            }
 
             this._dailyTimetable = dailyTimetable;
         });
@@ -274,7 +291,7 @@ export class StudentDailyTimetable extends Page {
             }
 
             let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
-            
+
             if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
                 timeDisplay.class = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
             else
@@ -282,7 +299,17 @@ export class StudentDailyTimetable extends Page {
         }
 
         if (this._cachedBells === null) {
-            this._cachedBells = bells.map(bell => {
+            let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
+            for (let i = nextVisibleBellIndex; i < bells.length; i++) {
+                if (bells[i].display === false) {
+                    nextVisibleBellIndex++;
+                    continue;
+                }
+
+                break;
+            }
+
+            this._cachedBells = bells.map((bell, index) => {
                 if (!(bell.display ?? true)) return null;
 
                 if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
@@ -291,12 +318,12 @@ export class StudentDailyTimetable extends Page {
                     if (period !== undefined && period !== null &&
                         "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
                         period.room !== undefined && period.room !== null)
-                        return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period], bell === nextBellInfo?.bell);
+                        return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period], index == nextVisibleBellIndex);
                     else
-                        return this.GetBell(bell, bell === nextBellInfo?.bell);
+                        return this.GetBell(bell, index == nextVisibleBellIndex);
                 }
                 else
-                    return this.GetBell(bell, bell === nextBellInfo?.bell);
+                    return this.GetBell(bell, index == nextVisibleBellIndex);
             }).filter(x => x !== null) as TemplateResult<1>[];
         }
 
@@ -305,7 +332,7 @@ export class StudentDailyTimetable extends Page {
                 <img slot="icon" src="/images/warning.svg">
                 This timetable was automatically generated and may be inaccurate. <a href="${LOGIN_URL}">Login</a> for the latest information.
             </info-popup>
-            
+
             <div class="time-display">
                 <p>${timeDisplay.class}</p>
                 <p>${timeDisplay.preposition}</p>

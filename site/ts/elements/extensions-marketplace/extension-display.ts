@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Extensions } from "../../site/extensions";
@@ -12,9 +12,11 @@ import buttonCss from "default/button.css";
 //@ts-ignore
 import extensionDisplayCss from "./extension-display.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("extension-display")
 export class ExtensionDisplay extends LitElement {
-    static styles = [textCss, buttonCss, extensionDisplayCss];
+    static styles = [textCss, buttonCss, extensionDisplayCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property()
     title: string;
@@ -24,7 +26,7 @@ export class ExtensionDisplay extends LitElement {
 
     @property()
     description: string;
-    
+
     @property({ type: Boolean })
     preview: boolean;
 
@@ -48,7 +50,7 @@ export class ExtensionDisplay extends LitElement {
         <div class="icon-wrapper">
             <img class="icon" src="${this.img}" alt="Logo for ${this.title} extension">
         </div>
-        
+
         <div class="content">
             <h4 class="${this.preview ? "preview" : ""}">${this.title}</h4>
             <p>${this.description}</p>

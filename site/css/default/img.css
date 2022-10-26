@@ -1,4 +1,7 @@
 :where(img, svg) {
+    width: inherit;
+    height: inherit;
+
     filter: invert(var(--img-invert)) hue-rotate(var(--hue-rotate));
     cursor: default;
 
@@ -6,9 +9,4 @@
     -ms-user-select: none;
     -moz-user-select: none;
     -webkit-user-select: none;
-}
-
-svg {
-    width: inherit;
-    height: inherit;
 }

@@ -1,4 +1,4 @@
-import { LitElement, html } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property, state, query } from "lit/decorators.js";
 
 //@ts-ignore
@@ -6,9 +6,11 @@ import textCss from "default/text.css";
 //@ts-ignore
 import periodCss from "./period.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("timetable-period")
 export class TimetablePeriod extends LitElement {
-    static styles = [textCss, periodCss];
+    static styles = [textCss, periodCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property()
     title: string;

@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, TemplateResult } from "lit";
+import { html, unsafeCSS, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { TimetablePeriod } from "./period";
@@ -19,9 +19,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import timetableCss from "./timetable.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [textCss, scrollbarCss, pageCss, timetableCss];
+    static styles = [textCss, scrollbarCss, pageCss, timetableCss, unsafeCSS(SKIN_CSS ?? "")];
 
     static get observedAttributes(): string[] {
         return [...super.observedAttributes, "class"];
@@ -74,7 +76,7 @@ export class FullTimetable extends Page {
 
     disconnectedCallback() {
         super.disconnectedCallback();
-        
+
         document.removeEventListener("pointerover", this.ClearHighlight);
 
         window.removeEventListener("resize", this.Resize);
@@ -87,7 +89,7 @@ export class FullTimetable extends Page {
 
         root.addEventListener("focusin", e => {
             this.SetHighlight(e);
-            
+
             let target = e.target as HTMLElement;
 
             if (target.tagName == "TIMETABLE-PERIOD") {
@@ -145,7 +147,7 @@ export class FullTimetable extends Page {
             let remove = periodRows[i].filter(period => period !== null).length == 0;
 
             if (!remove) break;
-            
+
             toRemove++;
         }
 
@@ -167,7 +169,7 @@ export class FullTimetable extends Page {
                             period.title !== undefined && period.title !== null &&
                             period.room !== undefined && period.room !== null) {
                             let words = period.title.split(" ");
-                            
+
                             words.pop();
 
                             let shortTitle = words.join(" ");

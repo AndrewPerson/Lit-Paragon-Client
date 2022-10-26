@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, unsafeCSS } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -22,17 +22,16 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
 
-//@ts-ignore
-import downloadSvg from "images/download.svg"
-
 declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
     displayValue: boolean
     margin: number
 }) => void) | undefined;
 
+declare const SKIN_CSS: string;
+
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
-    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
+    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @query("#barcode")
     barcode: HTMLCanvasElement | null;
@@ -168,7 +167,7 @@ export class StudentBarcode extends Page {
 
         let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2?.style.left.length - 1) || "0");
         let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2?.style.top.length - 1) || "0");
-    
+
         let maxX = Math.max(x1, x2);
         let minX = Math.min(x1, x2);
 
@@ -230,7 +229,9 @@ export class StudentBarcode extends Page {
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-        <a id="save" title="Save Barcode">${downloadSvg}</a>
+        <a id="save" title="Save Barcode">
+            <img src="/images/download.svg">
+        </a>
 
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>

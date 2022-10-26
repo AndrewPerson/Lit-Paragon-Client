@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <svg width="200px" height="200px" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:bx="https://boxy-svg.com">
   <defs>
-    <symbol id="line" viewBox="0 0 10 65" bx:pinned="true">
-      <path d="M 5 5 L 5 60" fill="none" fill-rule="evenodd" stroke="#323232" stroke-width="10" stroke-linecap="round" bx:origin="0 1"/>
-    </symbol>
     <symbol id="circle" viewBox="0 0 10 10" bx:pinned="true">
       <ellipse style="fill: rgb(50, 50, 50);" cx="100" cy="25" rx="5" ry="5" transform="matrix(1, 0, 0, 1, -95, -20)"/>
     </symbol>
   </defs>
   <ellipse style="stroke: rgb(50, 50, 50); stroke-width: 10px; fill: none;" cx="100" cy="100" rx="95" ry="95"/>
-  <use width="10" height="65" transform="matrix(1, 0, 0, 0.9230769872665405, 95, 45)" xlink:href="#line" bx:origin="0.5 0.916667"/>
-  <use width="10" height="65" transform="matrix(0, 0.9000000357627869, -0.8307690620422363, 0, 148.99998474121094, 96)" bx:origin="0.5 0.916667" xlink:href="#line"/>
-  <use width="10" height="10" transform="matrix(1, 0, 0, 1, 95, 20)" xlink:href="#circle" bx:origin="0.5 8.5"/>
-  <use width="10" height="10" transform="matrix(0, 1, -1, 0, 180, 95)" bx:origin="0.5 8.5" xlink:href="#circle"/>
-  <use width="10" height="10" transform="matrix(-1, 0, 0, -1, 105, 180)" bx:origin="0.5 8.5" xlink:href="#circle"/>
-  <use width="10" height="10" transform="matrix(0, -1, 1, 0, 20, 105)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+
+  <path d="M 5 5 L 5 60" stroke="#323232" stroke-width="10" stroke-linecap="round" transform="rotate(-180, 100, 100) translate(95, 95)"/>
+  <path d="M 5 5 L 5 45" stroke="#323232" stroke-width="10" stroke-linecap="round" transform="rotate(-90, 100, 100) translate(95, 95)"/>
+
+  <use width="10" height="10" transform="translate(95, 20)" xlink:href="#circle" bx:origin="0.5 8.5"/>
+  <use width="10" height="10" transform="translate(170, 95)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+  <use width="10" height="10" transform="translate(95, 170)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+  <use width="10" height="10" transform="translate(20, 95)" bx:origin="0.5 8.5" xlink:href="#circle"/>
+
+  <ellipse id="background" style="fill: rgba(0,0,0,0);" cx="100" cy="100" rx="100" ry="100"/>
 </svg>

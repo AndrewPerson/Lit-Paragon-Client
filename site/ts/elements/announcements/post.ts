@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
@@ -9,9 +9,11 @@ import textCss from "default/text.css";
 //@ts-ignore
 import postCss from "./post.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("announcement-post")
 export class AnnouncementPost extends LitElement {
-    static styles = [textCss, postCss];
+    static styles = [textCss, postCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property()
     title: string;

@@ -1,8 +1,7 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, unsafeCSS } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { ifDefined } from "lit/directives/if-defined.js";
 import { repeat } from "lit/directives/repeat.js";
 
 import "./post";
@@ -27,9 +26,11 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import announcementCss from "./announcements.css";
 
+declare const SKIN_CSS: string;
+
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [textCss, imgCss, searchCss, selectCss, scrollbarCss, pageCss, fullElementCss, announcementCss];
+    static styles = [textCss, imgCss, searchCss, selectCss, scrollbarCss, pageCss, fullElementCss, announcementCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @state()
     announcements: Announcements;
@@ -87,7 +88,7 @@ export class SchoolAnnouncements extends Page {
 
             if (title === undefined || title === null ||
                 content === undefined || content === null) return false;
-            
+
             return title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
                    content.toLowerCase().includes(this.searchFilter.toLowerCase())
         });
@@ -116,8 +117,7 @@ export class SchoolAnnouncements extends Page {
             if (this.IsSameDay(new Date(meetingDate), new Date())) meetingDate = "Today";
 
             return html`
-            <announcement-post
-                               title="${announcement.title ?? "???"}"
+            <announcement-post title="${announcement.title ?? "???"}"
                                content="${announcement.content ?? "???"}"
                                author="${announcement.authorName ?? "???"}"
                                years="${announcement.displayYears ?? "???"}"

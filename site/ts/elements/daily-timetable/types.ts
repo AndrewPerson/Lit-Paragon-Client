@@ -26,6 +26,8 @@ export type DailyTimetable = {
 
 export type Bell = {
     period: string | Missing,
+    startTime: string | Missing,
+    endTime: string | Missing,
     time: string | Missing,
     bell: string | Missing,
     bellDisplay: string | Missing,
