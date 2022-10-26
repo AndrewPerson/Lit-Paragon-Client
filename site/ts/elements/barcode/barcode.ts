@@ -31,7 +31,7 @@ declare const SKIN_CSS: string;
 
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
-    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
 
     @query("#barcode")
     barcode: HTMLCanvasElement | null;

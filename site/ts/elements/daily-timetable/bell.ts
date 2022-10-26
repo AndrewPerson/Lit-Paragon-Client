@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("daily-timetable-bell")
 export class DailyTimetableBell extends LitElement {
-    static styles = [textCss, bellCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [textCss, bellCss];
 
     @property()
     title: string;
