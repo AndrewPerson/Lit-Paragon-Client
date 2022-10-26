@@ -27,6 +27,7 @@
 
     display: block;
 
+    width: auto;
     height: var(--full-size);
 
     padding: var(--padding);
