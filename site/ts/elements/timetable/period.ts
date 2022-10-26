@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("timetable-period")
 export class TimetablePeriod extends LitElement {
-    static styles = [textCss, periodCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [textCss, periodCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property()
     title: string;

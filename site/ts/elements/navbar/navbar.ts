@@ -16,7 +16,7 @@ declare const SKIN_CSS: string;
 
 @customElement("nav-bar")
 export class Navbar extends LitElement {
-    static styles = [navbarCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [navbarCss, unsafeCSS(SKIN_CSS ?? "")];
 
     static defaultPages = [
         {

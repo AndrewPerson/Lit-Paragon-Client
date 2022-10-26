@@ -18,7 +18,7 @@ enum ReorderDirection {
 
 @customElement("nav-item")
 export class NavItem extends LitElement {
-    static styles = [imgCss, navItemCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [imgCss, navItemCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property({ type: String })
     page: string;

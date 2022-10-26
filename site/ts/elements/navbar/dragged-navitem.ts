@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("dragged-nav-item")
 export class DraggedNavItem extends LitElement {
-    static styles = [imgCss, draggedNavItemCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [imgCss, draggedNavItemCss, unsafeCSS(SKIN_CSS ?? "")];
 
     render() {
         return html`

@@ -25,7 +25,7 @@ declare const SKIN_CSS: string;
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
-    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @state()
     extensions: Map<string, Extension> = new Map();

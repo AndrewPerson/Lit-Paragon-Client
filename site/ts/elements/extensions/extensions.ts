@@ -15,7 +15,7 @@ declare const SKIN_CSS: string;
 
 @customElement("extension-page")
 export class ExtensionPage extends LitElement {
-    static styles = [extensionsCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [extensionsCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property({type: String})
     src: string = "";

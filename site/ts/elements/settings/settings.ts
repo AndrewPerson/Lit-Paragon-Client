@@ -25,7 +25,7 @@ declare const SKIN_CSS: string;
 
 @customElement("user-settings")
 export class Settings extends LitElement {
-    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @query("#hue", true)
     hueInput: HTMLInputElement;

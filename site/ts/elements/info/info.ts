@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("info-popup")
 export class Info extends LitElement {
-    static styles = [imgCss, infoCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [imgCss, infoCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @query(".info")
     info: HTMLElement;

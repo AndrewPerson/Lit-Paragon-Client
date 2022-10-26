@@ -13,7 +13,7 @@ declare const SKIN_CSS: string;
 
 @customElement("announcement-post")
 export class AnnouncementPost extends LitElement {
-    static styles = [textCss, postCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [textCss, postCss, unsafeCSS(SKIN_CSS ?? "")];
 
     @property()
     title: string;

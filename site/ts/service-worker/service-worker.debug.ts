@@ -32,7 +32,7 @@ async function onFetch(e: FetchEvent): Promise<Response> {
                 let textPromise = fetch(e.request).then(r => r.text());
                 let skinPromise = caches.open(SKIN_CACHE).then(c => c.match(`${location.origin}/skin.css`)).then(r => r?.text() ?? "");
 
-                return new Response(`const SKIN_CSS=\`${encodeURIComponent(await skinPromise)}\`\n${await textPromise}`, {
+                return new Response(`const SKIN_CSS=decodeURIComponent(\`${encodeURIComponent(await skinPromise)}\`);\n${await textPromise}`, {
                     headers: {
                         "Content-Type": "application/javascript"
                     }

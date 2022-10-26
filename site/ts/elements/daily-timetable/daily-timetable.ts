@@ -40,7 +40,7 @@ declare const SKIN_CSS: string;
 
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
-    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss, unsafeCSS(decodeURIComponent(SKIN_CSS))];
+    static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss, unsafeCSS(SKIN_CSS ?? "")];
 
     static updatingData: boolean = false;
 
