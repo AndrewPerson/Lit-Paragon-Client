@@ -16,7 +16,7 @@ declare const SKIN_CSS: string;
 
 @customElement("extension-display")
 export class ExtensionDisplay extends LitElement {
-    static styles = [textCss, buttonCss, extensionDisplayCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [textCss, buttonCss, extensionDisplayCss];
 
     @property()
     title: string;

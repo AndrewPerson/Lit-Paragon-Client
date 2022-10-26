@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("loading-indicator")
 export class LoadingIndicator extends LitElement {
-    static styles = [imgCss, loadingCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [imgCss, loadingCss];
 
     render() {
         return html`<img src="/images/rings.svg">`;

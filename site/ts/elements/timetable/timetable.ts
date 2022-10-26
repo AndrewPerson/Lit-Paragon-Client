@@ -23,7 +23,7 @@ declare const SKIN_CSS: string;
 
 @customElement("full-timetable")
 export class FullTimetable extends Page {
-    static styles = [textCss, scrollbarCss, pageCss, timetableCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [textCss, scrollbarCss, pageCss, timetableCss];
 
     static get observedAttributes(): string[] {
         return [...super.observedAttributes, "class"];

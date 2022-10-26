@@ -10,7 +10,7 @@ declare const SKIN_CSS: string;
 
 @customElement("inline-notification")
 export class InlineNotification extends LitElement {
-    static styles = [imgCss, notificationCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [imgCss, notificationCss];
 
     @property({ type: Boolean })
     loader: boolean;

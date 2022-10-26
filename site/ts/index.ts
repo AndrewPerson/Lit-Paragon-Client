@@ -1,7 +1,5 @@
 //#conditional
 
-window.SKIN_CSS = "";
-
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";

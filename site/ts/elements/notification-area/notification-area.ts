@@ -8,7 +8,7 @@ declare const SKIN_CSS: string;
 
 @customElement("notification-area")
 export class NotificationArea extends LitElement {
-    static styles = [notificationAreaCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [notificationAreaCss];
 
     dragging: boolean = false;
     processingDrag: boolean = false;

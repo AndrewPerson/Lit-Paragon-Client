@@ -30,7 +30,7 @@ declare const SKIN_CSS: string;
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {
-    static styles = [textCss, imgCss, searchCss, selectCss, scrollbarCss, pageCss, fullElementCss, announcementCss, unsafeCSS(SKIN_CSS ?? "")];
+    static styles = [textCss, imgCss, searchCss, selectCss, scrollbarCss, pageCss, fullElementCss, announcementCss];
 
     @state()
     announcements: Announcements;
