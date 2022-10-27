@@ -1,5 +1,5 @@
 {
-    "version": "2.2.78",
+    "version": "2.2.79",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -36,6 +36,15 @@
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
             "version": "1.0.1"
+        },
+        "Skins": {
+            "navIcon": "/nav-icon.svg",
+            "url": "https://skins-paragon-pages.pages.dev",
+            "preview": true,
+            "description": "Allows you to create and use skins for Paragon.",
+            "icon": "/icon.svg",
+            "darkIcon": "/dark-icon.svg",
+            "version": "0.0.1"
         }
     }
 }
