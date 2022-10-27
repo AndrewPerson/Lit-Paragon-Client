@@ -141,7 +141,19 @@ export class Resources {
             return false;
         }
 
-        let resourceResult: ResourceResult = await resourceResponse.json();
+        let resourceResult: ResourceResult;
+        try {
+            resourceResult = await resourceResponse.json();
+        }
+        catch (e) {
+            resourceNotification.Close();
+            this.ShowLoginNotification();
+            
+            this._fetchCallbacks.Invoke(false);
+            this._fetching = false;
+
+            return false;
+        }
 
         let cache = await caches.open(RESOURCE_CACHE);
 
