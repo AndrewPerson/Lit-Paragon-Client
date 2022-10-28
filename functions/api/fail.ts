@@ -1,0 +1,1 @@
+export const onRequestGet = () =>  new Response("Fail", { status: 500 });

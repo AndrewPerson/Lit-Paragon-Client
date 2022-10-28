@@ -38,7 +38,7 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                 return result;
             }
             else {
-                let result = new Response("An error unknown occurred.", {
+                let result = new Response("An unknown error occurred.", {
                     status: 500
                 });
 
