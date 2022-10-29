@@ -1,8 +1,8 @@
-import { create } from "../../lib/function";
-import { ErrorResponse } from "../../lib/error";
-import { Token, TokenFactory } from "../../lib/token";
-import { SBHSEnv } from "../../lib/env";
 import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
+import { create } from "../lib/function";
+import { ErrorResponse } from "../lib/error";
+import { Token, TokenFactory } from "../lib/token";
+import { SBHSEnv } from "../lib/env";
 
 const RESOURCES: Map<string, string> = new Map([
     ["dailynews/list.json", "announcements"],
@@ -37,7 +37,7 @@ async function getResource(resource: string, token: Token, tracer: RequestTracer
     return await response.json();
 }
 
-export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honeycomb: { tracer } } }) => {
+export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, data: { tracer } }) => {
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     if (new Date() > token.termination) {
@@ -50,7 +50,7 @@ export const onRequestGet = create<SBHSEnv>(async ({ env, request, data: { honey
             }
         });
 
-        return new Response("The token is terminated.", { status: 422 });
+        throw new ErrorResponse("The token is terminated.", 422);
     }
 
     tracer.addData({

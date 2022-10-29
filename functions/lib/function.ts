@@ -1,14 +1,24 @@
-import { PluginData } from "@cloudflare/pages-plugin-honeycomb";
+import { RequestTracer, resolve } from "@cloudflare/workers-honeycomb-logger";
 import { ErrorResponse } from "./error";
+import { Data } from "./data";
 
-export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFunction<Env, any, PluginData> {
+export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
     return async (context) => {
-        context.data.honeycomb.tracer.addRequest(context.request);
+        const tracer = new RequestTracer(context.request, resolve({
+            dataset: honeycombDataset,
+            //@ts-ignore
+            apiKey: context.env.HONEYCOMB_API_KEY,
+            serviceName: "paragon"
+        }));
+
+        context.data.tracer = tracer;
 
         try {
             let result = await func(context);
-            context.data.honeycomb.tracer.addResponse(result);
-            context.data.honeycomb.tracer.addData({ error: !result.ok });
+            tracer.addResponse(result);
+            tracer.addData({ error: !result.ok });
+
+            tracer.sendEvents();
 
             return result;
         }
@@ -19,8 +29,10 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                     headers: error.headers
                 });
 
-                context.data.honeycomb.tracer.addResponse(result);
-                context.data.honeycomb.tracer.addData({ error: true });
+                tracer.addResponse(result);
+                tracer.addData({ error: true });
+
+                tracer.sendEvents();
 
                 return result;
             }
@@ -32,18 +44,22 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                     }
                 });
 
-                context.data.honeycomb.tracer.addResponse(result);
-                context.data.honeycomb.tracer.addData({ error: true });
+                tracer.addResponse(result);
+                tracer.addData({ error: true });
+
+                tracer.sendEvents();
 
                 return result;
             }
             else {
-                let result = new Response("An error unknown occurred.", {
+                let result = new Response("An unknown error occurred.", {
                     status: 500
                 });
 
-                context.data.honeycomb.tracer.addResponse(result);
-                context.data.honeycomb.tracer.addData({ error: true });
+                tracer.addResponse(result);
+                tracer.addData({ error: true });
+
+                tracer.sendEvents();
 
                 return result;
             }
