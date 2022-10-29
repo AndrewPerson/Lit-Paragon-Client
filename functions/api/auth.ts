@@ -1,9 +1,9 @@
-import { create } from "../../lib/function";
-import { ErrorResponse } from "../../lib/error";
-import { TokenFactory } from "../../lib/token";
-import { SBHSEnv } from "../../lib/env";
+import { create } from "../lib/function";
+import { ErrorResponse } from "../lib/error";
+import { TokenFactory } from "../lib/token";
+import { SBHSEnv } from "../lib/env";
 
-export const onRequestPost = create<SBHSEnv>(async ({ env, request, data: { honeycomb: { tracer } } }) => {
+export const onRequestPost = create<SBHSEnv>("auth", async ({ env, request, data: { tracer } }) => {
     let json: unknown = await request.json();
 
     if (typeof json !== "object") return new Response("Body must be JSON object.", { status: 400 });
