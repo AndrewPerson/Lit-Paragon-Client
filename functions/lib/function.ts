@@ -3,28 +3,6 @@ import { ErrorResponse } from "./error";
 
 export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFunction<Env, any, PluginData> {
     return async (context) => {
-        try {
-            return await func(context);
-        }
-        catch (error) {
-            if (error instanceof ErrorResponse) {
-                return new Response(error.message, {
-                    status: error.statusCode
-                });
-            }
-            else if (error instanceof Error) {
-                return new Response(error.message, {
-                    status: 500
-                });
-            }
-            else {
-                return new Response("An unknown error occurred.", {
-                    status: 500
-                });
-            }
-        }
-
-        /*
         context.data.honeycomb.tracer.addRequest(context.request);
 
         try {
@@ -70,6 +48,5 @@ export function create<Env>(func: PagesFunction<Env, any, PluginData>): PagesFun
                 return result;
             }
         }
-        */
     }
 }
