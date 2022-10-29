@@ -5,6 +5,7 @@ import { SBHSEnv } from "../../lib/env";
 export const onRequestGet = /*create<SBHSEnv>(async ({ env, request }) => {
     throw new ErrorResponse("Fail", 500);
 });*/
+/*
 (context) => {
     context.data.honeycomb.tracer.addRequest(context.request);
 
@@ -16,4 +17,10 @@ export const onRequestGet = /*create<SBHSEnv>(async ({ env, request }) => {
     context.data.honeycomb.tracer.addData({ error: true });
 
     return result;
+}
+*/
+(context) => {
+    return new Response("Fail", {
+        status: 500
+    });
 }
