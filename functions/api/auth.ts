@@ -12,6 +12,9 @@ export const onRequestPost = create<SBHSEnv>("auth", async ({ env, request, data
 
     let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
         body: new URLSearchParams({
             code: json["code"],
             grant_type: "authorization_code",
