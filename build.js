@@ -5,15 +5,12 @@ const config = require("./build.json");
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile, readdir, copyFile } from "fs/promises";
+import { writeFile, readFile, rmdir, readdir, copyFile } from "fs/promises";
 
 import { exec } from "child_process";
 
-import { optimize } from "svgo";
-
 import { build } from "esbuild";
 
-import clear from "esbuild-plugin-clear";
 import conditionalBuild from "esbuild-plugin-conditional-build";
 
 function transformVars(vars) {
@@ -88,6 +85,8 @@ async function Main() {
 
     let metadataPromise = copyFile(path.resolve(dirname, "metadata.json"), path.resolve(dirname, "site/metadata.json"));
 
+    await rmdir(path.resolve(dirname, "site/dist"), { recursive: true });
+
     let tsPromise = new Promise(res => {
         exec("npx tsc --noEmit", (err, stdout, stderr) => {
             console.log(stdout);
@@ -109,7 +108,6 @@ async function Main() {
         target: "es2016",
         define: transformVars(env.vars),
         plugins: [
-            clear("./site/dist"),
             {
                 name: "css-redirect",
                 setup(build) {

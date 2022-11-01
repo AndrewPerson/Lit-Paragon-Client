@@ -9,11 +9,9 @@
         "@types/service-worker-mock": "^2.0.1",
         "esbuild": "^0.14.8",
         "esbuild-linux-64": "^0.14.2",
-        "esbuild-plugin-clear": "^1.0.1",
         "esbuild-plugin-conditional-build": "^1.0.2",
         "local-web-server": "^5.1.1",
         "sbhs-random-data": "^1.0.9",
-        "svgo": "^2.8.0",
         "typescript": "^4.5.4"
     },
     "scripts": {
