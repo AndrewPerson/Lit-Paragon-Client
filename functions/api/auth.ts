@@ -17,7 +17,7 @@ export const onRequestPost = create<SBHSEnv>("auth", async ({ env, request, data
             grant_type: "authorization_code",
             client_id: env.CLIENT_ID,
             client_secret: env.CLIENT_SECRET,
-            redirect_uri: "https://paragon.pages.dev/callback"
+            redirect_uri: env.REDIRECT_URI
         })
     });
 
