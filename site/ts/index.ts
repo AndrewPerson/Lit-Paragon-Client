@@ -94,43 +94,6 @@ async function Main() {
     catch(_) {
         await Site.SetMetadata(await (await fetch(METADATA_ENDPOINT)).json());
     }
-
-    let lastPromptedInstall = localStorage.getItem("Last Prompted Install");
-    let promptedInstall = lastPromptedInstall == null ? false : new Date().getTime() - new Date(lastPromptedInstall).getTime() < INSTALL_PROMPT_FREQUENCY;
-    window.addEventListener("beforeinstallprompt", e => {
-        if (promptedInstall) return;
-        promptedInstall = true;
-
-        e.preventDefault();
-
-        localStorage.setItem("Last Prompted Install", new Date().toISOString());
-
-        let deferredPrompt = e as Event & {
-            prompt: () => void;
-            userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-        };
-
-        let text = document.createElement("p");
-
-        let button = document.createElement("button");
-        button.classList.add("a");
-        button.innerText = "Click";
-
-        button.addEventListener("click", () => {
-            deferredPrompt.prompt();
-        });
-
-        text.appendChild(button);
-        text.appendChild(document.createTextNode(" to install Paragon."));
-
-        let notification = Site.ShowNotification(text);
-
-        deferredPrompt.userChoice.then(choiceResult => {
-            notification.Close();
-
-            if (choiceResult.outcome == "accepted") Site.ShowNotification("Thanks for installing Paragon!");
-        });
-    });
 }
 
 function NavigateToHash(hash: string) {
