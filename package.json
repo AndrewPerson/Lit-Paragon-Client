@@ -12,7 +12,7 @@
         "esbuild-plugin-clear": "^1.0.1",
         "esbuild-plugin-conditional-build": "^1.0.2",
         "local-web-server": "^5.1.1",
-        "sbhs-random-data": "^1.0.0",
+        "sbhs-random-data": "^1.0.9",
         "svgo": "^2.8.0",
         "typescript": "^4.5.4"
     },
