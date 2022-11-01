@@ -49,9 +49,6 @@ let params = new URLSearchParams(window.location.search);
 
 let code = params.get("code");
 
-console.log(code);
-
-/*
 if (code) {
     GetToken(code)
     .then(succeeded => {
@@ -65,4 +62,3 @@ else {
     if (error) ShowError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }
-*/
