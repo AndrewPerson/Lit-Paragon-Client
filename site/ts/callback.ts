@@ -47,17 +47,6 @@ function ShowError(error: string) {
 
 let params = new URLSearchParams(window.location.search);
 
-//#if DEVELOPMENT
-let error = params.get("error");
-
-if (error) ShowError(error)
-else {
-    Token("").then(succeeded => {
-        if (succeeded) location.href = location.origin;
-        else ShowError("Could not get token");
-    });
-}
-//#else
 let code = params.get("code");
 
 if (code) {
@@ -73,4 +62,3 @@ else {
     if (error) ShowError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }
-//#endif
