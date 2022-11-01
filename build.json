@@ -46,12 +46,12 @@
             ],
             "vars": {
                 "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata.json",
-                "SERVER_ENDPOINT": "https://sbhs-random-data.profsmart.repl.co",
+                "SERVER_ENDPOINT": "https://rewrite.paragon.pages.dev/api",
                 "CLIENT_ID": "Paragon_Tools",
-                "MAX_REFRESH_FREQUENCY": 0
+                "MAX_REFRESH_FREQUENCY": 60000
             },
             "js": {
-                "sourcemaps": false,
+                "sourcemaps": true,
                 "minify": true,
                 "treeShaking": true
             }
