@@ -5,7 +5,7 @@ const config = require("./build.json");
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile, rmdir, readdir, copyFile } from "fs/promises";
+import { writeFile, readFile, rm, readdir, copyFile } from "fs/promises";
 
 import { exec } from "child_process";
 
@@ -85,7 +85,7 @@ async function Main() {
 
     let metadataPromise = copyFile(path.resolve(dirname, "metadata.json"), path.resolve(dirname, "site/metadata.json"));
 
-    await rmdir(path.resolve(dirname, "site/dist"), { recursive: true });
+    await rm(path.resolve(dirname, "site/dist"), { force: true, recursive: true });
 
     let tsPromise = new Promise(res => {
         exec("npx tsc --noEmit", (err, stdout, stderr) => {
