@@ -26,9 +26,4 @@ export class Tracer extends RequestTracer {
     addData(data: object) {
         mergeDeep(this.data, data);
     }
-
-    async sendEvents(excludeSpans?: string[]): Promise<void> {
-        console.log(this.data);
-        super.sendEvents(excludeSpans);
-    }
 }
