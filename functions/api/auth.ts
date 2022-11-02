@@ -12,12 +12,15 @@ export const onRequestPost = create<SBHSEnv>("auth", async ({ env, request, data
 
     let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
         body: new URLSearchParams({
             code: json["code"],
             grant_type: "authorization_code",
             client_id: env.CLIENT_ID,
             client_secret: env.CLIENT_SECRET,
-            redirect_uri: "https://paragon.pages.dev/callback"
+            redirect_uri: env.REDIRECT_URI
         })
     });
 

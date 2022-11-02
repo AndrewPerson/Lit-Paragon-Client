@@ -1,3 +1,5 @@
+import { parseJSONStream } from "@andrewperson/parse-json-stream";
+
 import { Site } from "./site";
 
 import { Callbacks, Callback } from "./callback";
@@ -141,30 +143,42 @@ export class Resources {
             return false;
         }
 
-        let resourceResult: ResourceResult;
-        try {
-            resourceResult = await resourceResponse.json();
-        }
-        catch (e) {
-            resourceNotification.Close();
-            this.ShowLoginNotification();
-            
-            this._fetchCallbacks.Invoke(false);
-            this._fetching = false;
+        let parser = parseJSONStream([
+            ["token"],
+            ["result", "*"]
+        ]);
 
-            return false;
-        }
+        let finishedPiping = false;
+        let objectHandlerCount = 0;
 
-        let cache = await caches.open(RESOURCE_CACHE);
+        let objectHandlerPromise = new Promise<void>(resolve => {
+            parser.onObject(async (path, object) => {
+                objectHandlerCount++;
 
-        await cache.put("Token", new Response(JSON.stringify(resourceResult.token)));
+                if (path[0] == "token") {
+                    let cache = await caches.open(RESOURCE_CACHE);
 
-        await this.SetResources(Object.keys(resourceResult.result).map(key => {
-            return {
-                name: key,
-                resource: JSON.stringify(resourceResult.result[key])
-            };
+                    await cache.put("Token", new Response(object));
+                }
+                else {
+                    await this.SetResource(path[1], object);
+                }
+
+                objectHandlerCount--;
+
+                if (objectHandlerCount == 0 && finishedPiping) resolve();
+            });
+        });
+
+        await resourceResponse.body?.pipeTo(new WritableStream({
+            write: parser.write.bind(parser),
         }));
+
+        parser.finish();
+
+        finishedPiping = true;
+
+        if (!(objectHandlerCount == 0 && finishedPiping)) await objectHandlerPromise;
 
         resourceNotification.Close();
 

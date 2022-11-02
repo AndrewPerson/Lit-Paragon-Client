@@ -20,6 +20,9 @@ export class TokenFactory {
 
         let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
             body: new URLSearchParams({
                 refresh_token: token.refresh_token,
                 grant_type: "refresh_token",

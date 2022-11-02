@@ -1,6 +1,7 @@
 {
     "type": "module",
     "dependencies": {
+        "@andrewperson/parse-json-stream": "^0.0.4",
         "@cloudflare/workers-honeycomb-logger": "^2.3.3",
         "lit": "^2.0.2"
     },
@@ -9,14 +10,13 @@
         "@types/service-worker-mock": "^2.0.1",
         "esbuild": "^0.14.8",
         "esbuild-linux-64": "^0.14.2",
-        "esbuild-plugin-clear": "^1.0.1",
         "esbuild-plugin-conditional-build": "^1.0.2",
         "local-web-server": "^5.1.1",
-        "sbhs-random-data": "^1.0.0",
-        "svgo": "^2.8.0",
+        "sbhs-random-data": "^1.1.1",
         "typescript": "^4.5.4"
     },
     "scripts": {
+        "build": "node build",
         "serve": "npx ws -d site --static.extensions html --stack dev-server/mw-serviceworker.js dev-server/mw-metadata.js dev-server/mw-login.js lws-static -p 5555 & npx sbhs-random-data"
     }
 }

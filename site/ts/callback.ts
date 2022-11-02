@@ -5,7 +5,7 @@ import LOGIN_URL from "./login-url";
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
-async function Token(code: string) {
+async function GetToken(code: string) {
     let tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
         method: "POST",
         body: JSON.stringify({
@@ -47,21 +47,10 @@ function ShowError(error: string) {
 
 let params = new URLSearchParams(window.location.search);
 
-//#if DEVELOPMENT
-let error = params.get("error");
-
-if (error) ShowError(error)
-else {
-    Token("").then(succeeded => {
-        if (succeeded) location.href = location.origin;
-        else ShowError("Could not get token");
-    });
-}
-//#else
 let code = params.get("code");
 
 if (code) {
-    Token(code)
+    GetToken(code)
     .then(succeeded => {
         sessionStorage.removeItem("Last Refreshed");
         location.href = `${location.origin}/${succeeded ? "" : "login"}`;
@@ -73,4 +62,3 @@ else {
     if (error) ShowError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }
-//#endif
