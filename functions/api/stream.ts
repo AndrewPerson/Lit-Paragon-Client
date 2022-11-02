@@ -50,7 +50,7 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     let { readable, writable } = new TransformStream();
 
     let writer = writable.getWriter();
-    writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"data":{`));
+    writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"result":{`));
     writer.releaseLock();
 
     streamJsonBodies(responses, writable);
