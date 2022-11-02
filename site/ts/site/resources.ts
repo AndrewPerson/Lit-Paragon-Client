@@ -109,7 +109,7 @@ export class Resources {
 
         let resourceNotification = this.ShowResourceNotification();
 
-        let serverUrl = new URL(`${SERVER_ENDPOINT}/stream`);
+        let serverUrl = new URL(`${SERVER_ENDPOINT}/resources`);
         serverUrl.searchParams.append("token", JSON.stringify(token));
 
         let resourceResponse: Response;

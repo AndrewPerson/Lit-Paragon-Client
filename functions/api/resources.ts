@@ -1,40 +1,57 @@
 import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
 import { create } from "../lib/function";
-import { ErrorResponse } from "../lib/error";
+import { ErrorResponse, SBHSError, UnauthorisedError } from "../lib/error";
 import { Token, TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 
-const RESOURCES: Map<string, string> = new Map([
-    ["dailynews/list.json", "announcements"],
-    ["timetable/daytimetable.json", "dailytimetable"],
-    ["timetable/timetable.json", "timetable"],
-    ["details/userinfo.json", "userinfo"]
-]);
+type Responses = {
+    name: string,
+    response: Response
+}[];
 
-async function getResource(resource: string, token: Token, tracer: RequestTracer) {
-    let response = await tracer.fetch(`https://student.sbhs.net.au/api/${resource}`, {
-        headers: {
-            "Authorization": `Bearer ${token.access_token}`
+async function getResources(token: Token, tracer: RequestTracer) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    const RESOURCES: Map<string, string> = new Map([
+        ["dailynews/list.json", "announcements"],
+        ["timetable/daytimetable.json", "dailytimetable"],
+        [`timetable/daytimetable.json?date=${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, "0")}-${tomorrow.getDate().toString().padStart(2, "0")}`, "next-dailytimetable"],
+        ["timetable/timetable.json", "timetable"],
+        ["details/userinfo.json", "userinfo"]
+    ]);
+
+    const requestInit = {
+        headers: { "Authorization": `Bearer ${token.access_token}` }
+    };
+
+    let requests = [...RESOURCES.entries()].map(([url, name]) => tracer.fetch(`https://student.sbhs.net.au/api/${url}`, requestInit).then(response => ({
+        name: name,
+        response: response
+    })));
+
+    // Wait for each fetch() to complete.
+    let responses = await Promise.all(requests);
+    
+    if (!responses.every(r => r.response.ok)) {
+        for (let { response } of responses) {
+            if (response.status >= 500) {
+                throw new SBHSError();
+            }
+    
+            if (response.status == 401) {
+                throw new UnauthorisedError();
+            }
+    
+            if (response.status >= 400) {
+                throw new Error("An error occurred on the Paragon servers.");
+            }
+    
+            throw new Error("An unknown error occurred.");
         }
-    });
-
-    if (!response.ok) {
-        if (response.status >= 500) {
-            throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
-        }
-
-        if (response.status == 401) {
-            throw new ErrorResponse("Unauthorised.", 401);
-        }
-
-        if (response.status >= 400) {
-            throw new ErrorResponse("An error occurred on the Paragon servers.", 500);
-        }
-
-        throw new ErrorResponse("An unknown error occurred.", 500);
     }
 
-    return await response.json();
+    return responses;
 }
 
 export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, data: { tracer } }) => {
@@ -74,36 +91,64 @@ export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, 
         });
     }
 
-    let result: {
-        result: {[index: string]: any},
-        token: Token
-    } = {
-        result: {},
-        token: token
-    };
+    let responses: Responses;
+    let maxRetries = 3;
 
-    let promises = [];
-
-    for (let [url, name] of RESOURCES.entries()) {
-        promises.push(getResource(url, token, tracer).then(resourceResponse => {
-            result.result[name] = resourceResponse;
-        }));
+    while (maxRetries > 0) {
+        try {
+            responses = await getResources(token, tracer);
+            break;
+        }
+        catch (e) {
+            if (e instanceof SBHSError) {
+                maxRetries--;
+            }
+            else if (e instanceof UnauthorisedError) {
+                token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
+                maxRetries--;
+            }
+            else {
+                throw new ErrorResponse(e.message, 500);
+            }
+        }
     }
 
-    let now = new Date();
+    // Create a pipe and stream the response bodies out
+    // as a JSON array.
+    let { readable, writable } = new TransformStream();
 
-    let month = (now.getMonth() + 1).toString().padStart(2, "0");
-    let day = (now.getDate() + 1).toString().padStart(2, "0");
+    let writer = writable.getWriter();
+    await writer.ready;
+    writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"result":{`));
 
-    promises.push(getResource(`timetable/daytimetable.json?date=${now.getFullYear()}-${month}-${day}`, token, tracer).then(resourceResponse => {
-        result.result["next-dailytimetable"] = resourceResponse;
-    }));
+    streamJsonBodies(responses, writer);
 
-    await Promise.all(promises);
-
-    return new Response(JSON.stringify(result), {
+    return new Response(readable, {
         headers: {
             "Content-Type": "application/json"
         }
     });
 });
+
+async function streamJsonBodies(responses: Responses, writer: WritableStreamDefaultWriter) {
+    // We're presuming these bodies are JSON, so we
+    // concatenate them into a JSON object. Since we're
+    // streaming, we can't use JSON.stringify()
+
+    let encoder = new TextEncoder();
+
+    let writeCount = 0;
+    for (let i = 0; i < responses.length; i++) {
+        responses[i].response.text().then(async result => {
+            writeCount++;
+
+            if (writeCount == responses.length) {
+                writer.write(encoder.encode(`"${responses[i].name}":${result}}}`));
+                writer.close();
+            }
+            else {
+                writer.write(encoder.encode(`"${responses[i].name}":${result},`));
+            }
+        });
+    }
+}
