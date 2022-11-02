@@ -49,7 +49,9 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     // as a JSON array.
     let { readable, writable } = new TransformStream();
 
-    writable.getWriter().write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"data":{`));
+    let writer = writable.getWriter();
+    writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"data":{`));
+    writer.releaseLock();
 
     streamJsonBodies(responses, writable);
 
@@ -65,23 +67,21 @@ async function streamJsonBodies(responses: { name: string, response: Response }[
     // concatenate them into a JSON array. Since we're
     // streaming, we can't use JSON.stringify()
 
-    let writer = writable.getWriter()
-    let encoder = new TextEncoder()
+    let encoder = new TextEncoder();
+    let writer = writable.getWriter();
 
+    let writeCount = 0;
     for (let i = 0; i < responses.length; i++) {
-        if (i > 0) {
-            await writer.write(",");
-        }
+        responses[i].response.text().then(async result => {
+            writeCount++;
 
-        await writer.write(`"${responses[i].name}":`)
-
-        writer.releaseLock();
-        await responses[i].response.body.pipeTo(writable, { preventClose: true });
-
-        writer = writable.getWriter();
+            if (writeCount == responses.length) {
+                writer.write(encoder.encode(`"${responses[i].name}":${result}}}`));
+                await writer.close();
+            }
+            else {
+                writer.write(encoder.encode(`"${responses[i].name}":${result},`));
+            }
+        });
     }
-
-    await writer.write(encoder.encode("}}"));
-
-    await writer.close();
 }
