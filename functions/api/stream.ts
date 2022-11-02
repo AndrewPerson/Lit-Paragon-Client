@@ -18,7 +18,7 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
         headers: { "Authorization": `Bearer ${token.access_token}` }
     };
 
-    let requests = [...RESOURCES.entries()].map(([url, name]) => tracer.fetch(url, requestInit).then(response => ({
+    let requests = [...RESOURCES.entries()].map(([url, name]) => tracer.fetch(`https://student.sbhs.net.au/api/${url}`, requestInit).then(response => ({
         name: name,
         response: response
     })));
