@@ -12,11 +12,13 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
             serviceName: "paragon"
         }));
 
+        tracer.start();
+
         context.data.tracer = tracer;
 
         try {
             let result = await func(context);
-            tracer.addResponse(result);
+            tracer.finishResponse(result);
             tracer.addData({ error: !result.ok });
 
             tracer.sendEvents();
@@ -30,7 +32,7 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
                     headers: error.headers
                 });
 
-                tracer.addResponse(result);
+                tracer.finishResponse(result);
                 tracer.addData({ error: true });
 
                 tracer.sendEvents();
@@ -45,7 +47,7 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
                     }
                 });
 
-                tracer.addResponse(result);
+                tracer.finishResponse(result);
                 tracer.addData({ error: true });
 
                 tracer.sendEvents();
@@ -57,7 +59,7 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
                     status: 500
                 });
 
-                tracer.addResponse(result);
+                tracer.finishResponse(result);
                 tracer.addData({ error: true });
 
                 tracer.sendEvents();
