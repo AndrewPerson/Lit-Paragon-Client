@@ -9,7 +9,6 @@ type Responses = {
     response: Response
 }[];
 
-
 const RESOURCES: Map<string, string> = new Map([
     ["dailynews/list.json", "announcements"],
     ["timetable/daytimetable.json", "dailytimetable"],
