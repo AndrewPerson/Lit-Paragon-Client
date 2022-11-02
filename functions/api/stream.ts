@@ -18,7 +18,7 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
         headers: { "Authorization": `Bearer ${token.access_token}` }
     };
 
-    let requests = [...RESOURCES.entries()].map(([name, url]) => tracer.fetch(url, requestInit).then(response => ({
+    let requests = [...RESOURCES.entries()].map(([url, name]) => tracer.fetch(url, requestInit).then(response => ({
         name: name,
         response: response
     })));
@@ -48,6 +48,9 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     // Create a pipe and stream the response bodies out
     // as a JSON array.
     let { readable, writable } = new TransformStream();
+
+    writable.getWriter().write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"data":{`));
+
     streamJsonBodies(responses, writable);
 
     return new Response(readable, {
@@ -60,27 +63,25 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
 async function streamJsonBodies(responses: { name: string, response: Response }[], writable: WritableStream) {
     // We're presuming these bodies are JSON, so we
     // concatenate them into a JSON array. Since we're
-    // streaming, we can't use JSON.stringify(), but must
-    // instead manually write an initial '[' before the
-    // bodies, interpolate ',' between them, and write a
-    // terminal ']' after them.
+    // streaming, we can't use JSON.stringify()
 
     let writer = writable.getWriter()
     let encoder = new TextEncoder()
 
-    await writer.write(encoder.encode("[\n"))
-
-    for (let i = 0; i < responses.length; ++i) {
+    for (let i = 0; i < responses.length; i++) {
         if (i > 0) {
-            await writer.write(encoder.encode(",\n"))
+            await writer.write(",");
         }
+
+        await writer.write(`"${responses[i].name}":`)
 
         writer.releaseLock();
         await responses[i].response.body.pipeTo(writable, { preventClose: true });
+
         writer = writable.getWriter();
     }
 
-    await writer.write(encoder.encode("]"));
+    await writer.write(encoder.encode("}}"));
 
     await writer.close();
 }
