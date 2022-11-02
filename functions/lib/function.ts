@@ -1,10 +1,11 @@
-import { RequestTracer, resolve } from "@cloudflare/workers-honeycomb-logger";
+import { resolve } from "@cloudflare/workers-honeycomb-logger";
+import { Tracer } from "./tracer";
 import { ErrorResponse } from "./error";
 import { Data } from "./data";
 
 export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
     return async (context) => {
-        const tracer = new RequestTracer(context.request, resolve({
+        const tracer = new Tracer(context.request, resolve({
             dataset: honeycombDataset,
             //@ts-ignore
             apiKey: context.env.HONEYCOMB_API_KEY,
