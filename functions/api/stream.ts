@@ -1,19 +1,26 @@
+import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
 import { create } from "../lib/function";
-import { ErrorResponse } from "../lib/error";
-import { TokenFactory } from "../lib/token";
+import { ErrorResponse, SBHSError, UnauthorisedError } from "../lib/error";
+import { Token, TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
+
+type Responses = {
+    name: string,
+    response: Response
+}[];
+
+const tomorrow = new Date();
+tomorrow.setDate(tomorrow.getDate() + 1);
 
 const RESOURCES: Map<string, string> = new Map([
     ["dailynews/list.json", "announcements"],
     ["timetable/daytimetable.json", "dailytimetable"],
+    [`timetable/daytimetable.json?date=${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, "0")}-${tomorrow.getDate().toString().padStart(2, "0")}`, "next-dailytimetable"],
     ["timetable/timetable.json", "timetable"],
     ["details/userinfo.json", "userinfo"]
 ]);
 
-//TODO Add token refreshing. Oops...
-export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, data: { tracer } }) => {
-    let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
-
+async function getResources(token: Token, tracer: RequestTracer) {
     const requestInit = {
         headers: { "Authorization": `Bearer ${token.access_token}` }
     };
@@ -24,24 +31,86 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     })));
 
     // Wait for each fetch() to complete.
-    let responses = await Promise.all(requests)
-
-    // Make sure every subrequest succeeded.
+    let responses = await Promise.all(requests);
+    
     if (!responses.every(r => r.response.ok)) {
         for (let { response } of responses) {
             if (response.status >= 500) {
-                throw new ErrorResponse("An error occurred on the SBHS servers.", 502);
+                throw new SBHSError();
             }
     
             if (response.status == 401) {
-                throw new ErrorResponse("Unauthorised.", 401);
+                throw new UnauthorisedError();
             }
     
             if (response.status >= 400) {
-                throw new ErrorResponse("An error occurred on the Paragon servers.", 500);
+                throw new Error("An error occurred on the Paragon servers.");
             }
     
-            throw new ErrorResponse("An unknown error occurred.", 500);
+            throw new Error("An unknown error occurred.");
+        }
+    }
+
+    return responses;
+}
+
+//TODO Add token refreshing. Oops...
+export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, data: { tracer } }) => {
+    let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
+
+    if (new Date() > token.termination) {
+        tracer.addData({
+            token: {
+                termination: {
+                    terminated: true,
+                    date: token.termination
+                }
+            }
+        });
+
+        throw new ErrorResponse("The token is terminated.", 422);
+    }
+
+    tracer.addData({
+        token: {
+            termination: {
+                terminated: false
+            }
+        }
+    });
+
+    if (new Date() > token.expiry) {
+        token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
+    }
+    else {
+        tracer.addData({
+            token: {
+                refresh: {
+                    attempted: false
+                }
+            }
+        });
+    }
+
+    let responses: Responses;
+    let maxRetries = 3;
+
+    while (maxRetries > 0) {
+        try {
+            responses = await getResources(token, tracer);
+            break;
+        }
+        catch (e) {
+            if (e instanceof SBHSError) {
+                maxRetries--;
+            }
+            else if (e instanceof UnauthorisedError) {
+                token = await TokenFactory.Refresh(token, env.CLIENT_ID, env.CLIENT_SECRET, tracer);
+                maxRetries--;
+            }
+            else {
+                throw new ErrorResponse(e.message, 500);
+            }
         }
     }
 
@@ -50,10 +119,10 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     let { readable, writable } = new TransformStream();
 
     let writer = writable.getWriter();
+    await writer.ready;
     writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"result":{`));
-    writer.releaseLock();
 
-    streamJsonBodies(responses, writable);
+    streamJsonBodies(responses, writer);
 
     return new Response(readable, {
         headers: {
@@ -62,13 +131,12 @@ export const onRequestGet = create<SBHSEnv>("stream", async ({ env, request, dat
     });
 });
 
-async function streamJsonBodies(responses: { name: string, response: Response }[], writable: WritableStream) {
+async function streamJsonBodies(responses: Responses, writer: WritableStreamDefaultWriter) {
     // We're presuming these bodies are JSON, so we
-    // concatenate them into a JSON array. Since we're
+    // concatenate them into a JSON object. Since we're
     // streaming, we can't use JSON.stringify()
 
     let encoder = new TextEncoder();
-    let writer = writable.getWriter();
 
     let writeCount = 0;
     for (let i = 0; i < responses.length; i++) {
@@ -77,7 +145,7 @@ async function streamJsonBodies(responses: { name: string, response: Response }[
 
             if (writeCount == responses.length) {
                 writer.write(encoder.encode(`"${responses[i].name}":${result}}}`));
-                await writer.close();
+                writer.close();
             }
             else {
                 writer.write(encoder.encode(`"${responses[i].name}":${result},`));
