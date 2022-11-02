@@ -9,18 +9,20 @@ type Responses = {
     response: Response
 }[];
 
-const tomorrow = new Date();
-tomorrow.setDate(tomorrow.getDate() + 1);
 
 const RESOURCES: Map<string, string> = new Map([
     ["dailynews/list.json", "announcements"],
     ["timetable/daytimetable.json", "dailytimetable"],
-    [`timetable/daytimetable.json?date=${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, "0")}-${tomorrow.getDate().toString().padStart(2, "0")}`, "next-dailytimetable"],
     ["timetable/timetable.json", "timetable"],
     ["details/userinfo.json", "userinfo"]
 ]);
 
 async function getResources(token: Token, tracer: RequestTracer) {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    
+    RESOURCES.set(`timetable/daytimetable.json?date=${tomorrow.getFullYear()}-${(tomorrow.getMonth() + 1).toString().padStart(2, "0")}-${tomorrow.getDate().toString().padStart(2, "0")}`, "next-dailytimetable");
+
     const requestInit = {
         headers: { "Authorization": `Bearer ${token.access_token}` }
     };
