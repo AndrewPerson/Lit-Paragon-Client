@@ -40,11 +40,8 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
                 return result;
             }
             else if (error instanceof Error) {
-                let result = new Response(JSON.stringify({ error: error.message }), {
-                    status: 500,
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
+                let result = new Response(error.message, {
+                    status: 500
                 });
 
                 tracer.finishResponse(result);
