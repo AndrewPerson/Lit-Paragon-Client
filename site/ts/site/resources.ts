@@ -159,11 +159,15 @@ export class Resources {
                 objectHandlerCount++;
 
                 if (path[0] == "token") {
+                    console.log(`Setting token: ${object}`);
+
                     let cache = await caches.open(RESOURCE_CACHE);
 
                     await cache.put("Token", new Response(object));
                 }
                 else {
+                    console.log(`Setting ${path[1]}: ${object}`);
+
                     await this.SetResource(path[1], object);
                     receivedResourceCount++;
 
