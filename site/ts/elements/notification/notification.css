@@ -31,4 +31,6 @@
     height: 0.2rem;
     background-color: var(--surface4);
     border-radius: 0.2rem;
+
+    transition: width 0.5s;
 }
