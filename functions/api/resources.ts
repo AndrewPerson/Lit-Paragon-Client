@@ -82,42 +82,39 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
     let responsesReceived = new Promise<void>(resolve => responsesReceivedResolve = resolve);
 
     for (const resource of resources) {
-        //setTimeout is debug code. TODO Remove when done.
-        setTimeout(async () => {
-            tracer.fetch(`https://student.sbhs.net.au/api/${resource[0]}`, {
-                headers: {
-                    "Authorization": `Bearer ${token.access_token}`
+        tracer.fetch(`https://student.sbhs.net.au/api/${resource[0]}`, {
+            headers: {
+                "Authorization": `Bearer ${token.access_token}`
+            }
+        }).then(async response => {
+            receivedResourceCount++;
+
+            if (response.ok) {
+                writtenResourceCount++;
+
+                if (writtenResourceCount == 1 && !resourcesAlreadyWritten) {
+                    resourcesAlreadyWritten = true;
+                    await writer.write(encoder.encode(`"${resource[1]}":${await response.text()}`));
                 }
-            }).then(async response => {
-                receivedResourceCount++;
-
-                if (response.ok) {
-                    writtenResourceCount++;
-
-                    if (writtenResourceCount == 1 && !resourcesAlreadyWritten) {
-                        resourcesAlreadyWritten = true;
-                        await writer.write(encoder.encode(`"${resource[1]}":${await response.text()}`));
-                    }
-                    else if (writtenResourceCount == resources.length) {
-                        await writer.write(encoder.encode(`,"${resource[1]}":${await response.text()}}`));
-                    }
-                    else {
-                        await writer.write(encoder.encode(`,"${resource[1]}":${await response.text()}`));
-                    }
+                else if (writtenResourceCount == resources.length) {
+                    await writer.write(encoder.encode(`,"${resource[1]}":${await response.text()}}`));
                 }
                 else {
-                    failedResources.push([...resource, response.status]);
-
-                    if (response.status == 401) {
-                        refreshToken = true;
-                    }
+                    await writer.write(encoder.encode(`,"${resource[1]}":${await response.text()}`));
                 }
+            }
+            else {
+                failedResources.push([...resource, response.status]);
 
-                if (receivedResourceCount == resources.length) {
-                    responsesReceivedResolve();
+                if (response.status == 401) {
+                    refreshToken = true;
                 }
-            });
-        }, Math.random() * 10000);
+            }
+
+            if (receivedResourceCount == resources.length) {
+                responsesReceivedResolve();
+            }
+        });
     }
 
     await responsesReceived;
