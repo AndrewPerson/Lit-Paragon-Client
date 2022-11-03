@@ -58,7 +58,7 @@ export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, 
 
     await writer.ready;
 
-    writer.write(new TextEncoder().encode(`{"resources":{`));
+    writer.write(new TextEncoder().encode(`{"result":{`));
 
     streamResources(token, env.CLIENT_ID, env.CLIENT_SECRET, RESOURCES, writer, tracer);
 
