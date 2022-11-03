@@ -164,8 +164,6 @@ export class Resources {
                     await cache.put("Token", new Response(object));
                 }
                 else {
-                    console.log("Received resource", path[1]);
-
                     await this.SetResource(path[1], object);
                     receivedResourceCount++;
 
