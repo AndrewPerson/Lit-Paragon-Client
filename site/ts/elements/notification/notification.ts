@@ -15,6 +15,9 @@ export class InlineNotification extends LitElement {
     @property({ type: Boolean })
     loader: boolean;
 
+    @property({ type: Number })
+    percentage: number = 0;
+
     Close = (async () => {
         await this.updateComplete;
         this.remove();
@@ -33,6 +36,9 @@ export class InlineNotification extends LitElement {
                 </button>
             `
         }
+
+        <!--TODO Make this more accessible-->
+        <div class="progress" style="width: ${this.percentage * 100}%;"></div>
         `;
     }
 }
