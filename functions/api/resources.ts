@@ -1,6 +1,6 @@
 import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
 import { create } from "../lib/function";
-import { ErrorResponse, SBHSError, UnauthorisedError } from "../lib/error";
+import { ErrorResponse } from "../lib/error";
 import { Token, TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 

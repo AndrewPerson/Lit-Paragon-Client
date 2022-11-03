@@ -11,6 +11,3 @@ export class ErrorResponse extends Error {
         this.headers = headers;
     }
 }
-
-export class SBHSError extends Error {}
-export class UnauthorisedError extends Error {}
