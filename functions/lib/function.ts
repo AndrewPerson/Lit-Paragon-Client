@@ -21,7 +21,7 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
             tracer.finishResponse(result);
             tracer.addData({ error: !result.ok });
 
-            tracer.sendEvents();
+            result.clone().text().then(_ => tracer.sendEvents());
 
             return result;
         }
