@@ -5,6 +5,7 @@ export type Announcements = {
 }
 
 export type Announcement = {
+    id: number | Missing,
     title: string | Missing,
     content: string | Missing,
     years: string[] | Missing,
