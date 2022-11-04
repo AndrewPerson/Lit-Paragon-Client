@@ -58,7 +58,7 @@ export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, 
 
     await writer.ready;
 
-    writer.write(new TextEncoder().encode(`{"result":{`));
+    writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"result":{`));
 
     streamResources(token, env.CLIENT_ID, env.CLIENT_SECRET, RESOURCES, writer, tracer);
 
@@ -76,7 +76,6 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
     let receivedResourceCount = 0;
     let writtenResourceCount = 0;
     let failedResources: [string, string, number][] = [];
-    let refreshToken = false;
 
     let responsesReceivedResolve: (value: void | PromiseLike<void>) => void;
     let responsesReceived = new Promise<void>(resolve => responsesReceivedResolve = resolve);
@@ -105,10 +104,6 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
             }
             else {
                 failedResources.push([...resource, response.status]);
-
-                if (response.status == 401) {
-                    refreshToken = true;
-                }
             }
 
             if (receivedResourceCount == resources.length) {
@@ -121,10 +116,6 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
 
     if (failedResources.length > 0) {
         if (maxRetries > 0) {
-            if (refreshToken) {
-                token = await TokenFactory.Refresh(token, clientId, clientSecret, tracer);
-            }
-
             await streamResources(token, clientId, clientSecret, failedResources.map(x => [x[0], x[1]]), writer, tracer, maxRetries - 1, resourcesAlreadyWritten);
         }
         else {
@@ -167,12 +158,12 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
                 await writer.write(encoder.encode(`},"error":500`));
             }
 
-            await writer.write(encoder.encode(`,"token":${JSON.stringify(token)}}`));
+            await writer.write(encoder.encode(`}`));
             await writer.close();
         }
     }
     else {
-        await writer.write(encoder.encode(`,"token":${JSON.stringify(token)}}`));
+        await writer.write(encoder.encode(`}`));
         await writer.close();
     }
 }
