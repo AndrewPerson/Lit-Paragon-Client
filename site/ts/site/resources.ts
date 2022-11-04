@@ -59,20 +59,6 @@ export class Resources {
         return token;
     }
 
-    static async SetResources(resources: {name: string, resource: string}[]) {
-        let cache = await caches.open(RESOURCE_CACHE);
-
-        let promises = resources.map(resourceGroup => {
-            let name = resourceGroup.name;
-            let resource = resourceGroup.resource;
-
-            return cache.put(name, new Response(resource))
-                        .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource)));
-        });
-
-        await Promise.all(promises);
-    }
-
     static async SetResource(name: string, resource: string) {
         let cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
