@@ -18,10 +18,13 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
 
         try {
             let result = await func(context);
-            tracer.finishResponse(result);
-            tracer.addData({ error: !result.ok });
 
-            result.clone().text().then(_ => tracer.sendEvents());
+            result.clone().blob().then(async _ => {
+                tracer.finishResponse(result);
+                tracer.addData({ error: !result.ok });
+
+                await tracer.sendEvents();
+            });
 
             return result;
         }
