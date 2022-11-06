@@ -3,7 +3,7 @@ import { Tracer } from "./tracer";
 import { ErrorResponse } from "./error";
 import { Data } from "./data";
 
-export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
+export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
     return async (context) => {
         const tracer = new Tracer(context.request, resolve({
             dataset: honeycombDataset,
@@ -18,10 +18,13 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
 
         try {
             let result = await func(context);
-            tracer.finishResponse(result);
-            tracer.addData({ error: !result.ok });
 
-            tracer.sendEvents();
+            if (autoTrace) {
+                tracer.finishResponse(result);
+                tracer.addData({ error: !result.ok });
+
+                tracer.sendEvents();
+            }
 
             return result;
         }
@@ -40,11 +43,8 @@ export function create<Env>(honeycombDataset: string, func: PagesFunction<Env, a
                 return result;
             }
             else if (error instanceof Error) {
-                let result = new Response(JSON.stringify({ error: error.message }), {
-                    status: 500,
-                    headers: {
-                        "Content-Type": "application/json"
-                    }
+                let result = new Response(error.message, {
+                    status: 500
                 });
 
                 tracer.finishResponse(result);

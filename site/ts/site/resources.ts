@@ -59,20 +59,6 @@ export class Resources {
         return token;
     }
 
-    static async SetResources(resources: {name: string, resource: string}[]) {
-        let cache = await caches.open(RESOURCE_CACHE);
-
-        let promises = resources.map(resourceGroup => {
-            let name = resourceGroup.name;
-            let resource = resourceGroup.resource;
-
-            return cache.put(name, new Response(resource))
-                        .then(() => this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource)));
-        });
-
-        await Promise.all(promises);
-    }
-
     static async SetResource(name: string, resource: string) {
         let cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
@@ -130,7 +116,7 @@ export class Resources {
         if (!resourceResponse.ok) {
             resourceNotification.Close();
 
-            if (resourceResponse.status == 401) {
+            if (resourceResponse.status == 401 || resourceResponse.status == 422) {
                 this.ShowLoginNotification();
             }
             else {
@@ -143,9 +129,12 @@ export class Resources {
             return false;
         }
 
+        let resourceCount = parseInt(resourceResponse.headers.get("X-Resource-Count") ?? "0");
+        let receivedResourceCount = 0;
+
         let parser = parseJSONStream([
-            ["token"],
-            ["result", "*"]
+            ["result", "*"],
+            ["token"]
         ]);
 
         let finishedPiping = false;
@@ -162,6 +151,9 @@ export class Resources {
                 }
                 else {
                     await this.SetResource(path[1], object);
+                    receivedResourceCount++;
+
+                    resourceNotification.percentage = resourceCount == 0 ? 1 : receivedResourceCount / resourceCount;
                 }
 
                 objectHandlerCount--;
@@ -170,8 +162,13 @@ export class Resources {
             });
         });
 
+        const decoder = new TextDecoder();
+        let totalStream = "";
         await resourceResponse.body?.pipeTo(new WritableStream({
-            write: parser.write.bind(parser),
+            write(chunk) {
+                totalStream += decoder.decode(chunk);
+                parser.write(chunk);
+            }
         }));
 
         parser.finish();
@@ -181,6 +178,28 @@ export class Resources {
         if (!(objectHandlerCount == 0 && finishedPiping)) await objectHandlerPromise;
 
         resourceNotification.Close();
+
+        let fullJSON = JSON.parse(totalStream);
+
+        if ("error" in fullJSON) {
+            if (fullJSON["error"] == 401) {
+                this.ShowLoginNotification();
+            }
+            else if (fullJSON["error"] == 500) {
+                Site.ShowNotification("An error occurred on the Paragon servers.");
+            }
+            else if (fullJSON["error"] == 502) {
+                Site.ShowNotification("An error occurred on the SBHS servers.");
+            }
+            else {
+                Site.ShowNotification("An unknown error occurred.");
+            }
+
+            this._fetchCallbacks.Invoke(false);
+            this._fetching = false;
+
+            return false;
+        }
 
         this._fetchCallbacks.Invoke(true);
         this._fetching = false;

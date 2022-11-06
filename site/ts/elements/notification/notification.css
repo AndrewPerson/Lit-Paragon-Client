@@ -11,6 +11,8 @@
     padding: 0.6rem;
     border-radius: 0.6rem;
     box-shadow: var(--small-shadow);
+
+    overflow: clip;
 }
 
 .indicator {
@@ -20,4 +22,15 @@
 
     width: calc(1rem * 1.1);
     height: calc(1rem * 1.1);
+}
+
+.progress {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 0.2rem;
+    background-color: var(--surface4);
+    border-radius: 0.2rem;
+
+    transition: width 0.5s;
 }

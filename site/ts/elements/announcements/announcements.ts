@@ -71,7 +71,7 @@ export class SchoolAnnouncements extends Page {
     }
 
     AnnouncementKey(announcement: Announcement) {
-        return announcement.content ?? announcement.title ?? "";
+        return announcement.id ?? "0";
     }
 
     renderPage() {
