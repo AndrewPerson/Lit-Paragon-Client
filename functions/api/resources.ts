@@ -2,6 +2,7 @@ import { RequestTracer } from "@cloudflare/workers-honeycomb-logger";
 import { create } from "../lib/function";
 import { ErrorResponse } from "../lib/error";
 import { Token, TokenFactory } from "../lib/token";
+import { Mutex } from "../lib/mutex";
 import { SBHSEnv } from "../lib/env";
 
 export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, data: { tracer } }) => {
@@ -80,12 +81,16 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
     let responsesReceivedResolve: (value: void | PromiseLike<void>) => void;
     let responsesReceived = new Promise<void>(resolve => responsesReceivedResolve = resolve);
 
+    let writeMutex = new Mutex();
+
     for (const resource of resources) {
         tracer.fetch(`https://student.sbhs.net.au/api/${resource[0]}`, {
             headers: {
                 "Authorization": `Bearer ${token.access_token}`
             }
         }).then(async response => {
+            await writeMutex.lock();
+
             receivedResourceCount++;
 
             if (response.ok) {
@@ -105,6 +110,8 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
             else {
                 failedResources.push([...resource, response.status]);
             }
+
+            writeMutex.unlock();
 
             if (receivedResourceCount == resources.length) {
                 responsesReceivedResolve();
