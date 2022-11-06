@@ -5,7 +5,7 @@ import { Token, TokenFactory } from "../lib/token";
 import { Mutex } from "../lib/mutex";
 import { SBHSEnv } from "../lib/env";
 
-export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, data: { tracer } }) => {
+export const onRequestGet = create<SBHSEnv>("resources", false, async ({ env, request, data: { tracer } }) => {
     let token = TokenFactory.Create(JSON.parse(new URL(request.url).searchParams.get("token")));
 
     if (new Date() > token.termination) {
@@ -61,17 +61,19 @@ export const onRequestGet = create<SBHSEnv>("resources", async ({ env, request, 
 
     writer.write(new TextEncoder().encode(`{"token":${JSON.stringify(token)},"result":{`));
 
-    streamResources(token, env.CLIENT_ID, env.CLIENT_SECRET, RESOURCES, writer, tracer);
-
-    return new Response(readable, {
+    let result = new Response(readable, {
         headers: {
             "Content-Type": "application/json",
             "X-Resource-Count": RESOURCES.length.toString()
         }
     });
+
+    streamResources(token, env.CLIENT_ID, env.CLIENT_SECRET, RESOURCES, writer, tracer, result);
+
+    return result;
 });
 
-async function streamResources(token: Token, clientId: string, clientSecret: string, resources: [string, string][], writer: WritableStreamDefaultWriter, tracer: RequestTracer, maxRetries = 3, resourcesAlreadyWritten = false) {
+async function streamResources(token: Token, clientId: string, clientSecret: string, resources: [string, string][], writer: WritableStreamDefaultWriter, tracer: RequestTracer, result: Response, maxRetries = 3, resourcesAlreadyWritten = false) {
     const encoder = new TextEncoder();
 
     let receivedResourceCount = 0;
@@ -123,7 +125,7 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
 
     if (failedResources.length > 0) {
         if (maxRetries > 0) {
-            await streamResources(token, clientId, clientSecret, failedResources.map(x => [x[0], x[1]]), writer, tracer, maxRetries - 1, resourcesAlreadyWritten);
+            await streamResources(token, clientId, clientSecret, failedResources.map(x => [x[0], x[1]]), writer, tracer, result, maxRetries - 1, resourcesAlreadyWritten);
         }
         else {
             let unauthorised = false;
@@ -151,26 +153,42 @@ async function streamResources(token: Token, clientId: string, clientSecret: str
 
             if (unauthorised) {
                 await writer.write(encoder.encode(`},"error":401`));
+                tracer.addData({ error: true, status: 401 });
             }
             else if (sbhsError) {
                 await writer.write(encoder.encode(`},"error":502`));
+                tracer.addData({ error: true, status: 502 });
             }
             else if (serverError) {
                 await writer.write(encoder.encode(`},"error":500`));
+                tracer.addData({ error: true, status: 500 });
             }
             else if (unknownError) {
                 await writer.write(encoder.encode(`},"error":500`));
+                tracer.addData({ error: true, status: 500 });
             }
             else {
                 await writer.write(encoder.encode(`},"error":500`));
+                tracer.addData({ error: true, status: 500 });
             }
 
             await writer.write(encoder.encode(`}`));
+
+            tracer.finishResponse(result);
+
+            tracer.sendEvents();
+
             await writer.close();
         }
     }
     else {
         await writer.write(encoder.encode(`}`));
+
+        tracer.finishResponse(result);
+        tracer.addData({ error: false });
+
+        tracer.sendEvents();
+
         await writer.close();
     }
 }
