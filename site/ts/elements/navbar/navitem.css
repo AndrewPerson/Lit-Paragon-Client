@@ -29,6 +29,7 @@
 
     display: block;
 
+    width: min-content;
     height: var(--full-size);
 
     padding: var(--padding);
