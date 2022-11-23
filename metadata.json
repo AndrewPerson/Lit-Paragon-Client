@@ -1,5 +1,5 @@
 {
-    "version": "2.2.83",
+    "version": "2.2.84",
     "pages": {
         "Award Scheme Points": {
             "navIcon": "/nav-icon.svg",
@@ -31,7 +31,7 @@
         "Barcodes": {
             "navIcon": "/nav-icon.svg",
             "url": "https://barcodes-paragon-pages.pages.dev",
-            "preview": true,
+            "preview": false,
             "description": "Allows you to create and scan multiple student ID barcodes.",
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
@@ -40,11 +40,11 @@
         "Calendar": {
             "navIcon": "/nav-icon.svg",
             "url": "https://calendar-paragon-pages.pages.dev",
-            "preview": true,
+            "preview": false,
             "description": "Allows you to view your SBHS calendar.",
             "icon": "/icon.svg",
             "darkIcon": "/dark-icon.svg",
-            "version": "0.0.1"
+            "version": "1.0.1"
         }
     }
 }
