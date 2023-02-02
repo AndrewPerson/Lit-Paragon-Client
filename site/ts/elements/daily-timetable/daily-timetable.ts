@@ -3,7 +3,7 @@ import { Page } from "../page/page";
 import { html, unsafeCSS, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { DailyTimetableUtils } from "./daily-timetable-utils";
+import { bellTemplatingPipeline } from "./bell-templating-pipeline/pipeline";
 
 import { Resources } from "../../site/resources";
 
@@ -240,29 +240,6 @@ export class StudentDailyTimetable extends Page {
         }, 1000);
     }
 
-    GetBell(bell: Bell, next: boolean) {
-        return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" class="${next ? "next" : ""}" time="${bell.time ?? "??:??"}"></daily-timetable-bell>`;
-    }
-
-    GetPeriod(period: Period, bell: Bell, classVariation: ClassVariation | Missing, roomVariation: RoomVariation | Missing, next: boolean) {
-        let teacherChanged = classVariation !== undefined && classVariation !== null && classVariation.type != TeacherType.NO_VARIATION;
-        let roomChanged = roomVariation !== undefined && roomVariation !== null;
-
-        return html`
-        <daily-timetable-period title="${DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, period.year ?? "?", period.title ?? "???")}"
-                                class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""} ${next ? "next" : ""}"
-                                time="${bell.time ?? "??:??"}"
-                                teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
-                                           classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
-                                           classVariation.type == TeacherType.NO_COVER ? "No one" :
-                                           classVariation.casualSurname ?? DailyTimetableUtils.FormatCasualCode(classVariation.casual ?? "????")}"
-                                ?teacherChanged="${teacherChanged}"
-                                room="${roomVariation?.roomTo ?? period.room ?? "???"}"
-                                ?roomChanged="${roomChanged}"
-                               ></daily-timetable-period>
-        `;
-    }
-
     renderPage() {
         let bells = this._dailyTimetable.bells ?? [];
         let periods = this._dailyTimetable.timetable?.timetable?.periods ?? {};
@@ -309,22 +286,10 @@ export class StudentDailyTimetable extends Page {
                 break;
             }
 
-            this._cachedBells = bells.map((bell, index) => {
-                if (!(bell.display ?? true)) return null;
-
-                if (bell.period !== undefined && bell.period !== null && bell.period in periods) {
-                    let period = periods[bell.period];
-
-                    if (period !== undefined && period !== null &&
-                        "fullTeacher" in period && period.fullTeacher !== undefined && period.fullTeacher !== null &&
-                        period.room !== undefined && period.room !== null)
-                        return this.GetPeriod(period, bell, classVariations[bell.period], roomVariations[bell.period], index == nextVisibleBellIndex);
-                    else
-                        return this.GetBell(bell, index == nextVisibleBellIndex);
-                }
-                else
-                    return this.GetBell(bell, index == nextVisibleBellIndex);
-            }).filter(x => x !== null) as TemplateResult<1>[];
+            this._cachedBells = bellTemplatingPipeline.run(bells, {
+                dailyTimetable: this._dailyTimetable,
+                nextVisibleBell: nextVisibleBellIndex,
+            });
         }
 
         return html`

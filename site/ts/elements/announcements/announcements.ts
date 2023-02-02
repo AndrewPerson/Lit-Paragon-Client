@@ -4,6 +4,10 @@ import { html, unsafeCSS } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
+import { Pipeline } from "../../site/pipeline";
+import { filterYears } from "./year-filter";
+import { filterText } from "./text-filter";
+
 import "./post";
 
 import { Announcements, Announcement } from "./types";
@@ -41,6 +45,10 @@ export class SchoolAnnouncements extends Page {
     @state()
     searchFilter: string = "";
 
+    announcementFilterPipeline = new Pipeline<Announcement[], { years: string[], text?: string }>()
+                                 .transform(filterYears)
+                                 .transform(filterText);
+
     constructor() {
         super();
 
@@ -77,20 +85,10 @@ export class SchoolAnnouncements extends Page {
     renderPage() {
         let notices = this.announcements.notices ?? [];
 
-        let filteredAnnouncements = this.yearFilter == "all" ? notices : notices.filter(announcement => {
-            let years = announcement.years ?? [];
-            return years.includes(this.yearFilter)
-        });
-
-        filteredAnnouncements = this.searchFilter.length == 0 ? filteredAnnouncements : filteredAnnouncements.filter(announcement => {
-            let title = announcement.title;
-            let content = announcement.content;
-
-            if (title === undefined || title === null ||
-                content === undefined || content === null) return false;
-
-            return title.toLowerCase().includes(this.searchFilter.toLowerCase()) ||
-                   content.toLowerCase().includes(this.searchFilter.toLowerCase())
+        let filteredAnnouncements = this.announcementFilterPipeline.run(notices, {
+            //TODO Make this multi-select
+            years: this.yearFilter == "all" ? [] : [this.yearFilter],
+            text: this.searchFilter
         });
 
         return html`
