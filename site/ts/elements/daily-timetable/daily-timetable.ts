@@ -3,11 +3,11 @@ import { Page } from "../page/page";
 import { html, unsafeCSS, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
+import { BellToDate, GetCurrentBell, GetPeriodTitle, HumanTimeDisplay } from "./daily-timetable-utils";
+import { generateDailyTimetable } from "./generate-daily-timetable";
 import { bellTemplatingPipeline } from "./bell-templating-pipeline/pipeline";
 
 import { Resources } from "../../site/resources";
-
-import { bells } from "./bells";
 
 import "./bell";
 import "./period";
@@ -16,8 +16,8 @@ import "../info/info";
 
 import LOGIN_URL from "../../login-url";
 
-import { DailyTimetable, Bell, Period, RoomVariation, ClassVariation, TeacherType } from "./types";
-import { Day, Timetable } from "../timetable/types";
+import { DailyTimetable, Bell } from "./types";
+import { Timetable } from "../timetable/types";
 
 import { Missing } from "../../missing";
 
@@ -53,6 +53,7 @@ export class StudentDailyTimetable extends Page {
     private static _lastUpdatedData?: Date;
 
     static async UpdateData() {
+        //Rate limit in case of bug.
         if (this._lastUpdatedData !== undefined) {
             let now = new Date();
             if (this._lastUpdatedData.getTime() + MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY > now.getTime()) {
@@ -72,23 +73,13 @@ export class StudentDailyTimetable extends Page {
 
         if (nextDailyTimetable === undefined || nextDailyTimetable === null || lastBell === undefined ||
             nextDailyTimetable.date === undefined || nextDailyTimetable.date === null ||
-            new Date().getTime() > DailyTimetableUtils.BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
+            new Date().getTime() > BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
             let succeeded = await Resources.FetchResources();
 
             let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
-            if (currentDailyTimetable === undefined || currentDailyTimetable === null)
-                //Keep updatingData true so we don't keep trying
-                return;
-
-            if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null)
-                //Keep updatingData true so we don't keep trying
-                return;
-
-            if (currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
-                //Keep updatingData true so we don't keep trying
-                return;
-
-            if (currentDailyTimetable.bells === undefined || currentDailyTimetable.bells === null)
+            if (currentDailyTimetable === undefined || currentDailyTimetable === null ||
+                currentDailyTimetable.date === undefined || currentDailyTimetable.date === null ||
+                currentDailyTimetable.bells === undefined || currentDailyTimetable.bells === null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
@@ -96,7 +87,7 @@ export class StudentDailyTimetable extends Page {
             let lastBell = currentDailyTimetable.bells[currentDailyTimetable.bells.length - 1];
 
             //Check if the returned date is not today.
-            if (succeeded && lastBell !== undefined && new Date().getTime() < DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
+            if (succeeded && lastBell !== undefined && new Date().getTime() < BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
                 this.updatingData = false;
                 return;
             }
@@ -106,59 +97,11 @@ export class StudentDailyTimetable extends Page {
                 //Keep updatingData true so we don't keep trying
                 return;
 
-            let now = new Date();
+            let newDailyTimetable = await generateDailyTimetable(currentDailyTimetable, timetable);
 
-            while (now.getTime() > DailyTimetableUtils.BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
-                let adjustedNow = new Date(now);
-
-                if (adjustedNow.getFullYear() == currentDailyTimetableDate.getFullYear() &&
-                    adjustedNow.getMonth() == currentDailyTimetableDate.getMonth() &&
-                    adjustedNow.getDate() == currentDailyTimetableDate.getDate())
-                    adjustedNow.setDate(adjustedNow.getDate() + 1);
-
-                if (adjustedNow.getDay() == 6)
-                    adjustedNow.setDate(adjustedNow.getDate() + 1);
-
-                if (adjustedNow.getDay() == 0)
-                    adjustedNow.setDate(adjustedNow.getDate() + 1);
-
-                //YYYY-MM-DD
-                let date = `${adjustedNow.getFullYear().toString().padStart(2, "0")}-${(adjustedNow.getMonth() + 1).toString().padStart(2, "0")}-${adjustedNow.getDate().toString().padStart(2, "0")}`
-
-                //Day number (1 - 15)
-                let dayNumber: number = (parseInt(currentDailyTimetable!.timetable!.timetable.dayNumber) + DailyTimetableUtils.GetSchoolDayCount(currentDailyTimetableDate, adjustedNow) - 1) % 15 + 1;
-
-                let newBells = bells[dayNumber - 1];
-                if (newBells === undefined)
-                    //Keep updatingData true so we don't keep trying
-                    return;
-
-                let day: Day | Missing = timetable.days?.[dayNumber.toString()];
-                if (day === null || day === undefined)
-                    //Keep updatingData true so we don't keep trying
-                    return;
-
-                if (day.dayNumber === null || day.dayNumber === undefined)
-                    //Keep updatingData true so we don't keep trying
-                    return;
-
-                currentDailyTimetable = {
-                    date: date,
-                    bells: newBells,
-                    timetable: {
-                        timetable: day,
-                        subjects: Object.fromEntries(timetable.subjects?.map(subject => {
-                            return [`${subject?.year}${subject?.shortTitle}`, subject];
-                        }) ?? [])
-                    },
-                    roomVariations: [],
-                    classVariations: [],
-                    autoGenerated: true
-                }
-
-                currentDailyTimetableDate = new Date(adjustedNow);
-                lastBell = newBells[newBells.length - 1];
-            }
+            if (newDailyTimetable === null)
+                //Keep updatingData true so we don't keep trying
+                return;
 
             await Resources.SetResource("dailytimetable", JSON.stringify(currentDailyTimetable));
 
@@ -248,7 +191,7 @@ export class StudentDailyTimetable extends Page {
         let classVariations = (Array.isArray(this._dailyTimetable.classVariations) ? {} : this._dailyTimetable.classVariations) ?? {};
 
         //TODO Change timer display here
-        let nextBellInfo = DailyTimetableUtils.GetCurrentBell(this._dailyTimetable, new Date());
+        let nextBellInfo = GetCurrentBell(this._dailyTimetable, new Date());
 
         let timeDisplay = { class: "Nothing", preposition: "in", time: "Never" };
         if (nextBellInfo === undefined) {
@@ -263,14 +206,14 @@ export class StudentDailyTimetable extends Page {
             if (nextBellInfo?.bell !== undefined) {
                 timeDisplay = {
                     class: "Nothing",
-                    ...DailyTimetableUtils.HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date())
+                    ...HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date())
                 }
             }
 
             let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
 
             if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
-                timeDisplay.class = DailyTimetableUtils.GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
+                timeDisplay.class = GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
             else
                 timeDisplay.class = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
         }
