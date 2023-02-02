@@ -1,5 +1,3 @@
-//#conditional
-
 import { Site } from "./site/site";
 import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";
@@ -7,7 +5,6 @@ import { Extensions } from "./site/extensions";
 import "./elements";
 
 declare const MAX_REFRESH_FREQUENCY: number;
-declare const INSTALL_PROMPT_FREQUENCY: number;
 declare const BACKGROUND_SYNC_INTERVAL: number;
 
 declare const METADATA_ENDPOINT: string;
