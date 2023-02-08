@@ -117,7 +117,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
     button:active {
         color: var(--text3);
     }
-`;class a extends e{static get styles(){return n}static get properties(){return{link:{type:String},title:{type:String},icon:{type:String}}}constructor(){super(),this.link="",this.title="Home",this.icon=""}render(){return this.icon||(this.icon=this.title.toLowerCase()),location.pathname==this.link&&this.classList.add("nav-selected"),i`
+`;location.href="https://paragon.pages.dev";class a extends e{static get styles(){return n}static get properties(){return{link:{type:String},title:{type:String},icon:{type:String}}}constructor(){super(),this.link="",this.title="Home",this.icon=""}render(){return this.icon||(this.icon=this.title.toLowerCase()),location.pathname==this.link&&this.classList.add("nav-selected"),i`
             <a href="${this.link}${location.hash}" title="${this.title}">
                 <img draggable="false" src="images/${this.icon}.svg" />
             </a>
@@ -131,7 +131,7 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
             <nav-item link="/settings" title="Settings"></nav-item>
         `}}class c extends e{static get styles(){return o}static get properties(){return{width:{type:String},height:{type:String}}}constructor(){super(),this.width="0",this.height="0"}render(){return i`
             <img draggable="false" class="spinner" src="images/rings.svg" />
-        `}}class m extends e{static get styles(){return r}async login(){await caches.delete("User Resources"),location.pathname="login"}constructor(){super()}render(){return i`
+        `}}class d extends e{static get styles(){return r}async login(){await caches.delete("User Resources"),location.pathname="login"}constructor(){super()}render(){return i`
             <p>You need to log in to view the latest information.</p>
 
             <div class="buttons">
@@ -142,4 +142,4 @@ import{i as t,h as e,T as i}from"./lit-element-97c1479f.js";const n=t`
                     Dismiss
                 </button>
             </div>
-        `}}customElements.define("nav-item",a),customElements.define("nav-bar",l),customElements.define("loading-element",c),customElements.define("login-notification",m);export{c as LoadingElement,m as LoginNotification,a as NavItem,l as Navbar};
+        `}}customElements.define("nav-item",a),customElements.define("nav-bar",l),customElements.define("loading-element",c),customElements.define("login-notification",d);export{c as LoadingElement,d as LoginNotification,a as NavItem,l as Navbar};

@@ -1,3 +1,5 @@
+location.href = "https://paragon.pages.dev";
+
 import { html, LitElement } from "lit";
 import { navItemCss, navMenuCss, loadingElementCss, loginNotificationCss } from "./main-css";
 
