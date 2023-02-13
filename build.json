@@ -24,22 +24,6 @@
                 "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000,
                 "TELEMETRY_PERMISSION_STORAGE": "Telemetry Permission",
                 "TELEMETRY_STORAGE": "Telemetry"
-            }
-        },
-        "default": {
-            "constants": [
-                "DEVELOPMENT"
-            ],
-            "vars": {
-                "METADATA_ENDPOINT": "http://localhost:5555/metadata.json",
-                "SERVER_ENDPOINT": "http://localhost:8080",
-                "CLIENT_ID": "",
-                "MAX_REFRESH_FREQUENCY": 0
-            },
-            "js": {
-                "sourcemaps": true,
-                "minify": false,
-                "treeShaking": false
             },
             "service-worker": {
                 "ignore": [
@@ -57,6 +41,22 @@
                     "/login",
                     "/unsupported"
                 ]
+            }
+        },
+        "default": {
+            "constants": [
+                "DEVELOPMENT"
+            ],
+            "vars": {
+                "METADATA_ENDPOINT": "http://localhost:5555/metadata.json",
+                "SERVER_ENDPOINT": "http://localhost:8080",
+                "CLIENT_ID": "",
+                "MAX_REFRESH_FREQUENCY": 0
+            },
+            "js": {
+                "sourcemaps": true,
+                "minify": false,
+                "treeShaking": false
             }
         },
         "rewrite-branch": {
