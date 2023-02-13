@@ -18,7 +18,7 @@ function getPeriod(period: Period, bell: Bell, dailyTimetable: DailyTimetable, n
     <daily-timetable-period title="${GetPeriodTitle(dailyTimetable, period.year ?? "?", period.title ?? "???")}"
                             class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""} ${next ? "next" : ""}"
                             time="${bell.time ?? "??:??"}"
-                            teacher="${classVariation === undefined || classVariation === null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
+                            teacher="${classVariation === undefined || classVariation == null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                        classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
                                        classVariation.type == TeacherType.NO_COVER ? "No one" :
                                        classVariation.casualSurname ?? FormatCasualCode(classVariation.casual ?? "????")}"

@@ -25,7 +25,7 @@ export type Token = {
 
 export class Resources {
     private static _resourceCallbacks: Map<string, Callbacks<any>> = new Map();
-    private static _fetchCallbacks: Callbacks<boolean> = new Callbacks();
+    private static _fetchCallbacks = new Callbacks<boolean>();
 
     private static _fetching: boolean = false;
 
@@ -66,24 +66,24 @@ export class Resources {
         this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
     }
 
-    static async GetResourceNow(name: string) {
+    static async GetResource<T>(name: string): Promise<T | undefined> {
         let cache = await caches.open(RESOURCE_CACHE);
         let response = await cache.match(name);
 
-        if (response) {
+        if (response === undefined) return undefined;
+        else {
             let resource = await response.json();
             return resource;
         }
-        else return undefined;
     }
 
-    static async GetResource(name: string, callback: Callback<any>): Promise<void> {
+    static async ListenForResource<T>(name: string, callback: Callback<T | undefined>): Promise<void> {
         let callbacks = this._resourceCallbacks.get(name) ?? new Callbacks();
 
         callbacks.AddListener(callback);
         this._resourceCallbacks.set(name, callbacks);
 
-        callback(await this.GetResourceNow(name));
+        callback(await this.GetResource<T>(name));
     }
 
     static async FetchResources(): Promise<boolean> {
@@ -91,7 +91,7 @@ export class Resources {
         this._fetching = true;
 
         let token = await this.GetToken();
-        if (token === null) return false;
+        if (token == null) return false;
 
         let resourceNotification = this.ShowResourceNotification();
 

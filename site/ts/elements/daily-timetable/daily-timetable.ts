@@ -67,19 +67,17 @@ export class StudentDailyTimetable extends Page {
 
         this._lastUpdatedData = new Date();
 
-        let nextDailyTimetable = await Resources.GetResourceNow("next-dailytimetable") as DailyTimetable | Missing;
+        let nextDailyTimetable = await Resources.GetResource<DailyTimetable>("next-dailytimetable");
 
         let lastBell = nextDailyTimetable?.bells?.[(nextDailyTimetable?.bells?.length ?? 1) - 1];
 
-        if (nextDailyTimetable === undefined || nextDailyTimetable === null || lastBell === undefined ||
-            nextDailyTimetable.date === undefined || nextDailyTimetable.date === null ||
-            new Date().getTime() > BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
+        if (nextDailyTimetable === undefined || lastBell === undefined || nextDailyTimetable.date === undefined ||
+            nextDailyTimetable.date == null || new Date().getTime() > BellToDate(lastBell, new Date(nextDailyTimetable.date)).getTime()) {
             let succeeded = await Resources.FetchResources();
 
-            let currentDailyTimetable = await Resources.GetResourceNow("dailytimetable") as DailyTimetable | Missing;
-            if (currentDailyTimetable === undefined || currentDailyTimetable === null ||
-                currentDailyTimetable.date === undefined || currentDailyTimetable.date === null ||
-                currentDailyTimetable.bells === undefined || currentDailyTimetable.bells === null)
+            let currentDailyTimetable = await Resources.GetResource<DailyTimetable>("dailytimetable");
+            if (currentDailyTimetable === undefined || currentDailyTimetable.date === undefined || currentDailyTimetable.date == null ||
+                currentDailyTimetable.bells === undefined || currentDailyTimetable.bells == null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
@@ -92,14 +90,14 @@ export class StudentDailyTimetable extends Page {
                 return;
             }
 
-            let timetable = await Resources.GetResourceNow("timetable") as Timetable | Missing;
-            if (timetable === undefined || timetable === null)
+            let timetable = await Resources.GetResource<Timetable>("timetable");
+            if (timetable === undefined)
                 //Keep updatingData true so we don't keep trying
                 return;
 
             let newDailyTimetable = await generateDailyTimetable(currentDailyTimetable, timetable);
 
-            if (newDailyTimetable === null)
+            if (newDailyTimetable == null)
                 //Keep updatingData true so we don't keep trying
                 return;
 
@@ -125,7 +123,7 @@ export class StudentDailyTimetable extends Page {
 
             let bells = dailyTimetable.bells;
 
-            if (bells === undefined || bells === null) {
+            if (bells === undefined || bells == null) {
                 this._dailyTimetable = dailyTimetable;
                 return;
             }
@@ -218,7 +216,7 @@ export class StudentDailyTimetable extends Page {
                 timeDisplay.class = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
         }
 
-        if (this._cachedBells === null) {
+        if (this._cachedBells == null) {
             let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
             for (let i = nextVisibleBellIndex; i < bells.length; i++) {
                 if (bells[i].display === false) {

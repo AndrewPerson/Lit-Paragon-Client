@@ -3,8 +3,6 @@ import { customElement, property } from "lit/decorators.js";
 
 import { Extensions } from "../../site/extensions";
 
-import { ExtensionsMarketplace } from "./extensions-marketplace";
-
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
@@ -34,15 +32,29 @@ export class ExtensionDisplay extends LitElement {
     installed: boolean;
 
     async Install() {
-        await Extensions.InstallExtension(this.title);
+        let installEvent = new CustomEvent("install", {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            detail: {
+                extension: this.title
+            }
+        });
 
-        (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
+        this.dispatchEvent(installEvent);
     }
 
     async Uninstall() {
-        await Extensions.UninstallExtension(this.title);
+        let uninstallEvent = new CustomEvent("uninstall", {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            detail: {
+                extension: this.title
+            }
+        });
 
-        (document.getElementById("pages") as ExtensionsMarketplace).requestUpdate();
+        this.dispatchEvent(uninstallEvent);
     }
 
     render() {

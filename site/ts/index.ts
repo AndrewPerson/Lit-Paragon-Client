@@ -12,18 +12,16 @@ declare const METADATA_ENDPOINT: string;
 Main();
 
 async function Main() {
-    if (location.hash)
-        NavigateToHash(location.hash);
-    else
-        Site.NavigateTo({
-            page: document.querySelector("main")?.children[0].id ?? "",
-            extension: false
-        });
+    if (location.hash != "") NavigateToHash(location.hash);
+    else Site.NavigateTo({
+        page: document.querySelector("main")?.children[0].id ?? "",
+        extension: false
+    });
 
     Extensions.Initialise();
 
     window.addEventListener("hashchange", () => {
-        if (location.hash) {
+        if (location.hash != "") {
             NavigateToHash(location.hash);
         }
     });
@@ -32,7 +30,7 @@ async function Main() {
     //Session storage is persisted between reloads but is cleared when the tab is closed.
     let lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
-    if (lastReloadedText === null) {
+    if (lastReloadedText == null) {
         Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
     }
     else {

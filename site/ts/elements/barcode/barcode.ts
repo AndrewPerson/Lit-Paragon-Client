@@ -45,14 +45,13 @@ export class StudentBarcode extends Page {
     @query("#save")
     saveLink: HTMLAnchorElement | null;
 
+    @state()
+    studentId: string;
+
     rect: DOMRect = this.getBoundingClientRect();
 
     draggedElement: HTMLElement | null = null;
-
     dragging: boolean = false;
-
-    @state()
-    studentId: string;
 
     Resize = Debounce(() => {
         this.rect = this.getBoundingClientRect();
@@ -81,37 +80,10 @@ export class StudentBarcode extends Page {
         }
     }).bind(this);
 
-    constructor() {
-        super();
-
-        this.addEventListener("pointerup", this.EndDrag);
-
-        document.addEventListener("pointermove", this.DragPoint);
-
-        window.addEventListener("resize", this.Resize);
-
-        this.AddResource("userinfo", (userInfo: {studentId: string | Missing}) => {
-            let studentId = userInfo.studentId;
-
-            if (studentId !== undefined && studentId !== null)
-                this.studentId = studentId;
-        });
-
-        Site.ListenForDark(dark => {
-            this.barcode?.classList.toggle("outline", dark);
-        });
-    }
-
-    disconnectedCallback() {
-        document.removeEventListener("pointermove", this.DragPoint);
-        window.removeEventListener("resize", this.Resize);
-    }
-
     StartDrag(e: PointerEvent) {
         e.preventDefault();
 
         this.draggedElement = e.target as HTMLElement;
-
         this.draggedElement.style.pointerEvents = "none";
 
         this.style.cursor = "move";
@@ -160,7 +132,7 @@ export class StudentBarcode extends Page {
     }
 
     SetBarcodePosition() {
-        if (this.barcode === null) return;
+        if (this.barcode == null) return;
 
         let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1?.style.left.length - 1) || "0");
         let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1?.style.top.length - 1) || "0");
@@ -183,7 +155,7 @@ export class StudentBarcode extends Page {
 
     RenderBarcode() {
         if (this.draggedElement !== null) return;
-        if (this.barcode === null) return;
+        if (this.barcode == null) return;
 
         if (typeof JsBarcode === "function") {
             JsBarcode(this.barcode, this.studentId, {
@@ -194,15 +166,15 @@ export class StudentBarcode extends Page {
 
         let url = this.barcode.toDataURL("image/png");
 
-        if (this.saveLink === null) return;
+        if (this.saveLink == null) return;
 
         this.saveLink.href = url;
         this.saveLink.download = `${this.studentId}.png`;
     }
 
     SaveBarcodePosition() {
-        if (this.point1 === null) return;
-        if (this.point2 === null) return;
+        if (this.point1 == null) return;
+        if (this.point2 == null) return;
 
         localStorage.setItem("Barcode Points",
                              JSON.stringify([
@@ -211,6 +183,28 @@ export class StudentBarcode extends Page {
                                  this.point2.style.left,
                                  this.point2.style.top
                              ]));
+    }
+
+    constructor() {
+        super();
+
+        this.addEventListener("pointerup", this.EndDrag);
+        document.addEventListener("pointermove", this.DragPoint);
+        window.addEventListener("resize", this.Resize);
+
+        this.AddResource("userinfo", (userInfo: { studentId: string | Missing }) => {
+            let studentId = userInfo.studentId;
+
+            if (studentId !== undefined && studentId !== null)
+                this.studentId = studentId;
+        });
+
+        Site.ListenForDark(dark => this.barcode?.classList.toggle("outline", dark));
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("pointermove", this.DragPoint);
+        window.removeEventListener("resize", this.Resize);
     }
 
     updated() {
@@ -223,9 +217,7 @@ export class StudentBarcode extends Page {
     renderPage() {
         let storedPoints = localStorage.getItem("Barcode Points");
 
-        let points: string[] = ["10%", "10%", "90%", "50%"];
-
-        if (storedPoints) points = JSON.parse(storedPoints);
+        let points: string[] = storedPoints == null ? ["10%", "10%", "90%", "50%"] : JSON.parse(storedPoints);
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>

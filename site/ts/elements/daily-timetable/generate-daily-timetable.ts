@@ -5,13 +5,13 @@ import { BellToDate, GetSchoolDayCount } from "./daily-timetable-utils";
 import { bells } from "./bells";
 
 export async function generateDailyTimetable(currentDailyTimetable: DailyTimetable, timetable: Timetable): Promise<DailyTimetable | null> {
-    if (currentDailyTimetable.date === undefined || currentDailyTimetable.date === null)
+    if (currentDailyTimetable.date === undefined || currentDailyTimetable.date == null)
         return null;
 
-    if (currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber === null)
+    if (currentDailyTimetable.timetable?.timetable?.dayNumber === undefined || currentDailyTimetable.timetable?.timetable?.dayNumber == null)
         return null;
 
-    if (currentDailyTimetable.bells === undefined || currentDailyTimetable.bells === null)
+    if (currentDailyTimetable.bells === undefined || currentDailyTimetable.bells == null)
         return null;
 
     let currentDailyTimetableDate = new Date(currentDailyTimetable.date);
@@ -45,11 +45,11 @@ export async function generateDailyTimetable(currentDailyTimetable: DailyTimetab
             return null;
 
         let day: Day | Missing = timetable.days?.[dayNumber.toString()];
-        if (day === null || day === undefined)
+        if (day == null || day === undefined)
             //Keep updatingData true so we don't keep trying
             return null;
 
-        if (day.dayNumber === null || day.dayNumber === undefined)
+        if (day.dayNumber == null || day.dayNumber === undefined)
             //Keep updatingData true so we don't keep trying
             return null;
 

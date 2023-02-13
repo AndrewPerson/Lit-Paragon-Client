@@ -2,8 +2,8 @@ import { Extensions, Extension } from "./extensions";
 
 import { Callbacks, Callback } from "./callback";
 
+import { Page as PageElement } from "../elements/page/page";
 import { ExtensionPage } from "../elements/extensions/extensions";
-import { Navbar } from "../elements/navbar/navbar";
 import { InlineNotification } from "../elements/notification/notification";
 
 declare const METADATA_CACHE: string;
@@ -27,13 +27,15 @@ export class Site {
     };
 
     static dark: boolean = localStorage.getItem("Dark") == "true";
-    static hue: string = localStorage.getItem("Hue") || "200";
+    static hue: number = parseFloat(localStorage.getItem("Hue") || "200");
 
-    private static _pageElement: HTMLElement | null = null;
+    private static _navigationListeners = new Callbacks<Page>();
 
-    private static _darkCallbacks: Callbacks<boolean> = new Callbacks();
-    private static _hueCallbacks: Callbacks<number> = new Callbacks();
-    private static _metadataCallbacks: Callbacks<Metadata | undefined> = new Callbacks();
+    private static _pageElement: PageElement | null = null;
+
+    private static _darkCallbacks = new Callbacks<boolean>();
+    private static _hueCallbacks = new Callbacks<number>();
+    private static _metadataCallbacks = new Callbacks<Metadata | undefined>();
 
     //#region Navigation
     static NavigateTo(page: Page): void {
@@ -41,9 +43,9 @@ export class Site {
             let extensions = Extensions.installedExtensions;
 
             if (extensions.has(page.page)) {
-                let newPage = document.getElementById(`extension-${page.page}`);
+                let newPage = document.getElementById(`extension-${page.page}`) as PageElement;
 
-                if (newPage === null) {
+                if (newPage == null) {
                     let extensionPage: ExtensionPage = document.createElement("extension-page") as ExtensionPage;
                     extensionPage.src = (extensions.get(page.page) as Extension).url;
                     extensionPage.id = `extension-${page.page}`;
@@ -56,13 +58,18 @@ export class Site {
                 this.SetPage(page, newPage);
             }
         }
-        else this.SetPage(page, document.getElementById(page.page));
+        else this.SetPage(page, document.getElementById(page.page) as PageElement);
     }
 
-    private static SetPage(page: Page, element: HTMLElement | null) {
-        if (element === null) {
-            if (this._pageElement === null) {
-                let defaultPage = (document.querySelector("main")?.children?.[0] as HTMLElement | undefined | null) ?? null;
+    static ListenForNavigation(callback: Callback<Page>) {
+        this._navigationListeners.AddListener(callback);
+        callback(this.page);
+    }
+
+    private static SetPage(page: Page, element: PageElement | null) {
+        if (element == null) {
+            if (this._pageElement == null) {
+                let defaultPage = document.querySelector("main")?.children?.[0] as PageElement | null;
 
                 this.page = {
                     page: defaultPage?.id ?? "",
@@ -85,16 +92,11 @@ export class Site {
             this.page = page;
 
             location.hash = page.extension ? `extension-${page.page}` : page.page;
-
-            if (Navbar.instance !== null) {
-                Navbar.instance.editing = false;
-                Navbar.instance.requestUpdate();
-            }
         }
 
-        //TODO Find a way to get rid of the @ts-ignore
-        //@ts-ignore
         this._pageElement?.requestUpdate?.();
+
+        this._navigationListeners.Invoke(page);
     }
     //#endregion
 
@@ -130,23 +132,25 @@ export class Site {
 
     static ListenForDark(callback: Callback<boolean>) {
         this._darkCallbacks.AddListener(callback);
+        callback(this.dark);
     }
 
-    static SetHue(hue: string): void {
-        document.documentElement.style.setProperty("--main-hue", hue);
-        document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);
+    static SetHue(hue: number): void {
+        document.documentElement.style.setProperty("--main-hue", hue.toString());
+        document.documentElement.style.setProperty("--hue-rotate", `${hue - 200}deg`);
 
         this.hue = hue;
     }
 
     static SaveHue() {
-        localStorage.setItem("Hue", this.hue);
+        localStorage.setItem("Hue", this.hue.toString());
 
-        this._hueCallbacks.Invoke(parseFloat(this.hue));
+        this._hueCallbacks.Invoke(this.hue);
     }
 
     static ListenForHue(callback: Callback<number>) {
         this._hueCallbacks.AddListener(callback);
+        callback(this.hue);
     }
     //#endregion
 
@@ -155,7 +159,7 @@ export class Site {
         return await (await cache.match("Metadata"))?.json();
     }
 
-    static async GetMetadata(callback: Callback<Metadata | undefined>) {
+    static async ListenForMetadata(callback: Callback<Metadata | undefined>) {
         this._metadataCallbacks.AddListener(callback);
         callback(await this.GetMetadataNow());
     }

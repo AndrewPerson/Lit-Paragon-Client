@@ -10,14 +10,19 @@ import "../loader/loader";
 
 //@ts-ignore
 import extensionsCss from "./extensions.css";
+import { Page } from "../page/page";
 
 declare const SKIN_CSS: string;
 
 @customElement("extension-page")
-export class ExtensionPage extends LitElement {
+export class ExtensionPage extends Page {
     static styles = [extensionsCss];
 
-    @property({type: String})
+    //TODO Set this property
+    @property()
+    name: string = "";
+
+    @property()
     src: string = "";
 
     @query("iframe", true)
@@ -33,6 +38,16 @@ export class ExtensionPage extends LitElement {
 
     PostMessage(message: any) {
         this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
+    }
+
+    constructor() {
+        super();
+
+        Extensions.ListenForInstalledExtensions(extensions => {
+            if (!extensions.has(this.name)) {
+                this.remove();
+            }
+        });
     }
 
     disconnectedCallback() {

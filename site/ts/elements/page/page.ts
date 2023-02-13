@@ -1,5 +1,7 @@
 import { html, nothing, TemplateResult, LitElement } from "lit";
 import { state } from "lit/decorators.js";
+
+import { Callback } from "../../site/callback";
 import { Resources } from "../../site/resources";
 
 export enum PageState {
@@ -15,20 +17,20 @@ export class Page extends LitElement {
     private _unreceivedResources: number = 0;
     private _uncompletedResources: number = 0;
 
-    AddResource(resourceName: string, callback: (result: any) => any) {
+    AddResource<T>(resourceName: string, callback: Callback<T>) {
         this._unreceivedResources++;
         this._uncompletedResources++;
 
         let received = false;
         let completed = false;
 
-        Resources.GetResource(resourceName, resource => {
+        Resources.ListenForResource<T>(resourceName, resource => {
             if (!received) {
                 this._unreceivedResources--;
                 received = true;
             }
 
-            if (resource !== null && resource !== undefined) {
+            if (resource !== undefined) {
                 if (!completed) {
                     this._uncompletedResources--;
                     completed = true;

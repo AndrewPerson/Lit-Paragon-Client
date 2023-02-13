@@ -21,7 +21,9 @@
                 "SKIN_CACHE": "Skin Resources",
                 "BACKGROUND_SYNC_INTERVAL": 2592000000,
                 "INSTALL_PROMPT_FREQUENCY": 2592000000,
-                "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000
+                "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000,
+                "TELEMETRY_PERMISSION_STORAGE": "Telemetry Permission",
+                "TELEMETRY_STORAGE": "Telemetry"
             }
         },
         "default": {
@@ -38,6 +40,23 @@
                 "sourcemaps": true,
                 "minify": false,
                 "treeShaking": false
+            },
+            "service-worker": {
+                "ignore": [
+                    "ts/**",
+                    "_headers",
+                    "_redirects",
+                    "metadata.json",
+                    "dist/service-worker.js",
+                    "dist/esbuild-metadata.json"
+                ],
+                "extras": [
+                    "/",
+                    "/404",
+                    "/callback",
+                    "/login",
+                    "/unsupported"
+                ]
             }
         },
         "rewrite-branch": {

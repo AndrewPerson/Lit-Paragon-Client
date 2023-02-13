@@ -1,7 +1,7 @@
 import { Announcement } from "./types";
 
-export function filterText(data: Announcement[], { text }: { text?: string }): Announcement[] {
-    let normalisedText = text?.trim().toLowerCase() ?? "";
+export function filterSearch(data: Announcement[], { search }: { search?: string }): Announcement[] {
+    let normalisedText = search?.trim().toLowerCase() ?? "";
     if (normalisedText === undefined || normalisedText.trim() === "") return data;
 
     return data.filter(announcement => {

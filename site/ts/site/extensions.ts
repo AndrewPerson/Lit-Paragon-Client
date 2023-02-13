@@ -1,7 +1,7 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
 
-import { Navbar } from "../elements/navbar/navbar";
+import { Callbacks, Callback } from "./callback";
 import { ExtensionPage } from "../elements/extensions/extensions";
 
 import { InlineNotification } from "../elements/notification/notification";
@@ -22,9 +22,15 @@ export type Extension = {
 export class Extensions {
     static installedExtensions: Map<string, Extension> = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") ?? "{}")));
 
+    static _installedExtensionsListeners = new Callbacks<Map<string, Extension>>();
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 
     static extensionNotificationIds: Map<string, string[]> = new Map();
+
+    static ListenForInstalledExtensions(callback: (extensions: Map<string, Extension>) => void) {
+        this._installedExtensionsListeners.AddListener(callback);
+        callback(this.installedExtensions);
+    }
 
     static GetExtensionOrigins() {
         let origins: string[] = [];
@@ -38,40 +44,21 @@ export class Extensions {
     static async InstallExtension(extensionName: string) {
         let extension = (await this.GetExtensionsNow()).get(extensionName);
 
-        if (extension) {
+        if (extension !== undefined) {
             this.installedExtensions.set(extensionName, extension);
 
             localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions)));
-
-            let order = Navbar.GetNavbarOrder();
-            order.splice(order.length - 1, 0, order.length);
-
-            Navbar.SetNavbarOrder(order);
         }
+
+        this._installedExtensionsListeners.Invoke(this.installedExtensions);
     }
 
     static async UninstallExtension(extensionName: string) {
-        let installedExtensions = this.installedExtensions;
-
-        let order = Navbar.GetNavbarOrder();
-
-        let index = order.indexOf(Object.keys(installedExtensions).indexOf(extensionName)) + Navbar.defaultPages.length;
-        let position = order.splice(index, 1)[0];
-
-        for (let i = 0; i < order.length; i++) {
-            if (order[i] > position) {
-                order[i]--;
-            }
-        }
-
-        Navbar.SetNavbarOrder(order);
-
-        var extensionPage = document.getElementById(`extension-${extensionName}`);
-        if (extensionPage !== null) extensionPage.remove();
-
         this.installedExtensions.delete(extensionName);
 
         localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions)));
+
+        this._installedExtensionsListeners.Invoke(this.installedExtensions);
     }
 
     static async GetExtensionsNow(): Promise<Map<string, Extension>> {
@@ -100,27 +87,14 @@ export class Extensions {
     }
 
     static Initialise() {
-        Site.GetMetadata(metadata => {
+        Site.ListenForMetadata(metadata => {
             let extensions = new Map(Object.entries(metadata?.pages ?? {}));
 
-            let entries = [...this.installedExtensions.entries()];
-
-            let updatedEntries = entries.map(entry => {
-                let extension = extensions.get(entry[0]);
-
-                if (extension === undefined) return undefined;
-
-                return [entry[0], extension];
-            });
-
-            let filteredEntries = updatedEntries.filter(entry => entry !== undefined) as [string, Extension][];
-
-            this.installedExtensions = new Map(filteredEntries);
-            localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(filteredEntries)));
-
-            let order = Navbar.GetNavbarOrder();
-            order.filter(index => index < Navbar.defaultPages.length + filteredEntries.length);
-            Navbar.SetNavbarOrder(order);
+            for (let entry of this.installedExtensions.entries()) {
+                if (extensions.get(entry[0]) === undefined) {
+                    this.UninstallExtension(entry[0]);
+                }
+            }
         });
 
         Site.ListenForDark(dark => {
@@ -179,21 +153,15 @@ export class Extensions {
         }
 
         if (command == "Get Resource") {
-            let listeners = this._resourceListeners.get(data.name);
-
-            let firstTime = false;
-
-            if (listeners === undefined) {
-                firstTime = true;
-                listeners = [];
-            }
+            let listeners = this._resourceListeners.get(data.name) ?? [];
+            let firstTime = listeners.length == 0;
 
             listeners.push(e);
 
             this._resourceListeners.set(data.name, listeners);
 
             if (firstTime) {
-                Resources.GetResource(data.name, resource => {
+                Resources.ListenForResource(data.name, resource => {
                     let listeners = this._resourceListeners.get(data.name) ?? [];
 
                     for (let listener of listeners) {
@@ -210,7 +178,7 @@ export class Extensions {
                 });
             }
 
-            let resource = await Resources.GetResourceNow(data.name);
+            let resource = await Resources.GetResource(data.name);
 
             return {
                 command: "Resource",
@@ -233,11 +201,10 @@ export class Extensions {
         if (command == "Refresh Token") {
             let fetchedResources = await Resources.FetchResources();
 
-            if (!fetchedResources)
-                return {
-                    command: "Refreshed Token",
-                    data: null
-                }
+            if (!fetchedResources) return {
+                command: "Refreshed Token",
+                data: null
+            }
 
             let token = await Resources.GetToken();
 

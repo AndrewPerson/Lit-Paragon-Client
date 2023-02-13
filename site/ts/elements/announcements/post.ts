@@ -1,8 +1,6 @@
 import { html, unsafeCSS, LitElement } from "lit";
-import { customElement, property, query } from "lit/decorators.js";
+import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
-
-import { EscapeCss } from "../../utils";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -42,33 +40,37 @@ export class AnnouncementPost extends LitElement {
     @property()
     key: string;
 
-    @query("#read")
-    readIndicator: HTMLInputElement;
+    @property({ type: Boolean })
+    read: boolean;
 
-    SaveRead(read: boolean) {
-        this.readIndicator.checked = read;
+    SetRead(read: boolean) {
+        let readEvent = new CustomEvent("read", {
+            bubbles: true,
+            cancelable: true,
+            composed: true,
+            detail: {
+                read: read,
+                key: this.key,
+            }
+        });
 
-        let announcements = new Set<string>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
+        this.dispatchEvent(readEvent);
 
-        if (read) announcements.add(this.key);
-        else announcements.delete(this.key);
-
-        localStorage.setItem("Read Announcements", JSON.stringify([...announcements]));
-    }
-
-    GetRead(): boolean {
-        let announcements = new Set<string>(JSON.parse(localStorage.getItem("Read Announcements") ?? "[]"));
-
-        return announcements.has(this.key);
+        this.read = true;
     }
 
     render() {
         return html`
-        <input type="checkbox" id="read" ?checked="${this.GetRead()}" @input="${(e: InputEvent) => this.SaveRead((e.target as HTMLInputElement).checked)}">
-        <details @toggle="${(e: Event) => { if ((e.target as HTMLDetailsElement).open) this.SaveRead(true) }}">
+        <input type="checkbox" id="read" ?checked="${this.read}" @input="${(e: InputEvent) => this.SetRead((e.target as HTMLInputElement).checked)}">
+        <details @toggle="${(e: Event) => { if ((e.target as HTMLDetailsElement).open) this.SetRead(true) }}">
             <summary>
                 <h1>${this.title}</h1>
-                <p class="subtitle">By ${this.author} | For ${this.years}${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}${this.published === null ? "" : ` | Published ${this.published}`}</p>
+                <p class="subtitle">
+                    By ${this.author} |
+                    For ${this.years}
+                    ${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}
+                    ${this.published == null ? "" : ` | Published ${this.published}`}
+                </p>
             </summary>
 
             ${unsafeHTML(this.content)}

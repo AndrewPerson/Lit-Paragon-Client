@@ -3,6 +3,13 @@
     display: block;
 }
 
+:host(:hover) > #info,
+:host(:hover) > #background,
+:host(:focus-within) > #info,
+:host(:focus-within) > #background {
+    display: block;
+}
+
 button {
     all: unset;
     width: inherit;
@@ -20,9 +27,9 @@ button > slot {
     height: 100%;
 }
 
-.info {
+#info {
     position: absolute;
-    display: block;
+    display: none;
     top: var(--offset);
 
     width: max-content;
@@ -39,8 +46,9 @@ button > slot {
     box-sizing: border-box;
 }
 
-.background {
+#background {
     position: absolute;
+    display: none;
     width: var(--max-width);
     height: 200%;
     top: 0;

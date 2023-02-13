@@ -6,7 +6,7 @@ import { repeat } from "lit/directives/repeat.js";
 
 import { Pipeline } from "../../site/pipeline";
 import { filterYears } from "./year-filter";
-import { filterText } from "./text-filter";
+import { filterSearch } from "./search-filter";
 
 import "./post";
 
@@ -45,21 +45,22 @@ export class SchoolAnnouncements extends Page {
     @state()
     searchFilter: string = "";
 
-    announcementFilterPipeline = new Pipeline<Announcement[], { years: string[], text?: string }>()
+    announcementFilterPipeline = new Pipeline<Announcement[], { years: string[], search?: string }>()
                                  .transform(filterYears)
-                                 .transform(filterText);
+                                 .transform(filterSearch);
 
-    constructor() {
-        super();
+    GetReadAnnouncements() {
+        let announcements: string[] = JSON.parse(localStorage.getItem("Read Announcements") ?? "[]");
+        announcements = announcements.filter(a => this.announcements.notices?.findIndex(b => b.id?.toString() == a) != -1);
 
-        this.AddResource("announcements", (announcements: Announcements) => this.announcements = announcements);
-        this.AddResource("userinfo", (userInfo: {yearGroup: string | Missing}) => {
-            let yearGroup = userInfo.yearGroup;
+        let announcementsSet = new Set(announcements);
+        this.SetReadAnnouncements(announcementsSet);
 
-            if (yearGroup !== undefined && yearGroup !== null)
-                if (localStorage.getItem("Announcement Year Filter") === null)
-                    this.yearFilter = yearGroup;
-        });
+        return announcementsSet;
+    }
+
+    SetReadAnnouncements(readAnnouncements: Set<string>) {
+        localStorage.setItem("Read Announcements", JSON.stringify(Array.from(readAnnouncements)));
     }
 
     ChangeSearchFilter(e: InputEvent) {
@@ -78,8 +79,45 @@ export class SchoolAnnouncements extends Page {
         return a.getDate() == b.getDate() && a.getMonth() == b.getMonth() && a.getFullYear() == b.getFullYear();
     }
 
-    AnnouncementKey(announcement: Announcement) {
-        return announcement.id ?? "0";
+    GetHumanDate(date: Date) {
+        let now = new Date();
+
+        if (this.IsSameDay(date, now)) return "Today";
+
+        let yesterday = new Date(now);
+        yesterday.setDate(yesterday.getDate() - 1);
+
+        if (this.IsSameDay(date, yesterday)) return "Yesterday";
+
+        let tomorrow = new Date(now);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        if (this.IsSameDay(date, tomorrow)) return "Tomorrow";
+
+
+        return `${date.getDate().toString().padStart(2, "0")}-${(date.getMonth() + 1).toString().padStart(2, "0")}-${date.getFullYear()}`
+    }
+
+    constructor() {
+        super();
+
+        this.AddResource("announcements", (announcements: Announcements) => this.announcements = announcements);
+        this.AddResource("userinfo", (userInfo: {yearGroup: string | Missing}) => {
+            let yearGroup = userInfo.yearGroup;
+
+            if (yearGroup !== undefined && yearGroup !== null)
+                if (localStorage.getItem("Announcement Year Filter") == null)
+                    this.yearFilter = yearGroup;
+        });
+
+        this.addEventListener("read", ((e: CustomEvent<{ read: boolean, key: string }>) => {
+            let readAnnouncements = this.GetReadAnnouncements();
+
+            if (e.detail.read) readAnnouncements.add(e.detail.key);
+            else readAnnouncements.delete(e.detail.key);
+
+            this.SetReadAnnouncements(readAnnouncements);
+        }) as EventListener);
     }
 
     renderPage() {
@@ -88,8 +126,10 @@ export class SchoolAnnouncements extends Page {
         let filteredAnnouncements = this.announcementFilterPipeline.run(notices, {
             //TODO Make this multi-select
             years: this.yearFilter == "all" ? [] : [this.yearFilter],
-            text: this.searchFilter
+            search: this.searchFilter
         });
+
+        let readAnnouncements = this.GetReadAnnouncements();
 
         return html`
         <div class="header">
@@ -108,27 +148,22 @@ export class SchoolAnnouncements extends Page {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${repeat(filteredAnnouncements, (announcement) => this.AnnouncementKey(announcement), announcement => {
+        <div class="content">${repeat(filteredAnnouncements, (announcement) => announcement.id?.toString() ?? "", announcement => {
             let meeting = announcement.isMeeting == 1;
-
-            let meetingDate = announcement.meetingDate ?? "";
-            if (this.IsSameDay(new Date(meetingDate), new Date())) meetingDate = "Today";
+            let read = readAnnouncements.has(announcement.id?.toString() ?? "");
 
             return html`
             <announcement-post title="${announcement.title ?? "???"}"
                                content="${announcement.content ?? "???"}"
                                author="${announcement.authorName ?? "???"}"
                                years="${announcement.displayYears ?? "???"}"
-                               published="${
-                                    this.IsSameDay(new Date(announcement.dates?.[0] ?? ""), new Date()) ?
-                                    "Today" :
-                                    announcement.dates?.[0] ?? ""
-                               }"
+                               published="${this.GetHumanDate(new Date(announcement.dates?.[0] ?? ""))}"
                                ?meeting="${meeting}"
-                               meetingDate="${meetingDate}"
-                               meetingTime="${meeting ? (announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??") : ""}"
+                               meetingDate="${this.GetHumanDate(new Date(announcement.meetingDate ?? ""))}"
+                               meetingTime="${announcement.meetingTime ?? announcement.meetingTimeParsed ?? "??:??"}"
                                weight="${(announcement.relativeWeight ?? 0) + (meeting ? 1 : 0)}"
-                               key="${this.AnnouncementKey(announcement)}"></announcement-post>
+                               key="${announcement.id?.toString() ?? ""}"
+                               ?read=${read}></announcement-post>
             `;
         })}</div>
         `;

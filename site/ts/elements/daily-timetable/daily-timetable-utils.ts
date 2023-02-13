@@ -23,7 +23,7 @@ export function GetCurrentBell(dailyTimetable: DailyTimetable, now: Date) {
     let bells = dailyTimetable.bells ?? [];
 
     for (let i = 0; i < bells.length; i++) {
-        if (bells[i].time === undefined || bells[i].time === null) continue;
+        if (bells[i].time === undefined || bells[i].time == null) continue;
 
         let time = BellToDate(bells[i], dailyTimetableDate);
 
@@ -97,7 +97,7 @@ export function HumanTimeDisplay(bell: Bell, dailyTimetableDate: Date, now: Date
 export function GetPeriodTitle(dailyTimetable: DailyTimetable | Missing, year: string, title: string) {
     let fullName = dailyTimetable?.timetable?.subjects?.[`${year}${title}`]?.title;
 
-    if (fullName === undefined || fullName === null) {
+    if (fullName === undefined || fullName == null) {
         let words = title.split(" ");
         words.pop();
 

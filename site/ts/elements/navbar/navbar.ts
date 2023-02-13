@@ -1,13 +1,11 @@
 import { html, unsafeCSS, LitElement } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
-import { repeat } from "lit/directives/repeat.js";
+import { map } from "lit/directives/map.js";
 
+import { Site } from "../../site/site";
 import { Extensions, Extension } from "../../site/extensions";
 
 import "./navitem";
-import { NavItem } from "./navitem";
-import "./dragged-navitem";
-import { DraggedNavItem } from "./dragged-navitem";
 
 //@ts-ignore
 import navbarCss from "./navbar.css";
@@ -19,40 +17,16 @@ export class Navbar extends LitElement {
     static styles = [navbarCss];
 
     static defaultPages = [
-        {
-            page: "daily-timetable",
-            title: "Daily Timetable",
-            icon: "images/dailytimetable.svg"
-        },
-        {
-            page: "barcode",
-            title: "ID Barcode",
-            icon: "images/barcode.svg"
-        },
-        {
-            page: "timetable",
-            title: "Timetable",
-            icon: "images/timetable.svg"
-        },
-        {
-            page: "announcements",
-            title: "Announcements",
-            icon: "images/announcements.svg"
-        },
-        {
-            page: "pages",
-            title: "Pages Marketplace",
-            icon: "images/marketplace.svg"
-        },
-        {
-            page: "settings",
-            title: "Settings",
-            icon: "images/settings.svg"
-        }
+        { page: "daily-timetable", title: "Daily Timetable", icon: "images/dailytimetable.svg", extension: false },
+        { page: "barcode", title: "ID Barcode", icon: "images/barcode.svg", extension: false },
+        { page: "timetable", title: "Timetable", icon: "images/timetable.svg", extension: false },
+        { page: "announcements", title: "Announcements", icon: "images/announcements.svg", extension: false },
+        { page: "pages", title: "Pages Marketplace", icon: "images/marketplace.svg", extension: false },
+        { page: "settings", title: "Settings", icon: "images/settings.svg", extension: false },
     ];
 
-    @property({ type: Boolean })
-    editing: boolean = false;
+    @property({ type: Array })
+    order: string[] = Navbar.defaultPages.map((page) => page.page);
 
     @query("#items-container", true)
     itemsContainer: HTMLDivElement;
@@ -71,43 +45,18 @@ export class Navbar extends LitElement {
 
     mobileMediaQuery: MediaQueryList = matchMedia("(max-aspect-ratio: 1/1)");
 
-    draggedItemIndex: number = 0;
-    draggedItem: DraggedNavItem | null = null;
-    draggedItemOffsetX: number = 0;
-    draggedItemOffsetY: number = 0;
-
-    hoveredElement: NavItem | null = null;
-
-    static GetNavbarOrder(): number[] {
-        return JSON.parse(localStorage.getItem("Nav Order") || "[0, 1, 2, 3, 4, 5]");
-    }
-
-    static SetNavbarOrder(order: number[], update: boolean = true) {
-        localStorage.setItem("Nav Order", JSON.stringify(order));
-        if (update) this.instance?.requestUpdate();
-    }
-
-    static instance: Navbar | null;
-
     constructor() {
         super();
 
-        Navbar.instance = this;
-
-        this.addEventListener("pointerdown", this.SetDraggedItem.bind(this));
         this.addEventListener("pointerdown", this.ShowScrollBar.bind(this));
         this.addEventListener("pointerup", this.HideScrollBar.bind(this));
-        document.addEventListener("pointermove", this.DragElement);
-        document.addEventListener("pointerup", this.StopDrag);
+
+        Site.ListenForNavigation(_ => this.requestUpdate());
+        Extensions.ListenForInstalledExtensions(_ => this.requestUpdate());
 
         //Because sometimes addEventListener is undefined.
         //TODO Find out why
         this.mobileMediaQuery.addEventListener?.("change", this.ShowScrollShadows.bind(this));
-    }
-
-    disconnectedCallback() {
-        document.removeEventListener("pointermove", this.DragElement);
-        document.removeEventListener("pointerup", this.StopDrag);
     }
 
     ShowScrollBar() {
@@ -121,7 +70,7 @@ export class Navbar extends LitElement {
     ShowScrollShadows() {
         //This function can be called before the element is fully initialised.
         //This stops it from running if that happens.
-        if (this.shadowRoot === null) return;
+        if (this.shadowRoot == null) return;
 
         if (window.innerWidth <= window.innerHeight) {
             this.topShadow.style.display = "none";
@@ -153,143 +102,35 @@ export class Navbar extends LitElement {
         }
     }
 
-    GetNavItemAtLocation(x: number, y: number): NavItem | null {
-        let element = this.shadowRoot?.elementFromPoint(x, y);
-
-        if (element === undefined || element === null) return null;
-
-        while (element.tagName !== "NAV-ITEM") {
-            if (element.parentElement === null) return null;
-
-            element = element.parentElement;
-        }
-
-        return element as NavItem;
-    }
-
-    SetDraggedItem(e: PointerEvent) {
-        if (!this.editing) return;
-
-        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
-        if (element === null) return;
-
-        this.draggedItemIndex = element.childIndex;
-
-        let clone = document.createElement("dragged-nav-item") as DraggedNavItem;
-        clone.innerHTML = element.innerHTML;
-        document.documentElement.appendChild(clone);
-
-        this.draggedItem = clone;
-
-        let rect = element.getBoundingClientRect();
-
-        this.draggedItemOffsetX = rect.left - e.clientX;
-        this.draggedItemOffsetY = rect.top - e.clientY;
-
-        e.preventDefault();
-    }
-
-    DragElement = ((e: PointerEvent) => {
-        if (!this.editing) return;
-        if (this.draggedItem == null) return;
-
-        this.draggedItem.style.left = `${e.clientX + this.draggedItemOffsetX}px`;
-        this.draggedItem.style.top = `${e.clientY + this.draggedItemOffsetY}px`;
-
-        e.preventDefault();
-
-        let element = this.GetNavItemAtLocation(e.clientX, e.clientY);
-        if (element === null) return;
-
-        if (this.hoveredElement !== element) {
-            if (this.hoveredElement !== null) this.hoveredElement.hovered = false;
-
-            element.hovered = true;
-            this.hoveredElement = element;
-
-            this.ReorderNavItems(element.childIndex);
-        }
-    }).bind(this);
-
-    StopDrag = ((e: PointerEvent) => {
-        if (this.draggedItem !== null) {
-            this.draggedItem.remove();
-            this.draggedItem = null;
-        }
-
-        if (this.hoveredElement !== null) {
-            this.hoveredElement.hovered = false;
-            this.hoveredElement = null;
-        }
-
-        e.preventDefault();
-    }).bind(this);
-
-    ReorderNavItems(newIndex: number) {
-        let order = Navbar.GetNavbarOrder();
-        order.splice(newIndex, 0, order.splice(this.draggedItemIndex, 1)[0]);
-
-        this.draggedItemIndex = newIndex;
-
-        Navbar.SetNavbarOrder(order);
-    }
-
-    GetNavItem = ((index: number, order: number[], pages: string[], icons: string[]) => {
-        let page: string;
-        let title: string;
-        let icon: string;
-        let extension: boolean = false;
-
-        let orderNumber = order[index];
-
-        if (orderNumber < Navbar.defaultPages.length) ({page, title, icon} = Navbar.defaultPages[orderNumber]);
-        else {
-            page = pages[orderNumber - Navbar.defaultPages.length];
-            title = pages[orderNumber - Navbar.defaultPages.length];
-            icon = icons[orderNumber - Navbar.defaultPages.length];
-            extension = true;
-        }
-
-        return html`
-            <nav-item ?editing="${this.editing}" page="${page}" ?extension="${extension}" title="${title}" childIndex="${index}">
-                <img draggable="false" src="${icon}" alt="">
-            </nav-item>
-        `;
-    }).bind(this);
-
-    updated() {
-        for (let navItem of this.shadowRoot?.querySelectorAll("nav-item") as NodeListOf<NavItem>)
-            navItem.requestUpdate();
-    }
-
     render() {
-        let order = Navbar.GetNavbarOrder();
-
         let extensions = Extensions.installedExtensions;
 
-        if (order.length >= Navbar.defaultPages.length + extensions.size) {
-            for (let i = order.length - 1; i >= 0; i--) {
-                if (order[i] >= extensions.size + Navbar.defaultPages.length)
-                    order.splice(i, 1);
-            }
+        let pages = [...Navbar.defaultPages];
+        let lastPage = pages.pop()!;
 
-            Navbar.SetNavbarOrder(order, false);
-        }
-
-        let pages: string[] = [];
-        let icons: string[] = [];
         for (let key of extensions.keys()) {
-            pages.push(key);
-            icons.push(Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension));
+            pages.push({
+                page: key,
+                title: key,
+                icon: Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension),
+                extension: true,
+            });
         }
+
+        pages.push(lastPage);
 
         let mobile = this.mobileMediaQuery.matches;
         let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-        let scrollable = order.length * 12 * vmin > window.innerHeight;
+        let scrollable = (extensions.size + 5) * 12 * vmin > window.innerHeight;
 
         return html`
         <div id="items-container" @scroll="${this.ShowScrollShadows.bind(this)}">
-            ${repeat(order, (order) => order, (_, index) => this.GetNavItem(index, order, pages, icons))}
+            ${map(pages, page => html`
+            <nav-item page="${page.page}" title="${page.title}" ?extension="${page.extension}"
+                      class="${Site.page.page == page.page && Site.page.extension == page.extension ? "selected" : ""}">
+                <img draggable="false" src="${page.icon}" alt="">
+            </nav-item>
+            `)}
 
             <div id="top-shadow" style="display: none"></div>
             <div id="bottom-shadow" style="${!mobile && scrollable ? "" : "display: none"}"></div>

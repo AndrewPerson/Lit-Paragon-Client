@@ -25,35 +25,23 @@ declare const SKIN_CSS: string;
 export class FullTimetable extends Page {
     static styles = [textCss, scrollbarCss, pageCss, timetableCss];
 
-    static get observedAttributes(): string[] {
-        return [...super.observedAttributes, "class"];
-    }
-
-    attributeChangedCallback(name: string, _old: string | null, value: string | null): void {
-        super.attributeChangedCallback(name, _old, value);
-
-        if (name == "class") this.requestUpdate();
-    }
-
     @state()
     timetable: Timetable;
 
-    set dailyTimetable(value: DailyTimetable) {
-        let day = value.timetable?.timetable?.dayname;
-
-        if (day !== undefined && day !== null) {
-            this._day = day;
-        }
-    }
-
     @state()
-    private _day: string | undefined;
+    private day: string | undefined;
 
     constructor() {
         super();
 
         this.AddResource("timetable", (timetable: Timetable) => this.timetable = timetable);
-        this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => this.dailyTimetable = dailyTimetable);
+        this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => {
+            let day = dailyTimetable.timetable?.timetable?.dayname;
+
+            if (day !== undefined && day !== null) {
+                this.day = day;
+            }
+        });
 
         document.addEventListener("pointerover", this.ClearHighlight);
 
@@ -78,7 +66,6 @@ export class FullTimetable extends Page {
         super.disconnectedCallback();
 
         document.removeEventListener("pointerover", this.ClearHighlight);
-
         window.removeEventListener("resize", this.Resize);
     }
 
@@ -158,7 +145,7 @@ export class FullTimetable extends Page {
             <thead>
                 <tr>
                     <th></th>
-                    ${dayNames.map(dayName => html`<th class="${dayName == this._day ? "current-day" : ""}">${dayName}</th>`)}
+                    ${dayNames.map(dayName => html`<th class="${dayName == this.day ? "current-day" : ""}">${dayName}</th>`)}
                 </tr>
             </thead>
             <tbody>

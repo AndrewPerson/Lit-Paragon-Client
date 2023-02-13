@@ -148,7 +148,7 @@ async function MetadataFetch() {
 
     let latestMetadata = await GetLatestMetadata();
 
-    let needsUpdating = currentMetadata === undefined || currentMetadata === null || currentMetadata.version != latestMetadata.version;
+    let needsUpdating = currentMetadata === undefined || currentMetadata == null || currentMetadata.version != latestMetadata.version;
 
     if (needsUpdating)
         await Update();
