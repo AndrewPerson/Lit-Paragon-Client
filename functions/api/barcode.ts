@@ -1,5 +1,4 @@
-import { Canvas } from "canvas";
-import JsBarcode = require("jsbarcode");
+import { encodeDigitsToCode128Svg } from "../lib/code128";
 
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
@@ -13,19 +12,9 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
         });
     }
 
-    console.log(Canvas);
-
-    const canvas = new Canvas(200, 100);
-
-    JsBarcode(canvas, studentID, {
-        format: "CODE128",
-        displayValue: false,
-        margin: 0
-    });
-
-    return new Response(canvas.toBuffer(), {
+    return new Response(encodeDigitsToCode128Svg(studentID), {
         headers: {
-            "Content-Type": "image/png"
+            "Content-Type": "image/svg+xml"
         }
     });
 });
