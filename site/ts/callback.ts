@@ -49,15 +49,7 @@ let params = new URLSearchParams(window.location.search);
 
 let code = params.get("code");
 
-//#if DEVELOPMENT
-caches.open(RESOURCE_CACHE).then(cache => {
-    cache.put("Token", new Response("{}"));
-});
-
-sessionStorage.removeItem("Last Refreshed");
-location.href = location.origin;
-//#else
-if (code) {
+if (code != null) {
     GetToken(code)
     .then(succeeded => {
         sessionStorage.removeItem("Last Refreshed");
@@ -70,4 +62,3 @@ else {
     if (error) ShowError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }
-//#endif
