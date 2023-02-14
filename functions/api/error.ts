@@ -26,7 +26,7 @@ export const onRequestPost = create<SBHSEnv>("error", true, async ({ env, reques
         host: env.PLANETSCALE_HOST,
         username: env.PLANETSCALE_USERNAME,
         password: env.PLANETSCALE_PASSWORD,
-        fetch: tracer.fetch
+        fetch: tracer.fetch.bind(tracer)
     });
 
     //env comes from a trusted source so it should be okay to inject its values directly. (If someone manages to compromise the env, they could do whatever they want already.)
