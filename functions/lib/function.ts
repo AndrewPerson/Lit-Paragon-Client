@@ -37,6 +37,8 @@ export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: 
                     headers: error.headers
                 });
 
+                console.log(error.body);
+
                 tracer.finishResponse(result);
                 tracer.addData({ error: true });
 
@@ -48,6 +50,8 @@ export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: 
                 let result = new Response(error.message, {
                     status: 500
                 });
+
+                console.log(error.stack);
 
                 tracer.finishResponse(result);
                 tracer.addData({ error: true });
