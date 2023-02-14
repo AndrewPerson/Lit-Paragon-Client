@@ -29,6 +29,8 @@ export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: 
             return result;
         }
         catch (error) {
+            console.log(error);
+
             if (error instanceof ErrorResponse) {
                 let result = new Response(error.body, {
                     status: error.statusCode,
