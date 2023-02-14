@@ -13,6 +13,8 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
         });
     }
 
+    console.log(Canvas);
+
     const canvas = new Canvas(200, 100);
 
     JsBarcode(canvas, studentID, {
