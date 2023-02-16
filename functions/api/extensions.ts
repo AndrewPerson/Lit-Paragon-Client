@@ -17,7 +17,7 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env, re
     });
 
     //env comes from a trusted source so it should be okay to inject its values directly. (If someone manages to compromise the env, they could do whatever they want already.)
-    const result: ExecutedQuery = await connection.execute(`SELECT * FROM \`${env.PLANETSCALE_EXTENSIONS_TABLE}\` LIMIT ?,? ORDERBY \`name\``, [
+    const result: ExecutedQuery = await connection.execute(`SELECT * FROM \`${env.PLANETSCALE_EXTENSIONS_TABLE}\` ORDER BY \`name\` LIMIT ?,?`, [
         pageSize * page,
         pageSize
     ]);
