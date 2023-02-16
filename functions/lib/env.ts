@@ -5,5 +5,6 @@ export type SBHSEnv = {
     PLANETSCALE_HOST: string,
     PLANETSCALE_USERNAME: string,
     PLANETSCALE_PASSWORD: string,
-    PLANETSCALE_TABLE: string
+    PLANETSCALE_ERRORS_TABLE: string,
+    PLANETSCALE_EXTENSIONS_TABLE: string
 }

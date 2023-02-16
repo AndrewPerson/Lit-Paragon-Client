@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, unsafeCSS, TemplateResult } from "lit";
+import { html, TemplateResult } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { BellToDate, GetCurrentBell, GetPeriodTitle, HumanTimeDisplay } from "./daily-timetable-utils";
@@ -36,8 +36,6 @@ import dailyTimetableCss from "./daily-timetable.css";
 
 declare const RESOURCE_CACHE: string;
 declare const MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY: number;
-declare const SKIN_CSS: string;
-
 @customElement("daily-timetable")
 export class StudentDailyTimetable extends Page {
     static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];

@@ -9,9 +9,6 @@ self.addEventListener("install", e => e.waitUntil(self.skipWaiting()));
 self.addEventListener("activate", e => e.waitUntil(self.clients.claim()));
 
 self.addEventListener("fetch", e => e.respondWith(onFetch(e)));
-self.addEventListener("message", e => e.waitUntil(onMessage(e)));
-
-declare const METADATA_ENDPOINT: string;
 
 async function onFetch(e: FetchEvent): Promise<Response> {
     if (e.request.method == "GET") {
@@ -27,29 +24,8 @@ async function onFetch(e: FetchEvent): Promise<Response> {
                 let cache = await caches.open(SKIN_CACHE);
                 return (await cache.match(`${location.origin}${url.pathname}`)) ?? fetch(e.request);
             }
-
-            if (url.pathname == "/dist/index.js") {
-                let textPromise = fetch(e.request).then(r => r.text());
-                let skinPromise = caches.open(SKIN_CACHE).then(c => c.match(`${location.origin}/skin.css`)).then(r => r?.text() ?? "");
-
-                return new Response(`const SKIN_CSS=decodeURIComponent(\`${encodeURIComponent(await skinPromise)}\`);\n${await textPromise}`, {
-                    headers: {
-                        "Content-Type": "application/javascript"
-                    }
-                });
-            }
         }
     }
 
     return fetch(e.request);
-}
-
-async function onMessage(e: ExtendableMessageEvent) {
-    if (e.data.command == "metadata-fetch") {
-        e.source?.postMessage({
-            command: "metadata-fetched",
-            metadata: await (await fetch(METADATA_ENDPOINT)).json(),
-            updated: false
-        });
-    }
 }

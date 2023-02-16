@@ -1,5 +1,5 @@
+declare const VERSION: string;
 declare const SERVER_ENDPOINT: string;
-declare const METADATA_CACHE: string;
 declare const REQUIRED_FEATURES: string[];
 declare const TELEMETRY_PERMISSION_STORAGE: string;
 //declare const TELEMETRY_STORAGE: string;
@@ -8,10 +8,6 @@ window.addEventListener("error", async e => {
     const telemetryPermission = JSON.parse(localStorage.getItem(TELEMETRY_PERMISSION_STORAGE) ?? "true");
 
     if (!telemetryPermission) return;
-
-    const metadataCache = await caches.open("Metadata Cache");
-    const metadataResponse = await metadataCache.match("Metadata");
-    const metadata = metadataResponse === undefined ? undefined : await metadataResponse.json();
 
     if (e.error instanceof Error) {
         fetch(`${SERVER_ENDPOINT}/error`, {
@@ -22,7 +18,7 @@ window.addEventListener("error", async e => {
             body: JSON.stringify({
                 error_message: e.error.message,
                 stack_trace: e.error.stack ?? "No stack trace",
-                version: metadata?.version ?? "No version"
+                version: VERSION
             })
         });
     }
@@ -35,7 +31,7 @@ window.addEventListener("error", async e => {
             body: JSON.stringify({
                 error_message: "No message",
                 stack_trace: e.error.stack ?? "No stack trace",
-                version: metadata?.version ?? "No version"
+                version: VERSION
             })
         });
     }

@@ -6,18 +6,9 @@ import { Page as PageElement } from "../elements/page/page";
 import { ExtensionPage } from "../elements/extensions/extensions";
 import { InlineNotification } from "../elements/notification/notification";
 
-declare const METADATA_CACHE: string;
-
 export type Page = {
     page: string,
     extension: boolean
-};
-
-export type Metadata = {
-    version: string,
-    pages: {
-        [index: string]: Extension
-    };
 };
 
 export class Site {
@@ -35,7 +26,6 @@ export class Site {
 
     private static _darkCallbacks = new Callbacks<boolean>();
     private static _hueCallbacks = new Callbacks<number>();
-    private static _metadataCallbacks = new Callbacks<Metadata | undefined>();
 
     //#region Navigation
     static NavigateTo(page: Page): void {
@@ -153,21 +143,4 @@ export class Site {
         callback(this.hue);
     }
     //#endregion
-
-    static async GetMetadataNow(): Promise<Metadata | undefined> {
-        let cache = await caches.open(METADATA_CACHE);
-        return await (await cache.match("Metadata"))?.json();
-    }
-
-    static async ListenForMetadata(callback: Callback<Metadata | undefined>) {
-        this._metadataCallbacks.AddListener(callback);
-        callback(await this.GetMetadataNow());
-    }
-
-    static async SetMetadata(metadata: Metadata, fireCallbacks: boolean = true) {
-        let cache = await caches.open(METADATA_CACHE);
-        await cache.put("Metadata", new Response(JSON.stringify(metadata)));
-
-        if (fireCallbacks) this._metadataCallbacks.Invoke(metadata);
-    }
 }

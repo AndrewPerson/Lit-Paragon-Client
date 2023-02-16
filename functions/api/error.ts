@@ -30,7 +30,7 @@ export const onRequestPost = create<SBHSEnv>("error", true, async ({ env, reques
     });
 
     //env comes from a trusted source so it should be okay to inject its values directly. (If someone manages to compromise the env, they could do whatever they want already.)
-    const result = await connection.execute(`INSERT INTO \`${env.PLANETSCALE_TABLE}\` (error_message, stack_trace, version, date) VALUES (?, ?, ?, ?)`, [
+    const result = await connection.execute(`INSERT INTO \`${env.PLANETSCALE_ERRORS_TABLE}\` (error_message, stack_trace, version, date) VALUES (?, ?, ?, ?)`, [
         error.error_message,
         error.stack_trace,
         error.version,

@@ -1,12 +1,10 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 
 //@ts-ignore
 import imgCss from "default/img.css";
 //@ts-ignore
 import infoCss from "./info.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("info-popup")
 export class Info extends LitElement {

@@ -1,4 +1,4 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { map } from "lit/directives/map.js";
 
@@ -26,8 +26,6 @@ import fullElementCss from "default/pages/full.css";
 import pageCss from "default/pages/page.css";
 //@ts-ignore
 import extensionsMarketplaceCss from "./extensions-marketplace.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
@@ -60,14 +58,17 @@ export class ExtensionsMarketplace extends LitElement {
 
         Extensions.ListenForInstalledExtensions(_ => this.requestUpdate());
 
-        Site.ListenForMetadata(metadata => {
-            this.extensions = new Map(Object.entries(metadata?.pages ?? {}));
-        });
-
         Site.ListenForDark(_ => this.requestUpdate());
+
+        //TODO Use pagination
+        Extensions.GetExtensions().then(extensions => {
+            this.extensions = extensions;
+            this.requestUpdate();
+        });
     }
 
     render() {
+        //TODO Use Algolia for searching
         let extensions = this.extensionPipeline.run([...this.extensions.entries()].map(e => ({name: e[0], extension: e[1]})), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
 
         return html`

@@ -6,8 +6,6 @@ import imgCss from "default/img.css";
 //@ts-ignore
 import loadingCss from "./loader.css";
 
-declare const SKIN_CSS: string;
-
 @customElement("loading-indicator")
 export class LoadingIndicator extends LitElement {
     static styles = [imgCss, loadingCss];

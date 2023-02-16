@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, unsafeCSS } from "lit";
+import { html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -22,13 +22,6 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
 
-declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
-    displayValue: boolean
-    margin: number
-}) => void) | undefined;
-
-declare const SKIN_CSS: string;
-
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
     static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
@@ -41,9 +34,6 @@ export class StudentBarcode extends Page {
 
     @query("#point2")
     point2: HTMLElement | null;
-
-    @query("#save")
-    saveLink: HTMLAnchorElement | null;
 
     @state()
     studentId: string;
@@ -153,25 +143,6 @@ export class StudentBarcode extends Page {
         this.barcode.style.height = `${maxY - minY}%`;
     }
 
-    RenderBarcode() {
-        if (this.draggedElement !== null) return;
-        if (this.barcode == null) return;
-
-        if (typeof JsBarcode === "function") {
-            JsBarcode(this.barcode, this.studentId, {
-                displayValue: false,
-                margin: 0
-            });
-        }
-
-        let url = this.barcode.toDataURL("image/png");
-
-        if (this.saveLink == null) return;
-
-        this.saveLink.href = url;
-        this.saveLink.download = `${this.studentId}.png`;
-    }
-
     SaveBarcodePosition() {
         if (this.point1 == null) return;
         if (this.point2 == null) return;
@@ -209,7 +180,6 @@ export class StudentBarcode extends Page {
 
     updated() {
         this.SetBarcodePosition();
-        this.RenderBarcode();
 
         this.rect = this.getBoundingClientRect();
     }
@@ -221,7 +191,7 @@ export class StudentBarcode extends Page {
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-        <a id="save" title="Save Barcode">
+        <a id="save" title="Save Barcode" href="https://paragon.pages.dev/api/barcode?studentID=${this.studentId}">
             <img src="/images/download.svg">
         </a>
 

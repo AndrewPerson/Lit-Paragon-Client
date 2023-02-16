@@ -1,4 +1,4 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Extensions } from "../../site/extensions";
@@ -9,8 +9,6 @@ import textCss from "default/text.css";
 import buttonCss from "default/button.css";
 //@ts-ignore
 import extensionDisplayCss from "./extension-display.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("extension-display")
 export class ExtensionDisplay extends LitElement {

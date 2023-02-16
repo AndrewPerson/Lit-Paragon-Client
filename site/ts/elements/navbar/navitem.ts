@@ -1,4 +1,4 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -7,8 +7,6 @@ import { Site } from "../../site/site";
 import imgCss from "default/img.css";
 //@ts-ignore
 import navItemCss from "./navitem.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("nav-item")
 export class NavItem extends LitElement {

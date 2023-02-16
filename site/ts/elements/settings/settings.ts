@@ -1,5 +1,5 @@
-import { html, unsafeCSS, LitElement } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
+import { html, LitElement } from "lit";
+import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 import LOGIN_URL from "../../login-url";
@@ -21,7 +21,7 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
-declare const SKIN_CSS: string;
+declare const VERSION: string;
 
 @customElement("user-settings")
 export class Settings extends LitElement {
@@ -29,15 +29,6 @@ export class Settings extends LitElement {
 
     @query("#hue", true)
     hueInput: HTMLInputElement;
-
-    @state()
-    version: string = "0.0.0";
-
-    constructor() {
-        super();
-
-        Site.ListenForMetadata(metadata => this.version = metadata?.version ?? "0.0.0");
-    }
 
     async Patch() {
         await Promise.all((await navigator.serviceWorker.getRegistrations()).map(reg => reg.unregister()));
@@ -79,7 +70,7 @@ export class Settings extends LitElement {
                 The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
             </info-popup>
 
-            <h6 id="version">Paragon v${this.version}</h6>
+            <h6 id="version">Paragon v${VERSION}</h6>
         </header>
 
         <div class="content">

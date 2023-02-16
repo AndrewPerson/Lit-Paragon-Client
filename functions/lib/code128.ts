@@ -61,10 +61,24 @@ export function encodeDigitsToCode128(text: string) {
 export function encodeDigitsToCode128Svg(text: string) {
     const widths = encodeDigitsToCode128(text);
 
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${widths.length * 2} 100">
-        <rect width="${widths.length * 2}" height="100" fill="white" />
-        <rect x="0" y="0" width="${widths.length * 2}" height="100" fill="white" />
-        ${widths.map((width, i) => `<rect x="${i * 2}" y="0" width="${width * 2}" height="100" fill="black" />`).join('')}
+    let rects = [];
+    let currentWidth = 0;
+    let index = 0;
+    for (let i = 0; i < widths.length; i++) {
+        const width = widths[i];
+
+        rects.push({
+            x: currentWidth,
+            width: width,
+            colour: i % 2 == 0 ? "black" : "white"
+        })
+
+        currentWidth += width;
+        index++;
+    }
+
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${currentWidth} 100">
+        ${rects.map(rect => `<rect x="${rect.x}" y="0" width="${rect.width}" height="100" fill="${rect.colour}" />`).join('')}
     </svg>`;
 
     return svg;

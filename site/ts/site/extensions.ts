@@ -1,12 +1,12 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
 
-import { Callbacks, Callback } from "./callback";
+import { Callbacks } from "./callback";
 import { ExtensionPage } from "../elements/extensions/extensions";
 
 import { InlineNotification } from "../elements/notification/notification";
 
-declare const METADATA_CACHE: string;
+declare const VERSION: string;
 declare const SKIN_CACHE: string;
 
 export type Extension = {
@@ -42,7 +42,7 @@ export class Extensions {
     }
 
     static async InstallExtension(extensionName: string) {
-        let extension = (await this.GetExtensionsNow()).get(extensionName);
+        let extension = (await this.GetExtensions()).get(extensionName);
 
         if (extension !== undefined) {
             this.installedExtensions.set(extensionName, extension);
@@ -61,15 +61,11 @@ export class Extensions {
         this._installedExtensionsListeners.Invoke(this.installedExtensions);
     }
 
-    static async GetExtensionsNow(): Promise<Map<string, Extension>> {
-        let cache = await caches.open(METADATA_CACHE);
-        let response = await cache.match("Metadata");
-
-        if (!response) return new Map();
-
-        let extensions: Map<string, Extension> = new Map(Object.entries((await response.json()).pages ?? {}));
-
-        return extensions;
+    //TODO Pagination
+    //TODO Add search
+    static async GetExtensions(pageSize: number = 10, page: number = 1): Promise<Map<string, Extension>> {
+        let response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
+        return new Map(await response.json());
     }
 
     static GetExtensionIconURL(extension: Extension, dark: boolean) {
@@ -87,9 +83,7 @@ export class Extensions {
     }
 
     static Initialise() {
-        Site.ListenForMetadata(metadata => {
-            let extensions = new Map(Object.entries(metadata?.pages ?? {}));
-
+        this.GetExtensions().then(extensions => {
             for (let entry of this.installedExtensions.entries()) {
                 if (extensions.get(entry[0]) === undefined) {
                     this.UninstallExtension(entry[0]);
@@ -147,7 +141,7 @@ export class Extensions {
                 data: {
                     dark: Site.dark,
                     hue: Site.hue,
-                    version: (await Site.GetMetadataNow())?.version
+                    version: VERSION
                 }
             }
         }

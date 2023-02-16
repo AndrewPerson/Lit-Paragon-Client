@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, unsafeCSS } from "lit";
+import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 import { repeat } from "lit/directives/repeat.js";
 
@@ -29,8 +29,6 @@ import fullElementCss from "default/pages/full.css";
 import pageCss from "default/pages/page.css";
 //@ts-ignore
 import announcementCss from "./announcements.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("school-announcements")
 export class SchoolAnnouncements extends Page {

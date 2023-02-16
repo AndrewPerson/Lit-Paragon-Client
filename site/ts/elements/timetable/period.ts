@@ -1,12 +1,10 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, property, state, query } from "lit/decorators.js";
 
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
 import periodCss from "./period.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("timetable-period")
 export class TimetablePeriod extends LitElement {
