@@ -3,7 +3,7 @@ import { connect } from "@planetscale/database";
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
 
-export const onRequestPost = create<SBHSEnv>("extensions", true, async ({ env, request, data: { tracer } }) => {
+export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env, request, data: { tracer } }) => {
     const searchParams = new URL(request.url).searchParams;
 
     const pageSize = parseInt(searchParams.get("page_size") ?? "0");

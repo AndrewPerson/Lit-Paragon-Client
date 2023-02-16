@@ -9,6 +9,7 @@ import { InlineNotification } from "../elements/notification/notification";
 declare const VERSION: string;
 declare const SKIN_CACHE: string;
 
+//TODO Fix types
 export type Extension = {
     navIcon: string,
     url: string,
@@ -63,6 +64,7 @@ export class Extensions {
 
     //TODO Pagination
     //TODO Add search
+    //TODO Stop using Map and fix types
     static async GetExtensions(pageSize: number = 10, page: number = 1): Promise<Map<string, Extension>> {
         let response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
         return new Map(await response.json());
