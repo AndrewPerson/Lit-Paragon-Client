@@ -1,7 +1,7 @@
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile, rm, readdir, copyFile } from "fs/promises";
+import { writeFile, readFile, rm, readdir } from "fs/promises";
 
 import { exec } from "child_process";
 
@@ -82,8 +82,6 @@ async function Main() {
     //Order matters here so values specified in the specified env override those in the sharedEnv
     const env = merge(sharedEnv, specifiedEnv);
 
-    let metadataPromise = copyFile(path.resolve(dirname, "metadata.json"), path.resolve(dirname, "site/metadata.json"));
-
     await rm(path.resolve(dirname, "site/dist"), { force: true, recursive: true });
 
     let tsPromise = new Promise(res => {
@@ -138,7 +136,7 @@ async function Main() {
         process.exit(1);
     });
 
-    let [_1, _2, buildResult] = await Promise.all([metadataPromise, tsPromise, buildPromise]);
+    let [_, buildResult] = await Promise.all([tsPromise, buildPromise]);
 
     await writeFile(path.resolve(dirname, "site/dist/esbuild-metadata.json"), JSON.stringify(buildResult.metafile));
 

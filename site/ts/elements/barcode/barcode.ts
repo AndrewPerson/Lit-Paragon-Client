@@ -191,14 +191,14 @@ export class StudentBarcode extends Page {
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-        <a id="save" title="Save Barcode" href="https://paragon.pages.dev/api/barcode?studentID=${this.studentId}">
+        <a id="save" title="Save Barcode" href="/api/barcode?studentID=${this.studentId}">
             <img src="/images/download.svg">
         </a>
 
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
 
-        <canvas id="barcode" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        <img src="/api/barcode?studentID=${this.studentId}" id="barcode" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;">
         `;
     }
 }

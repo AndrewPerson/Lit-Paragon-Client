@@ -16,10 +16,24 @@ export class InlineNotification extends LitElement {
     @property({ type: Number })
     percentage: number = 0;
 
-    Close = (async () => {
-        await this.updateComplete;
-        this.remove();
-    }).bind(this);
+    static ShowNotification(content: HTMLElement | string, loader: boolean = false) {
+        let notification = document.createElement("inline-notification") as InlineNotification;
+
+        if (!(content instanceof HTMLElement)) {
+            let text = document.createElement("p");
+            text.textContent = content;
+            content = text;
+        }
+
+        notification.appendChild(content);
+        notification.loader = loader;
+
+        document.getElementById("notification-area")?.appendChild(notification);
+
+        return notification;
+    }
+
+    Close = (() => this.updateComplete.then(this.remove.bind(this))).bind(this);
 
     render() {
         return html`
@@ -29,9 +43,9 @@ export class InlineNotification extends LitElement {
             this.loader ?
             html`<loading-indicator class="indicator"></loading-indicator>` :
             html`
-                <button class="indicator" @click="${this.Close}" title="Close">
-                    <img src="/images/cross.svg">
-                </button>
+            <button class="indicator" @click="${this.Close}" title="Close">
+                <img src="/images/cross.svg">
+            </button>
             `
         }
 

@@ -1,10 +1,9 @@
-import { Extensions, Extension } from "./extensions";
+import { Extensions } from "./extensions";
 
 import { Callbacks, Callback } from "./callback";
 
 import { Page as PageElement } from "../elements/page/page";
 import { ExtensionPage } from "../elements/extensions/extensions";
-import { InlineNotification } from "../elements/notification/notification";
 
 export type Page = {
     page: string,
@@ -30,14 +29,14 @@ export class Site {
     //#region Navigation
     static NavigateTo(page: Page): void {
         if (page.extension) {
-            let extensions = Extensions.installedExtensions;
+            let extension = Extensions.installedExtensions.get(page.page);
 
-            if (extensions.has(page.page)) {
+            if (extension !== undefined) {
                 let newPage = document.getElementById(`extension-${page.page}`) as PageElement;
 
                 if (newPage == null) {
                     let extensionPage: ExtensionPage = document.createElement("extension-page") as ExtensionPage;
-                    extensionPage.src = (extensions.get(page.page) as Extension).url;
+                    extensionPage.src = extension.url;
                     extensionPage.id = `extension-${page.page}`;
 
                     document.querySelector("main")?.appendChild(extensionPage);
@@ -87,25 +86,6 @@ export class Site {
         this._pageElement?.requestUpdate?.();
 
         this._navigationListeners.Invoke(page);
-    }
-    //#endregion
-
-    //#region Notifications
-    static ShowNotification(content: HTMLElement | string, loader: boolean = false) {
-        let notification = document.createElement("inline-notification") as InlineNotification;
-
-        if (!(content instanceof HTMLElement)) {
-            let text = document.createElement("p");
-            text.textContent = content;
-            content = text;
-        }
-
-        notification.appendChild(content);
-        notification.loader = loader;
-
-        document.getElementById("notification-area")?.appendChild(notification);
-
-        return notification;
     }
     //#endregion
 

@@ -40,7 +40,7 @@ export class ExtensionsMarketplace extends LitElement {
     @state()
     allowPreview: boolean = false;
 
-    extensionPipeline = new Pipeline<{name: string, extension: Extension}[], { allowPreviewExtensions: boolean, search?: string }>()
+    extensionPipeline = new Pipeline<Extension[], { allowPreviewExtensions: boolean, search?: string }>()
                             .transform(filterPreviewExtensions)
                             .transform(filterSearch)
                             .transform(sortExtensions);
@@ -69,7 +69,7 @@ export class ExtensionsMarketplace extends LitElement {
 
     render() {
         //TODO Use Algolia for searching
-        let extensions = this.extensionPipeline.run([...this.extensions.entries()].map(e => ({name: e[0], extension: e[1]})), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
+        let extensions = this.extensionPipeline.run(Array.from(this.extensions.values()), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
 
         return html`
         <div class="header">
@@ -85,11 +85,11 @@ export class ExtensionsMarketplace extends LitElement {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${map(extensions, (extension: {name: string, extension: Extension}) => html`
+        <div class="content">${map(extensions, extension => html`
             <extension-display title="${extension.name}"
-                               img="${Extensions.GetExtensionIconURL(extension.extension, Site.dark)}"
-                               description="${extension.extension.description}"
-                               ?preview="${extension.extension.preview}"
+                               img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
+                               description="${extension.description}"
+                               ?preview="${extension.preview}"
                                ?installed="${Extensions.installedExtensions.has(extension.name)}"></extension-display>
         `)}</div>
         `;

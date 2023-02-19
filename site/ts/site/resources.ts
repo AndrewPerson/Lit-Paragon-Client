@@ -1,10 +1,10 @@
 import { parseJSONStream } from "@andrewperson/parse-json-stream";
 
-import { Site } from "./site";
-
 import { Callbacks, Callback } from "./callback";
 
 import LOGIN_URL from "../login-url";
+
+import { InlineNotification } from "../elements/notification/notification";
 
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
@@ -33,11 +33,11 @@ export class Resources {
         let content = document.createElement("p");
         content.innerHTML = `You need to <a href="${LOGIN_URL}">login</a> to see the latest information.`
 
-        Site.ShowNotification(content);
+        InlineNotification.ShowNotification(content);
     }
 
     static ShowResourceNotification() {
-        return Site.ShowNotification("Updating resources...", true);
+        return InlineNotification.ShowNotification("Updating resources...", true);
     }
 
     static async GetToken(): Promise<Token | null> {
@@ -104,7 +104,7 @@ export class Resources {
         }
         catch (e) {
             resourceNotification.Close();
-            Site.ShowNotification("No network connection.");
+            InlineNotification.ShowNotification("No network connection.");
 
             this._fetchCallbacks.Invoke(false);
             this._fetching = false;
@@ -120,7 +120,7 @@ export class Resources {
                 this.ShowLoginNotification();
             }
             else {
-                Site.ShowNotification(await resourceResponse.text());
+                InlineNotification.ShowNotification(await resourceResponse.text());
             }
 
             this._fetchCallbacks.Invoke(false);
@@ -186,13 +186,13 @@ export class Resources {
                 this.ShowLoginNotification();
             }
             else if (fullJSON["error"] == 500) {
-                Site.ShowNotification("An error occurred on the Paragon servers.");
+                InlineNotification.ShowNotification("An error occurred on the Paragon servers.");
             }
             else if (fullJSON["error"] == 502) {
-                Site.ShowNotification("An error occurred on the SBHS servers.");
+                InlineNotification.ShowNotification("An error occurred on the SBHS servers.");
             }
             else {
-                Site.ShowNotification("An unknown error occurred.");
+                InlineNotification.ShowNotification("An unknown error occurred.");
             }
 
             this._fetchCallbacks.Invoke(false);

@@ -11,12 +11,10 @@ declare const SKIN_CACHE: string;
 
 //TODO Fix types
 export type Extension = {
-    navIcon: string,
-    url: string,
-    preview: boolean,
+    name: string,
     description: string,
-    icon: string,
-    darkIcon: string,
+    preview: boolean,
+    url: string,
     version: string
 };
 
@@ -64,21 +62,22 @@ export class Extensions {
 
     //TODO Pagination
     //TODO Add search
-    //TODO Stop using Map and fix types
     static async GetExtensions(pageSize: number = 10, page: number = 1): Promise<Map<string, Extension>> {
         let response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
-        return new Map(await response.json());
+        let extensions: Extension[] = await response.json();
+
+        return new Map(extensions.map(extension => [extension.name, extension]));
     }
 
     static GetExtensionIconURL(extension: Extension, dark: boolean) {
-        let url = new URL(dark ? extension.darkIcon : extension.icon, extension.url);
+        let url = new URL(dark ? "/dark-icon.svg" : "/icon.svg", extension.url);
         url.search = `cache-version=${extension.version}`;
 
         return url.toString();
     }
 
     static GetExtensionNavIconURL(extension: Extension) {
-        let url = new URL(extension.navIcon, extension.url);
+        let url = new URL("/nav-icon.svg", extension.url);
         url.searchParams.set("cache-version", extension.version);
 
         return url.toString();
@@ -213,7 +212,7 @@ export class Extensions {
         if (command == "Show Notification") {
             if (data.loader && typeof data.id !== "string") return;
 
-            let notification = Site.ShowNotification(data.content, data.loader ?? false);
+            let notification = InlineNotification.ShowNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
             let ids = this.extensionNotificationIds.get(e.origin) ?? [];

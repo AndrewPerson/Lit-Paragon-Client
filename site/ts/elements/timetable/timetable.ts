@@ -1,14 +1,13 @@
 import { Page } from "../page/page";
 
-import { html, TemplateResult } from "lit";
+import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
 
 import { TimetablePeriod } from "./period";
 
 import { Timetable, Day, Period } from "./types";
 import { DailyTimetable } from "../daily-timetable/types";
-
-import { Debounce } from "../../utils";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -27,23 +26,21 @@ export class FullTimetable extends Page {
     timetable: Timetable;
 
     @state()
-    private day: string | undefined;
+    private dayNumber: number | undefined;
 
     constructor() {
         super();
 
         this.AddResource("timetable", (timetable: Timetable) => this.timetable = timetable);
         this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => {
-            let day = dailyTimetable.timetable?.timetable?.dayname;
+            let dayNumber = dailyTimetable.timetable?.timetable?.dayNumber;
 
-            if (day !== undefined && day !== null) {
-                this.day = day;
+            if (dayNumber !== undefined && dayNumber !== null) {
+                this.dayNumber = parseInt(dayNumber);
             }
         });
 
         document.addEventListener("pointerover", this.ClearHighlight);
-
-        window.addEventListener("resize", this.Resize);
     }
 
     SetHighlight(event: Event) {
@@ -56,15 +53,10 @@ export class FullTimetable extends Page {
         event.stopPropagation();
     }
 
-    Resize = Debounce(() => {
-        this.requestUpdate();
-    }, 300).bind(this);
-
     disconnectedCallback() {
         super.disconnectedCallback();
 
         document.removeEventListener("pointerover", this.ClearHighlight);
-        window.removeEventListener("resize", this.Resize);
     }
 
     createRenderRoot() {
@@ -93,57 +85,32 @@ export class FullTimetable extends Page {
         return root;
     }
 
-    CreateTable(dayGroup: Day[], minWidth: number, maxWidth: number, maxHeight: number): TemplateResult<1> {
-        let dayNames: string[] = [];
+    CreateTable(dayGroup: Day[]) {
+        const dayPeriods = dayGroup.map(day => Object.entries(day.periods ?? {}).map(([_, period]) => period));
+
+        const periodsPerDay = Math.max(...dayPeriods.map(periods => periods.length));
+        const daysPerWeek = dayPeriods.length;
+
         let periodRows: (Period | null)[][] = [];
 
-        for (let day of dayGroup) {
-            let dayName = day.dayname ?? "???";
+        for (let y = 0; y < periodsPerDay; y++) {
+            periodRows.push([]);
+        }
 
-            dayNames.push(dayName);
-
-            let periods = day.periods ?? {};
-            let periodIndices = Object.keys(periods);
-            let lastIndex = 0;
-
-            for (let i = 0; i < periodIndices.length; i++) {
-                let index = parseInt(periodIndices[i]);
-
-                let diff = index - lastIndex;
-
-                for (let x = 0; x < diff; x++) {
-                    if (diff + x > periodRows.length - 1)
-                        periodRows.push([null]);
-                    else
-                        periodRows[lastIndex + x].push(null);
-                }
-
-                if (index > periodRows.length - 1)
-                    periodRows.push([periods[periodIndices[i]] ?? null]);
-                else
-                    periodRows[index].push(periods[periodIndices[i]] ?? null);
-
-                lastIndex = index + 1;
+        for (let x = 0; x < daysPerWeek; x++) {
+            for (let y = 0; y < periodsPerDay; y++) {
+                periodRows[y].push(dayPeriods[x][y] ?? null);
             }
         }
 
-        let toRemove = 0;
-        for (let i = 0; i < periodRows.length; i++) {
-            let remove = periodRows[i].filter(period => period !== null).length == 0;
-
-            if (!remove) break;
-
-            toRemove++;
-        }
-
-        periodRows.splice(0, toRemove);
+        periodRows = periodRows.filter(row => !row.every(p => p == null));
 
         return html`
-        <table style="--count-start: ${toRemove - 1}">
+        <table style="--count-start: ${periodsPerDay - periodRows.length - 1}">
             <thead>
                 <tr>
                     <th></th>
-                    ${dayNames.map(dayName => html`<th class="${dayName == this.day ? "current-day" : ""}">${dayName}</th>`)}
+                    ${dayGroup.map(day => html`<th class="${day.dayNumber == this.dayNumber ? "current-day" : ""}">${day.dayname}</th>`)}
                 </tr>
             </thead>
             <tbody>
@@ -169,9 +136,7 @@ export class FullTimetable extends Page {
 
                             return html`
                             <td>
-                                <timetable-period title="${title}" shortTitle="${shortTitle}" teacher="${teacher}"
-                                                  room="${period.room}" minWidth="${minWidth}"
-                                                  maxWidth="${maxWidth}" maxHeight="${maxHeight}"></timetable-period>
+                                <timetable-period title="${title}" shortTitle="${shortTitle}" teacher="${teacher}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         }
@@ -186,31 +151,19 @@ export class FullTimetable extends Page {
     }
 
     renderPage() {
-        let days = this.timetable.days ?? {};
-        let dayNames = Object.keys(days);
+        const days = this.timetable.days ?? {};
+        const dayNames = Object.keys(days);
 
-        let rect = this.getBoundingClientRect();
+        let dayGroups = [];
 
-        let minWidth = rect.left;
-        let maxWidth = rect.right;
-        let maxHeight = rect.bottom;
-
-        let rows: TemplateResult<1>[] = [];
-        let dayGroup: Day[] = [];
-        for (let i = 0; i < dayNames.length; i++) {
-            if (i % 5 == 0) {
-                if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup, minWidth, maxWidth, maxHeight));
-
-                dayGroup = [];
-            }
-
-            let day = days[dayNames[i]];
-
-            if (day !== undefined && day !== null) dayGroup.push(day);
+        for (let i = 0; i < dayNames.length; i += 5) {
+            dayGroups.push(
+                dayNames.slice(i, Math.min(i + 5, dayNames.length))
+                .map(day => days[day])
+                .filter(day => day != null && day !== undefined) as Day[]
+            );
         }
 
-        if (dayGroup.length > 0) rows.push(this.CreateTable(dayGroup, minWidth, maxWidth, maxHeight));
-
-        return html`${rows}`;
+        return html`${map(dayGroups, dayGroup => this.CreateTable(dayGroup))}`;
     }
 }

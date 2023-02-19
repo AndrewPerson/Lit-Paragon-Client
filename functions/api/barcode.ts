@@ -14,7 +14,8 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
 
     return new Response(encodeDigitsToCode128Svg(studentID), {
         headers: {
-            "Content-Type": "image/svg+xml"
+            "Content-Type": "image/svg+xml",
+            "X-Paragon-Cache": "etag"
         }
     });
 });

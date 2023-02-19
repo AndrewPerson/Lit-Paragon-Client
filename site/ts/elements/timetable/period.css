@@ -1,11 +1,21 @@
 :host {
-    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-:host(.highlighted) > .info {
+:host(:hover), :host(:focus) {
+    z-index: 98;
+    outline: none;
+}
+
+:host(:hover) > .title,
+:host(:focus) > .title {
+    border: solid 0.1rem black !important;
+    margin: -0.1rem;
+}
+
+:host(.highlighted) > .title {
     background-color: var(--surface4);
     color: var(--text4);
 
@@ -15,17 +25,7 @@
     animation: appear 0.3s ease-out;
 }
 
-@keyframes appear {
-    from {
-        filter: opacity(0);
-    }
-
-    to {
-        filter: opacity(1);
-    }
-}
-
-.info {
+.title {
     width: 4rem;
     min-height: 1.5rem;
     text-align: center;
@@ -43,35 +43,40 @@
     --triangle-size: 0.5rem;
 
     position: absolute;
-    top: calc(100% + var(--triangle-size));
+    transform: translateY(var(--triangle-size));
 
     z-index: 97;
 
     pointer-events: none;
 }
 
+.popup.info {
+    width: 4rem;
+    min-height: 1.5rem;
+
+    margin: -0.1rem;
+
+    border-radius: 0.4rem;
+    border: solid 0.1rem black !important;
+
+    box-sizing: border-box;
+    padding: 0 0.3rem;
+
+    background-color: var(--surface4);
+    color: var(--text4);
+
+    box-shadow: var(--shadow);
+    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
+
+    text-align: center;
+    line-height: 1.5;
+    word-break: break-word;
+
+    animation: appear 0.3s ease-out;
+}
+
 .popup.details {
-    max-width: 250%;
     width: max-content;
-}
-
-.popup.right {
-    top: auto;
-    /* You have to set the left style to get the popup
-       to point right. */
-    left: calc(100% + var(--triangle-size));
-}
-
-.popup.left {
-    top: auto;
-    /* You have to set the right style to get the popup
-       to point left. */
-    right: calc(100% + var(--triangle-size));
-}
-
-.popup.up {
-    top: auto;
-    bottom: calc(100% + var(--triangle-size));
 }
 
 .popup::before {
@@ -86,37 +91,12 @@
     border-left: calc(var(--triangle-size) / 1.5) solid transparent;
 }
 
-.popup.right::before {
-    top: calc((100% - var(--triangle-size)) / 2);
-    left: calc(-1 * var(--triangle-size));
-    border-left: none;
-    border-right: var(--triangle-size) solid var(--surface4);
-    border-top: calc(var(--triangle-size) / 1.5) solid transparent;
-    border-bottom: calc(var(--triangle-size) / 1.5) solid transparent;
-}
+@keyframes appear {
+    from {
+        filter: opacity(0);
+    }
 
-.popup.left::before {
-    top: calc((100% - var(--triangle-size)) / 2);
-    left: 100%;
-    border-right: none;
-    border-left: var(--triangle-size) solid var(--surface4);
-    border-top: calc(var(--triangle-size) / 1.5) solid transparent;
-    border-bottom: calc(var(--triangle-size) / 1.5) solid transparent;
-}
-
-.popup.up::before {
-    top: 100%;
-    border-bottom: none;
-    border-top: var(--triangle-size) solid var(--surface4);
-}
-
-:host(:hover), :host(:focus) {
-    z-index: 98;
-    outline: none;
-}
-
-:host(:hover) > .info,
-:host(:focus) > .info {
-    border: solid 0.1rem black !important;
-    margin: -0.1rem;
+    to {
+        filter: opacity(1);
+    }
 }

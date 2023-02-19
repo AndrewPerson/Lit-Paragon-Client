@@ -16,8 +16,6 @@
 }
 
 .indicator {
-    all: unset;
-
     display: flex;
 
     width: calc(1rem * 1.1);

@@ -1,14 +1,15 @@
 import { Page } from "../page/page";
 
-import { html, TemplateResult } from "lit";
+import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
-import { BellToDate, GetCurrentBell, GetPeriodTitle, HumanTimeDisplay } from "./daily-timetable-utils";
+import { BellToDate, GetCurrentBell, GetPeriodTitle } from "./daily-timetable-utils";
 import { generateDailyTimetable } from "./generate-daily-timetable";
 import { bellTemplatingPipeline } from "./bell-templating-pipeline/pipeline";
 
 import { Resources } from "../../site/resources";
 
+import "./countdown";
 import "./bell";
 import "./period";
 
@@ -18,8 +19,6 @@ import LOGIN_URL from "../../login-url";
 
 import { DailyTimetable, Bell } from "./types";
 import { Timetable } from "../timetable/types";
-
-import { Missing } from "../../missing";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -44,9 +43,6 @@ export class StudentDailyTimetable extends Page {
 
     @state()
     private _dailyTimetable: DailyTimetable;
-
-    private _previousBell: Bell | null = null;
-    private _cachedBells: TemplateResult<1>[] | null = null;
 
     private static _lastUpdatedData?: Date;
 
@@ -117,8 +113,6 @@ export class StudentDailyTimetable extends Page {
         super();
 
         this.AddResource("dailytimetable", (dailyTimetable: DailyTimetable) => {
-            this._cachedBells = null;
-
             let bells = dailyTimetable.bells;
 
             if (bells === undefined || bells == null) {
@@ -171,64 +165,39 @@ export class StudentDailyTimetable extends Page {
             this._dailyTimetable = dailyTimetable;
         });
 
-        setInterval(() => {
-            //We need this because this can run before _dailyTimetable is initialised.
-            if (this._dailyTimetable === undefined) return;
-
+        this.addEventListener("countdown-finished", ((e: CustomEvent) => {
             this.requestUpdate();
-        }, 1000);
+        }) as EventListener);
     }
 
     renderPage() {
-        let bells = this._dailyTimetable.bells ?? [];
-        let periods = this._dailyTimetable.timetable?.timetable?.periods ?? {};
+        const bells = this._dailyTimetable.bells ?? [];
 
-        let roomVariations = (Array.isArray(this._dailyTimetable.roomVariations) ? {} : this._dailyTimetable.roomVariations) ?? {};
-        let classVariations = (Array.isArray(this._dailyTimetable.classVariations) ? {} : this._dailyTimetable.classVariations) ?? {};
+        const nextBellInfo = GetCurrentBell(this._dailyTimetable, new Date());
 
-        //TODO Change timer display here
-        let nextBellInfo = GetCurrentBell(this._dailyTimetable, new Date());
-
-        let timeDisplay = { class: "Nothing", preposition: "in", time: "Never" };
-        if (nextBellInfo === undefined) {
+        let title = "Nothing";
+        let countdownAvailable = true;
+        if (nextBellInfo === undefined || this._dailyTimetable.date === undefined || this._dailyTimetable.date == null) {
             StudentDailyTimetable.UpdateData();
+            countdownAvailable = false;
         }
         else {
-            if ((nextBellInfo?.bell ?? null) !== this._previousBell) {
-                this._previousBell = nextBellInfo?.bell ?? null;
-                this._cachedBells = null;
-            }
-
-            if (nextBellInfo?.bell !== undefined) {
-                timeDisplay = {
-                    class: "Nothing",
-                    ...HumanTimeDisplay(nextBellInfo.bell, new Date(this._dailyTimetable.date ?? ""), new Date())
-                }
-            }
-
             let nextClass = this._dailyTimetable?.timetable?.timetable?.periods?.[nextBellInfo?.bell?.period ?? ""];
 
             if (nextClass !== undefined && nextClass !== null && "year" in nextClass)
-                timeDisplay.class = GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
+                title = GetPeriodTitle(this._dailyTimetable, nextClass.year ?? "?", nextClass.title ?? "???");
             else
-                timeDisplay.class = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
+                title = nextBellInfo?.bell?.bellDisplay ?? "Nothing";
         }
 
-        if (this._cachedBells == null) {
-            let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
-            for (let i = nextVisibleBellIndex; i < bells.length; i++) {
-                if (bells[i].display === false) {
-                    nextVisibleBellIndex++;
-                    continue;
-                }
-
-                break;
+        let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
+        for (let i = nextVisibleBellIndex; i < bells.length; i++) {
+            if (bells[i].display === false) {
+                nextVisibleBellIndex++;
+                continue;
             }
 
-            this._cachedBells = bellTemplatingPipeline.run(bells, {
-                dailyTimetable: this._dailyTimetable,
-                nextVisibleBell: nextVisibleBellIndex,
-            });
+            break;
         }
 
         return html`
@@ -237,14 +206,17 @@ export class StudentDailyTimetable extends Page {
                 This timetable was automatically generated and may be inaccurate. <a href="${LOGIN_URL}">Login</a> for the latest information.
             </info-popup>
 
-            <div class="time-display">
-                <p>${timeDisplay.class}</p>
-                <p>${timeDisplay.preposition}</p>
-                <h1 class="time">${timeDisplay.time}</h1>
-            </div>
+            ${
+                countdownAvailable ?
+                html`<daily-timetable-countdown periodTitle="${title}" periodTime="${BellToDate(nextBellInfo!.bell, new Date(this._dailyTimetable.date!))}"></daily-timetable-countdown>` :
+                html`<daily-timetable-countdown periodTitle="Nothing" periodTime="${new Date()}"></daily-timetable-countdown>`
+            }
 
             <div class="periods">
-                ${this._cachedBells}
+                ${bellTemplatingPipeline.run(bells, {
+                    dailyTimetable: this._dailyTimetable,
+                    nextVisibleBell: nextVisibleBellIndex,
+                })}
             </div>
         `;
     }

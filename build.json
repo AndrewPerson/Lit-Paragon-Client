@@ -17,8 +17,8 @@
                 ],
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
-                "EXTENSION_CACHE": "Extension Resources",
                 "SKIN_CACHE": "Skin Resources",
+                "MISC_CACHE": "Misc Cache",
                 "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000,
                 "TELEMETRY_PERMISSION_STORAGE": "Telemetry Permission",
                 "TELEMETRY_STORAGE": "Telemetry"

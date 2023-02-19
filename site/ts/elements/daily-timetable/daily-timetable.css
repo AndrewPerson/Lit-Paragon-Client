@@ -20,30 +20,6 @@ info-popup {
     height: 1.5rem;
 }
 
-.time-display {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    width: 100%;
-}
-
-.time {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    width: 80%;
-}
-
-.time::before,
-.time::after {
-    content: "";
-    display: inline-block;
-    flex: 1;
-    height: 0;
-    border-top: solid 0.05rem var(--text3);
-}
-
 .periods {
     display: flex;
     flex-direction: column;

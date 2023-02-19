@@ -14,7 +14,7 @@ self.addEventListener("fetch", e => e.respondWith(Fetch(e)));
 //Service worker will change with each change to the VERSION variable, causing it to automatically re-update
 declare const VERSION: string;
 declare const FILE_CACHE: string;
-declare const EXTENSION_CACHE: string;
+declare const MISC_CACHE: string;
 
 let UPDATING = false;
 
@@ -29,29 +29,19 @@ async function Fetch(e: FetchEvent) {
         let request = e.request;
         let url = new URL(request.url);
 
-        if (url.searchParams.has("cache-version")) {
-            let cache = await caches.open(EXTENSION_CACHE);
+        const miscCache = await caches.open(MISC_CACHE);
+        const miscCacheResponse = await miscCache.match(request);
 
-            let cachedResource = await cache.match(request);
-
-            if (cachedResource) return cachedResource;
-            else {
-                let response =  await fetch(request);
-
-                cache.put(request, response.clone()).then(async () => {
-                    let keys = await cache.keys();
-
-                    for (let key of keys) {
-                        let keyUrl = new URL(key.url);
-                        if (keyUrl.origin == url.origin
-                            && keyUrl.pathname == url.pathname
-                            && keyUrl.search != url.search)
-                            cache.delete(key);
+        if (miscCacheResponse !== undefined) {
+            fetch(request).then(response => {
+                if (response.status == 200) {
+                    if (response.headers.has("X-Paragon-Cache")) {
+                        miscCache.put(request, response.clone());
                     }
-                });
+                }
+            }).catch(() => { });
 
-                return response;
-            }
+            return miscCacheResponse;
         }
 
         if (url.origin == location.origin) {
@@ -60,9 +50,18 @@ async function Fetch(e: FetchEvent) {
             let cachedResource = await cache.match(url.origin + url.pathname);
             if (cachedResource !== undefined) return cachedResource;
         }
-    }
 
-    return fetch(e.request);
+        const response = await fetch(request);
+
+        if (response.status == 200) {
+            if (response.headers.has("X-Paragon-Cache")) {
+                miscCache.put(request, response.clone());
+            }
+        }
+
+        return response;
+    }
+    else return fetch(e.request);
 }
 
 async function Update() {
