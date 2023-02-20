@@ -37,8 +37,6 @@ export class DailyTimetableCountdown extends LitElement {
     }
 
     render() {
-        if (this.setIntervalID == null) this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);;
-
         const timeDisplay = HumanTimeDisplay(new Date(), this.periodTime);
 
         if (this.periodTime <= new Date()) {
@@ -52,6 +50,9 @@ export class DailyTimetableCountdown extends LitElement {
 
             if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
             this.setIntervalID = null;
+        }
+        else {
+            if (this.setIntervalID == null) this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);
         }
 
         return html`
