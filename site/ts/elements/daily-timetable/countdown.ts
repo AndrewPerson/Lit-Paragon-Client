@@ -28,21 +28,17 @@ export class DailyTimetableCountdown extends LitElement {
     })
     periodTime: Date;
 
-    setIntervalID: number;
-
-    constructor() {
-        super();
-
-        this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);
-    }
+    setIntervalID: number | null = null;
 
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        window.clearInterval(this.setIntervalID);
+        if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
     }
 
     render() {
+        if (this.setIntervalID == null) this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);;
+
         const timeDisplay = HumanTimeDisplay(new Date(), this.periodTime);
 
         if (this.periodTime <= new Date()) {
@@ -53,6 +49,9 @@ export class DailyTimetableCountdown extends LitElement {
             });
 
             this.dispatchEvent(event);
+
+            if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
+            this.setIntervalID = null;
         }
 
         return html`
