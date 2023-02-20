@@ -19,8 +19,6 @@ declare const MISC_CACHE: string;
 let UPDATING = false;
 
 async function Activate() {
-    await self.clients.claim();
-
     console.log(`Updating to ${VERSION}`);
 
     Update();
