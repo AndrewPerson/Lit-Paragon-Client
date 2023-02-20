@@ -22,6 +22,7 @@ import pageCss from "default/pages/page.css";
 import settingsCss from "./settings.css";
 
 declare const VERSION: string;
+declare const TELEMETRY_PERMISSION_STORAGE: string;
 
 @customElement("user-settings")
 export class Settings extends LitElement {
@@ -61,7 +62,17 @@ export class Settings extends LitElement {
         this.requestUpdate();
     }
 
+    ToggleTelemetry(e: InputEvent) {
+        let telemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+
+        localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, telemetryCheckbox.checked.toString());
+
+        this.requestUpdate();
+    }
+
     render() {
+        const telemetryEnabled = localStorage.getItem(TELEMETRY_PERMISSION_STORAGE) != "false";
+
         return html`
         <header>
             <info-popup class="credits">
@@ -92,6 +103,12 @@ export class Settings extends LitElement {
             <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
 
             <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+
+            <span class="divider"></span>
+
+            <h6>${telemetryEnabled ? "Disable" : "Enable"} Telemetry</h6>
+
+            <input type="checkbox" ?checked="${telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Telemetry" @input="${this.ToggleTelemetry.bind(this)}">
         </div>
         `;
     }
