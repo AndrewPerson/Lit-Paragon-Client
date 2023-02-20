@@ -207,10 +207,9 @@ export class StudentDailyTimetable extends Page {
             </info-popup>
 
             ${
-                nothing
-                // countdownAvailable ?
-                // html`<daily-timetable-countdown periodTitle="${title}" periodTime="${BellToDate(nextBellInfo!.bell, new Date(this._dailyTimetable.date!))}"></daily-timetable-countdown>` :
-                // html`<daily-timetable-countdown periodTitle="Nothing" periodTime="${new Date()}"></daily-timetable-countdown>`
+                countdownAvailable ?
+                html`<daily-timetable-countdown periodTitle="${title}" periodTime="${BellToDate(nextBellInfo!.bell, new Date(this._dailyTimetable.date!))}"></daily-timetable-countdown>` :
+                html`<daily-timetable-countdown periodTitle="Nothing" periodTime="${new Date()}"></daily-timetable-countdown>`
             }
 
             <div class="periods">

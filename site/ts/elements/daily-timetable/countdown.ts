@@ -28,6 +28,7 @@ export class DailyTimetableCountdown extends LitElement {
     })
     periodTime: Date;
 
+    emittedCountdownFinishedEvent: boolean = false;
     setIntervalID: number | null = null;
 
     disconnectedCallback() {
@@ -40,19 +41,24 @@ export class DailyTimetableCountdown extends LitElement {
         const timeDisplay = HumanTimeDisplay(new Date(), this.periodTime);
 
         if (this.periodTime <= new Date()) {
-            const event = new CustomEvent("countdown-finished", {
-                bubbles: true,
-                cancelable: true,
-                composed: true
-            });
+            if (!this.emittedCountdownFinishedEvent) {
+                const event = new CustomEvent("countdown-finished", {
+                    bubbles: true,
+                    cancelable: true,
+                    composed: true
+                });
 
-            this.dispatchEvent(event);
+                this.dispatchEvent(event);
 
-            if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
-            this.setIntervalID = null;
+                if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
+                this.setIntervalID = null;
+
+                this.emittedCountdownFinishedEvent = true;
+            }
         }
         else {
             if (this.setIntervalID == null) this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);
+            this.emittedCountdownFinishedEvent = false;
         }
 
         return html`
