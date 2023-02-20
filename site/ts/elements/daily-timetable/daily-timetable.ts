@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html } from "lit";
+import { html, nothing } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { BellToDate, GetCurrentBell, GetPeriodTitle } from "./daily-timetable-utils";
@@ -207,9 +207,10 @@ export class StudentDailyTimetable extends Page {
             </info-popup>
 
             ${
-                countdownAvailable ?
-                html`<daily-timetable-countdown periodTitle="${title}" periodTime="${BellToDate(nextBellInfo!.bell, new Date(this._dailyTimetable.date!))}"></daily-timetable-countdown>` :
-                html`<daily-timetable-countdown periodTitle="Nothing" periodTime="${new Date()}"></daily-timetable-countdown>`
+                nothing
+                // countdownAvailable ?
+                // html`<daily-timetable-countdown periodTitle="${title}" periodTime="${BellToDate(nextBellInfo!.bell, new Date(this._dailyTimetable.date!))}"></daily-timetable-countdown>` :
+                // html`<daily-timetable-countdown periodTitle="Nothing" periodTime="${new Date()}"></daily-timetable-countdown>`
             }
 
             <div class="periods">
