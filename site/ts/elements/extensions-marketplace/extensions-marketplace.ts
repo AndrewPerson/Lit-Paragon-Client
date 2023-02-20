@@ -31,6 +31,7 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 export class ExtensionsMarketplace extends LitElement {
     static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
+    @state()
     extensions: Map<string, Extension> = new Map();
 
     @state()
@@ -62,7 +63,6 @@ export class ExtensionsMarketplace extends LitElement {
         //TODO Use pagination
         Extensions.GetExtensions().then(extensions => {
             this.extensions = extensions;
-            this.requestUpdate();
         });
     }
 
