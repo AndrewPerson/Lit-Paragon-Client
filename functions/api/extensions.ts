@@ -22,12 +22,10 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env, re
         pageSize
     ]);
 
-    console.log(result);
-
     //Convert the preview column from a number (the way MySQL internally stores boolean) to an actual boolean.
     const rows = result.rows.map(r => {
         r["preview"] = r["preview"] == 1
-        return rows;
+        return r;
     });
 
     return new Response(JSON.stringify(rows), {
