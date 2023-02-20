@@ -77,7 +77,7 @@ export function encodeDigitsToCode128Svg(text: string) {
         index++;
     }
 
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${currentWidth} 100" prevserveAspectRatio="none">
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${currentWidth} 100" preserveAspectRatio="none">
         ${rects.map(rect => `<rect x="${rect.x}" y="0" width="${rect.width}" height="100" fill="${rect.colour}" />`).join('')}
     </svg>`;
 
