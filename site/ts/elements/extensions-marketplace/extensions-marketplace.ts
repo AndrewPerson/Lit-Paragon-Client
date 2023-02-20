@@ -31,7 +31,6 @@ import extensionsMarketplaceCss from "./extensions-marketplace.css";
 export class ExtensionsMarketplace extends LitElement {
     static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
 
-    @state()
     extensions: Map<string, Extension> = new Map();
 
     @state()
