@@ -18,9 +18,11 @@ export class Info extends LitElement {
             </slot>
         </button>
 
-        <slot id="info"></slot>
+        <div id="info-container">
+            <slot id="info"></slot>
 
-        <div id="background"></div>
+            <div id="background"></div>
+        </div>
         `;
     }
 }

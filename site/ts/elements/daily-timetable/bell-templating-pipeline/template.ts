@@ -16,7 +16,7 @@ function getPeriod(period: Period, bell: Bell, dailyTimetable: DailyTimetable, n
 
     return html`
     <daily-timetable-period title="${GetPeriodTitle(dailyTimetable, period.year ?? "?", period.title ?? "???")}"
-                            class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""} ${next ? "next" : ""}"
+                            class="${classVariation?.type == TeacherType.NO_COVER ? "cancelled" : ""}"
                             time="${bell.time ?? "??:??"}"
                             teacher="${classVariation === undefined || classVariation == null ? (period.fullTeacher?.trim().length == 0 ? "No one" : period.fullTeacher) ?? "???" :
                                        classVariation.type == TeacherType.NO_VARIATION ? period.fullTeacher ?? "???" :
@@ -25,12 +25,13 @@ function getPeriod(period: Period, bell: Bell, dailyTimetable: DailyTimetable, n
                             ?teacherChanged="${teacherChanged}"
                             room="${roomVariation?.roomTo ?? period.room ?? "???"}"
                             ?roomChanged="${roomChanged}"
+                            ?next="${next}"
                            ></daily-timetable-period>
     `;
 }
 
 function getBell(bell: Bell, next: boolean) {
-    return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" class="${next ? "next" : ""}" time="${bell.time ?? "??:??"}"></daily-timetable-bell>`;
+    return html`<daily-timetable-bell title="${bell.bellDisplay ?? "???"}" time="${bell.time ?? "??:??"}" ?next="${next}"></daily-timetable-bell>`;
 }
 
 export function templateBells(data: { periods: [Bell, Period, number][], bells: [Bell, number][] }, metadata: PipelineMetadata) {

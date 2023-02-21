@@ -64,11 +64,11 @@ export class TimetablePeriod extends LitElement {
         return html`
         <p class="title">${this.shortTitle}</p>
 
-        <p id="room" class="popup info" style="top: ${rect.top + rect.height}px; left: ${rect.left}px; ${highlighted && !this.showDetails ? "" : "display: none"}">
+        <p id="room" class="popup info" style="top: ${rect.y + rect.height}px; left: ${rect.x}px; ${highlighted && !this.showDetails ? "" : "display: none"}">
             ${this.room}
         </p>
 
-        <div id="details" class="popup details" style="top: ${rect.top + rect.height}px; left: ${rect.left}px; ${this.showDetails ? "" : "display: none"}">
+        <div id="details" class="popup details" style="top: ${rect.y + rect.height}px; left: ${rect.x}px; ${this.showDetails ? "" : "display: none"}">
             ${this.title} in ${this.room} with ${this.teacher}
         </div>
         `;
