@@ -10,7 +10,7 @@
     "env": {
         "shared": {
             "vars": {
-                "VERSION": "2.3.3",
+                "VERSION": "2.3.4",
                 "REQUIRED_FEATURES": [
                     "ShadowRoot",
                     "customElements"
