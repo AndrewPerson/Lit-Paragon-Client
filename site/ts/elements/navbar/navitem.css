@@ -9,12 +9,12 @@
 
 :host(:hover) {
     background-color: var(--surface2);
-    box-shadow: var(--small-shadow);
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
 }
 
 :host(.selected) {
     background-color: var(--surface4) !important;
-    box-shadow: var(--small-shadow);
+    box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
 }
 
 a {
