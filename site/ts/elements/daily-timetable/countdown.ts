@@ -13,19 +13,7 @@ export class DailyTimetableCountdown extends LitElement {
     @property()
     periodTitle: string;
 
-    @property({
-        type: Date, 
-        converter: {
-            fromAttribute(value) {
-                if (typeof value === "string") return new Date(value);
-                return null;
-            },
-            toAttribute(value) {
-                if (value instanceof Date) return value.toISOString();
-                return null;
-            }
-        }
-    })
+    @property({ type: Date })
     periodTime: Date;
 
     emittedCountdownFinishedEvent: boolean = false;
