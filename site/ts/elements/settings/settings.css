@@ -74,3 +74,17 @@ header {
 #colour-mode:checked::after {
     background-image: url(/images/sun.svg);
 }
+
+#telemetry {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+#telemetry::after {
+    content: "Disable Telemetry";
+}
+
+#telemetry:checked::after {
+    content: "Enable Telemetry";
+}

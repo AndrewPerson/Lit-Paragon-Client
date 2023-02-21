@@ -63,9 +63,9 @@ export class Settings extends LitElement {
     }
 
     ToggleTelemetry(e: InputEvent) {
-        let telemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+        let disableTelemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
-        localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, telemetryCheckbox.checked.toString());
+        localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, (!disableTelemetryCheckbox.checked).toString());
 
         this.requestUpdate();
     }
@@ -106,9 +106,9 @@ export class Settings extends LitElement {
 
             <span class="divider"></span>
 
-            <h6>${telemetryEnabled ? "Disable" : "Enable"} Telemetry</h6>
+            <h6>Telemetry</h6>
 
-            <input type="checkbox" ?checked="${telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Telemetry" @input="${this.ToggleTelemetry.bind(this)}">
+            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Telemetry" @input="${this.ToggleTelemetry.bind(this)}">
         </div>
         `;
     }
