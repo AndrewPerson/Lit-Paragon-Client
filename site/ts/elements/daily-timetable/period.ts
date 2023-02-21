@@ -4,13 +4,11 @@ import { customElement, property } from "lit/decorators.js";
 //@ts-ignore
 import periodCss from "./period.css";
 //@ts-ignore
-import nextIndicatorCss from "./next-indicator.css";
-//@ts-ignore
 import textCss from "default/text.css";
 
 @customElement("daily-timetable-period")
 export class DailyTimetablePeriod extends LitElement {
-    static styles = [textCss, nextIndicatorCss, periodCss];
+    static styles = [textCss, periodCss];
 
     @property()
     title: string;
@@ -35,14 +33,7 @@ export class DailyTimetablePeriod extends LitElement {
 
     render() {
         return html`
-            ${
-                this.next ? html`
-                <info-popup class="next">
-                    <div class="icon" slot="icon"></div>
-                    <p>This is the next period.</p>
-                </info-popup>` :
-                nothing
-            }
+            ${this.next ? html`<next-indicator text="This is the next period."></next-indicator>` : nothing}
 
             <div>
                 <p>${this.title}</p>

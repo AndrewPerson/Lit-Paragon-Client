@@ -1,18 +1,16 @@
 import { html, nothing, LitElement } from "lit";
 import { customElement, property } from "lit/decorators.js";
 
-import "../info/info";
+import "./next-indicator";
 
 //@ts-ignore
 import bellCss from "./bell.css";
-//@ts-ignore
-import nextIndicatorCss from "./next-indicator.css";
 //@ts-ignore
 import textCss from "default/text.css";
 
 @customElement("daily-timetable-bell")
 export class DailyTimetableBell extends LitElement {
-    static styles = [textCss, nextIndicatorCss, bellCss];
+    static styles = [textCss, bellCss];
 
     @property()
     title: string;
@@ -25,14 +23,7 @@ export class DailyTimetableBell extends LitElement {
 
     render() {
         return html`
-            ${
-                this.next ? html`
-                <info-popup class="next">
-                    <div class="icon" slot="icon"></div>
-                    <p>This is the next bell.</p>
-                </info-popup>` :
-                nothing
-            }
+            ${this.next ? html`<next-indicator text="This is the next bell."></next-indicator>` : nothing}
 
             <p>${this.title}</p>
             <p>${this.time}</p>

@@ -1,11 +1,8 @@
-info-popup.next {
-    position: absolute;
-    left: -1rem;
-
+:host {
     --offset: 1rem;
 }
 
-info-popup.next > .icon {
+.icon {
     --size: 0.5rem;
 
     display: block;
@@ -17,6 +14,10 @@ info-popup.next > .icon {
     background-color: var(--surface4);
 }
 
-info-popup.next:focus-within > .icon {
+info-popup:focus-within > .icon {
     background-color: var(--surface2);
+}
+
+p {
+    height: 1rem;
 }

@@ -24,6 +24,7 @@ p {
     color: var(--text2);
 }
 
-info-popup > p {
-    height: 1rem;
+next-indicator {
+    position: absolute;
+    left: -1rem;
 }
