@@ -1,40 +1,54 @@
 :host {
+    /* Need units on the end or it's treated as undefined */
+    --popup-y-offset: 0rem;
+
     display: flex;
     align-items: center;
     justify-content: center;
-}
 
-:host(:hover), :host(:focus) {
-    z-index: 98;
-    outline: none;
-}
-
-:host(:hover) > .title,
-:host(:focus) > .title {
-    border: solid 0.1rem black !important;
-    margin: -0.1rem;
-}
-
-:host(.highlighted) > .title {
-    background-color: var(--surface4);
-    color: var(--text4);
-
-    box-shadow: var(--shadow);
-    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
-
-    animation: appear 0.3s ease-out;
-}
-
-.title {
     width: 4rem;
     min-height: 1.5rem;
-    text-align: center;
-    line-height: 1.5;
 
     border-radius: 0.4rem;
 
     box-sizing: border-box;
     padding: 0 0.3rem;
+}
+
+:host(.highlighted) {
+    box-shadow: 0 0 0 0.1rem var(--surface4), var(--shadow);
+}
+
+:host(.highlighted) > .title {
+    color: var(--text1);
+}
+
+:host(.highlighted:not(:focus)) > .popup#room {
+    display: block;
+}
+
+:host(:focus) {
+    --popup-y-offset: 0.4rem;
+
+    box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow) !important;
+
+    z-index: 98;
+    outline: none;
+}
+
+:host(:focus) > .popup {
+    z-index: 99;
+}
+
+:host(:focus) > .popup#details {
+    display: block;
+}
+
+.title {
+    width: 100%;
+    height: fit-content;
+    text-align: center;
+    line-height: 1.5;
 
     word-break: break-word;
 }
@@ -43,40 +57,29 @@
     --triangle-size: 0.5rem;
 
     position: absolute;
-    transform: translateY(var(--triangle-size));
+    transform: translate(-50%, calc(var(--triangle-size) + var(--popup-y-offset)));
 
-    z-index: 97;
+    display: none;
 
-    pointer-events: none;
-}
-
-.popup.info {
-    width: 4rem;
+    width: fit-content;
     min-height: 1.5rem;
 
-    margin: -0.1rem;
-
     border-radius: 0.4rem;
-    border: solid 0.1rem black !important;
+    box-shadow: 0 0 0 0.1rem var(--surface4), var(--shadow);
 
     box-sizing: border-box;
-    padding: 0 0.3rem;
+    padding: 0 0.8rem;
 
-    background-color: var(--surface4);
-    color: var(--text4);
-
-    box-shadow: var(--shadow);
-    text-shadow: 0.05rem 0.05rem var(--shadow-colour);
+    background-color: var(--surface2);
+    color: var(--text1);
 
     text-align: center;
     line-height: 1.5;
     word-break: break-word;
 
-    animation: appear 0.3s ease-out;
-}
+    z-index: 97;
 
-.popup.details {
-    width: max-content;
+    pointer-events: none;
 }
 
 .popup::before {
@@ -91,12 +94,15 @@
     border-left: calc(var(--triangle-size) / 1.5) solid transparent;
 }
 
-@keyframes appear {
-    from {
-        filter: opacity(0);
-    }
+.popup#room {
+    width: 4rem;
+}
 
-    to {
-        filter: opacity(1);
-    }
+.popup#details {
+    width: max-content;
+    transform: translate(calc(-50% + var(--popup-x-offset, 0px)), calc(var(--triangle-size) + var(--popup-y-offset)));
+}
+
+.popup#details::before {
+    transform: translateX(calc(-1 * var(--popup-x-offset, 0px)));
 }

@@ -22,8 +22,8 @@ export class TimetablePeriod extends LitElement {
     @property()
     room: string;
 
-    @state()
-    showDetails: boolean = false;
+    @query("#details", true)
+    details: HTMLElement;
 
     static highlighted: string | undefined;
 
@@ -37,10 +37,32 @@ export class TimetablePeriod extends LitElement {
         for (let instance of this.instances) instance.requestUpdate();
     }
 
+    CalculateDetailsOffset() {
+        this.details.style.removeProperty("--popup-x-offset");
+        const detailsRect = this.details.getBoundingClientRect();
+
+        if (detailsRect.right > window.innerWidth) {
+            this.details.style.setProperty("--popup-x-offset", `${Math.round(window.innerWidth - detailsRect.right)}px`);
+        }
+
+        if (detailsRect.left < 0) {
+            this.details.style.setProperty("--popup-x-offset", `${Math.round(-detailsRect.left)}px`);
+        }
+
+        if (detailsRect.bottom > window.innerHeight) {
+            //TODO Add support for this
+            this.details.classList.add("flip-y");
+        }
+    }
+
     constructor() {
         super();
 
         TimetablePeriod.instances.push(this);
+
+        this.addEventListener("focus", _ => {
+            this.CalculateDetailsOffset();
+        });
     }
 
     firstUpdated() {
@@ -56,20 +78,22 @@ export class TimetablePeriod extends LitElement {
 
         if (!highlighted) {
             this.blur();
-            this.showDetails = false;
         }
 
         const rect = this.getBoundingClientRect();
+        const offsetY = Math.round(rect.y + rect.height);
+        const offsetX = Math.round(rect.x + rect.width / 2);
 
         return html`
         <p class="title">${this.shortTitle}</p>
 
-        <p id="room" class="popup info" style="top: ${rect.y + rect.height}px; left: ${rect.x}px; ${highlighted && !this.showDetails ? "" : "display: none"}">
+        <p id="room" class="popup" style="top: ${offsetY}px; left: ${offsetX}px;">
             ${this.room}
         </p>
 
-        <div id="details" class="popup details" style="top: ${rect.y + rect.height}px; left: ${rect.x}px; ${this.showDetails ? "" : "display: none"}">
-            ${this.title} in ${this.room} with ${this.teacher}
+        <div id="details" class="popup" style="top: ${offsetY}px; left: ${offsetX}px;">
+            <p>${this.title}</p>
+            <p>${this.teacher} • Room ${this.room}</p>
         </div>
         `;
     }

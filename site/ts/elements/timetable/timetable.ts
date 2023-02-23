@@ -66,20 +66,6 @@ export class FullTimetable extends Page {
 
         root.addEventListener("focusin", e => {
             this.SetHighlight(e);
-
-            let target = e.target as HTMLElement;
-
-            if (target.tagName == "TIMETABLE-PERIOD") {
-                (target as TimetablePeriod).showDetails = true;
-            }
-        });
-
-        root.addEventListener("focusout", e => {
-            let target = e.target as HTMLElement;
-
-            if (target.tagName == "TIMETABLE-PERIOD") {
-                (target as TimetablePeriod).showDetails = false;
-            }
         });
 
         return root;
