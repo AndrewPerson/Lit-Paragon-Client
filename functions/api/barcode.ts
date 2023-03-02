@@ -25,7 +25,10 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
 
     svgNode.removeAttribute("x");
     svgNode.removeAttribute("y");
-    svgNode.removeAttribute("transform");
+    svgNode.removeAttribute("width");
+    svgNode.removeAttribute("height");
+    svgNode.removeAttribute("style");
+
     svgNode.setAttribute("preserveAspectRatio", "none");
 
     return new Response(xmlSerializer.serializeToString(svgNode), {
