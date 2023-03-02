@@ -11,10 +11,6 @@
         "shared": {
             "vars": {
                 "VERSION": "2.3.6",
-                "REQUIRED_FEATURES": [
-                    "ShadowRoot",
-                    "customElements"
-                ],
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "SKIN_CACHE": "Skin Resources",
