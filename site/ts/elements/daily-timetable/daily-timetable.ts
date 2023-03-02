@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, nothing } from "lit";
+import { html } from "lit";
 import { customElement, state } from "lit/decorators.js";
 
 import { BellToDate, GetCurrentBell, GetPeriodTitle } from "./daily-timetable-utils";
@@ -191,13 +191,16 @@ export class StudentDailyTimetable extends Page {
         }
 
         let nextVisibleBellIndex = nextBellInfo?.index ?? 0;
-        for (let i = nextVisibleBellIndex; i < bells.length; i++) {
-            if (bells[i].display === false) {
-                nextVisibleBellIndex++;
-                continue;
-            }
+        if (nextBellInfo?.bell.display === false)
+        {
+            for (let i = nextVisibleBellIndex; i < bells.length; i++) {
+                if (bells[i].display === false) {
+                    nextVisibleBellIndex++;
+                    continue;
+                }
 
-            break;
+                break;
+            }
         }
 
         return html`
