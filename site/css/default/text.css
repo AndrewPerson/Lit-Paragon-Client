@@ -18,6 +18,7 @@
     font: inherit;
     color: inherit;
     cursor: inherit;
+    overflow-wrap: anywhere;
 
     user-select: var(--user-select, inherit);
     -ms-user-select: var(--user-select, inherit);
