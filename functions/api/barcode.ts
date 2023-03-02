@@ -3,6 +3,7 @@ import JsBarcode from "jsbarcode";
 
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
+import { svg } from "lit";
 
 export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request }) => {
     const studentID = new URL(request.url).searchParams.get("studentID");
@@ -19,7 +20,14 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
 
     JsBarcode(svgNode, studentID, {
         xmlDocument: document,
+        displayValue: false,
+        margin: 0
     });
+
+    svgNode.removeAttribute("x");
+    svgNode.removeAttribute("y");
+    svgNode.removeAttribute("transform");
+    svgNode.setAttribute("preserveAspectRatio", "none");
 
     return new Response(xmlSerializer.serializeToString(svgNode), {
         headers: {
