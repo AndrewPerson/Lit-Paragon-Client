@@ -82,9 +82,9 @@ header {
 }
 
 #telemetry::after {
-    content: "Disable Telemetry";
+    content: "Disable Error Reporting";
 }
 
 #telemetry:checked::after {
-    content: "Enable Telemetry";
+    content: "Enable Error Reporting";
 }
