@@ -34,7 +34,8 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
     return new Response(xmlSerializer.serializeToString(svgNode), {
         headers: {
             "Content-Type": "image/svg+xml",
-            "X-Paragon-Cache": "etag"
+            "X-Paragon-Cache": "etag",
+            "Cache-Control": "public, max-age=604800, immutable"
         }
     });
 });
