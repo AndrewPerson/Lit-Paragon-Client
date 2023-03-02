@@ -41,6 +41,12 @@ export class FullTimetable extends Page {
         });
 
         document.addEventListener("pointerover", this.ClearHighlight);
+
+        this.addEventListener("scroll", e => {
+            let scroll = (e.target as HTMLElement).scrollTop;
+
+            this.style.setProperty("--scroll", scroll + "px");
+        });
     }
 
     SetHighlight(event: Event) {

@@ -54,7 +54,7 @@
     --triangle-size: 0.5rem;
 
     position: absolute;
-    transform: translate(-50%, var(--triangle-size));
+    transform: translate(-50%, calc(var(--triangle-size) - var(--scroll, 0px)));
 
     display: none;
 
@@ -96,12 +96,12 @@
 
 .popup#details {
     width: max-content;
-    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(var(--triangle-size) + var(--popup-y-offset)));
+    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(var(--triangle-size) + var(--popup-y-offset) - var(--scroll, 0px)));
 }
 
 .popup#details.flip-detail-y {
     top: unset !important;
-    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(-100% - var(--triangle-size) + var(--popup-y-offset))); 
+    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(-100% - var(--triangle-size) + var(--popup-y-offset) - var(--scroll, 0px))); 
 }
 
 .popup#details::before {
