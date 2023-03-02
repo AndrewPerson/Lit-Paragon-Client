@@ -40,7 +40,7 @@ export class DailyTimetablePeriod extends LitElement {
                 <p class="subtitle">at <span>${this.time}</span> with <span class="${this.teacherChanged ? "changed" : ""}">${this.teacher}</span></p>
             </div>
 
-            <p class="${this.roomChanged ? "changed" : ""}">${this.room}</p>
+            <p class="room ${this.roomChanged ? "changed" : ""}">${this.room}</p>
         `;
     }
 }

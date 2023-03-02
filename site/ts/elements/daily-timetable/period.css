@@ -26,6 +26,10 @@
     font-size: 0.6rem;
 }
 
+.room {
+    overflow-wrap: normal;
+}
+
 .changed {
     color: var(--text2);
 }
