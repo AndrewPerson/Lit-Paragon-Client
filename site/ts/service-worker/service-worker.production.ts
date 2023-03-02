@@ -29,21 +29,6 @@ async function Fetch(e: FetchEvent) {
         let request = e.request;
         let url = new URL(request.url);
 
-        const miscCache = await caches.open(MISC_CACHE);
-        const miscCacheResponse = await miscCache.match(request);
-
-        if (miscCacheResponse !== undefined) {
-            fetch(request).then(response => {
-                if (response.status == 200) {
-                    if (response.headers.has("X-Paragon-Cache")) {
-                        miscCache.put(request, response.clone());
-                    }
-                }
-            }).catch(() => { });
-
-            return miscCacheResponse;
-        }
-
         if (url.origin == location.origin) {
             let cache = await caches.open(FILE_CACHE);
 
@@ -51,10 +36,28 @@ async function Fetch(e: FetchEvent) {
             if (cachedResource !== undefined) return cachedResource;
         }
 
-        const response = await fetch(request);
+        let response;
+        try
+        {
+            response = await fetch(request);
+        }
+        catch(e)
+        {
+            //TypeError is used for a network error. (Why???)
+            if (e instanceof TypeError)
+            {
+                const miscCache = await caches.open(MISC_CACHE);
+                const cachedResponse = await miscCache.match(request.url);
+
+                if (cachedResponse !== undefined) return cachedResponse;
+                else throw e;
+            }
+            else throw e;
+        }
 
         if (response.status == 200) {
             if (response.headers.has("X-Paragon-Cache")) {
+                const miscCache = await caches.open(MISC_CACHE);
                 miscCache.put(request, response.clone());
             }
         }

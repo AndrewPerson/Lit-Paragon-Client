@@ -1,4 +1,5 @@
-import { SymbologyType, createStream, OutputType } from "symbology";
+import { DOMImplementation, XMLSerializer } from "@xmldom/xmldom";
+import JsBarcode from "jsbarcode";
 
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
@@ -12,9 +13,15 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
         });
     }
 
-    return new Response((await createStream({
-        symbology: SymbologyType.CODE128
-    }, studentID, OutputType.SVG)).data, {
+    const xmlSerializer = new XMLSerializer();
+    const document = new DOMImplementation().createDocument('http://www.w3.org/1999/xhtml', 'html', null);
+    const svgNode = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+    JsBarcode(svgNode, studentID, {
+        xmlDocument: document,
+    });
+
+    return new Response(xmlSerializer.serializeToString(svgNode), {
         headers: {
             "Content-Type": "image/svg+xml",
             "X-Paragon-Cache": "etag"
