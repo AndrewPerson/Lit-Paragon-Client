@@ -3,7 +3,6 @@ import JsBarcode from "jsbarcode";
 
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
-import { svg } from "lit";
 
 export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request }) => {
     const studentID = new URL(request.url).searchParams.get("studentID");
