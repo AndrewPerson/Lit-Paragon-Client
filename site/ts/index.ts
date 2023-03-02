@@ -5,6 +5,7 @@ import { Extensions } from "./site/extensions";
 import "./elements";
 
 declare const MAX_REFRESH_FREQUENCY: number;
+declare const AUTO_FETCH_RESOURCES_FREQUENCY: number;
 
 Main();
 
@@ -47,6 +48,10 @@ async function Main() {
         });
     }
     catch(_) { }
+
+    setInterval(() => {
+        Resources.FetchResources();
+    }, AUTO_FETCH_RESOURCES_FREQUENCY);
 }
 
 function NavigateToHash(hash: string) {

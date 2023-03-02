@@ -16,6 +16,7 @@
                 "SKIN_CACHE": "Skin Resources",
                 "MISC_CACHE": "Misc Cache",
                 "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000,
+                "AUTO_FETCH_RESOURCES_FREQUENCY": 10800000,
                 "TELEMETRY_PERMISSION_STORAGE": "Telemetry Permission",
                 "TELEMETRY_STORAGE": "Telemetry"
             },
