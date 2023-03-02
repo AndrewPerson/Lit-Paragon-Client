@@ -9,8 +9,6 @@ import { bellTemplatingPipeline } from "./bell-templating-pipeline/pipeline";
 
 import { Resources } from "../../site/resources";
 
-import { Debounce } from "../../utils";
-
 import "./countdown";
 import "./bell";
 import "./period";
@@ -42,13 +40,19 @@ export class StudentDailyTimetable extends Page {
     static styles = [textCss, imgCss, scrollbarCss, pageCss, cardElementCss, dailyTimetableCss];
 
     static updatingData: boolean = false;
+    static lastUpdatedData: Date | null = null;
 
     @state()
     private _dailyTimetable: DailyTimetable;
 
-    static UpdateData = Debounce(async () => {
-        if (StudentDailyTimetable.updatingData) return;
-        StudentDailyTimetable.updatingData = true;
+    static async UpdateData() {
+        if (this.lastUpdatedData !== null && new Date().getTime() - this.lastUpdatedData.getTime() < MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY) {
+            console.log("Not updating data because it was updated recently");
+            return;
+        }
+
+        if (this.updatingData) return;
+        this.updatingData = true;
 
         let nextDailyTimetable = await Resources.GetResource<DailyTimetable>("next-dailytimetable");
 
@@ -69,7 +73,7 @@ export class StudentDailyTimetable extends Page {
 
             //Check if the returned date is not today.
             if (succeeded && lastBell !== undefined && new Date().getTime() < BellToDate(lastBell, currentDailyTimetableDate).getTime()) {
-                StudentDailyTimetable.updatingData = false;
+                this.updatingData = false;
                 return;
             }
 
@@ -86,7 +90,7 @@ export class StudentDailyTimetable extends Page {
 
             await Resources.SetResource("dailytimetable", JSON.stringify(currentDailyTimetable));
 
-            StudentDailyTimetable.updatingData = false;
+            this.updatingData = false;
         }
         else {
             let resourceCache = await caches.open(RESOURCE_CACHE);
@@ -96,7 +100,7 @@ export class StudentDailyTimetable extends Page {
 
             StudentDailyTimetable.updatingData = false;
         }
-    }, MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY);
+    }
 
     constructor() {
         super();
@@ -154,7 +158,7 @@ export class StudentDailyTimetable extends Page {
             this._dailyTimetable = dailyTimetable;
         });
 
-        this.addEventListener("countdown-finished", ((e: CustomEvent) => {
+        this.addEventListener("countdown-finished", (_ => {
             this.requestUpdate();
         }) as EventListener);
     }
