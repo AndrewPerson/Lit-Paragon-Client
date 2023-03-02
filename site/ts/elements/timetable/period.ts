@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement, property, state, query } from "lit/decorators.js";
+import { customElement, property, query } from "lit/decorators.js";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -38,20 +38,23 @@ export class TimetablePeriod extends LitElement {
     }
 
     CalculateDetailsOffset() {
-        this.details.style.removeProperty("--popup-x-offset");
+        this.details.style.removeProperty("--detail-x-offset");
         const detailsRect = this.details.getBoundingClientRect();
 
         if (detailsRect.right > window.innerWidth) {
-            this.details.style.setProperty("--popup-x-offset", `${Math.round(window.innerWidth - detailsRect.right)}px`);
+            this.details.style.setProperty("--detail-x-offset", `${Math.round(window.innerWidth - detailsRect.right)}px`);
         }
 
         if (detailsRect.left < 0) {
-            this.details.style.setProperty("--popup-x-offset", `${Math.round(-detailsRect.left)}px`);
+            this.details.style.setProperty("--detail-x-offset", `${Math.round(-detailsRect.left)}px`);
         }
 
         if (detailsRect.bottom > window.innerHeight) {
-            //TODO Add support for this
-            this.details.classList.add("flip-y");
+            this.details.classList.add("flip-detail-y");
+        }
+        else
+        {
+            this.details.classList.remove("flip-detail-y");
         }
     }
 

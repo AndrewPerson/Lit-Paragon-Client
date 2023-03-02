@@ -32,12 +32,11 @@
 
     box-shadow: 0 0 0 0.4rem var(--surface4), var(--shadow) !important;
 
-    z-index: 98;
     outline: none;
 }
 
 :host(:focus) > .popup {
-    z-index: 99;
+    z-index: 102;
 }
 
 :host(:focus) > .popup#details {
@@ -49,15 +48,13 @@
     height: fit-content;
     text-align: center;
     line-height: 1.5;
-
-    word-break: break-word;
 }
 
 .popup {
     --triangle-size: 0.5rem;
 
     position: absolute;
-    transform: translate(-50%, calc(var(--triangle-size) + var(--popup-y-offset)));
+    transform: translate(-50%, var(--triangle-size));
 
     display: none;
 
@@ -75,9 +72,8 @@
 
     text-align: center;
     line-height: 1.5;
-    word-break: break-word;
 
-    z-index: 97;
+    z-index: 101;
 
     pointer-events: none;
 }
@@ -100,9 +96,21 @@
 
 .popup#details {
     width: max-content;
-    transform: translate(calc(-50% + var(--popup-x-offset, 0px)), calc(var(--triangle-size) + var(--popup-y-offset)));
+    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(var(--triangle-size) + var(--popup-y-offset)));
+}
+
+.popup#details.flip-detail-y {
+    top: unset !important;
+    transform: translate(calc(-50% + var(--detail-x-offset, 0px)), calc(-100% - var(--triangle-size) + var(--popup-y-offset))); 
 }
 
 .popup#details::before {
-    transform: translateX(calc(-1 * var(--popup-x-offset, 0px)));
+    top: calc(-1 * var(--triangle-size));
+    transform: translateX(calc(-1 * var(--detail-x-offset, 0px)));
+}
+
+.popup#details.flip-detail-y::before {
+    top: unset;
+    bottom: calc(-1 * var(--triangle-size));
+    transform: translateX(calc(-1 * var(--detail-x-offset, 0px))) rotate(180deg);
 }
