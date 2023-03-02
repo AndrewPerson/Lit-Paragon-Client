@@ -1,4 +1,4 @@
-import { encodeDigitsToCode128Svg } from "../lib/code128";
+import { SymbologyType, createStream, OutputType } from "symbology";
 
 import { create } from "../lib/function";
 import { SBHSEnv } from "../lib/env";
@@ -12,7 +12,9 @@ export const onRequestGet = create<SBHSEnv>("barcode", true, async ({ request })
         });
     }
 
-    return new Response(encodeDigitsToCode128Svg(studentID), {
+    return new Response((await createStream({
+        symbology: SymbologyType.CODE128
+    }, studentID, OutputType.SVG)).data, {
         headers: {
             "Content-Type": "image/svg+xml",
             "X-Paragon-Cache": "etag"
