@@ -30,7 +30,8 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env, re
 
     return new Response(JSON.stringify(rows), {
         headers: {
-            "content-type": "application/json"
+            "content-type": "application/json",
+            "Cache-Control": "max-age=86400, immutable"
         }
     });
 });
