@@ -42,8 +42,7 @@ async function Main() {
     try {
         let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
-        if (registration) await registration.update();
-        else await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
+        if (registration === undefined) await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
             scope: "/"
         });
     }
