@@ -10,18 +10,32 @@
     "env": {
         "shared": {
             "vars": {
-                "REQUIRED_FEATURES": [
-                    "ShadowRoot",
-                    "customElements"
-                ],
+                "VERSION": "2.3.13",
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
-                "METADATA_CACHE": "Metadata",
-                "EXTENSION_CACHE": "Extension Resources",
                 "SKIN_CACHE": "Skin Resources",
-                "BACKGROUND_SYNC_INTERVAL": 2592000000,
-                "INSTALL_PROMPT_FREQUENCY": 2592000000,
-                "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000
+                "MISC_CACHE": "Misc Cache",
+                "MAX_DAILY_TIMETABLE_DATA_UPDATE_FREQUENCY": 20000,
+                "AUTO_FETCH_RESOURCES_FREQUENCY": 10800000,
+                "TELEMETRY_PERMISSION_STORAGE": "Telemetry Permission",
+                "TELEMETRY_STORAGE": "Telemetry"
+            },
+            "service-worker": {
+                "ignore": [
+                    "ts/**",
+                    "_headers",
+                    "_redirects",
+                    "metadata.json",
+                    "dist/service-worker.js",
+                    "dist/esbuild-metadata.json"
+                ],
+                "extras": [
+                    "/",
+                    "/404",
+                    "/callback",
+                    "/login",
+                    "/unsupported"
+                ]
             }
         },
         "default": {
@@ -42,7 +56,7 @@
         },
         "rewrite-branch": {
             "constants": [
-                "DEVELOPMENT"
+
             ],
             "vars": {
                 "METADATA_ENDPOINT": "https://rewrite.paragon.pages.dev/metadata.json",

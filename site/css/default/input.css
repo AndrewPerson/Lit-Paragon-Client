@@ -1,11 +1,11 @@
 :where(input) {
+    all: unset;
+    
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
 
-    border: none;
     border-bottom: solid 0.05rem var(--text2);
-    border-radius: 0;
 
     background-color: var(--surface2);
     color: var(--text1);

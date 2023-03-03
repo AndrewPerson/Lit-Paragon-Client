@@ -1,30 +1,35 @@
 import { Site } from "./site";
 import { Resources } from "./resources";
 
-import { Navbar } from "../elements/navbar/navbar";
+import { Callbacks } from "./callback";
 import { ExtensionPage } from "../elements/extensions/extensions";
 
 import { InlineNotification } from "../elements/notification/notification";
 
-declare const METADATA_CACHE: string;
+declare const VERSION: string;
 declare const SKIN_CACHE: string;
 
+//TODO Fix types
 export type Extension = {
-    navIcon: string,
-    url: string,
-    preview: boolean,
+    name: string,
     description: string,
-    icon: string,
-    darkIcon: string,
+    preview: boolean,
+    url: string,
     version: string
 };
 
 export class Extensions {
     static installedExtensions: Map<string, Extension> = new Map(Object.entries(JSON.parse(localStorage.getItem("Installed Extensions") ?? "{}")));
 
+    static _installedExtensionsListeners = new Callbacks<Map<string, Extension>>();
     static _resourceListeners: Map<string, MessageEvent[]> = new Map();
 
     static extensionNotificationIds: Map<string, string[]> = new Map();
+
+    static ListenForInstalledExtensions(callback: (extensions: Map<string, Extension>) => void) {
+        this._installedExtensionsListeners.AddListener(callback);
+        callback(this.installedExtensions);
+    }
 
     static GetExtensionOrigins() {
         let origins: string[] = [];
@@ -36,91 +41,55 @@ export class Extensions {
     }
 
     static async InstallExtension(extensionName: string) {
-        let extension = (await this.GetExtensionsNow()).get(extensionName);
+        let extension = (await this.GetExtensions()).get(extensionName);
 
-        if (extension) {
+        if (extension !== undefined) {
             this.installedExtensions.set(extensionName, extension);
 
             localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions)));
-
-            let order = Navbar.GetNavbarOrder();
-            order.splice(order.length - 1, 0, order.length);
-
-            Navbar.SetNavbarOrder(order);
         }
+
+        this._installedExtensionsListeners.Invoke(this.installedExtensions);
     }
 
     static async UninstallExtension(extensionName: string) {
-        let installedExtensions = this.installedExtensions;
-
-        let order = Navbar.GetNavbarOrder();
-
-        let index = order.indexOf(Object.keys(installedExtensions).indexOf(extensionName)) + Navbar.defaultPages.length;
-        let position = order.splice(index, 1)[0];
-
-        for (let i = 0; i < order.length; i++) {
-            if (order[i] > position) {
-                order[i]--;
-            }
-        }
-
-        Navbar.SetNavbarOrder(order);
-
-        var extensionPage = document.getElementById(`extension-${extensionName}`);
-        if (extensionPage !== null) extensionPage.remove();
-
         this.installedExtensions.delete(extensionName);
 
         localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(this.installedExtensions)));
+
+        this._installedExtensionsListeners.Invoke(this.installedExtensions);
     }
 
-    static async GetExtensionsNow(): Promise<Map<string, Extension>> {
-        let cache = await caches.open(METADATA_CACHE);
-        let response = await cache.match("Metadata");
+    //TODO Pagination
+    //TODO Add search
+    static async GetExtensions(pageSize: number = 10, page: number = 1): Promise<Map<string, Extension>> {
+        let response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
+        let extensions: Extension[] = await response.json();
 
-        if (!response) return new Map();
-
-        let extensions: Map<string, Extension> = new Map(Object.entries((await response.json()).pages ?? {}));
-
-        return extensions;
+        return new Map(extensions.map(extension => [extension.name, extension]));
     }
 
     static GetExtensionIconURL(extension: Extension, dark: boolean) {
-        let url = new URL(dark ? extension.darkIcon : extension.icon, extension.url);
+        let url = new URL(dark ? "/dark-icon.svg" : "/icon.svg", extension.url);
         url.search = `cache-version=${extension.version}`;
 
         return url.toString();
     }
 
     static GetExtensionNavIconURL(extension: Extension) {
-        let url = new URL(extension.navIcon, extension.url);
+        let url = new URL("/nav-icon.svg", extension.url);
         url.searchParams.set("cache-version", extension.version);
 
         return url.toString();
     }
 
     static Initialise() {
-        Site.GetMetadata(metadata => {
-            let extensions = new Map(Object.entries(metadata?.pages ?? {}));
-
-            let entries = [...this.installedExtensions.entries()];
-
-            let updatedEntries = entries.map(entry => {
-                let extension = extensions.get(entry[0]);
-
-                if (extension === undefined) return undefined;
-
-                return [entry[0], extension];
-            });
-
-            let filteredEntries = updatedEntries.filter(entry => entry !== undefined) as [string, Extension][];
-
-            this.installedExtensions = new Map(filteredEntries);
-            localStorage.setItem("Installed Extensions", JSON.stringify(Object.fromEntries(filteredEntries)));
-
-            let order = Navbar.GetNavbarOrder();
-            order.filter(index => index < Navbar.defaultPages.length + filteredEntries.length);
-            Navbar.SetNavbarOrder(order);
+        this.GetExtensions().then(extensions => {
+            for (let entry of this.installedExtensions.entries()) {
+                if (extensions.get(entry[0]) === undefined) {
+                    this.UninstallExtension(entry[0]);
+                }
+            }
         });
 
         Site.ListenForDark(dark => {
@@ -173,27 +142,21 @@ export class Extensions {
                 data: {
                     dark: Site.dark,
                     hue: Site.hue,
-                    version: (await Site.GetMetadataNow())?.version
+                    version: VERSION
                 }
             }
         }
 
         if (command == "Get Resource") {
-            let listeners = this._resourceListeners.get(data.name);
-
-            let firstTime = false;
-
-            if (listeners === undefined) {
-                firstTime = true;
-                listeners = [];
-            }
+            let listeners = this._resourceListeners.get(data.name) ?? [];
+            let firstTime = listeners.length == 0;
 
             listeners.push(e);
 
             this._resourceListeners.set(data.name, listeners);
 
             if (firstTime) {
-                Resources.GetResource(data.name, resource => {
+                Resources.ListenForResource(data.name, resource => {
                     let listeners = this._resourceListeners.get(data.name) ?? [];
 
                     for (let listener of listeners) {
@@ -210,7 +173,7 @@ export class Extensions {
                 });
             }
 
-            let resource = await Resources.GetResourceNow(data.name);
+            let resource = await Resources.GetResource(data.name);
 
             return {
                 command: "Resource",
@@ -233,11 +196,10 @@ export class Extensions {
         if (command == "Refresh Token") {
             let fetchedResources = await Resources.FetchResources();
 
-            if (!fetchedResources)
-                return {
-                    command: "Refreshed Token",
-                    data: null
-                }
+            if (!fetchedResources) return {
+                command: "Refreshed Token",
+                data: null
+            }
 
             let token = await Resources.GetToken();
 
@@ -250,7 +212,7 @@ export class Extensions {
         if (command == "Show Notification") {
             if (data.loader && typeof data.id !== "string") return;
 
-            let notification = Site.ShowNotification(data.content, data.loader ?? false);
+            let notification = InlineNotification.ShowNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
             let ids = this.extensionNotificationIds.get(e.origin) ?? [];

@@ -7,7 +7,7 @@
     flex-shrink: 0;
 }
 
-:host(:hover:not(:host([editing]))) {
+:host(:hover) {
     background-color: var(--surface2);
     box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
 }
@@ -15,28 +15,6 @@
 :host(.selected) {
     background-color: var(--surface4) !important;
     box-shadow: var(--shadow-colour) calc(var(--shadow-x) / 2) calc(var(--shadow-y) / 2) var(--shadow-spread);
-}
-
-#handle {
-    --size: 0.8rem;
-    --padding: 0.8rem;
-
-    --full-size: calc(calc(var(--padding) * 2) + var(--size));
-
-    position: absolute;
-    top: calc(50% - calc(var(--full-size) / 2));
-    left: calc(calc(calc(3.3vmin - var(--size)) / 2) - var(--padding));
-
-    display: block;
-
-    width: min-content;
-    height: var(--full-size);
-
-    padding: var(--padding);
-
-    box-sizing: border-box;
-
-    cursor: move;
 }
 
 a {

@@ -8,7 +8,11 @@ export class Callbacks<TParamType> {
     }
 
     public Invoke(param: TParamType) {
-        for (let callback of this._callbacks)
-            callback(param);
+        for (let callback of this._callbacks) {
+            try {
+                callback(param);
+            }
+            catch (_) { }
+        }
     }
 }

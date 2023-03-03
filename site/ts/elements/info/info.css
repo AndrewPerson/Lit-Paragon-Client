@@ -1,6 +1,13 @@
 :host {
     position: relative;
     display: block;
+    width: max-content;
+    max-width: var(--max-width);
+}
+
+:host(:hover) > #info-container,
+:host(:focus-within) > #info-container {
+    display: block;
 }
 
 button {
@@ -20,13 +27,23 @@ button > slot {
     height: 100%;
 }
 
-.info {
+#info-container {
     position: absolute;
-    display: block;
     top: var(--offset);
 
+    display: none;
+
     width: max-content;
-    max-width: var(--max-width);
+    max-width: var(--max-width, unset);
+
+    z-index: 99;
+}
+
+#info {
+    display: block;
+
+    width: max-content;
+    max-width: 100%;
 
     background-color: var(--surface2);
 
@@ -34,20 +51,15 @@ button > slot {
     box-shadow: var(--shadow);
     padding: 0.8rem;
 
-    z-index: 99;
-
     box-sizing: border-box;
 }
 
-.background {
+#background {
     position: absolute;
-    width: var(--max-width);
-    height: 200%;
-    top: 0;
-    clip-path: polygon(0 0, 100% 100%, 0 100%);
-}
+    top: calc(-1 * var(--offset) + 0.4rem);
 
-::slotted(*) {
-    width: inherit;
-    height: inherit;
+    width: 100%;
+    height: var(--offset);
+
+    clip-path: polygon(0 0, 100% 100%, 0 100%);
 }

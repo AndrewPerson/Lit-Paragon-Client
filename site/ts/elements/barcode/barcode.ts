@@ -1,6 +1,6 @@
 import { Page } from "../page/page";
 
-import { html, unsafeCSS } from "lit";
+import { html } from "lit";
 import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
@@ -22,13 +22,6 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import barcodeCss from "./barcode.css";
 
-declare const JsBarcode: ((canvas: HTMLCanvasElement, data: string, options: {
-    displayValue: boolean
-    margin: number
-}) => void) | undefined;
-
-declare const SKIN_CSS: string;
-
 @customElement("student-barcode")
 export class StudentBarcode extends Page {
     static styles = [textCss, imgCss, pageCss, fullElementCss, barcodeCss];
@@ -42,17 +35,13 @@ export class StudentBarcode extends Page {
     @query("#point2")
     point2: HTMLElement | null;
 
-    @query("#save")
-    saveLink: HTMLAnchorElement | null;
+    @state()
+    studentId: string;
 
     rect: DOMRect = this.getBoundingClientRect();
 
     draggedElement: HTMLElement | null = null;
-
     dragging: boolean = false;
-
-    @state()
-    studentId: string;
 
     Resize = Debounce(() => {
         this.rect = this.getBoundingClientRect();
@@ -81,37 +70,10 @@ export class StudentBarcode extends Page {
         }
     }).bind(this);
 
-    constructor() {
-        super();
-
-        this.addEventListener("pointerup", this.EndDrag);
-
-        document.addEventListener("pointermove", this.DragPoint);
-
-        window.addEventListener("resize", this.Resize);
-
-        this.AddResource("userinfo", (userInfo: {studentId: string | Missing}) => {
-            let studentId = userInfo.studentId;
-
-            if (studentId !== undefined && studentId !== null)
-                this.studentId = studentId;
-        });
-
-        Site.ListenForDark(dark => {
-            this.barcode?.classList.toggle("outline", dark);
-        });
-    }
-
-    disconnectedCallback() {
-        document.removeEventListener("pointermove", this.DragPoint);
-        window.removeEventListener("resize", this.Resize);
-    }
-
     StartDrag(e: PointerEvent) {
         e.preventDefault();
 
         this.draggedElement = e.target as HTMLElement;
-
         this.draggedElement.style.pointerEvents = "none";
 
         this.style.cursor = "move";
@@ -160,7 +122,7 @@ export class StudentBarcode extends Page {
     }
 
     SetBarcodePosition() {
-        if (this.barcode === null) return;
+        if (this.barcode == null) return;
 
         let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1?.style.left.length - 1) || "0");
         let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1?.style.top.length - 1) || "0");
@@ -181,28 +143,9 @@ export class StudentBarcode extends Page {
         this.barcode.style.height = `${maxY - minY}%`;
     }
 
-    RenderBarcode() {
-        if (this.draggedElement !== null) return;
-        if (this.barcode === null) return;
-
-        if (typeof JsBarcode === "function") {
-            JsBarcode(this.barcode, this.studentId, {
-                displayValue: false,
-                margin: 0
-            });
-        }
-
-        let url = this.barcode.toDataURL("image/png");
-
-        if (this.saveLink === null) return;
-
-        this.saveLink.href = url;
-        this.saveLink.download = `${this.studentId}.png`;
-    }
-
     SaveBarcodePosition() {
-        if (this.point1 === null) return;
-        if (this.point2 === null) return;
+        if (this.point1 == null) return;
+        if (this.point2 == null) return;
 
         localStorage.setItem("Barcode Points",
                              JSON.stringify([
@@ -213,9 +156,30 @@ export class StudentBarcode extends Page {
                              ]));
     }
 
+    constructor() {
+        super();
+
+        this.addEventListener("pointerup", this.EndDrag);
+        document.addEventListener("pointermove", this.DragPoint);
+        window.addEventListener("resize", this.Resize);
+
+        this.AddResource("userinfo", (userInfo: { studentId: string | Missing }) => {
+            let studentId = userInfo.studentId;
+
+            if (studentId !== undefined && studentId !== null)
+                this.studentId = studentId;
+        });
+
+        Site.ListenForDark(dark => this.barcode?.classList.toggle("outline", dark));
+    }
+
+    disconnectedCallback() {
+        document.removeEventListener("pointermove", this.DragPoint);
+        window.removeEventListener("resize", this.Resize);
+    }
+
     updated() {
         this.SetBarcodePosition();
-        this.RenderBarcode();
 
         this.rect = this.getBoundingClientRect();
     }
@@ -223,20 +187,18 @@ export class StudentBarcode extends Page {
     renderPage() {
         let storedPoints = localStorage.getItem("Barcode Points");
 
-        let points: string[] = ["10%", "10%", "90%", "50%"];
-
-        if (storedPoints) points = JSON.parse(storedPoints);
+        let points: string[] = storedPoints == null ? ["10%", "10%", "90%", "50%"] : JSON.parse(storedPoints);
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>
-        <a id="save" title="Save Barcode">
+        <a id="save" title="Save Barcode" href="/api/barcode?studentID=${this.studentId}">
             <img src="/images/download.svg">
         </a>
 
         <div id="point1" style="left: ${points[0]}; top: ${points[1]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
         <div id="point2" style="left: ${points[2]}; top: ${points[3]};" tabindex="0" @keydown="${this.MovePointKeys}" @pointerdown="${this.StartDrag}"></div>
 
-        <canvas id="barcode" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;"></canvas>
+        <img src="/api/barcode?studentID=${this.studentId}" id="barcode" class="${Site.dark ? "outline" : ""}" style="top: 20%; left: 20%; width: 60%; height: 20%;">
         `;
     }
 }

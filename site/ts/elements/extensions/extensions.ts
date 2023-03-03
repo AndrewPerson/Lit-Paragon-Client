@@ -1,4 +1,4 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
 import { Extensions } from "../../site/extensions";
@@ -10,14 +10,17 @@ import "../loader/loader";
 
 //@ts-ignore
 import extensionsCss from "./extensions.css";
-
-declare const SKIN_CSS: string;
+import { Page } from "../page/page";
 
 @customElement("extension-page")
-export class ExtensionPage extends LitElement {
+export class ExtensionPage extends Page {
     static styles = [extensionsCss];
 
-    @property({type: String})
+    //TODO Set this property
+    @property()
+    name: string = "";
+
+    @property()
     src: string = "";
 
     @query("iframe", true)
@@ -33,6 +36,16 @@ export class ExtensionPage extends LitElement {
 
     PostMessage(message: any) {
         this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
+    }
+
+    constructor() {
+        super();
+
+        Extensions.ListenForInstalledExtensions(extensions => {
+            if (!extensions.has(this.name)) {
+                this.remove();
+            }
+        });
     }
 
     disconnectedCallback() {

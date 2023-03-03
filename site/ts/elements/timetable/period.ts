@@ -1,12 +1,10 @@
-import { html, unsafeCSS, LitElement } from "lit";
-import { customElement, property, state, query } from "lit/decorators.js";
+import { html, LitElement } from "lit";
+import { customElement, property, query } from "lit/decorators.js";
 
 //@ts-ignore
 import textCss from "default/text.css";
 //@ts-ignore
 import periodCss from "./period.css";
-
-declare const SKIN_CSS: string;
 
 @customElement("timetable-period")
 export class TimetablePeriod extends LitElement {
@@ -24,23 +22,8 @@ export class TimetablePeriod extends LitElement {
     @property()
     room: string;
 
-    @property({ type: Number })
-    minWidth: number = 0;
-
-    @property({ type: Number })
-    maxWidth: number = 0;
-
-    @property({ type: Number })
-    maxHeight: number = 0;
-
-    @state()
-    showDetails: boolean = false;
-
-    @query("#details")
-    details: HTMLParagraphElement;
-
-    @query("#room")
-    roomInfo: HTMLParagraphElement;
+    @query("#details", true)
+    details: HTMLElement;
 
     static highlighted: string | undefined;
 
@@ -54,10 +37,35 @@ export class TimetablePeriod extends LitElement {
         for (let instance of this.instances) instance.requestUpdate();
     }
 
+    CalculateDetailsOffset() {
+        this.details.style.removeProperty("--detail-x-offset");
+        const detailsRect = this.details.getBoundingClientRect();
+
+        if (detailsRect.right > window.innerWidth) {
+            this.details.style.setProperty("--detail-x-offset", `${Math.round(window.innerWidth - detailsRect.right)}px`);
+        }
+
+        if (detailsRect.left < 0) {
+            this.details.style.setProperty("--detail-x-offset", `${Math.round(-detailsRect.left)}px`);
+        }
+
+        if (detailsRect.bottom > window.innerHeight) {
+            this.details.classList.add("flip-detail-y");
+        }
+        else
+        {
+            this.details.classList.remove("flip-detail-y");
+        }
+    }
+
     constructor() {
         super();
 
         TimetablePeriod.instances.push(this);
+
+        this.addEventListener("focus", _ => {
+            this.CalculateDetailsOffset();
+        });
     }
 
     firstUpdated() {
@@ -67,52 +75,31 @@ export class TimetablePeriod extends LitElement {
         }
     }
 
-    updated() {
-        if (TimetablePeriod.highlighted == this.title) {
-            if (this.showDetails) {
-                this.details.classList.remove("right");
-                this.details.classList.remove("left");
-                this.details.classList.remove("up");
-
-                let rect = this.details.getBoundingClientRect();
-
-                if (rect.left < this.minWidth)
-                    this.details.classList.add("right");
-                else if (rect.right > this.maxWidth)
-                    this.details.classList.add("left");
-                else if (rect.bottom > this.maxHeight)
-                    this.details.classList.add("up");
-            }
-            else {
-                this.roomInfo.classList.remove("up");
-
-                let rect = this.roomInfo.getBoundingClientRect();
-
-                let detailsOffscreen = rect.top + rect.height > this.maxHeight;
-
-                this.roomInfo.classList.toggle("up", detailsOffscreen);
-            }
-        }
-    }
-
     render() {
         let highlighted = TimetablePeriod.highlighted == this.title;
         this.classList.toggle("highlighted", highlighted);
 
         if (!highlighted) {
             this.blur();
-            this.showDetails = false;
         }
 
-        return html`
-        <p class="info">${this.shortTitle}</p>
+        const rect = this.getBoundingClientRect();
 
-        <p id="room" class="popup info" style="${highlighted && !this.showDetails ? "" : "display: none"}">
+        const scroll = getComputedStyle(this).getPropertyValue("--scroll");
+
+        const offsetY = Math.round(rect.y + rect.height) + (scroll.length < 3 ? 0 : parseFloat(scroll.substring(0, scroll.length - 2)));
+        const offsetX = Math.round(rect.x + rect.width / 2);
+
+        return html`
+        <p class="title">${this.shortTitle}</p>
+
+        <p id="room" class="popup" style="top: ${offsetY}px; left: ${offsetX}px;">
             ${this.room}
         </p>
 
-        <div id="details" class="popup details info" style="${this.showDetails ? "" : "display: none"}">
-            ${this.title} in ${this.room} with ${this.teacher}
+        <div id="details" class="popup" style="top: ${offsetY}px; left: ${offsetX}px;">
+            <p>${this.title}</p>
+            <p>${this.teacher} • Room ${this.room}</p>
         </div>
         `;
     }

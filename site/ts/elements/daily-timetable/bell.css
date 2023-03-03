@@ -16,28 +16,15 @@
     background-color: var(--surface3);
 }
 
-:host(.next)::before {
-    --size: 0.5rem;
-
-    content: "";
-
-    position: absolute;
-    top: calc((100% - var(--size)) / 2);
-    left: -1rem;
-
-    display: block;
-    width: var(--size);
-    height: var(--size);
-
-    border-radius: 100%;
-
-    background-color: var(--surface4);
-}
-
 p {
     color: var(--text3);
 }
 
 .changed {
     color: var(--text2);
+}
+
+next-indicator {
+    position: absolute;
+    left: -1rem;
 }

@@ -1,8 +1,14 @@
-import { html, unsafeCSS, LitElement } from "lit";
+import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
+import { map } from "lit/directives/map.js";
 
 import { Site } from "../../site/site";
 import { Extensions, Extension } from "../../site/extensions";
+
+import { Pipeline } from "../../site/pipeline";
+import { filterPreviewExtensions } from "./preview-filter";
+import { filterSearch } from "./search-filter";
+import { sortExtensions } from "./sort";
 
 import "./extension-display";
 
@@ -21,8 +27,6 @@ import pageCss from "default/pages/page.css";
 //@ts-ignore
 import extensionsMarketplaceCss from "./extensions-marketplace.css";
 
-declare const SKIN_CSS: string;
-
 @customElement("extensions-marketplace")
 export class ExtensionsMarketplace extends LitElement {
     static styles = [textCss, searchCss, checkboxCss, scrollbarCss, pageCss, fullElementCss, extensionsMarketplaceCss];
@@ -36,59 +40,35 @@ export class ExtensionsMarketplace extends LitElement {
     @state()
     allowPreview: boolean = false;
 
+    extensionPipeline = new Pipeline<Extension[], { allowPreviewExtensions: boolean, search?: string }>()
+                            .transform(filterPreviewExtensions)
+                            .transform(filterSearch)
+                            .transform(sortExtensions);
+
     constructor() {
         super();
 
-        Site.GetMetadata(metadata => {
-            this.extensions = new Map(Object.entries(metadata?.pages ?? {}));
-        });
+        this.addEventListener("install", ((e: CustomEvent<{ extension: string }>) => {
+            Extensions.InstallExtension(e.detail.extension);
+        }) as EventListener);
+
+        this.addEventListener("uninstall", ((e: CustomEvent<{ extension: string }>) => {
+            Extensions.UninstallExtension(e.detail.extension);
+        }) as EventListener);
+
+        Extensions.ListenForInstalledExtensions(_ => this.requestUpdate());
 
         Site.ListenForDark(_ => this.requestUpdate());
-    }
 
-    AllowPreviewExtensions(e: InputEvent) {
-        this.allowPreview = (e.target as HTMLInputElement).checked;
+        //TODO Use pagination
+        Extensions.GetExtensions().then(extensions => {
+            this.extensions = extensions;
+        });
     }
 
     render() {
-        let installedExtensions = Extensions.installedExtensions;
-
-        let installedExtensionNames: string[] = [...installedExtensions.keys()];
-
-        let extensionNames = [...this.extensions.keys()];
-        extensionNames = this.searchFilter.length == 0 ? extensionNames : extensionNames.filter(name => name.toLowerCase().includes(this.searchFilter.toLowerCase()) || this.extensions.get(name)?.description.toLowerCase().includes(this.searchFilter.toLowerCase()));
-        extensionNames = extensionNames.filter(name => this.allowPreview || !this.extensions.get(name)?.preview || installedExtensionNames.includes(name));
-        //Sort extensions by whether they're installed, then by whether they're in preview, then by lexical order of the name.
-        extensionNames = extensionNames.sort((a, b) => {
-            let first = true;
-
-            if (installedExtensionNames.includes(a)) {
-                if (installedExtensionNames.includes(b)) {
-                    if (this.extensions.get(a)?.preview === false) {
-                        if (this.extensions.get(b)?.preview === false)
-                            first = a >= b;
-                        else
-                            first = true;
-                    }
-                    else if (this.extensions.get(b)?.preview === false)
-                        first = false;
-                }
-                else
-                    first = true;
-            }
-            else if (installedExtensionNames.includes(b))
-                first = false;
-            else if (this.extensions.get(a)?.preview === false) {
-                if (this.extensions.get(b)?.preview === false)
-                    first = a >= b;
-                else
-                    first = true;
-            }
-            else if (this.extensions.get(b)?.preview === false)
-                first = false;
-
-            return first ? -1 : 1;
-        });
+        //TODO Use Algolia for searching
+        let extensions = this.extensionPipeline.run(Array.from(this.extensions.values()), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
 
         return html`
         <div class="header">
@@ -99,22 +79,18 @@ export class ExtensionsMarketplace extends LitElement {
                     Show Preview Extensions?
                 </label>
 
-                <input type="checkbox" name="preview" title="Show Preview Extensions" @input="${this.AllowPreviewExtensions}">
+                <input type="checkbox" name="preview" title="Show Preview Extensions" @input="${(e: InputEvent) => this.allowPreview = (e.target as HTMLInputElement).checked}">
             </div>
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${extensionNames.map((extensionName: string) => {
-            let extension = this.extensions.get(extensionName) as Extension;
-
-            return html`
-                <extension-display title="${extensionName}"
-                                   img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
-                                   description="${extension.description}"
-                                   ?preview="${extension.preview}"
-                                   ?installed="${installedExtensionNames.includes(extensionName)}"></extension-display>
-            `
-        })}</div>
+        <div class="content">${map(extensions, extension => html`
+            <extension-display title="${extension.name}"
+                               img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
+                               description="${extension.description}"
+                               ?preview="${extension.preview}"
+                               ?installed="${Extensions.installedExtensions.has(extension.name)}"></extension-display>
+        `)}</div>
         `;
     }
 }

@@ -1,10 +1,8 @@
-import { html, unsafeCSS, LitElement } from "lit";
-import { customElement, query, state } from "lit/decorators.js";
+import { html, LitElement } from "lit";
+import { customElement, query } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 import LOGIN_URL from "../../login-url";
-
-import { Navbar } from "../navbar/navbar";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -15,29 +13,23 @@ import buttonCss from "default/button.css";
 //@ts-ignore
 import rangeCss from "default/range.css";
 //@ts-ignore
+import scrollbarCss from "default/scrollbar.css";
+//@ts-ignore
 import cardElementCss from "default/pages/card.css";
 //@ts-ignore
 import pageCss from "default/pages/page.css";
 //@ts-ignore
 import settingsCss from "./settings.css";
 
-declare const SKIN_CSS: string;
+declare const VERSION: string;
+declare const TELEMETRY_PERMISSION_STORAGE: string;
 
 @customElement("user-settings")
 export class Settings extends LitElement {
-    static styles = [textCss, imgCss, buttonCss, rangeCss, cardElementCss, pageCss, settingsCss];
+    static styles = [textCss, imgCss, buttonCss, rangeCss, scrollbarCss, cardElementCss, pageCss, settingsCss];
 
     @query("#hue", true)
     hueInput: HTMLInputElement;
-
-    @state()
-    version: string = "0.0.0";
-
-    constructor() {
-        super();
-
-        Site.GetMetadata(metadata => this.version = metadata?.version ?? "0.0.0");
-    }
 
     async Patch() {
         await Promise.all((await navigator.serviceWorker.getRegistrations()).map(reg => reg.unregister()));
@@ -57,8 +49,8 @@ export class Settings extends LitElement {
     }
 
     ResetColour() {
-        this.hueInput.value = "200";
-        Site.SetHue("200");
+        this.hueInput.valueAsNumber = 200;
+        Site.SetHue(200);
         Site.SaveHue();
     }
 
@@ -70,48 +62,54 @@ export class Settings extends LitElement {
         this.requestUpdate();
     }
 
+    ToggleTelemetry(e: InputEvent) {
+        let disableTelemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+
+        localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, (!disableTelemetryCheckbox.checked).toString());
+
+        this.requestUpdate();
+    }
+
     render() {
+        const telemetryEnabled = localStorage.getItem(TELEMETRY_PERMISSION_STORAGE) != "false";
+
         return html`
-        <info-popup class="credits">
-            Paragon is written by <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson">Andrew Pye</a>.
-            <br>
-            The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
-        </info-popup>
-
-        <h6 id="version">Paragon v${this.version}</h6>
-
-        <button @click="${this.Patch}">Fix</button>
-        <button @click="${this.LogOut}">Log Out</button>
-
-        <span></span>
-
-        <h6>Colour</h6>
-
-        <button @click="${this.ResetColour}">Reset</button>
-
-        <input title="Drag to change main hue for Paragon" type="range" id="hue" min="0" max="359" value="${Site.hue}"
-               @input="${(e: InputEvent) => Site.SetHue((e.target as HTMLInputElement).value)}"
-               @change="${Site.SaveHue.bind(Site)}">
-
-        <span></span>
-
-        <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
-
-        <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
-
-        <span></span>
-
-        <h6 class="navbar-header">
-            Sidebar
-            <info-popup class="navbar-info">
-                Click on "Reorder" and drag on the navbar icons to reorder them.
+        <header>
+            <info-popup class="credits">
+                Paragon is written by <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson">Andrew Pye</a>.
+                <br>
+                The source code is on <a target="_blank" rel="noopener noreferrer" href="https://github.com/AndrewPerson/Lit-Paragon-Client">Github</a>.
             </info-popup>
-        </h6>
 
-        <input type="checkbox" id="edit-navbar" class="button" title="Edit the sidebar" @input="${() => {
-            if (Navbar.instance !== null)
-                Navbar.instance.editing = !Navbar.instance.editing;
-        }}">
+            <h6 id="version">Paragon v${VERSION}</h6>
+        </header>
+
+        <div class="content">
+            <button @click="${this.Patch}">Fix</button>
+            <button @click="${this.LogOut}">Log Out</button>
+
+            <span class="divider"></span>
+
+            <h6>Colour</h6>
+
+            <button @click="${this.ResetColour}">Reset</button>
+
+            <input title="Drag to change main hue for Paragon" type="range" id="hue" min="0" max="359" value="${Site.hue}"
+                @input="${(e: InputEvent) => Site.SetHue((e.target as HTMLInputElement).valueAsNumber)}"
+                @change="${Site.SaveHue.bind(Site)}">
+
+            <span class="divider"></span>
+
+            <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
+
+            <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+
+            <span class="divider"></span>
+
+            <h6>Telemetry</h6>
+
+            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Telemetry" @input="${this.ToggleTelemetry.bind(this)}">
+        </div>
         `;
     }
 }

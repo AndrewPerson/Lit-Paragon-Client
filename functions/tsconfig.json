@@ -3,6 +3,7 @@
         "lib": ["esnext"],
         "downlevelIteration": true,
         "types": ["@cloudflare/workers-types"],
-        "composite": true
+        "composite": true,
+        "allowSyntheticDefaultImports": true
     }
 }

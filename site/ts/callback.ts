@@ -49,7 +49,7 @@ let params = new URLSearchParams(window.location.search);
 
 let code = params.get("code");
 
-if (code) {
+if (code != null) {
     GetToken(code)
     .then(succeeded => {
         sessionStorage.removeItem("Last Refreshed");

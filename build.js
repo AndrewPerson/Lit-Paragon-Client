@@ -1,17 +1,14 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const config = require("./build.json");
-
 import path from "path";
 import { fileURLToPath } from "url";
 
-import { writeFile, readFile, rm, readdir, copyFile } from "fs/promises";
+import { writeFile, readFile, rm, readdir } from "fs/promises";
 
 import { exec } from "child_process";
 
 import { build } from "esbuild";
-
 import conditionalBuild from "esbuild-plugin-conditional-build";
+
+import { minimatch } from "minimatch";
 
 function transformVars(vars) {
     for (let key of Object.keys(vars)) {
@@ -71,6 +68,10 @@ async function walk(dir) {
 
 Main()
 async function Main() {
+    const dirname = path.dirname(fileURLToPath(import.meta.url));
+
+    const config = JSON.parse(await readFile(path.resolve(dirname, "build.json")));
+
     const specifiedEnvName = process.env.CF_PAGES != "1" ? process.argv[2] ?? "default" :
                              `${process.env.CF_PAGES_BRANCH}-branch` in config.env ? `${process.env.CF_PAGES_BRANCH}-branch` :
                              process.argv[2] ?? "default";
@@ -80,10 +81,6 @@ async function Main() {
 
     //Order matters here so values specified in the specified env override those in the sharedEnv
     const env = merge(sharedEnv, specifiedEnv);
-
-    const dirname = path.dirname(fileURLToPath(import.meta.url));
-
-    let metadataPromise = copyFile(path.resolve(dirname, "metadata.json"), path.resolve(dirname, "site/metadata.json"));
 
     await rm(path.resolve(dirname, "site/dist"), { force: true, recursive: true });
 
@@ -107,6 +104,7 @@ async function Main() {
         format: "esm",
         target: "es2016",
         define: transformVars(env.vars),
+        metafile: true,
         plugins: [
             {
                 name: "css-redirect",
@@ -138,18 +136,25 @@ async function Main() {
         process.exit(1);
     });
 
-    await Promise.all([metadataPromise, tsPromise, buildPromise]);
+    let [_, buildResult] = await Promise.all([tsPromise, buildPromise]);
+
+    await writeFile(path.resolve(dirname, "site/dist/esbuild-metadata.json"), JSON.stringify(buildResult.metafile));
 
     let files = (await walk(path.resolve(dirname, "site"))).filter(file => {
-        return !file.startsWith(path.resolve(dirname, "site/ts")) && file != path.resolve(dirname, "site/metadata.json") &&
-               file != path.resolve(dirname, "site/index.html");
-    }).map(file => {
-        file = file.replace(".html", "");
+        for (let glob of env["service-worker"].ignore) {
+            if (minimatch(path.relative(path.resolve(dirname, "site"), file), glob))
+                return false;
+        }
 
-        return `"/${path.relative(path.resolve(dirname, "site"), file)}"`
-    }).join(",");
+        return true;
+    }).map(file => `"/${path.relative(path.resolve(dirname, "site"), file)}"`);
 
-    files = `self.assets=["/",${files}];`;
+    for (let extra of env["service-worker"].extras) {
+        files.push(`"${extra}"`);
+    }
 
-    await writeFile(path.resolve(dirname, "site/dist/service-worker/assets.js"), files);
+    await writeFile(
+        path.resolve(dirname, "site/dist/service-worker/assets.js"),
+        `self.assets=[${files.join(",")}];`
+    );
 }

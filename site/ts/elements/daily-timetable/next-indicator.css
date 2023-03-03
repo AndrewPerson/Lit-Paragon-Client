@@ -1,0 +1,23 @@
+:host {
+    --offset: 1rem;
+}
+
+.icon {
+    --size: 0.5rem;
+
+    display: block;
+    width: var(--size);
+    height: var(--size);
+
+    border-radius: 100%;
+
+    background-color: var(--surface4);
+}
+
+info-popup:focus-within > .icon {
+    background-color: var(--surface2);
+}
+
+p {
+    height: 1rem;
+}
