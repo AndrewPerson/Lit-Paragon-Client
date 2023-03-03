@@ -87,7 +87,7 @@ export class TimetablePeriod extends LitElement {
 
         const scroll = getComputedStyle(this).getPropertyValue("--scroll");
 
-        const offsetY = Math.round(rect.y + rect.height) + parseFloat(scroll.substring(0, scroll.length - 2));
+        const offsetY = Math.round(rect.y + rect.height) + (scroll.length < 3 ? 0 : parseFloat(scroll.substring(0, scroll.length - 2)));
         const offsetX = Math.round(rect.x + rect.width / 2);
 
         return html`
