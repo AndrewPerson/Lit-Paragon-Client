@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, PropertyValueMap } from "lit";
 import { customElement, property, query } from "lit/decorators.js";
 
 //@ts-ignore
@@ -39,6 +39,7 @@ export class TimetablePeriod extends LitElement {
 
     CalculateDetailsOffset() {
         this.details.style.removeProperty("--detail-x-offset");
+        this.details.classList.remove("flip-detail-y");
         const detailsRect = this.details.getBoundingClientRect();
 
         if (detailsRect.right > window.innerWidth) {
