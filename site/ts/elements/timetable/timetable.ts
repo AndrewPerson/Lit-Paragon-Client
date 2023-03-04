@@ -77,28 +77,41 @@ export class FullTimetable extends Page {
         return root;
     }
 
-    CreateTable(dayGroup: Day[]) {
-        const dayPeriods = dayGroup.map(day => Object.entries(day.periods ?? {}).map(([_, period]) => period));
+    GetPeriodsInDay(day: Day)
+    {
+        return new Map(
+            Object.entries(day.periods ?? {}).
+            map(([periodNumber, period]) => [
+                parseInt(periodNumber),
+                period
+            ] as [number, Period])
+        );
+    }
 
-        const periodsPerDay = Math.max(...dayPeriods.map(periods => periods.length));
+    CreateTable(dayGroup: Day[]) {
+        const dayPeriods = dayGroup.map(day => this.GetPeriodsInDay(day));
+
+        const firstPeriodIndex = Math.min(...dayPeriods.map(periods => Math.min(...periods.keys())));
+        const lastPeriodIndex = Math.max(...dayPeriods.map(periods => Math.max(...periods.keys())));
+        
         const daysPerWeek = dayPeriods.length;
 
         let periodRows: (Period | null)[][] = [];
 
-        for (let y = 0; y < periodsPerDay; y++) {
+        for (let y = firstPeriodIndex; y <= lastPeriodIndex; y++) {
             periodRows.push([]);
         }
 
         for (let x = 0; x < daysPerWeek; x++) {
-            for (let y = 0; y < periodsPerDay; y++) {
-                periodRows[y].push(dayPeriods[x][y] ?? null);
+            for (let y = firstPeriodIndex; y <= lastPeriodIndex; y++) {
+                periodRows[y].push(dayPeriods[x].get(y) ?? null);
             }
         }
 
         periodRows = periodRows.filter(row => !row.every(p => p == null));
 
         return html`
-        <table style="--count-start: ${periodsPerDay - periodRows.length - 1}">
+        <table style="--count-start: ${firstPeriodIndex - 1}">
             <thead>
                 <tr>
                     <th></th>
