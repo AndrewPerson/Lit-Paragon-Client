@@ -103,7 +103,7 @@ export class FullTimetable extends Page {
         }
 
         for (let x = 0; x < daysPerWeek; x++) {
-            for (let y = firstPeriodIndex; y <= lastPeriodIndex; y++) {
+            for (let y = 0; y <= lastPeriodIndex - firstPeriodIndex; y++) {
                 periodRows[y].push(dayPeriods[x].get(y) ?? null);
             }
         }
