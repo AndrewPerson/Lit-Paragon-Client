@@ -7,8 +7,8 @@ declare const self: ServiceWorkerGlobalScope & { assets: string[] };
 
 importScripts("./assets.js");
 
-self.addEventListener("install", e => e.waitUntil(self.skipWaiting()));
-self.addEventListener("activate", e => e.waitUntil(Activate()));
+self.addEventListener("install", e => Install());
+self.addEventListener("activate", e => Activate());
 self.addEventListener("fetch", e => e.respondWith(Fetch(e)));
 
 //Service worker will change with each change to the VERSION variable, causing it to automatically re-update
@@ -18,10 +18,15 @@ declare const MISC_CACHE: string;
 
 let UPDATING = false;
 
-async function Activate() {
-    console.log(`Updating to ${VERSION}`);
+function Install()
+{
+    console.log(`Updating to Paragon ${VERSION}`);
 
     Update();
+}
+
+function Activate() {
+    console.log(`SW for Paragon ${VERSION} is active.`);
 }
 
 async function Fetch(e: FetchEvent) {
