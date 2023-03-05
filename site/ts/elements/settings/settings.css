@@ -79,6 +79,9 @@ header {
     appearance: none;
     -webkit-appearance: none;
     -moz-appearance: none;
+
+    width: fit-content;
+    height: fit-content;
 }
 
 #telemetry::after {
