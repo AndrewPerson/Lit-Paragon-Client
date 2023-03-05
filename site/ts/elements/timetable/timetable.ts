@@ -104,7 +104,8 @@ export class FullTimetable extends Page {
 
         for (let x = 0; x < daysPerWeek; x++) {
             for (let y = firstPeriodIndex; y <= lastPeriodIndex; y++) {
-                periodRows[y].push(dayPeriods[x].get(y) ?? null);
+                //periodRows is 0-indexed, but y doesn't start at 0
+                periodRows[y - firstPeriodIndex].push(dayPeriods[x].get(y) ?? null);
             }
         }
 
