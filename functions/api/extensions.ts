@@ -7,7 +7,7 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env: { 
     const pageSize = parseInt(searchParams.get("page_size") ?? "0");
     const page = parseInt(searchParams.get("page") ?? "0");
 
-    const extensionsRequest = PARAGON_DB.prepare("SELECT * FROM extensions ORDERBY name LIMIT ?,?").bind(pageSize * (page - 1), pageSize);
+    const extensionsRequest = PARAGON_DB.prepare("SELECT * FROM extensions LIMIT ?,?").bind(pageSize * (page - 1), pageSize);
     const extensions = (await extensionsRequest.all<object>()).results.map(e => {
         return {
             ...e,
