@@ -15,9 +15,6 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env: { 
         }
     }) as object[];
 
-    console.log(await extensionsRequest.all());
-    console.log(extensions);
-
     return new Response(JSON.stringify(extensions), {
         headers: {
             "content-type": "application/json",
