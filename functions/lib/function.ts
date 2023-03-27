@@ -3,11 +3,10 @@ import { Tracer } from "./tracer";
 import { ErrorResponse } from "./error";
 import { Data } from "./data";
 
-export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
+export function create<Env extends { HONEYCOMB_API_KEY: string }>(honeycombDataset: string, autoTrace: boolean, func: PagesFunction<Env, any, Data>): PagesFunction<Env, any, Data> {
     return async (context) => {
         const tracer = new Tracer(context.request, resolve({
             dataset: honeycombDataset,
-            //@ts-ignore
             apiKey: context.env.HONEYCOMB_API_KEY,
             serviceName: "paragon"
         }));
@@ -37,6 +36,8 @@ export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: 
                     headers: error.headers
                 });
 
+                console.log(error.message);
+                console.log(error.stack);
                 console.log(error.body);
 
                 tracer.finishResponse(result);
@@ -51,6 +52,7 @@ export function create<Env>(honeycombDataset: string, autoTrace: boolean, func: 
                     status: 500
                 });
 
+                console.log(error.message);
                 console.log(error.stack);
 
                 tracer.finishResponse(result);

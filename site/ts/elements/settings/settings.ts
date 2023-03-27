@@ -108,7 +108,7 @@ export class Settings extends LitElement {
 
             <h6>Telemetry</h6>
 
-            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Telemetry" @input="${this.ToggleTelemetry.bind(this)}">
+            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Error Reporting" @input="${this.ToggleTelemetry.bind(this)}">
         </div>
         `;
     }

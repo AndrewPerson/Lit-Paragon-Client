@@ -71,15 +71,11 @@ export class Extensions {
 
     static GetExtensionIconURL(extension: Extension, dark: boolean) {
         let url = new URL(dark ? "/dark-icon.svg" : "/icon.svg", extension.url);
-        url.search = `cache-version=${extension.version}`;
-
         return url.toString();
     }
 
     static GetExtensionNavIconURL(extension: Extension) {
         let url = new URL("/nav-icon.svg", extension.url);
-        url.searchParams.set("cache-version", extension.version);
-
         return url.toString();
     }
 

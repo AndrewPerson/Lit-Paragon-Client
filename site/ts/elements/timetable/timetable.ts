@@ -109,8 +109,6 @@ export class FullTimetable extends Page {
             }
         }
 
-        periodRows = periodRows.filter(row => !row.every(p => p == null));
-
         return html`
         <table style="--count-start: ${firstPeriodIndex - 1}">
             <thead>
@@ -146,8 +144,7 @@ export class FullTimetable extends Page {
                             </td>
                             `;
                         }
-
-                        return html`<td></td>`;
+                        else return html`<td></td>`;
                     })}
                 </tr>
                 `)}
