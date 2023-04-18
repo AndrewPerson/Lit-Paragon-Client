@@ -1,6 +1,6 @@
 import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { map } from "lit/directives/map.js";
+import { repeat } from "lit/directives/repeat.js";
 
 import { Site } from "../../site/site";
 import { Extensions, Extension } from "../../site/extensions";
@@ -49,19 +49,19 @@ export class ExtensionsMarketplace extends LitElement {
         super();
 
         this.addEventListener("install", ((e: CustomEvent<{ extension: string }>) => {
-            Extensions.InstallExtension(e.detail.extension);
+            Extensions.installExtension(e.detail.extension);
         }) as EventListener);
 
         this.addEventListener("uninstall", ((e: CustomEvent<{ extension: string }>) => {
-            Extensions.UninstallExtension(e.detail.extension);
+            Extensions.uninstallExtension(e.detail.extension);
         }) as EventListener);
 
-        Extensions.ListenForInstalledExtensions(_ => this.requestUpdate());
+        Extensions.onInstalledExtensionsChanged(_ => this.requestUpdate());
 
-        Site.ListenForDark(_ => this.requestUpdate());
+        Site.onDarkChange(_ => this.requestUpdate());
 
         //TODO Use pagination
-        Extensions.GetExtensions().then(extensions => {
+        Extensions.getExtensions().then(extensions => {
             this.extensions = extensions;
         });
     }
@@ -84,9 +84,9 @@ export class ExtensionsMarketplace extends LitElement {
         </div>
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
-        <div class="content">${map(extensions, extension => html`
+        <div class="content">${repeat(extensions, extension => extension.name, extension => html`
             <extension-display title="${extension.name}"
-                               img="${Extensions.GetExtensionIconURL(extension, Site.dark)}"
+                               img="${Extensions.getExtensionIconURL(extension, Site.dark)}"
                                description="${extension.description}"
                                ?preview="${extension.preview}"
                                ?installed="${Extensions.installedExtensions.has(extension.name)}"></extension-display>

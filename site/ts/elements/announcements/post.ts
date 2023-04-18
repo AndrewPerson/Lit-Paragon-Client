@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { html, LitElement, nothing } from "lit";
 import { customElement, property } from "lit/decorators.js";
 import { unsafeHTML } from "lit/directives/unsafe-html.js";
 
@@ -7,8 +7,8 @@ import textCss from "default/text.css";
 //@ts-ignore
 import postCss from "./post.css";
 
-@customElement("announcement-post")
-export class AnnouncementPost extends LitElement {
+@customElement("a-post")
+export class Post extends LitElement {
     static styles = [textCss, postCss];
 
     @property()
@@ -21,16 +21,16 @@ export class AnnouncementPost extends LitElement {
     years: string;
 
     @property()
-    published: string | null;
+    published: string;
 
     @property({ type: Boolean })
     meeting: boolean;
 
     @property()
-    meetingDate: string;
+    meetingDate: string | undefined;
 
     @property()
-    meetingTime: string;
+    meetingTime: string | undefined;
 
     @property()
     content: string;
@@ -41,7 +41,7 @@ export class AnnouncementPost extends LitElement {
     @property({ type: Boolean })
     read: boolean;
 
-    SetRead(read: boolean) {
+    setRead(read: boolean) {
         let readEvent = new CustomEvent("read", {
             bubbles: true,
             cancelable: true,
@@ -59,15 +59,15 @@ export class AnnouncementPost extends LitElement {
 
     render() {
         return html`
-        <input type="checkbox" id="read" ?checked="${this.read}" @input="${(e: InputEvent) => this.SetRead((e.target as HTMLInputElement).checked)}">
-        <details @toggle="${(e: Event) => { if ((e.target as HTMLDetailsElement).open) this.SetRead(true) }}">
+        <input type="checkbox" id="read" ?checked="${this.read}" @input="${(e: InputEvent) => this.setRead((e.target as HTMLInputElement).checked)}">
+        <details @toggle="${(e: Event) => { if ((e.target as HTMLDetailsElement).open) this.setRead(true) }}">
             <summary>
                 <h1>${this.title}</h1>
                 <p class="subtitle">
                     By ${this.author} |
+                    Published ${this.published} |
                     For ${this.years}
-                    ${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : ""}
-                    ${this.published == null ? "" : ` | Published ${this.published}`}
+                    ${this.meeting ? html` | <span class="meeting">Meeting at ${this.meetingTime}, ${this.meetingDate}</span>` : nothing}
                 </p>
             </summary>
 

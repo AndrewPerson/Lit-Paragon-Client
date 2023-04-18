@@ -10,7 +10,9 @@ export const onRequestPost = create<SBHSEnv>("auth", true, async ({ env, request
     if (!("code" in json)) return new Response("You need to provide a code.", { status: 400 });
     if (typeof json["code"] !== "string") return new Response("Code must be a JSON string.", { status: 400 });
 
-    let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
+    const endpoint = env.SBHS_ENDPOINT ?? "https://student.sbhs.net.au";
+
+    let response = await tracer.fetch(`${endpoint}/api/token`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"

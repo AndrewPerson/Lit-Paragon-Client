@@ -1,12 +1,12 @@
-import { Announcement } from "./types";
+import { Announcement } from "schemas/announcements";
 
 export function filterSearch(data: Announcement[], { search }: { search?: string }): Announcement[] {
-    let normalisedText = search?.trim().toLowerCase() ?? "";
-    if (normalisedText === undefined || normalisedText.trim() === "") return data;
+    let normalisedText = search?.trim().toLowerCase();
+    if (normalisedText === undefined) return data;
 
     return data.filter(announcement => {
-        return (announcement.title?.toLowerCase().includes(normalisedText) ?? false) ||
-               (announcement.content?.toLowerCase().includes(normalisedText) ?? false) ||
-               (announcement.authorName?.toLowerCase().includes(normalisedText) ?? false);
+        return (announcement.title.toLowerCase().includes(normalisedText!)) ||
+               (announcement.content.toLowerCase().includes(normalisedText!)) ||
+               (announcement.author.toLowerCase().includes(normalisedText!));
     });
 }

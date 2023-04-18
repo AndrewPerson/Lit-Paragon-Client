@@ -4,13 +4,12 @@
         "ts/index.ts",
         "ts/callback.ts",
         "ts/login.ts",
-        "ts/unsupported.ts",
         "ts/service-worker/service-worker.js"
     ],
     "env": {
         "shared": {
             "vars": {
-                "VERSION": "2.3.19",
+                "VERSION": "2.4.0",
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "SKIN_CACHE": "Skin Resources",
@@ -43,8 +42,8 @@
                 "DEVELOPMENT"
             ],
             "vars": {
-                "METADATA_ENDPOINT": "http://localhost:5555/metadata.json",
-                "SERVER_ENDPOINT": "http://localhost:8080",
+                "METADATA_ENDPOINT": "http://localhost:8788/metadata.json",
+                "SERVER_ENDPOINT": "http://localhost:8788/api",
                 "CLIENT_ID": "",
                 "MAX_REFRESH_FREQUENCY": 0
             },

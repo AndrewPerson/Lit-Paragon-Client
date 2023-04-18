@@ -29,15 +29,14 @@ export class TimetablePeriod extends LitElement {
 
     static instances: TimetablePeriod[] = [];
 
-    static Highlight(name: string | undefined) {
+    static highlight(name: string | undefined) {
         if (this.highlighted == name) return;
-
         this.highlighted = name;
 
         for (let instance of this.instances) instance.requestUpdate();
     }
 
-    CalculateDetailsOffset() {
+    calculateDetailsOffset() {
         this.details.style.removeProperty("--detail-x-offset");
         this.details.classList.remove("flip-detail-y");
         const detailsRect = this.details.getBoundingClientRect();
@@ -65,15 +64,14 @@ export class TimetablePeriod extends LitElement {
         TimetablePeriod.instances.push(this);
 
         this.addEventListener("focus", _ => {
-            this.CalculateDetailsOffset();
+            this.calculateDetailsOffset();
         });
     }
 
-    firstUpdated() {
-        //The if statement is to stop empty periods from being tabbed to
-        if (this.room !== undefined && this.room !== null) {
-            this.tabIndex = 0;
-        }
+    disconnectedCallback() {
+        super.disconnectedCallback();
+
+        TimetablePeriod.instances.splice(TimetablePeriod.instances.indexOf(this), 1);
     }
 
     render() {

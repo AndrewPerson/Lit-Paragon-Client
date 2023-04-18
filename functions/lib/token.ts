@@ -9,7 +9,7 @@ export type Token = {
 }
 
 export class TokenFactory {
-    static async Refresh(token: Token, client_id: string, client_secret: string, tracer: RequestTracer): Promise<Token> {
+    static async Refresh(token: Token, client_id: string, client_secret: string, endpoint: string, tracer: RequestTracer): Promise<Token> {
         tracer.addData({
             token: {
                 refresh: {
@@ -18,7 +18,7 @@ export class TokenFactory {
             }
         });
 
-        let response = await tracer.fetch("https://student.sbhs.net.au/api/token", {
+        let response = await tracer.fetch(`${endpoint}/api/token`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"

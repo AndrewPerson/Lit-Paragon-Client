@@ -6,18 +6,42 @@ import countdownCss from "./countdown.css";
 //@ts-ignore
 import textCss from "default/text.css";
 
-@customElement("daily-timetable-countdown")
-export class DailyTimetableCountdown extends LitElement {
+@customElement("dt-countdown")
+export class Countdown extends LitElement {
     static styles = [textCss, countdownCss];
 
     @property()
-    periodTitle: string;
+    name: string;
 
     @property({ type: Date })
-    periodTime: Date;
+    time: Date;
 
     emittedCountdownFinishedEvent: boolean = false;
     setIntervalID: number | null = null;
+
+    constructor() {
+        super();
+
+        this.setIntervalID = window.setInterval(() => {
+            if (new Date() > this.time) {
+                if (!this.emittedCountdownFinishedEvent) {
+                    const event = new CustomEvent("countdown-finished", {
+                        bubbles: true,
+                        cancelable: true,
+                        composed: true
+                    });
+
+                    this.dispatchEvent(event);
+
+                    this.emittedCountdownFinishedEvent = true;
+                }
+            }
+            else {
+                this.emittedCountdownFinishedEvent = false;
+                this.requestUpdate();
+            }
+        }, 1000);
+    }
 
     disconnectedCallback() {
         super.disconnectedCallback();
@@ -26,31 +50,10 @@ export class DailyTimetableCountdown extends LitElement {
     }
 
     render() {
-        const timeDisplay = HumanTimeDisplay(new Date(), this.periodTime);
-
-        if (this.periodTime <= new Date()) {
-            if (!this.emittedCountdownFinishedEvent) {
-                const event = new CustomEvent("countdown-finished", {
-                    bubbles: true,
-                    cancelable: true,
-                    composed: true
-                });
-
-                this.dispatchEvent(event);
-
-                if (this.setIntervalID != null) window.clearInterval(this.setIntervalID);
-                this.setIntervalID = null;
-
-                this.emittedCountdownFinishedEvent = true;
-            }
-        }
-        else {
-            if (this.setIntervalID == null) this.setIntervalID = window.setInterval(() => this.requestUpdate(), 1000);
-            this.emittedCountdownFinishedEvent = false;
-        }
+        const timeDisplay = humanTimeDifference(new Date(), this.time);
 
         return html`
-            <p>${this.periodTitle}</p>
+            <p>${this.name}</p>
             <p>${timeDisplay.preposition}</p>
             <h1 class="time">${timeDisplay.time}</h1>
         `;
@@ -58,7 +61,7 @@ export class DailyTimetableCountdown extends LitElement {
 }
 
 //Returns the difference between now and future in a human-understandable format.
-function HumanTimeDisplay(now: Date, future: Date) {
+function humanTimeDifference(now: Date, future: Date) {
     const timeDifference = future.getTime() - now.getTime();
 
     if (now.getMonth() > future.getMonth() && now.getDate() > future.getDate()) {

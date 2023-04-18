@@ -2,10 +2,6 @@ import { parseJSONStream } from "@andrewperson/parse-json-stream";
 
 import { Callbacks, Callback } from "./callback";
 
-import LOGIN_URL from "../login-url";
-
-import { InlineNotification } from "../elements/notification/notification";
-
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
@@ -23,50 +19,52 @@ export type Token = {
     termination: Date
 };
 
+export enum UpdateFailure {
+    NoToken,
+    Server,
+    SBHS,
+    Client,
+    InvalidToken,
+    Network,
+    Unknown
+}
+
 export class Resources {
-    private static _resourceCallbacks: Map<string, Callbacks<any>> = new Map();
-    private static _fetchCallbacks = new Callbacks<boolean>();
+    private static _resourceCallbacks: Map<string, Callbacks<[any]>> = new Map();
+    private static _updateResourceReceivedCallbacks = new Callbacks<[number, number]>();
+    private static _updateEndCallbacks = new Callbacks<[UpdateFailure | null]>();
 
-    private static _fetching: boolean = false;
+    private static _updating: boolean = false;
 
-    static ShowLoginNotification() {
-        let content = document.createElement("p");
-        content.innerHTML = `You need to <a href="${LOGIN_URL}">login</a> to see the latest information.`
-
-        InlineNotification.ShowNotification(content);
+    static onReceivedResource(callback: Callback<[number, number]>) {
+        this._updateResourceReceivedCallbacks.add(callback);
     }
 
-    static ShowResourceNotification() {
-        return InlineNotification.ShowNotification("Updating resources...", true);
+    static onEndUpdatingResources(callback: Callback<[UpdateFailure | null]>) {
+        this._updateEndCallbacks.add(callback);
     }
 
-    static async GetToken(): Promise<Token | null> {
+    static async token(): Promise<Token | null> {
         let cache = await caches.open(RESOURCE_CACHE);
         let tokenResponse = await cache.match("Token");
 
-        if (!tokenResponse) {
-            location.href = `${location.origin}/login`;
-            return null;
-        }
+        if (tokenResponse === undefined) return null;
 
         let token: Token = await tokenResponse.json();
 
-        if (new Date() > token.termination) {
-            this.ShowLoginNotification();
-            return null;
-        }
+        if (new Date() > token.termination) return null;
 
         return token;
     }
 
-    static async SetResource(name: string, resource: string) {
+    static async set(name: string, resource: string) {
         let cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
 
-        this._resourceCallbacks.get(name)?.Invoke(JSON.parse(resource));
+        this._resourceCallbacks.get(name)?.invoke(JSON.parse(resource));
     }
 
-    static async GetResource<T>(name: string): Promise<T | undefined> {
+    static async get<T>(name: string): Promise<T | undefined> {
         let cache = await caches.open(RESOURCE_CACHE);
         let response = await cache.match(name);
 
@@ -77,23 +75,35 @@ export class Resources {
         }
     }
 
-    static async ListenForResource<T>(name: string, callback: Callback<T | undefined>): Promise<void> {
+    static async onChange<T>(name: string, callback: Callback<[T | undefined]>): Promise<void> {
         let callbacks = this._resourceCallbacks.get(name) ?? new Callbacks();
 
-        callbacks.AddListener(callback);
+        callbacks.add(callback);
         this._resourceCallbacks.set(name, callbacks);
 
-        callback(await this.GetResource<T>(name));
+        callback(await this.get<T>(name));
     }
 
-    static async FetchResources(): Promise<boolean> {
-        if (this._fetching) return new Promise(resolve => this._fetchCallbacks.AddListener(resolve));
-        this._fetching = true;
+    static async update(): Promise<UpdateFailure | null> {
+        if (this._updating) {
+            let promiseResolve: (value: UpdateFailure | null | PromiseLike<UpdateFailure | null>) => void = null!;
+            return new Promise<UpdateFailure | null>(resolve => {
+                promiseResolve = resolve;
+                this._updateEndCallbacks.add(resolve);
+            }).then(result => {
+                this._updateEndCallbacks.remove(promiseResolve);
+                return result;
+            });
+        }
 
-        let token = await this.GetToken();
-        if (token == null) return false;
+        this._updating = true;
 
-        let resourceNotification = this.ShowResourceNotification();
+        let token = await this.token();
+        if (token == null) {
+            this._updateEndCallbacks.invoke(UpdateFailure.NoToken);
+            this._updating = false;
+            return UpdateFailure.NoToken;
+        }
 
         let serverUrl = new URL(`${SERVER_ENDPOINT}/resources`);
         serverUrl.searchParams.append("token", JSON.stringify(token));
@@ -103,44 +113,37 @@ export class Resources {
             resourceResponse = await fetch(serverUrl.toString());
         }
         catch (e) {
-            resourceNotification.Close();
-            InlineNotification.ShowNotification("No network connection.");
-
-            this._fetchCallbacks.Invoke(false);
-            this._fetching = false;
-
-            return false;
+            this._updateEndCallbacks.invoke(UpdateFailure.Network);
+            this._updating = false;
+            return UpdateFailure.Network;
         }
 
-        //TODO Add more granular error handling
         if (!resourceResponse.ok) {
-            resourceNotification.Close();
-
-            if (resourceResponse.status == 401 || resourceResponse.status == 422) {
-                this.ShowLoginNotification();
-            }
-            else {
-                InlineNotification.ShowNotification(await resourceResponse.text());
-            }
-
-            this._fetchCallbacks.Invoke(false);
-            this._fetching = false;
-
-            return false;
+            let failure = statusCodeToFailure(resourceResponse.status);
+            this._updateEndCallbacks.invoke(failure);
+            this._updating = false;
+            return failure;
         }
 
         let resourceCount = parseInt(resourceResponse.headers.get("X-Resource-Count") ?? "0");
         let receivedResourceCount = 0;
 
+        this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
+
         let parser = parseJSONStream([
             ["result", "*"],
-            ["token"]
+            ["token"],
+            ["error"]
         ]);
 
         let finishedPiping = false;
         let objectHandlerCount = 0;
 
-        let objectHandlerPromise = new Promise<void>(resolve => {
+        let objectHandlerPromiseResolve: (value: UpdateFailure | null | PromiseLike<UpdateFailure | null>) => void = null!;
+
+        let objectHandlerPromise = new Promise<UpdateFailure | null>(resolve => {
+            objectHandlerPromiseResolve = resolve;
+
             parser.onObject(async (path, object) => {
                 objectHandlerCount++;
 
@@ -149,61 +152,64 @@ export class Resources {
 
                     await cache.put("Token", new Response(object));
                 }
+                else if (path[0] == "error") {
+                    resolve(statusCodeToFailure(parseInt(object)));
+                }
                 else {
-                    await this.SetResource(path[1], object);
+                    await this.set(path[1], object);
                     receivedResourceCount++;
 
-                    resourceNotification.percentage = resourceCount == 0 ? 1 : receivedResourceCount / resourceCount;
+                    this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
                 }
 
                 objectHandlerCount--;
 
-                if (objectHandlerCount == 0 && finishedPiping) resolve();
+                if (objectHandlerCount == 0 && finishedPiping) resolve(null);
             });
         });
 
-        const decoder = new TextDecoder();
-        let totalStream = "";
         await resourceResponse.body?.pipeTo(new WritableStream({
-            write(chunk) {
-                totalStream += decoder.decode(chunk);
-                parser.write(chunk);
-            }
+            write: parser.write.bind(parser)
         }));
 
         parser.finish();
-
         finishedPiping = true;
 
-        if (!(objectHandlerCount == 0 && finishedPiping)) await objectHandlerPromise;
+        // Possible that all processing finished before we finished piping
+        if (objectHandlerCount == 0) objectHandlerPromiseResolve(null);
 
-        resourceNotification.Close();
+        let failure = await objectHandlerPromise;
 
-        let fullJSON = JSON.parse(totalStream);
-
-        if ("error" in fullJSON) {
-            if (fullJSON["error"] == 401) {
-                this.ShowLoginNotification();
-            }
-            else if (fullJSON["error"] == 500) {
-                InlineNotification.ShowNotification("An error occurred on the Paragon servers.");
-            }
-            else if (fullJSON["error"] == 502) {
-                InlineNotification.ShowNotification("An error occurred on the SBHS servers.");
-            }
-            else {
-                InlineNotification.ShowNotification("An unknown error occurred.");
-            }
-
-            this._fetchCallbacks.Invoke(false);
-            this._fetching = false;
-
-            return false;
+        if (failure == null) {
+            this._updateEndCallbacks.invoke(null);
+            this._updating = false;
+            return null;
         }
+        else {
+            this._updateEndCallbacks.invoke(failure);
+            this._updating = false;
+            return failure;
+        }
+    }
+}
 
-        this._fetchCallbacks.Invoke(true);
-        this._fetching = false;
-
-        return true;
+function statusCodeToFailure(status: number) {
+    if (status == 401 || status == 422) {
+       return UpdateFailure.InvalidToken;
+    }
+    else if (status >= 400 && status < 500) {
+        return UpdateFailure.Client;
+    }
+    else if (status == 500) {
+        return UpdateFailure.Server;
+    }
+    else if (status == 502) {
+        return UpdateFailure.SBHS;
+    }
+    else if (status >= 500 && status < 600) {
+        return UpdateFailure.Server;
+    }
+    else {
+        return UpdateFailure.Unknown;
     }
 }

@@ -1,14 +1,15 @@
 {
-    "include": ["site/ts/**/*.ts"],
+    "include": ["site/ts/**/*.ts", "schemas/**/*.ts"],
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
         "target": "es2020",
         "moduleResolution": "node",
         "skipLibCheck": true,
-        "strictPropertyInitialization": false
+        "strictPropertyInitialization": false,
+        "baseUrl": "./"
     },
     "references": [
-        { "path": "./functions/tsconfig.json" }
+        { "path": "./tsconfig.functions.json" }
     ]
 }

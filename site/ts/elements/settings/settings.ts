@@ -44,25 +44,25 @@ export class Settings extends LitElement {
         location.reload();
     }
 
-    LogOut() {
+    logOut() {
         location.href = LOGIN_URL;
     }
 
-    ResetColour() {
+    resetColour() {
         this.hueInput.valueAsNumber = 200;
-        Site.SetHue(200);
-        Site.SaveHue();
+        Site.setHue(200);
+        Site.saveHue();
     }
 
-    ToggleDark(e: InputEvent) {
+    toggleDark(e: InputEvent) {
         let darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
-        Site.SetDark(darkCheckbox.checked);
+        Site.setDark(darkCheckbox.checked);
 
         this.requestUpdate();
     }
 
-    ToggleTelemetry(e: InputEvent) {
+    toggleTelemetry(e: InputEvent) {
         let disableTelemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
         localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, (!disableTelemetryCheckbox.checked).toString());
@@ -86,29 +86,29 @@ export class Settings extends LitElement {
 
         <div class="content">
             <button @click="${this.Patch}">Fix</button>
-            <button @click="${this.LogOut}">Log Out</button>
+            <button @click="${this.logOut}">Log Out</button>
 
             <span class="divider"></span>
 
             <h6>Colour</h6>
 
-            <button @click="${this.ResetColour}">Reset</button>
+            <button @click="${this.resetColour}">Reset</button>
 
             <input title="Drag to change main hue for Paragon" type="range" id="hue" min="0" max="359" value="${Site.hue}"
-                @input="${(e: InputEvent) => Site.SetHue((e.target as HTMLInputElement).valueAsNumber)}"
-                @change="${Site.SaveHue.bind(Site)}">
+                @input="${(e: InputEvent) => Site.setHue((e.target as HTMLInputElement).valueAsNumber)}"
+                @change="${Site.saveHue.bind(Site)}">
 
             <span class="divider"></span>
 
             <h6>${Site.dark ? "Dark" : "Light"} Mode</h6>
 
-            <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.ToggleDark}">
+            <input type="checkbox" ?checked="${Site.dark}" id="colour-mode" class="button" title="Turn on ${Site.dark ? "Light" : "Dark"} Mode" @input="${this.toggleDark}">
 
             <span class="divider"></span>
 
             <h6>Telemetry</h6>
 
-            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Error Reporting" @input="${this.ToggleTelemetry.bind(this)}">
+            <input type="checkbox" ?checked="${!telemetryEnabled}" id="telemetry" class="button" title="${telemetryEnabled ? "Disable" : "Enable"} Error Reporting" @input="${this.toggleTelemetry.bind(this)}">
         </div>
         `;
     }

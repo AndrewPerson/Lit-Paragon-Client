@@ -1,6 +1,9 @@
-import { html, LitElement } from "lit";
+import { Page } from "../page/page";
+
+import { html } from "lit";
 import { property, customElement, query } from "lit/decorators.js";
 
+import { Site } from "../../site/site";
 import { Extensions } from "../../site/extensions";
 
 import { InlineNotification } from "../notification/notification";
@@ -10,7 +13,6 @@ import "../loader/loader";
 
 //@ts-ignore
 import extensionsCss from "./extensions.css";
-import { Page } from "../page/page";
 
 @customElement("extension-page")
 export class ExtensionPage extends Page {
@@ -29,29 +31,47 @@ export class ExtensionPage extends Page {
     @query("loading-indicator", true)
     loader: LoadingIndicator;
 
-    StopLoading() {
+    stopLoading() {
         this.loader.remove();
         this.frame.removeAttribute("style");
     }
 
-    PostMessage(message: any) {
+    postMessage(message: any) {
         this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
     }
 
     constructor() {
         super();
 
-        Extensions.ListenForInstalledExtensions(extensions => {
+        Extensions.onInstalledExtensionsChanged(extensions => {
             if (!extensions.has(this.name)) {
                 this.remove();
             }
+        });
+
+        Site.onDarkChange(dark => {
+            this.postMessage({
+                command: "Set Dark",
+                data: {
+                    dark: dark
+                }
+            });
+        });
+
+        Site.onHueChange(hue => {
+            this.postMessage({
+                command: "Set Hue",
+                data: {
+                    hue: hue
+                }
+            });
         });
     }
 
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        this.frame.removeEventListener("load", this.StopLoading);
+        this.frame.removeEventListener("load", this.stopLoading);
 
         let ids = Extensions.extensionNotificationIds.get(new URL(this.src).origin);
 
@@ -68,7 +88,7 @@ export class ExtensionPage extends Page {
 
     render() {
         return html`
-        <iframe @load="${this.StopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation allow-top-navigation" style="display: none"></iframe>
+        <iframe @load="${this.stopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation allow-top-navigation" style="display: none"></iframe>
         <loading-indicator></loading-indicator>
         `;
     }

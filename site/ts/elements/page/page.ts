@@ -17,14 +17,14 @@ export class Page extends LitElement {
     private _unreceivedResources: number = 0;
     private _uncompletedResources: number = 0;
 
-    AddResource<T>(resourceName: string, callback: Callback<T>) {
+    addResource<T>(resourceName: string, callback: Callback<[T]>) {
         this._unreceivedResources++;
         this._uncompletedResources++;
 
         let received = false;
         let completed = false;
 
-        Resources.ListenForResource<T>(resourceName, resource => {
+        Resources.onChange<T>(resourceName, resource => {
             if (!received) {
                 this._unreceivedResources--;
                 received = true;

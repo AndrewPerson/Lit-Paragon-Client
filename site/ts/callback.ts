@@ -5,7 +5,7 @@ import LOGIN_URL from "./login-url";
 declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
-async function GetToken(code: string) {
+async function getToken(code: string) {
     let tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
         method: "POST",
         body: JSON.stringify({
@@ -23,7 +23,7 @@ async function GetToken(code: string) {
     return true;
 }
 
-function ShowError(error: string) {
+function showError(error: string) {
     let words = error.split(/ |_|-/);
 
     let formattedError = "";
@@ -50,15 +50,16 @@ let params = new URLSearchParams(window.location.search);
 let code = params.get("code");
 
 if (code != null) {
-    GetToken(code)
+    getToken(code)
     .then(succeeded => {
         sessionStorage.removeItem("Last Refreshed");
+        // TODO Have a better method than forcefully redirecting the user to the login page. (i.e. display an error message)
         location.href = `${location.origin}/${succeeded ? "" : "login"}`;
     });
 }
 else {
     let error = params.get("error");
 
-    if (error) ShowError(error)
+    if (error) showError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";
 }

@@ -46,26 +46,26 @@ export class Navbar extends LitElement {
     constructor() {
         super();
 
-        this.addEventListener("pointerdown", this.ShowScrollBar.bind(this));
-        this.addEventListener("pointerup", this.HideScrollBar.bind(this));
+        this.addEventListener("pointerdown", this.showScrollBar.bind(this));
+        this.addEventListener("pointerup", this.hideScrollBar.bind(this));
 
-        Site.ListenForNavigation(_ => this.requestUpdate());
-        Extensions.ListenForInstalledExtensions(_ => this.requestUpdate());
+        Site.onNavigate(_ => this.requestUpdate());
+        Extensions.onInstalledExtensionsChanged(_ => this.requestUpdate());
 
         //Because sometimes addEventListener is undefined.
         //TODO Find out why
-        this.mobileMediaQuery.addEventListener?.("change", this.ShowScrollShadows.bind(this));
+        this.mobileMediaQuery.addEventListener?.("change", this.showScrollShadows.bind(this));
     }
 
-    ShowScrollBar() {
+    showScrollBar() {
         this.itemsContainer.classList.add("scroll");
     }
 
-    HideScrollBar() {
+    hideScrollBar() {
         this.itemsContainer.classList.remove("scroll");
     }
 
-    ShowScrollShadows() {
+    showScrollShadows() {
         //This function can be called before the element is fully initialised.
         //This stops it from running if that happens.
         if (this.shadowRoot == null) return;
@@ -110,7 +110,7 @@ export class Navbar extends LitElement {
             pages.push({
                 page: key,
                 title: key,
-                icon: Extensions.GetExtensionNavIconURL(extensions.get(key) as Extension),
+                icon: Extensions.getExtensionNavIconURL(extensions.get(key) as Extension),
                 extension: true,
             });
         }
@@ -122,7 +122,7 @@ export class Navbar extends LitElement {
         let scrollable = (extensions.size + 5) * 12 * vmin > window.innerHeight;
 
         return html`
-        <div id="items-container" @scroll="${this.ShowScrollShadows.bind(this)}">
+        <div id="items-container" @scroll="${this.showScrollShadows.bind(this)}">
             ${map(pages, page => html`
             <nav-item page="${page.page}" title="${page.title}" ?extension="${page.extension}"
                       class="${Site.page.page == page.page && Site.page.extension == page.extension ? "selected" : ""}">

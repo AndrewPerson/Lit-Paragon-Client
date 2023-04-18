@@ -19,15 +19,15 @@ export class Site {
     static dark: boolean = localStorage.getItem("Dark") == "true";
     static hue: number = parseFloat(localStorage.getItem("Hue") || "200");
 
-    private static _navigationListeners = new Callbacks<Page>();
+    private static _navigationListeners = new Callbacks<[Page]>();
 
     private static _pageElement: PageElement | null = null;
 
-    private static _darkCallbacks = new Callbacks<boolean>();
-    private static _hueCallbacks = new Callbacks<number>();
+    private static _darkCallbacks = new Callbacks<[boolean]>();
+    private static _hueCallbacks = new Callbacks<[number]>();
 
     //#region Navigation
-    static NavigateTo(page: Page): void {
+    static navigateTo(page: Page): void {
         if (page.extension) {
             let extension = Extensions.installedExtensions.get(page.page);
 
@@ -44,18 +44,18 @@ export class Site {
                     newPage = extensionPage;
                 }
 
-                this.SetPage(page, newPage);
+                this.setPage(page, newPage);
             }
         }
-        else this.SetPage(page, document.getElementById(page.page) as PageElement);
+        else this.setPage(page, document.getElementById(page.page) as PageElement);
     }
 
-    static ListenForNavigation(callback: Callback<Page>) {
-        this._navigationListeners.AddListener(callback);
+    static onNavigate(callback: Callback<[Page]>) {
+        this._navigationListeners.add(callback);
         callback(this.page);
     }
 
-    private static SetPage(page: Page, element: PageElement | null) {
+    private static setPage(page: Page, element: PageElement | null) {
         if (element == null) {
             if (this._pageElement == null) {
                 let defaultPage = document.querySelector("main")?.children?.[0] as PageElement | null;
@@ -83,43 +83,41 @@ export class Site {
             location.hash = page.extension ? `extension-${page.page}` : page.page;
         }
 
-        this._pageElement?.requestUpdate?.();
-
-        this._navigationListeners.Invoke(page);
+        this._navigationListeners.invoke(page);
     }
     //#endregion
 
     //#region Theming
-    static SetDark(dark: boolean): void {
+    static setDark(dark: boolean): void {
         this.dark = dark;
 
         document.documentElement.classList.toggle("dark", dark);
 
         localStorage.setItem("Dark", dark.toString());
 
-        this._darkCallbacks.Invoke(dark);
+        this._darkCallbacks.invoke(dark);
     }
 
-    static ListenForDark(callback: Callback<boolean>) {
-        this._darkCallbacks.AddListener(callback);
+    static onDarkChange(callback: Callback<[boolean]>) {
+        this._darkCallbacks.add(callback);
         callback(this.dark);
     }
 
-    static SetHue(hue: number): void {
+    static setHue(hue: number): void {
         document.documentElement.style.setProperty("--main-hue", hue.toString());
         document.documentElement.style.setProperty("--hue-rotate", `${hue - 200}deg`);
 
         this.hue = hue;
     }
 
-    static SaveHue() {
+    static saveHue() {
         localStorage.setItem("Hue", this.hue.toString());
 
-        this._hueCallbacks.Invoke(this.hue);
+        this._hueCallbacks.invoke(this.hue);
     }
 
-    static ListenForHue(callback: Callback<number>) {
-        this._hueCallbacks.AddListener(callback);
+    static onHueChange(callback: Callback<[number]>) {
+        this._hueCallbacks.add(callback);
         callback(this.hue);
     }
     //#endregion

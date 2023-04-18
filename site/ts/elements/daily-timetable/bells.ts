@@ -1,279 +1,308 @@
-import { Bell } from "./types";
+import { BaseBell, Bell } from "schemas/daily-timetable";
 
-const bells1: Bell[] = [
+export type TemplatePeriod = BaseBell & {
+    type: "period",
+    linkedIndex: number
+}
+
+const bells1: (Bell | TemplatePeriod)[] = [
     {
-        period: "0",
+        type: "period",
+        name: "Period 0",
+        shortName: "0",
+        linkedIndex: 0,
         startTime: "08:00",
         endTime: "09:00",
-        time: "08:00",
-        bell: "0",
-        bellDisplay: "Period 0"
+        shouldDisplay: true,
     },
     {
-        period: "RC",
+        type: "bell",
+        name: "Roll Call",
+        shortName: "RC",
         startTime: "09:00",
         endTime: "09:05",
-        time: "09:00",
-        bell: "RC",
-        bellDisplay: "Roll Call"
+        shouldDisplay: true,
     },
     {
-        period: "1",
+        type: "period",
+        name: "Period 1",
+        shortName: "1",
+        linkedIndex: 1,
         startTime: "09:05",
         endTime: "10:05",
-        time: "09:05",
-        bell: "1",
-        bellDisplay: "Period 1"
+        shouldDisplay: true
     },
     {
-        period: "2",
+        type: "period",
+        name: "Period 2",
+        shortName: "2",
+        linkedIndex: 2,
         startTime: "10:10",
         endTime: "11:10",
-        time: "10:10",
-        bell: "2",
-        bellDisplay: "Period 2"
+        shouldDisplay: true
     },
     {
-        period: "R",
+        type: "bell",
+        name: "Recess",
+        shortName: "R",
         startTime: "11:10",
         endTime: "11:27",
-        time: "11:10",
-        bell: "R",
-        bellDisplay: "Recess"
+        shouldDisplay: true
     },
     {
-        period: "3",
+        type: "period",
+        name: "Period 3",
+        shortName: "3",
+        linkedIndex: 3,
         startTime: "11:30",
         endTime: "12:30",
-        time: "11:30",
-        bell: "3",
-        bellDisplay: "Period 3"
+        shouldDisplay: true
     },
     {
-        period: "4",
+        type: "period",
+        name: "Period 4",
+        shortName: "4",
+        linkedIndex: 4,
         startTime: "12:35",
         endTime: "13:35",
-        time: "12:35",
-        bell: "4",
-        bellDisplay: "Period 4"
+        shouldDisplay: true
     },
     {
-        period: "MTL1",
+        type: "bell",
+        name: "Lunch 1",
+        shortName: "MTL1",
         startTime: "13:35",
         endTime: "13:55",
-        time: "13:35",
-        bell: "MTL1",
-        bellDisplay: "Lunch 1"
+        shouldDisplay: true
     },
     {
-        period: "MTL2",
+        type: "bell",
+        name: "Lunch 2",
+        shortName: "MTL2",
         startTime: "13:55",
         endTime: "14:12",
-        time: "13:55",
-        bell: "MTL2",
-        bellDisplay: "Lunch 2"
+        shouldDisplay: true
     },
     {
-        period: "5",
+        type: "period",
+        name: "Period 5",
+        shortName: "5",
+        linkedIndex: 5,
         startTime: "14:15",
         endTime: "15:15",
-        time: "14:15",
-        bell: "5",
-        bellDisplay: "Period 5"
+        shouldDisplay: true
     },
     {
-        period: "EoD",
+        type: "bell",
+        name: "End of Day",
+        shortName: "EoD",
         startTime: "15:15",
-        endTime: null,
-        time: "15:15",
-        bell: "EoD",
-        bellDisplay: "End of Day"
+        endTime: "15:15",
+        shouldDisplay: true
     }
 ];
 
-const bells2: Bell[] = [
+const bells2: (Bell | TemplatePeriod)[] = [
     {
-        period: "0",
+        type: "period",
+        name: "Period 0",
+        shortName: "0",
+        linkedIndex: 0,
         startTime: "08:00",
         endTime: "09:00",
-        time: "08:00",
-        bell: "0",
-        bellDisplay: "Period 0"
+        shouldDisplay: true
     },
     {
-        period: "RC",
+        type: "bell",
+        name: "Roll Call",
+        shortName: "RC",
         startTime: "09:00",
         endTime: "09:05",
-        time: "09:00",
-        bell: "RC",
-        bellDisplay: "Roll Call"
+        shouldDisplay: true
     },
     {
-        period: "1",
+        type: "period",
+        name: "Period 1",
+        shortName: "1",
+        linkedIndex: 1,
         startTime: "09:05",
         endTime: "10:05",
-        time: "09:05",
-        bell: "1",
-        bellDisplay: "Period 1"
+        shouldDisplay: true
     },
     {
-        period: "2",
+        type: "period",
+        name: "Period 2",
+        shortName: "2",
+        linkedIndex: 2,
         startTime: "10:10",
         endTime: "11:10",
-        time: "10:10",
-        bell: "2",
-        bellDisplay: "Period 2"
+        shouldDisplay: true
     },
     {
-        period: "R",
+        type: "bell",
+        name: "Recess",
+        shortName: "R",
         startTime: "11:10",
         endTime: "11:27",
-        time: "11:10",
-        bell: "R",
-        bellDisplay: "Recess"
+        shouldDisplay: true
     },
     {
-        period: "3",
+        type: "period",
+        name: "Period 3",
+        shortName: "3",
+        linkedIndex: 3,
         startTime: "11:30",
         endTime: "12:30",
-        time: "11:30",
-        bell: "3",
-        bellDisplay: "Period 3"
+        shouldDisplay: true
     },
     {
-        period: "WFL1",
+        type: "bell",
+        name: "Lunch 1",
+        shortName: "WFL1",
         startTime: "12:30",
         endTime: "12:50",
-        time: "12:30",
-        bell: "WFL1",
-        bellDisplay: "Lunch 1"
+        shouldDisplay: true
     },
     {
-        period: "WFL2",
+        type: "bell",
+        name: "Lunch 2",
+        shortName: "WFL2",
         startTime: "12:50",
         endTime: "13:07",
-        time: "12:50",
-        bell: "WFL2",
-        bellDisplay: "Lunch 2"
+        shouldDisplay: true
     },
     {
-        period: "4",
+        type: "period",
+        name: "Period 4",
+        shortName: "4",
+        linkedIndex: 4,
         startTime: "13:10",
         endTime: "14:10",
-        time: "13:10",
-        bell: "4",
-        bellDisplay: "Period 4"
+        shouldDisplay: true
     },
     {
-        period: "5",
+        type: "period",
+        name: "Period 5",
+        shortName: "5",
+        linkedIndex: 5,
         startTime: "14:15",
         endTime: "15:15",
-        time: "14:15",
-        bell: "5",
-        bellDisplay: "Period 5"
+        shouldDisplay: true
     },
     {
-        period: "EoD",
+        type: "bell",
+        name: "End of Day",
+        shortName: "EoD",
         startTime: "15:15",
-        endTime: null,
-        time: "15:15",
-        bell: "EoD",
-        bellDisplay: "End of Day"
+        endTime: "15:15",
+        shouldDisplay: true
     }
 ];
 
-const bells3: Bell[] = [
+const bells3: (Bell | TemplatePeriod)[] = [
     {
-        period: "0",
+        type: "period",
+        name: "Period 0",
+        shortName: "0",
+        linkedIndex: 0,
         startTime: "08:00",
         endTime: "08:50",
-        time: "08:00",
-        bell: "0",
-        bellDisplay: "Period 0"
+        shouldDisplay: true
     },
     {
-        period: "RC",
+        type: "bell",
+        name: "Roll Call",
+        shortName: "RC",
         startTime: "09:25",
         endTime: "09:30",
-        time: "09:25",
-        bell: "RC",
-        bellDisplay: "Roll Call"
+        shouldDisplay: true
     },
     {
-        period: "1",
+        type: "period",
+        name: "Period 1",
+        shortName: "1",
+        linkedIndex: 1,
         startTime: "09:30",
         endTime: "10:25",
-        time: "09:30",
-        bell: "1",
-        bellDisplay: "Period 1"
+        shouldDisplay: true
     },
     {
-        period: "2",
+        type: "period",
+        name: "Period 2",
+        shortName: "2",
+        linkedIndex: 2,
         startTime: "10:30",
         endTime: "11:25",
-        time: "10:30",
-        bell: "2",
-        bellDisplay: "Period 2"
+        shouldDisplay: true
     },
     {
-        period: "R",
+        type: "bell",
+        name: "Recess",
+        shortName: "R",
         startTime: "11:25",
         endTime: "11:42",
-        time: "11:25",
-        bell: "R",
-        bellDisplay: "Recess"
+        shouldDisplay: true
     },
     {
-        period: "3",
+        // period: "3",
+        // startTime: "11:45",
+        // endTime: "12:40",
+        // time: "11:45",
+        // bell: "3",
+        // bellDisplay: "Period 3"
+        type: "period",
+        name: "Period 3",
+        shortName: "3",
+        linkedIndex: 3,
         startTime: "11:45",
         endTime: "12:40",
-        time: "11:45",
-        bell: "3",
-        bellDisplay: "Period 3"
+        shouldDisplay: true
     },
     {
-        period: "WFL1",
+        type: "bell",
+        name: "Lunch 1",
+        shortName: "WFL1",
         startTime: "12:40",
         endTime: "13:00",
-        time: "12:40",
-        bell: "WFL1",
-        bellDisplay: "Lunch 1"
+        shouldDisplay: true
     },
     {
-        period: "WFL2",
+        type: "bell",
+        name: "Lunch 2",
+        shortName: "WFL2",
         startTime: "13:00",
         endTime: "13:17",
-        time: "13:00",
-        bell: "WFL2",
-        bellDisplay: "Lunch 2"
+        shouldDisplay: true
     },
     {
-        period: "4",
+        type: "period",
+        name: "Period 4",
+        shortName: "4",
+        linkedIndex: 4,
         startTime: "13:20",
         endTime: "14:15",
-        time: "13:20",
-        bell: "4",
-        bellDisplay: "Period 4"
+        shouldDisplay: true
     },
     {
-        period: "5",
+        type: "period",
+        name: "Period 5",
+        shortName: "5",
+        linkedIndex: 5,
         startTime: "14:20",
         endTime: "15:15",
-        time: "14:20",
-        bell: "5",
-        bellDisplay: "Period 5"
+        shouldDisplay: true
     },
     {
-        period: "EoD",
+        type: "bell",
+        name: "End of Day",
+        shortName: "EoD",
         startTime: "15:15",
-        endTime: null,
-        time: "15:15",
-        bell: "EoD",
-        bellDisplay: "End of Day"
+        endTime: "15:15",
+        shouldDisplay: true
     }
 ];
 
-export const bells = [
+export default [
     bells1,
     bells1,
     bells2,

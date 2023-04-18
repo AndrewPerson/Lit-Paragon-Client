@@ -5,11 +5,11 @@ import { customElement, query, state } from "lit/decorators.js";
 
 import { Site } from "../../site/site";
 
-import { Missing } from "../../missing";
-
 import { Debounce } from "../../utils";
 
 import "../info/info";
+
+import { UserInfo } from "schemas/user-info";
 
 //@ts-ignore
 import textCss from "default/text.css";
@@ -163,14 +163,9 @@ export class StudentBarcode extends Page {
         document.addEventListener("pointermove", this.DragPoint);
         window.addEventListener("resize", this.Resize);
 
-        this.AddResource("userinfo", (userInfo: { studentId: string | Missing }) => {
-            let studentId = userInfo.studentId;
+        this.addResource("userinfo", ({ studentId }: UserInfo) => this.studentId = studentId);
 
-            if (studentId !== undefined && studentId !== null)
-                this.studentId = studentId;
-        });
-
-        Site.ListenForDark(dark => this.barcode?.classList.toggle("outline", dark));
+        Site.onDarkChange(dark => this.barcode?.classList.toggle("outline", dark));
     }
 
     disconnectedCallback() {

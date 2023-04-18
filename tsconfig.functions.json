@@ -1,0 +1,15 @@
+{
+    "include": ["functions/**/*.ts", "schemas/**/*.ts"],
+    "compilerOptions": {
+        "lib": ["esnext"],
+        "downlevelIteration": true,
+        "types": ["@cloudflare/workers-types"],
+        "composite": true,
+        "allowSyntheticDefaultImports": true,
+        "baseUrl": "./",
+        "strict": true,
+        "moduleResolution": "node",
+        "skipLibCheck": true,
+        "strictPropertyInitialization": false,
+    }
+}

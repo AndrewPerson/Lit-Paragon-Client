@@ -3,5 +3,6 @@ export type SBHSEnv = {
     CLIENT_SECRET: string,
     REDIRECT_URI: string,
     HONEYCOMB_API_KEY: string,
-    PARAGON_DB: D1Database
+    PARAGON_DB: D1Database,
+    SBHS_ENDPOINT?: string
 }

@@ -12,7 +12,7 @@ export class Info extends LitElement {
 
     render() {
         return html`
-        <button title="Click or hover to reveal more information">
+        <button title="${this.title == "" ? "Click or hover to reveal more information" : this.title}">
             <slot name="icon">
                 <img src="/images/info.svg">
             </slot>

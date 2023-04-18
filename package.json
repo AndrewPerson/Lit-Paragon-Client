@@ -1,25 +1,28 @@
 {
     "type": "module",
     "dependencies": {
-        "@andrewperson/parse-json-stream": "^0.0.5",
+        "@andrewperson/parse-json-stream": "^0.0.7",
         "@cloudflare/workers-honeycomb-logger": "^2.3.3",
         "@xmldom/xmldom": "^0.8.6",
-        "lit": "^2.0.2"
+        "jsbarcode": "^3.11.5",
+        "lit": "^2.0.2",
+        "node-fetch": "^3.3.1",
+        "superstruct": "^1.0.3"
     },
     "devDependencies": {
-        "@cloudflare/workers-types": "^4.20230307.0",
+        "@cloudflare/workers-types": "^4.20230321.0",
         "@types/service-worker-mock": "^2.0.1",
+        "better-sqlite3": "^8.0.1",
         "esbuild": "^0.14.54",
         "esbuild-linux-64": "^0.14.2",
         "esbuild-plugin-conditional-build": "^1.0.2",
-        "jsbarcode": "^3.11.5",
-        "local-web-server": "^5.1.1",
         "minimatch": "^6.1.8",
-        "sbhs-random-data": "^1.2.0",
-        "typescript": "^4.5.4"
+        "sbhs-random-data": "^1.2.7",
+        "typescript": "^4.5.4",
+        "wrangler": "^2.15.1"
     },
     "scripts": {
         "build": "node build",
-        "serve": "npx ws -d site --static.extensions html --stack dev-server/mw-serviceworker.js dev-server/mw-metadata.js dev-server/mw-login.js lws-static -p 5555 & npx sbhs-random-data"
+        "serve": "npx wrangler pages dev ./site --d1=PARAGON_DB --binding SBHS_ENDPOINT=\"http://localhost:8080\" & npx sbhs-random-data --port=8080"
     }
 }

@@ -84,14 +84,14 @@ async function Main() {
 
     await rm(path.resolve(dirname, "site/dist"), { force: true, recursive: true });
 
-    let tsPromise = new Promise(res => {
-        exec("npx tsc --noEmit", (err, stdout, stderr) => {
-            console.log(stdout);
-            console.log(stderr);
-            console.log(err || "");
-            res();
-        });
-    });
+    // let tsPromise = new Promise(res => {
+    //     exec("npx tsc --noEmit", (err, stdout, stderr) => {
+    //         console.log(stdout);
+    //         console.log(stderr);
+    //         console.log(err || "");
+    //         res();
+    //     });
+    // });
 
     let buildPromise = build({
         entryPoints: config.files.map(file => `site/${file}`),
@@ -136,7 +136,7 @@ async function Main() {
         process.exit(1);
     });
 
-    let [_, buildResult] = await Promise.all([tsPromise, buildPromise]);
+    let [/*_, */buildResult] = await Promise.all([/*tsPromise, */buildPromise]);
 
     await writeFile(path.resolve(dirname, "site/dist/esbuild-metadata.json"), JSON.stringify(buildResult.metafile));
 

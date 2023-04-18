@@ -24,7 +24,7 @@ export class NavItem extends LitElement {
     UpdatePage(e: Event) {
         e.preventDefault();
 
-        Site.NavigateTo({
+        Site.navigateTo({
             page: this.page,
             extension: this.extension
         });

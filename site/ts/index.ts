@@ -3,6 +3,7 @@ import { Resources } from "./site/resources";
 import { Extensions } from "./site/extensions";
 
 import "./elements";
+import { InlineNotification } from "./elements/notification/notification";
 
 declare const MAX_REFRESH_FREQUENCY: number;
 declare const AUTO_FETCH_RESOURCES_FREQUENCY: number;
@@ -11,16 +12,32 @@ Main();
 
 async function Main() {
     if (location.hash != "") NavigateToHash(location.hash);
-    else Site.NavigateTo({
+    else Site.navigateTo({
         page: document.querySelector("main")?.children[0].id ?? "",
         extension: false
     });
 
-    Extensions.Initialise();
+    Extensions.initialise();
 
     window.addEventListener("hashchange", () => {
         if (location.hash != "") {
             NavigateToHash(location.hash);
+        }
+    });
+
+    let resourcesUpdatingNotification: InlineNotification | null = null;
+    Resources.onReceivedResource((received, total) => {
+        if (resourcesUpdatingNotification === null) {
+            resourcesUpdatingNotification = InlineNotification.showNotification("Updating Resources", true);
+        }
+
+        resourcesUpdatingNotification.percentage = total == 0 ? 1 : received / total;
+    });
+
+    Resources.onEndUpdatingResources(_ => {
+        if (resourcesUpdatingNotification != null) {
+            resourcesUpdatingNotification.close();
+            resourcesUpdatingNotification = null;
         }
     });
 
@@ -29,13 +46,13 @@ async function Main() {
     let lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
     if (lastReloadedText == null) {
-        Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
+        Resources.update().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
     }
     else {
         let lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
-            Resources.FetchResources().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
+            Resources.update().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
         }
     }
 
@@ -49,7 +66,7 @@ async function Main() {
     catch(_) { }
 
     setInterval(() => {
-        Resources.FetchResources();
+        Resources.update();
     }, AUTO_FETCH_RESOURCES_FREQUENCY);
 }
 
@@ -64,7 +81,7 @@ function NavigateToHash(hash: string) {
         page = decodeURIComponent(hash.substring(1));
     }
 
-    Site.NavigateTo({
+    Site.navigateTo({
         page: page,
         extension: extension
     });

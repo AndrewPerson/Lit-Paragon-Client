@@ -14,7 +14,7 @@ export class NotificationArea extends LitElement {
     dragOffsetX: number = 0;
     dragOffsetY: number = 0;
 
-    Move = ((e: PointerEvent) => {
+    move = ((e: PointerEvent) => {
         if (!this.dragging) return;
         if (this.processingDrag) return;
 
@@ -31,7 +31,7 @@ export class NotificationArea extends LitElement {
         this.processingDrag = false;
     }).bind(this);
 
-    StopDragging = ((e?: PointerEvent) => {
+    stopDragging = ((e?: PointerEvent) => {
         if (e instanceof PointerEvent) e.preventDefault();
 
         this.dragging = false;
@@ -53,8 +53,8 @@ export class NotificationArea extends LitElement {
             this.dragOffsetY = e.clientY - rect.top;
         }).bind(this));
 
-        document.addEventListener("pointermove", this.Move);
-        document.addEventListener("pointerup", this.StopDragging);
+        document.addEventListener("pointermove", this.move);
+        document.addEventListener("pointerup", this.stopDragging);
 
         let [x, y]: (string | undefined)[] = JSON.parse(localStorage.getItem("Notification Area Position") ?? "[]");
 
@@ -63,8 +63,8 @@ export class NotificationArea extends LitElement {
     }
 
     disconnectedCallback() {
-        document.removeEventListener("pointermove", this.Move);
-        document.removeEventListener("pointerup", this.StopDragging);
+        document.removeEventListener("pointermove", this.move);
+        document.removeEventListener("pointerup", this.stopDragging);
     }
 
     render() {

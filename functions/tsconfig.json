@@ -1,9 +1,0 @@
-{
-    "compilerOptions": {
-        "lib": ["esnext"],
-        "downlevelIteration": true,
-        "types": ["@cloudflare/workers-types"],
-        "composite": true,
-        "allowSyntheticDefaultImports": true
-    }
-}
