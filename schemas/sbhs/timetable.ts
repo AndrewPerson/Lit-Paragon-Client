@@ -1,4 +1,4 @@
-import { Infer, nullable, object, record, array, string } from "banditypes";
+import { Infer, nullable, object, record, string } from "banditypes";
 import { ArrayAsRecord, StringAsInteger } from "../utils";
 
 export const Period = object({
