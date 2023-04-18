@@ -178,6 +178,7 @@ async function getNewDailyTimetable(currentDailyTimetable: DailyTimetable) : Pro
                 return {
                     ...bell,
                     ...timetable!.weeks.flatMap(week => week.days)[dayNumber].periods[bell.linkedIndex],
+                    periodIndex: bell.linkedIndex,
                     roomChanged: false,
                     teacherChanged: false
                 } as Period;

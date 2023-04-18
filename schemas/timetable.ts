@@ -15,7 +15,7 @@ export type Day = {
 
 export type Week = {
     weekName: string,
-    days: (Day | null)[]
+    days: Day[]
 };
 
 export type Timetable = {

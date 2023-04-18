@@ -63,7 +63,7 @@ export const onRequestGet = create<SBHSEnv>("resources", false, async ({ env, re
     // const tomorrow = new Date();
     // tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const resources: Resource<any>[] = [
+    const resources: Resource<unknown, unknown>[] = [
         new DailyTimetableResource(),
         new TimetableResource(),
         new AnnouncementsResource()
@@ -96,7 +96,7 @@ export const onRequestGet = create<SBHSEnv>("resources", false, async ({ env, re
     return result;
 });
 
-async function streamResources(token: Token, endpoint: string, resources: Resource<any>[], writer: JsonWriter, tracer: RequestTracer, maxRetries = 3) {
+async function streamResources(token: Token, endpoint: string, resources: Resource<unknown, unknown>[], writer: JsonWriter, tracer: RequestTracer, maxRetries = 3) {
     await writer.startObject();
 
     await writer.writeKey("token");
@@ -105,18 +105,18 @@ async function streamResources(token: Token, endpoint: string, resources: Resour
     await writer.writeKey("result");
     await writer.startObject();
 
-    let failedResources: [Resource<any>, number][] = resources.map(x => [x, 500]);
+    let failedResources: [Resource<unknown, unknown>, number][] = resources.map(x => [x, 500]);
 
     while(maxRetries > 0 && failedResources.length > 0) {
         let resourcePromises = [];
 
-        let newFailedResources: [Resource<any>, number][] = [];
+        let newFailedResources: [Resource<unknown, unknown>, number][] = [];
 
         for (const resource of failedResources) {
             resourcePromises.push(
                 resource[0].get(endpoint, token.access_token, tracer).then(async result => {
                     if (resource == null) {
-                        newFailedResources.push(result);
+                        newFailedResources.push([resource, result[1]]);
                     }
                     else {
                         await writer.writeKey(resource[0].name);

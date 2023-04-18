@@ -1,5 +1,5 @@
 {
-    "include": ["functions/**/*.ts", "schemas/**/*.ts"],
+    "include": ["functions/**/*.ts"],
     "compilerOptions": {
         "lib": ["esnext"],
         "downlevelIteration": true,

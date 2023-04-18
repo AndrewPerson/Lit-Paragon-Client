@@ -5,7 +5,7 @@ import { Announcements as TransformedAnnouncements, Announcement } from "schemas
 export class AnnouncementsResource extends Resource<Announcements, TransformedAnnouncements> {
     public readonly name = "announcements";
     public readonly path = "dailynews/list.json";
-    public readonly struct = Announcements;
+    public readonly validator = Announcements;
 
     public transform(original: Announcements): TransformedAnnouncements {
         let transformedAnnouncements: TransformedAnnouncements = [];

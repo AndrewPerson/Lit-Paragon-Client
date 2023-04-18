@@ -1,50 +1,43 @@
 import { Resource } from "./resource";
-import { Timetable, Period } from "schemas/sbhs/timetable";
-import { Timetable as TransformedTimetable, Week, Day } from "schemas/timetable";
+import { Timetable } from "schemas/sbhs/timetable";
+import { Timetable as TransformedTimetable, Week } from "schemas/timetable";
 
 export class TimetableResource extends Resource<Timetable, TransformedTimetable> {
     public readonly name = "timetable";
     public readonly path = "timetable/timetable.json";
-    public readonly struct = Timetable;
+    public readonly validator = Timetable;
 
     public transform(original: Timetable): TransformedTimetable {
-        return {
-            weeks: original.days.map(day => {
-                if (day === undefined) return null;
+        let weeks: Week[] = [];
 
-                return {
-                    dayName: day.dayname,
-                    dayNumber: day.dayNumber,
-                    periods: Object.fromEntries(
-                        (day.periods
-                            .map((period, index) => [index, period])
-                            .filter(([_, period]) => period !== undefined) as [number, Period][])
-                        .map(([index, period]) => {
-                            return [index, {
-                                name: period.title,
-                                shortName: period.title,
-                                room: period.room,
-                                teacher: period.fullTeacher
-                            }];
-                        })
-                    )
+        Object.values(original.days).forEach(day => {
+            const weekIndex = Math.floor(day.dayNumber / 5);
+
+            if (weeks[weekIndex] === undefined) {
+                weeks[weekIndex] = {
+                    weekName: String.fromCharCode(65 + weekIndex),
+                    days: []
                 };
-            }).reduce((weeks: Week[], day) => {
-                let week = weeks[weeks.length - 1];
+            }
 
-                if (week === undefined || week.days.length === 5) {
-                    week = {
-                        weekName: String.fromCharCode(65 + weeks.length),
-                        days: []
-                    };
+            const week = weeks[weekIndex];
 
-                    weeks.push(week);
-                }
+            week.days.push({
+                dayName: day.dayname,
+                dayNumber: day.dayNumber,
+                periods: Object.entries(day.periods).map(([periodIndexString, period]) => ({
+                    name: period.title,
+                    // TODO Get a proper short name
+                    shortName: period.title,
+                    periodIndex: parseInt(periodIndexString),
+                    room: period.room,
+                    teacher: period.fullTeacher
+                }))
+            });
+        });
 
-                week.days.push(day);
-
-                return weeks;
-            }, [])
-        }
+        return {
+            weeks: weeks
+        };
     }
 }

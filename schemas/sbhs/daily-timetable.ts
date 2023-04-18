@@ -1,18 +1,17 @@
-import { Infer, type, record, array, union, string, nullable, literal, enums } from "superstruct";
-import { missing, arrayAsRecord, StringAsInteger, StringAsDate, invalidAsUndefined, removeUndefinedFromArray, removeUndefinedFromRecord } from "./utils";
-import { StringAsTime } from "../utils";
+import { Infer, object, record, array, string, nullable, enums } from "banditypes";
+import { StringAsTime, StringAsInteger } from "../utils";
 
-export const Bell = type({
+export const Bell = object({
     period: string(),
     startTime: StringAsTime,
-    endTime: nullable(StringAsTime),
-    bell: missing(string()),
+    endTime: StringAsTime.or(nullable()),
+    bell: string(),
     bellDisplay: string()
 });
 
 export type Bell = Infer<typeof Bell>;
 
-export const Period = type({
+export const Period = object({
     title: string(),
     room: string(),
     fullTeacher: string()
@@ -20,46 +19,47 @@ export const Period = type({
 
 export type Period = Infer<typeof Period>;
 
-export const Subject = type({
+export const RollCall = object({
     title: string(),
-    shortTitle: missing(string())
+    room: string()
+});
+
+export type RollCall = Infer<typeof RollCall>;
+
+export const Subject = object({
+    title: string(),
+    shortTitle: string()
 });
 
 export type Subject = Infer<typeof Subject>;
 
-export const RoomVariation = type({
+export const RoomVariation = object({
     roomTo: string()
 });
 
 export type RoomVariation = Infer<typeof RoomVariation>;
 
-export const ClassVariation = type({
+export const ClassVariation = object({
     type: enums(["nocover", "novariation", "replacement"]),
     casual: string(),
-    casualSurname: missing(string())
+    casualSurname: string().or(nullable())
 });
 
 export type ClassVariation = Infer<typeof ClassVariation>;
 
-export const DailyTimetable = type({
+export const DailyTimetable = object({
     date: string(),
-    bells: removeUndefinedFromArray(array(invalidAsUndefined(Bell))),
-    timetable: type({
-        timetable: type({
+    bells: array(Bell),
+    timetable: object({
+        timetable: object({
             dayname: string(),
             dayNumber: StringAsInteger,
-            periods: removeUndefinedFromRecord(record(string(), invalidAsUndefined(Period)))
+            periods: record(Period.or(RollCall))
         }),
-        subjects: removeUndefinedFromRecord(record(string(), invalidAsUndefined(Subject)))
+        subjects: record(Subject)
     }),
-    roomVariations: missing(removeUndefinedFromRecord(union([
-        arrayAsRecord(invalidAsUndefined(RoomVariation)),
-        record(string(), invalidAsUndefined(RoomVariation))
-    ]))),
-    classVariations: missing(removeUndefinedFromRecord(union([
-        arrayAsRecord(invalidAsUndefined(ClassVariation)),
-        record(string(), invalidAsUndefined(ClassVariation))
-    ])))
+    roomVariations: array(RoomVariation).or(record(RoomVariation)),
+    classVariations: array(ClassVariation).or(record(ClassVariation))
 });
 
 export type DailyTimetable = Infer<typeof DailyTimetable>;

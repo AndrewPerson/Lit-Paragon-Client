@@ -1,7 +1,7 @@
-import { Infer, type, string } from "superstruct";
-import { StringAsInteger, invalidAsUndefined, recordAsArray } from "./utils";
+import { Infer, object, record, string } from "banditypes";
+import { StringAsInteger } from "../utils";
 
-export const Period = type({
+export const Period = object({
     title: string(),
     room: string(),
     fullTeacher: string()
@@ -9,17 +9,16 @@ export const Period = type({
 
 export type Period = Infer<typeof Period>;
 
-export const Day = type({
+export const Day = object({
     dayname: string(),
     dayNumber: StringAsInteger,
-    periods: recordAsArray(invalidAsUndefined(Period))
+    periods: record(Period)
 });
 
 export type Day = Infer<typeof Day>;
 
-export const Timetable = type({
-    // TODO This inserts undefined at [0], remove this, as the days are 1-indexed.
-    days: recordAsArray(invalidAsUndefined(Day))
+export const Timetable = object({
+    days: record(Day)
 });
 
 export type Timetable = Infer<typeof Timetable>;

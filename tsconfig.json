@@ -1,5 +1,5 @@
 {
-    "include": ["site/ts/**/*.ts", "schemas/**/*.ts"],
+    "include": ["site/ts/**/*.ts"],
     "compilerOptions": {
         "experimentalDecorators": true,
         "strict": true,
@@ -7,7 +7,7 @@
         "moduleResolution": "node",
         "skipLibCheck": true,
         "strictPropertyInitialization": false,
-        "baseUrl": "./"
+        "baseUrl": "./",
     },
     "references": [
         { "path": "./tsconfig.functions.json" }
