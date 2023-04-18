@@ -22,6 +22,12 @@ export abstract class Resource<OriginalT, TransformedT> {
         }
         catch (e) {
             console.error(e);
+
+            if (e instanceof Error) {
+                console.error(e.message);
+                console.error(e.stack);
+            }
+
             return [null, response.status];
         }
     }
