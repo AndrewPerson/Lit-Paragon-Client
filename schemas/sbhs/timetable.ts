@@ -1,4 +1,4 @@
-import { Infer, object, record, string } from "banditypes";
+import { Infer, nullable, object, record, string } from "banditypes";
 import { StringAsInteger } from "../utils";
 
 export const Period = object({
@@ -9,10 +9,17 @@ export const Period = object({
 
 export type Period = Infer<typeof Period>;
 
+export const BlankPeriod = object({
+    title: string(),
+    room: nullable()
+});
+
+export type BlankPeriod = Infer<typeof BlankPeriod>;
+
 export const Day = object({
     dayname: string(),
     dayNumber: StringAsInteger,
-    periods: record(Period)
+    periods: record(Period.or(BlankPeriod))
 });
 
 export type Day = Infer<typeof Day>;

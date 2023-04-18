@@ -1,5 +1,5 @@
 import { Resource } from "./resource";
-import { Timetable } from "schemas/sbhs/timetable";
+import { Timetable, Period } from "schemas/sbhs/timetable";
 import { Timetable as TransformedTimetable, Week } from "schemas/timetable";
 
 export class TimetableResource extends Resource<Timetable, TransformedTimetable> {
@@ -25,7 +25,7 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
             week.days.push({
                 dayName: day.dayname,
                 dayNumber: day.dayNumber,
-                periods: Object.entries(day.periods).map(([periodIndexString, period]) => ({
+                periods: (Object.entries(day.periods).filter(([_, period]) => period.room != null) as [string, Period][]).map(([periodIndexString, period]) => ({
                     name: period.title,
                     // TODO Get a proper short name
                     shortName: period.title,
