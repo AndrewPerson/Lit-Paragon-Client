@@ -10,6 +10,7 @@ import { Resource } from "./resources/resource";
 import { DailyTimetableResource } from "./resources/daily-timetable";
 import { TimetableResource } from "./resources/timetable";
 import { AnnouncementsResource } from "./resources/announcements";
+import { UserInfoResource } from "./resources/user-info";
 
 export const onRequestGet = create<SBHSEnv>("resources", false, async ({ env, request, data: { tracer } }) => {
     const endpoint = env.SBHS_ENDPOINT ?? "https://student.sbhs.net.au";
@@ -66,7 +67,8 @@ export const onRequestGet = create<SBHSEnv>("resources", false, async ({ env, re
     const resources: Resource<unknown, unknown>[] = [
         new DailyTimetableResource(),
         new TimetableResource(),
-        new AnnouncementsResource()
+        new AnnouncementsResource(),
+        new UserInfoResource()
     ];
 
     // const RESOURCES: [string, string][] = [
