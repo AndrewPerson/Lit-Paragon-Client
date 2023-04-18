@@ -20,8 +20,7 @@ export const Period = object({
 export type Period = Infer<typeof Period>;
 
 export const RollCall = object({
-    title: string(),
-    room: string()
+    
 });
 
 export type RollCall = Infer<typeof RollCall>;
