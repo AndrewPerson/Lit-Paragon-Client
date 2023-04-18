@@ -92,7 +92,7 @@ export class FullTimetable extends Page {
                             if (period === null) return html`<td></td>`;
                             else return html`
                             <td>
-                                <timetable-period tab-index="0" title="${period.name}" shortTitle="${period.shortName}" teacher="${period.teacher}" room="${period.room}"></timetable-period>
+                                <timetable-period tabindex="0" title="${period.name}" shortTitle="${period.shortName}" teacher="${period.teacher}" room="${period.room}"></timetable-period>
                             </td>
                             `;
                         })}
