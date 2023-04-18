@@ -1,5 +1,5 @@
 import { Infer, object, record, array, string, nullable, enums } from "banditypes";
-import { StringAsTime, StringAsInteger } from "../utils";
+import { StringAsTime, StringAsInteger, ArrayAsRecord } from "../utils";
 
 export const Bell = object({
     period: string(),
@@ -19,11 +19,12 @@ export const Period = object({
 
 export type Period = Infer<typeof Period>;
 
-export const RollCall = object({
+// i.e. Roll call
+export const PartialPeriod = object({
     
 });
 
-export type RollCall = Infer<typeof RollCall>;
+export type PartialPeriod = Infer<typeof PartialPeriod>;
 
 export const Subject = object({
     title: string(),
@@ -53,12 +54,12 @@ export const DailyTimetable = object({
         timetable: object({
             dayname: string(),
             dayNumber: StringAsInteger,
-            periods: record(Period.or(RollCall))
+            periods: record(Period.or(PartialPeriod))
         }),
         subjects: record(Subject)
     }),
-    roomVariations: array(RoomVariation).or(record(RoomVariation)),
-    classVariations: array(ClassVariation).or(record(ClassVariation))
+    roomVariations: record(RoomVariation).or(ArrayAsRecord(RoomVariation)),
+    classVariations: record(ClassVariation).or(ArrayAsRecord(ClassVariation))
 });
 
 export type DailyTimetable = Infer<typeof DailyTimetable>;

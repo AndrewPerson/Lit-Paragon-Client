@@ -10,6 +10,6 @@
         "strict": true,
         "moduleResolution": "node",
         "skipLibCheck": true,
-        "strictPropertyInitialization": false,
+        "strictPropertyInitialization": false
     }
 }

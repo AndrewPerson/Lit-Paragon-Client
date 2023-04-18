@@ -1,5 +1,5 @@
-import { Infer, nullable, object, record, string } from "banditypes";
-import { StringAsInteger } from "../utils";
+import { Infer, nullable, object, record, array, string } from "banditypes";
+import { ArrayAsRecord, StringAsInteger } from "../utils";
 
 export const Period = object({
     title: string(),
@@ -19,7 +19,7 @@ export type BlankPeriod = Infer<typeof BlankPeriod>;
 export const Day = object({
     dayname: string(),
     dayNumber: StringAsInteger,
-    periods: record(Period.or(BlankPeriod))
+    periods: record(Period.or(BlankPeriod)).or(ArrayAsRecord(Period.or(BlankPeriod)))
 });
 
 export type Day = Infer<typeof Day>;

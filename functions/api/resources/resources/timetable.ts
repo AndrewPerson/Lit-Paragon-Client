@@ -28,8 +28,7 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
                 dayNumber: day.dayNumber,
                 periods: (Object.entries(day.periods).filter(([_, period]) => period.room != null) as [string, Period][]).map(([periodIndexString, period]) => ({
                     name: period.title,
-                    // TODO Get a proper short name
-                    shortName: period.title,
+                    shortName: skipEnd(period.title.split(" "), 1).join(" "),
                     periodIndex: parseInt(periodIndexString),
                     room: period.room,
                     teacher: period.fullTeacher
@@ -41,4 +40,8 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
             weeks: weeks
         };
     }
+}
+
+function skipEnd<T>(arr: T[], n: number) {
+    return arr.slice(0, arr.length - n);
 }

@@ -1,4 +1,4 @@
-import { Infer, object, number, banditype, fail, Banditype, string } from "banditypes";
+import { Infer, object, array, number, banditype, fail, Banditype, string } from "banditypes";
 
 export function literal<T>(value: T) {
     return banditype((raw) => (raw === value ? raw as T : fail()));
@@ -57,24 +57,4 @@ export const StringAsInteger = string().map(value => {
     }
 });
 
-// export const StringAsTime = coerce(Time, pattern(string(), /\d+:\d+(:\d+)?/), value => {
-//     const parts = value.split(":");
-
-//     if (parts.length == 2) {
-//         return {
-//             hours: parseInt(parts[0]),
-//             minutes: parseInt(parts[1]),
-//             seconds: 0
-//         }
-//     }
-//     else if (parts.length == 3) {
-//         return {
-//             hours: parseInt(parts[0]),
-//             minutes: parseInt(parts[1]),
-//             seconds: parseInt(parts[2])
-//         }
-//     }
-//     else {
-//         throw new Error("Invalid time format");
-//     }
-// });
+export const ArrayAsRecord = <T>(type: Banditype<T>) => array(type).map(value => Object.fromEntries(Object.entries(value)));
