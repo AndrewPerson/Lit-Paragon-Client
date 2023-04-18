@@ -44,7 +44,7 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
             }
         });
 
-        for (const bell of timetable) {
+        for (const bell of timetable.reverse()) {
             if (bell.type == "period") break;
 
             bell.shouldDisplay = false;
