@@ -11,7 +11,8 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
         let weeks: Week[] = [];
 
         Object.values(original.days).forEach(day => {
-            const weekIndex = Math.floor(day.dayNumber / 5);
+            // Day numbers are 1-indexed, but we want 0-indexed
+            const weekIndex = Math.floor((day.dayNumber - 1) / 5);
 
             if (weeks[weekIndex] === undefined) {
                 weeks[weekIndex] = {
