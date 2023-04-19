@@ -17,7 +17,7 @@ export class InlineNotification extends LitElement {
     percentage: number = 0;
 
     static showNotification(content: HTMLElement | string, loader: boolean = false) {
-        let notification = document.createElement("inline-notification") as InlineNotification;
+        const notification = document.createElement("inline-notification") as InlineNotification;
 
         if (!(content instanceof HTMLElement)) {
             let text = document.createElement("p");

@@ -29,13 +29,13 @@ export class Site {
     //#region Navigation
     static navigateTo(page: Page): void {
         if (page.extension) {
-            let extension = Extensions.installedExtensions.get(page.page);
+            const extension = Extensions.installedExtensions.get(page.page);
 
             if (extension !== undefined) {
                 let newPage = document.getElementById(`extension-${page.page}`) as PageElement;
 
                 if (newPage == null) {
-                    let extensionPage: ExtensionPage = document.createElement("extension-page") as ExtensionPage;
+                    const extensionPage: ExtensionPage = document.createElement("extension-page") as ExtensionPage;
                     extensionPage.src = extension.url;
                     extensionPage.id = `extension-${page.page}`;
 
@@ -58,7 +58,7 @@ export class Site {
     private static setPage(page: Page, element: PageElement | null) {
         if (element == null) {
             if (this._pageElement == null) {
-                let defaultPage = document.querySelector("main")?.children?.[0] as PageElement | null;
+                const defaultPage = document.querySelector("main")?.children?.[0] as PageElement | null;
 
                 this.page = {
                     page: defaultPage?.id ?? "",

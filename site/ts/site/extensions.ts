@@ -36,7 +36,7 @@ export class Extensions {
     }
 
     static async installExtension(extensionName: string) {
-        let extension = (await this.getExtensions()).get(extensionName);
+        const extension = (await this.getExtensions()).get(extensionName);
 
         if (extension !== undefined) {
             this.installedExtensions.set(extensionName, extension);
@@ -58,25 +58,23 @@ export class Extensions {
     //TODO Pagination
     //TODO Add search
     static async getExtensions(pageSize: number = 10, page: number = 1): Promise<Map<string, Extension>> {
-        let response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
-        let extensions: Extension[] = await response.json();
+        const response = await fetch(`${SERVER_ENDPOINT}/extensions?page_size=${pageSize}&page=${page}`);
+        const extensions: Extension[] = await response.json();
 
         return new Map(extensions.map(extension => [extension.name, extension]));
     }
 
     static getExtensionIconURL(extension: Extension, dark: boolean) {
-        let url = new URL(dark ? "/dark-icon.svg" : "/icon.svg", extension.url);
-        return url.toString();
+        return new URL(dark ? "/dark-icon.svg" : "/icon.svg", extension.url).toString();
     }
 
     static getExtensionNavIconURL(extension: Extension) {
-        let url = new URL("/nav-icon.svg", extension.url);
-        return url.toString();
+        return new URL("/nav-icon.svg", extension.url).toString();
     }
 
     static initialise() {
         this.getExtensions().then(extensions => {
-            for (let entry of this.installedExtensions.entries()) {
+            for (const entry of this.installedExtensions.entries()) {
                 if (extensions.get(entry[0]) === undefined) {
                     this.uninstallExtension(entry[0]);
                 }
@@ -84,11 +82,11 @@ export class Extensions {
         });
 
         window.addEventListener("message", async e => {
-            let origin = e.origin;
+            const origin = e.origin;
 
             if (!this.installedExtensionOrigins.includes(origin)) return;
 
-            let result = await this.handleCommand(e);
+            const result = await this.handleCommand(e);
 
             if (result !== undefined && "command" in result) {
                 e.source?.postMessage(result, {
@@ -99,8 +97,8 @@ export class Extensions {
     }
 
     private static async handleCommand(e: MessageEvent) {
-        let command = e.data.command;
-        let data = e.data.data;
+        const command = e.data.command;
+        const data = e.data.data;
 
         if (command == "Initialise") {
             return {
@@ -114,8 +112,8 @@ export class Extensions {
         }
 
         if (command == "Get Resource") {
-            let listeners = this._resourceListeners.get(data.name) ?? [];
-            let firstTime = listeners.length == 0;
+            const listeners = this._resourceListeners.get(data.name) ?? [];
+            const firstTime = listeners.length == 0;
 
             listeners.push(e);
 
@@ -123,9 +121,9 @@ export class Extensions {
 
             if (firstTime) {
                 Resources.onChange(data.name, resource => {
-                    let listeners = this._resourceListeners.get(data.name) ?? [];
+                    const listeners = this._resourceListeners.get(data.name) ?? [];
 
-                    for (let listener of listeners) {
+                    for (const listener of listeners) {
                         listener.source?.postMessage({
                             command: "Resource",
                             data: {
@@ -139,49 +137,43 @@ export class Extensions {
                 });
             }
 
-            let resource = await Resources.get(data.name);
-
             return {
                 command: "Resource",
                 data: {
                     name: data.name,
-                    resource: resource
+                    resource: await Resources.get(data.name)
                 }
             }
         }
 
         if (command == "Get Token") {
-            let token = await Resources.token();
-
             return {
                 command: "Token",
-                data: token?.access_token ?? null
+                data: (await Resources.token())?.access_token ?? null
             }
         }
 
         if (command == "Refresh Token") {
-            let fetchedResources = await Resources.update();
+            const fetchedResources = await Resources.update();
 
             if (!fetchedResources) return {
                 command: "Refreshed Token",
                 data: null
             }
 
-            let token = await Resources.token();
-
             return {
                 command: "Refreshed Token",
-                data: token?.access_token ?? null
+                data: (await Resources.token())?.access_token ?? null
             }
         }
 
         if (command == "Show Notification") {
             if (data.loader && typeof data.id !== "string") return;
 
-            let notification = InlineNotification.showNotification(data.content, data.loader ?? false);
+            const notification = InlineNotification.showNotification(data.content, data.loader ?? false);
             notification.id = data.id;
 
-            let ids = this.extensionNotificationIds.get(e.origin) ?? [];
+            const ids = this.extensionNotificationIds.get(e.origin) ?? [];
             ids.push(notification.id);
 
             this.extensionNotificationIds.set(e.origin, ids);
@@ -190,16 +182,15 @@ export class Extensions {
         }
 
         if (command == "Close Notification") {
-            let notification = document.getElementById(data.id) as InlineNotification | null;
+            const notification = document.getElementById(data.id) as InlineNotification | null;
 
             if (notification !== null) {
                 notification.close();
 
-                let ids = this.extensionNotificationIds.get(e.origin);
+                const ids = this.extensionNotificationIds.get(e.origin);
 
                 if (ids !== undefined) {
-                    ids.slice(ids.indexOf(data.id), 1);
-                    this.extensionNotificationIds.set(e.origin, ids);
+                    this.extensionNotificationIds.set(e.origin, ids.slice(ids.indexOf(data.id), 1));
                 }
             }
 
@@ -207,7 +198,7 @@ export class Extensions {
         }
 
         if (command == "Register Skin") {
-            let cache = await caches.open(SKIN_CACHE);
+            const cache = await caches.open(SKIN_CACHE);
 
             let promises: Promise<void>[] = [];
 
@@ -219,7 +210,7 @@ export class Extensions {
                 })).then(() => {
                     document.getElementById("skin")?.remove();
 
-                    let newSkin = document.createElement("style");
+                    const newSkin = document.createElement("style");
                     newSkin.id = "skin";
                     newSkin.textContent = data.css;
 
@@ -228,7 +219,7 @@ export class Extensions {
             }
 
             try {
-                for (let icon of data.icons.entries()) {
+                for (const icon of data.icons.entries()) {
                     if (typeof icon[1] === "string") {
                         promises.push(cache.put(icon[0], new Response(icon[1], {
                             headers: {

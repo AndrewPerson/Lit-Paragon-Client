@@ -6,7 +6,7 @@ declare const RESOURCE_CACHE: string;
 declare const SERVER_ENDPOINT: string;
 
 async function getToken(code: string) {
-    let tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
+    const tokenResponse = await fetch(SERVER_ENDPOINT + "/auth", {
         method: "POST",
         body: JSON.stringify({
             code: code
@@ -17,37 +17,37 @@ async function getToken(code: string) {
 
     if (!tokenResponse) return false;
 
-    let resourceCache = await caches.open(RESOURCE_CACHE);
+    const resourceCache = await caches.open(RESOURCE_CACHE);
     resourceCache.put("Token", tokenResponse);
 
     return true;
 }
 
 function showError(error: string) {
-    let words = error.split(/ |_|-/);
+    const words = error.split(/ |_|-/);
 
     let formattedError = "";
-    for (let word of words) {
+    for (const word of words) {
         formattedError += word[0].toUpperCase() + word.substring(1) + " ";
     }
 
     formattedError = formattedError.substring(0, formattedError.length - 1);
 
-    let bold = document.createElement("b");
+    const bold = document.createElement("b");
     bold.innerText = formattedError;
 
     (document.getElementById("message") as HTMLParagraphElement).innerText = "Error: ";
     (document.getElementById("message") as HTMLParagraphElement).appendChild(bold);
 
-    let loginLink = document.getElementById("login") as HTMLAnchorElement;
+    const loginLink = document.getElementById("login") as HTMLAnchorElement;
 
     loginLink.href = LOGIN_URL;
     loginLink.removeAttribute("style");
 }
 
-let params = new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
-let code = params.get("code");
+const code = params.get("code");
 
 if (code != null) {
     getToken(code)
@@ -58,7 +58,7 @@ if (code != null) {
     });
 }
 else {
-    let error = params.get("error");
+    const error = params.get("error");
 
     if (error) showError(error)
     else (document.getElementById("message") as HTMLParagraphElement).innerText = "No code available.";

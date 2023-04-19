@@ -45,12 +45,12 @@ export class Resources {
     }
 
     static async token(): Promise<Token | null> {
-        let cache = await caches.open(RESOURCE_CACHE);
-        let tokenResponse = await cache.match("Token");
+        const cache = await caches.open(RESOURCE_CACHE);
+        const tokenResponse = await cache.match("Token");
 
         if (tokenResponse === undefined) return null;
 
-        let token: Token = await tokenResponse.json();
+        const token: Token = await tokenResponse.json();
 
         if (new Date() > token.termination) return null;
 
@@ -58,21 +58,18 @@ export class Resources {
     }
 
     static async set(name: string, resource: string) {
-        let cache = await caches.open(RESOURCE_CACHE);
+        const cache = await caches.open(RESOURCE_CACHE);
         await cache.put(name, new Response(resource));
 
         this._resourceCallbacks.get(name)?.invoke(JSON.parse(resource));
     }
 
     static async get<T>(name: string): Promise<T | undefined> {
-        let cache = await caches.open(RESOURCE_CACHE);
-        let response = await cache.match(name);
+        const cache = await caches.open(RESOURCE_CACHE);
+        const response = await cache.match(name);
 
         if (response === undefined) return undefined;
-        else {
-            let resource = await response.json();
-            return resource;
-        }
+        else return await response.json();
     }
 
     static async onChange<T>(name: string, callback: Callback<[T | undefined]>): Promise<void> {
@@ -98,7 +95,7 @@ export class Resources {
 
         this._updating = true;
 
-        let token = await this.token();
+        const token = await this.token();
         if (token == null) {
             this._updateEndCallbacks.invoke(UpdateFailure.NoToken);
             this._updating = false;
@@ -119,18 +116,18 @@ export class Resources {
         }
 
         if (!resourceResponse.ok) {
-            let failure = statusCodeToFailure(resourceResponse.status);
+            const failure = statusCodeToFailure(resourceResponse.status);
             this._updateEndCallbacks.invoke(failure);
             this._updating = false;
             return failure;
         }
 
-        let resourceCount = parseInt(resourceResponse.headers.get("X-Resource-Count") ?? "0");
+        const resourceCount = parseInt(resourceResponse.headers.get("X-Resource-Count") ?? "0");
         let receivedResourceCount = 0;
 
         this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
 
-        let parser = parseJSONStream([
+        const parser = parseJSONStream([
             ["result", "*"],
             ["token"],
             ["error"]
@@ -141,7 +138,7 @@ export class Resources {
 
         let objectHandlerPromiseResolve: (value: UpdateFailure | null | PromiseLike<UpdateFailure | null>) => void = null!;
 
-        let objectHandlerPromise = new Promise<UpdateFailure | null>(resolve => {
+        const objectHandlerPromise = new Promise<UpdateFailure | null>(resolve => {
             objectHandlerPromiseResolve = resolve;
 
             parser.onObject(async (path, object) => {
@@ -178,7 +175,7 @@ export class Resources {
         // Possible that all processing finished before we finished piping
         if (objectHandlerCount == 0) objectHandlerPromiseResolve(null);
 
-        let failure = await objectHandlerPromise;
+        const failure = await objectHandlerPromise;
 
         if (failure == null) {
             this._updateEndCallbacks.invoke(null);

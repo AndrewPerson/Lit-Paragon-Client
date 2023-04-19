@@ -73,12 +73,12 @@ export class ExtensionPage extends Page {
 
         this.frame.removeEventListener("load", this.stopLoading);
 
-        let ids = Extensions.extensionNotificationIds.get(new URL(this.src).origin);
+        const ids = Extensions.extensionNotificationIds.get(new URL(this.src).origin);
 
         if (ids === undefined) return;
 
-        for (let id of ids) {
-            let element = document.getElementById(id);
+        for (const id of ids) {
+            const element = document.getElementById(id);
 
             if (element instanceof InlineNotification) element.remove();
         }

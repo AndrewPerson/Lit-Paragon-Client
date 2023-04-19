@@ -1,7 +1,7 @@
 import { Extension } from "../../site/extensions";
 
 export function filterSearch(data: Extension[], { search }: { search?: string }) {
-    let normalisedText = search?.trim().toLowerCase() ?? "";
+    const normalisedText = search?.trim().toLowerCase() ?? "";
     if (normalisedText === undefined || normalisedText.trim() === "") return data;
 
     return data.filter(extension => {

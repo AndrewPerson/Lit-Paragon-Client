@@ -8,7 +8,7 @@ export class Callbacks<TParamTypes extends Array<unknown> = [], TReturnType=void
     }
 
     public remove(callback: Callback<TParamTypes, TReturnType>) {
-        let index = this._callbacks.indexOf(callback);
+        const index = this._callbacks.indexOf(callback);
         if (index != -1) this._callbacks.splice(index, 1);
     }
 
@@ -17,7 +17,7 @@ export class Callbacks<TParamTypes extends Array<unknown> = [], TReturnType=void
     }
 
     public* invokeLazy(...params: TParamTypes): Generator<TReturnType, void, unknown> {
-        for (let callback of this._callbacks) {
+        for (const callback of this._callbacks) {
             try {
                 yield callback(...params);
             }

@@ -42,7 +42,7 @@ export class Post extends LitElement {
     read: boolean;
 
     setRead(read: boolean) {
-        let readEvent = new CustomEvent("read", {
+        const readEvent = new CustomEvent("read", {
             bubbles: true,
             cancelable: true,
             composed: true,

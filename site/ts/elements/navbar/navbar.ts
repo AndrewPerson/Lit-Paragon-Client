@@ -101,12 +101,12 @@ export class Navbar extends LitElement {
     }
 
     render() {
-        let extensions = Extensions.installedExtensions;
+        const extensions = Extensions.installedExtensions;
 
         let pages = [...Navbar.defaultPages];
-        let lastPage = pages.pop()!;
+        const lastPage = pages.pop()!;
 
-        for (let key of extensions.keys()) {
+        for (const key of extensions.keys()) {
             pages.push({
                 page: key,
                 title: key,
@@ -117,9 +117,9 @@ export class Navbar extends LitElement {
 
         pages.push(lastPage);
 
-        let mobile = this.mobileMediaQuery.matches;
-        let vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
-        let scrollable = (extensions.size + 5) * 12 * vmin > window.innerHeight;
+        const mobile = this.mobileMediaQuery.matches;
+        const vmin = mobile ? window.innerWidth / 100 : window.innerHeight / 100;
+        const scrollable = (extensions.size + 5) * 12 * vmin > window.innerHeight;
 
         return html`
         <div id="items-container" @scroll="${this.showScrollShadows.bind(this)}">

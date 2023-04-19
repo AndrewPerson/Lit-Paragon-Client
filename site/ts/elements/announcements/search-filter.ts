@@ -1,7 +1,7 @@
 import { Announcement } from "schemas/announcements";
 
 export function filterSearch(data: Announcement[], { search }: { search?: string }): Announcement[] {
-    let normalisedText = search?.trim().toLowerCase();
+    const normalisedText = search?.trim().toLowerCase();
     if (normalisedText === undefined) return data;
 
     return data.filter(announcement => {

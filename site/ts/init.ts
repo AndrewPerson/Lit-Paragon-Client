@@ -36,9 +36,9 @@ if (JSON.parse(localStorage.getItem(TELEMETRY_PERMISSION_STORAGE) ?? "true"))
     });
 }
 
-let dark = localStorage.getItem("Dark") == "true";
+const dark = localStorage.getItem("Dark") == "true";
 document.documentElement.classList.toggle("dark", dark);
 
-let hue = localStorage.getItem("Hue") || "200";
+const hue = localStorage.getItem("Hue") || "200";
 document.documentElement.style.setProperty("--main-hue", hue);
 document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(hue) - 200}deg`);

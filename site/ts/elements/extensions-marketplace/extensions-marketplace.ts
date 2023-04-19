@@ -68,7 +68,7 @@ export class ExtensionsMarketplace extends LitElement {
 
     render() {
         //TODO Use Algolia for searching
-        let extensions = this.extensionPipeline.run(Array.from(this.extensions.values()), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
+        const extensions = this.extensionPipeline.run(Array.from(this.extensions.values()), { allowPreviewExtensions: this.allowPreview, search: this.searchFilter });
 
         return html`
         <div class="header">

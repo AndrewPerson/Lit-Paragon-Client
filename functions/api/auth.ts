@@ -4,15 +4,15 @@ import { TokenFactory } from "../lib/token";
 import { SBHSEnv } from "../lib/env";
 
 export const onRequestPost = create<SBHSEnv>("auth", true, async ({ env, request, data: { tracer } }) => {
-    let json: unknown = await request.json();
+    const json: unknown = await request.json();
 
-    if (typeof json !== "object") return new Response("Body must be JSON object.", { status: 400 });
+    if (typeof json !== "object" || json == null) return new Response("Body must be JSON object.", { status: 400 });
     if (!("code" in json)) return new Response("You need to provide a code.", { status: 400 });
     if (typeof json["code"] !== "string") return new Response("Code must be a JSON string.", { status: 400 });
 
     const endpoint = env.SBHS_ENDPOINT ?? "https://student.sbhs.net.au";
 
-    let response = await tracer.fetch(`${endpoint}/api/token`, {
+    const response = await tracer.fetch(`${endpoint}/api/token`, {
         method: "POST",
         headers: {
             "Content-Type": "application/x-www-form-urlencoded"
@@ -42,9 +42,7 @@ export const onRequestPost = create<SBHSEnv>("auth", true, async ({ env, request
         throw new ErrorResponse("An unknown error occurred.", 500);
     }
 
-    let token = TokenFactory.Create(await response.json());
-
-    return new Response(JSON.stringify(token), {
+    return new Response(JSON.stringify(TokenFactory.Create(await response.json())), {
         headers: {
             "Content-Type": "application/json"
         }

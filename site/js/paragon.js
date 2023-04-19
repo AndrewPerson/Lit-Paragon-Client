@@ -16,8 +16,8 @@ export function Init() {
         if (initialised) resolve();
 
         window.addEventListener("message", e => {
-            let command = e.data.command;
-            let data = e.data.data;
+            const command = e.data.command;
+            const data = e.data.data;
 
             if (command == "Initialise") {
 
@@ -66,7 +66,7 @@ export function Init() {
                 document.documentElement.classList.toggle("dark", data.dark);
                 dark = data.dark;
 
-                for (let callback of darkCallbacks)
+                for (const callback of darkCallbacks)
                     callback(data.dark);
 
                 return;
@@ -77,7 +77,7 @@ export function Init() {
                 document.documentElement.style.setProperty("--hue-rotate", `${parseFloat(data.hue) - 200}deg`);
                 hue = data.hue;
 
-                for (let callback of hueCallbacks)
+                for (const callback of hueCallbacks)
                     callback(data.hue);
 
                 return;
@@ -109,7 +109,7 @@ export function GetResource(resourceName, callback) {
 
 export function GetToken() {
     return new Promise(resolve => {
-        let callbacksEmpty = tokenCallbacks.length == 0;
+        const callbacksEmpty = tokenCallbacks.length == 0;
 
         tokenCallbacks.push(resolve);
 
@@ -123,7 +123,7 @@ export function GetToken() {
 
 export function RefreshToken() {
     return new Promise(resolve => {
-        let callbacksEmpty = refreshTokenCallbacks.length == 0;
+        const callbacksEmpty = refreshTokenCallbacks.length == 0;
 
         refreshTokenCallbacks.push(resolve);
 

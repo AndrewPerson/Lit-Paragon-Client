@@ -12,16 +12,16 @@ self.addEventListener("fetch", e => e.respondWith(onFetch(e)));
 
 async function onFetch(e: FetchEvent): Promise<Response> {
     if (e.request.method == "GET") {
-        let url = new URL(e.request.url);
+        const url = new URL(e.request.url);
 
         if (url.origin == location.origin) {
             if (url.pathname == "/skin.css") {
-                let cache = await caches.open(SKIN_CACHE);
+                const cache = await caches.open(SKIN_CACHE);
                 return (await cache.match(`${location.origin}/skin.css`)) ?? fetch(e.request);
             }
 
             if (url.pathname.endsWith(".svg")) {
-                let cache = await caches.open(SKIN_CACHE);
+                const cache = await caches.open(SKIN_CACHE);
                 return (await cache.match(`${location.origin}${url.pathname}`)) ?? fetch(e.request);
             }
         }

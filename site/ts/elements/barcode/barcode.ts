@@ -124,17 +124,17 @@ export class StudentBarcode extends Page {
     SetBarcodePosition() {
         if (this.barcode == null) return;
 
-        let x1 = parseFloat(this.point1?.style.left.substring(0, this.point1?.style.left.length - 1) || "0");
-        let y1 = parseFloat(this.point1?.style.top.substring(0, this.point1?.style.top.length - 1) || "0");
+        const x1 = parseFloat(this.point1?.style.left.substring(0, this.point1?.style.left.length - 1) || "0");
+        const y1 = parseFloat(this.point1?.style.top.substring(0, this.point1?.style.top.length - 1) || "0");
 
-        let x2 = parseFloat(this.point2?.style.left.substring(0, this.point2?.style.left.length - 1) || "0");
-        let y2 = parseFloat(this.point2?.style.top.substring(0, this.point2?.style.top.length - 1) || "0");
+        const x2 = parseFloat(this.point2?.style.left.substring(0, this.point2?.style.left.length - 1) || "0");
+        const y2 = parseFloat(this.point2?.style.top.substring(0, this.point2?.style.top.length - 1) || "0");
 
-        let maxX = Math.max(x1, x2);
-        let minX = Math.min(x1, x2);
+        const maxX = Math.max(x1, x2);
+        const minX = Math.min(x1, x2);
 
-        let maxY = Math.max(y1, y2);
-        let minY = Math.min(y1, y2);
+        const maxY = Math.max(y1, y2);
+        const minY = Math.min(y1, y2);
 
         this.barcode.style.left = `${minX}%`;
         this.barcode.style.top = `${minY}%`;
@@ -180,9 +180,9 @@ export class StudentBarcode extends Page {
     }
 
     renderPage() {
-        let storedPoints = localStorage.getItem("Barcode Points");
+        const storedPoints = localStorage.getItem("Barcode Points");
 
-        let points: string[] = storedPoints == null ? ["10%", "10%", "90%", "50%"] : JSON.parse(storedPoints);
+        const points: string[] = storedPoints == null ? ["10%", "10%", "90%", "50%"] : JSON.parse(storedPoints);
 
         return html`
         <info-popup>Use this barcode to scan in instead of your Student Card. Drag the points to resize it.</info-popup>

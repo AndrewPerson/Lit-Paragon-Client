@@ -30,7 +30,7 @@ export class ExtensionDisplay extends LitElement {
     installed: boolean;
 
     async Install() {
-        let installEvent = new CustomEvent("install", {
+        const installEvent = new CustomEvent("install", {
             bubbles: true,
             cancelable: true,
             composed: true,
@@ -43,7 +43,7 @@ export class ExtensionDisplay extends LitElement {
     }
 
     async Uninstall() {
-        let uninstallEvent = new CustomEvent("uninstall", {
+        const uninstallEvent = new CustomEvent("uninstall", {
             bubbles: true,
             cancelable: true,
             composed: true,

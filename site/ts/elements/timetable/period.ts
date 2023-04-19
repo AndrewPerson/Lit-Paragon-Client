@@ -33,7 +33,7 @@ export class TimetablePeriod extends LitElement {
         if (this.highlighted == name) return;
         this.highlighted = name;
 
-        for (let instance of this.instances) instance.requestUpdate();
+        for (const instance of this.instances) instance.requestUpdate();
     }
 
     calculateDetailsOffset() {
@@ -75,7 +75,7 @@ export class TimetablePeriod extends LitElement {
     }
 
     render() {
-        let highlighted = TimetablePeriod.highlighted == this.title;
+        const highlighted = TimetablePeriod.highlighted == this.title;
         this.classList.toggle("highlighted", highlighted);
 
         if (!highlighted) {

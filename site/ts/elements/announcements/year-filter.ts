@@ -4,7 +4,7 @@ export function filterYears(data: Announcement[], { years }: { years: string[] }
     if (years.length === 0) return data;
 
     return data.filter(announcement => {
-        for (let year of years)
+        for (const year of years)
             if (announcement.years.includes(year))
                 return true;
 

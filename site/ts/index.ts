@@ -43,13 +43,13 @@ async function Main() {
 
     //This is to stop people who refresh a lot from spamming the server with requests.
     //Session storage is persisted between reloads but is cleared when the tab is closed.
-    let lastReloadedText = sessionStorage.getItem("Last Refreshed");
+    const lastReloadedText = sessionStorage.getItem("Last Refreshed");
 
     if (lastReloadedText == null) {
         Resources.update().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
     }
     else {
-        let lastReloaded = new Date(lastReloadedText);
+        const lastReloaded = new Date(lastReloadedText);
 
         if ((new Date().getTime() - lastReloaded.getTime()) > MAX_REFRESH_FREQUENCY) {
             Resources.update().then(() => sessionStorage.setItem("Last Refreshed", new Date().toISOString()));
@@ -57,7 +57,7 @@ async function Main() {
     }
 
     try {
-        let registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
+        const registration = await navigator.serviceWorker.getRegistration("dist/service-worker/service-worker.js");
 
         if (registration === undefined) await navigator.serviceWorker.register("dist/service-worker/service-worker.js", {
             scope: "/"
@@ -71,7 +71,7 @@ async function Main() {
 }
 
 function NavigateToHash(hash: string) {
-    let extension = hash.indexOf("extension-") == 1;
+    const extension = hash.indexOf("extension-") == 1;
 
     let page ="";
     if (extension) {

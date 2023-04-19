@@ -39,7 +39,7 @@ export class FullTimetable extends Page {
         document.addEventListener("pointerover", this.clearHighlight);
 
         this.addEventListener("scroll", e => {
-            let scroll = (e.target as HTMLElement).scrollTop;
+            const scroll = (e.target as HTMLElement).scrollTop;
 
             this.style.setProperty("--scroll", scroll + "px");
         });
@@ -62,7 +62,7 @@ export class FullTimetable extends Page {
     }
 
     createRenderRoot() {
-        let root = super.createRenderRoot();
+        const root = super.createRenderRoot();
 
         root.addEventListener("pointerover", this.setHighlight);
 

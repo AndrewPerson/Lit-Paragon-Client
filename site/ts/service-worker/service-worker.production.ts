@@ -31,13 +31,13 @@ function Activate() {
 
 async function Fetch(e: FetchEvent) {
     if (e.request.method == "GET" && !UPDATING) {
-        let request = e.request;
-        let url = new URL(request.url);
+        const request = e.request;
+        const url = new URL(request.url);
 
         if (url.origin == location.origin) {
-            let cache = await caches.open(FILE_CACHE);
+            const cache = await caches.open(FILE_CACHE);
 
-            let cachedResource = await cache.match(url.origin + url.pathname);
+            const cachedResource = await cache.match(url.origin + url.pathname);
             if (cachedResource !== undefined) return cachedResource;
         }
 
@@ -77,7 +77,7 @@ async function Update() {
 
     await caches.delete(FILE_CACHE);
 
-    let fileCache = await caches.open(FILE_CACHE);
+    const fileCache = await caches.open(FILE_CACHE);
     await fileCache.addAll(self.assets);
 
     UPDATING = false;

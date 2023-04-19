@@ -16,7 +16,7 @@ export function create<Env extends { HONEYCOMB_API_KEY: string }>(honeycombDatas
         context.data.tracer = tracer;
 
         try {
-            let result = await func(context);
+            const result = await func(context);
 
             if (autoTrace) {
                 tracer.finishResponse(result);
@@ -31,7 +31,7 @@ export function create<Env extends { HONEYCOMB_API_KEY: string }>(honeycombDatas
             console.log(error);
 
             if (error instanceof ErrorResponse) {
-                let result = new Response(error.body, {
+                const result = new Response(error.body, {
                     status: error.statusCode,
                     headers: error.headers
                 });
@@ -48,7 +48,7 @@ export function create<Env extends { HONEYCOMB_API_KEY: string }>(honeycombDatas
                 return result;
             }
             else if (error instanceof Error) {
-                let result = new Response(error.message, {
+                const result = new Response(error.message, {
                     status: 500
                 });
 
@@ -63,7 +63,7 @@ export function create<Env extends { HONEYCOMB_API_KEY: string }>(honeycombDatas
                 return result;
             }
             else {
-                let result = new Response("An unknown error occurred.", {
+                const result = new Response("An unknown error occurred.", {
                     status: 500
                 });
 

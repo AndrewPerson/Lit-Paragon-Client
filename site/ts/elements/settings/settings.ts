@@ -37,7 +37,7 @@ export class Settings extends LitElement {
         localStorage.clear();
         sessionStorage.clear();
 
-        let keys = await caches.keys();
+        const keys = await caches.keys();
 
         await Promise.all(keys.map(key => caches.delete(key)));
 
@@ -55,7 +55,7 @@ export class Settings extends LitElement {
     }
 
     toggleDark(e: InputEvent) {
-        let darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+        const darkCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
         Site.setDark(darkCheckbox.checked);
 
@@ -63,7 +63,7 @@ export class Settings extends LitElement {
     }
 
     toggleTelemetry(e: InputEvent) {
-        let disableTelemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
+        const disableTelemetryCheckbox: HTMLInputElement = e.target as HTMLInputElement;
 
         localStorage.setItem(TELEMETRY_PERMISSION_STORAGE, (!disableTelemetryCheckbox.checked).toString());
 

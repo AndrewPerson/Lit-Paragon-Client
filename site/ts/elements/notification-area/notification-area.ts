@@ -22,8 +22,8 @@ export class NotificationArea extends LitElement {
 
         this.processingDrag = true;
 
-        let x = Math.max(this.clientWidth, Math.min(e.clientX - this.dragOffsetX, window.innerWidth));
-        let y = Math.max(0, Math.min(e.clientY - this.dragOffsetY, window.innerHeight - this.clientHeight));
+        const x = Math.max(this.clientWidth, Math.min(e.clientX - this.dragOffsetX, window.innerWidth));
+        const y = Math.max(0, Math.min(e.clientY - this.dragOffsetY, window.innerHeight - this.clientHeight));
 
         this.style.right = `${100 - x / window.innerWidth * 100}%`;
         this.style.top = `${y / window.innerHeight * 100}%`;
@@ -47,7 +47,7 @@ export class NotificationArea extends LitElement {
 
             this.dragging = true;
 
-            let rect = this.getBoundingClientRect();
+            const rect = this.getBoundingClientRect();
 
             this.dragOffsetX = e.clientX - rect.right;
             this.dragOffsetY = e.clientY - rect.top;
@@ -56,7 +56,7 @@ export class NotificationArea extends LitElement {
         document.addEventListener("pointermove", this.move);
         document.addEventListener("pointerup", this.stopDragging);
 
-        let [x, y]: (string | undefined)[] = JSON.parse(localStorage.getItem("Notification Area Position") ?? "[]");
+        const [x, y]: (string | undefined)[] = JSON.parse(localStorage.getItem("Notification Area Position") ?? "[]");
 
         if (x !== undefined) this.style.right = x;
         if (y !== undefined) this.style.top = y;

@@ -46,7 +46,7 @@ export class SchoolAnnouncements extends Page {
                                  .transform(filterSearch);
 
     get readAnnouncements() {
-        let announcements = new Set(
+        const announcements = new Set(
             (JSON.parse(localStorage.getItem("Read Announcements") ?? "[]") as string[])
             .filter(a => this.announcements.findIndex(b => b.id.toString() == a) != -1)
         );
@@ -61,7 +61,7 @@ export class SchoolAnnouncements extends Page {
     }
 
     changeYearFilter(e: InputEvent) {
-        let filter = (e.target as HTMLInputElement).value;
+        const filter = (e.target as HTMLInputElement).value;
 
         localStorage.setItem("Announcement Year Filter", filter);
 
@@ -88,13 +88,13 @@ export class SchoolAnnouncements extends Page {
     }
 
     renderPage() {
-        let filteredAnnouncements = this.announcementFilterPipeline.run(this.announcements, {
+        const filteredAnnouncements = this.announcementFilterPipeline.run(this.announcements, {
             //TODO Make this multi-select
             years: this.yearFilter == "all" ? [] : [this.yearFilter],
             search: this.searchFilter
         });
 
-        let readAnnouncements = this.readAnnouncements;
+        const readAnnouncements = this.readAnnouncements;
 
         return html`
         <div class="header">
@@ -114,8 +114,8 @@ export class SchoolAnnouncements extends Page {
 
         <!--The ugliest code ever written, but the div tags for .content need to be where they are, or the :empty selector won't work-->
         <div class="content">${repeat(filteredAnnouncements, announcement => announcement.id, (announcement: Announcement) => {
-            let isMeeting = announcement.meeting !== undefined;
-            let read = readAnnouncements.has(announcement.id);
+            const isMeeting = announcement.meeting !== undefined;
+            const read = readAnnouncements.has(announcement.id);
 
             return html`
             <a-post title="${announcement.title}"
@@ -140,7 +140,7 @@ function isSameDay(a: Date, b: Date) {
 }
 
 function humanDate(date: Date) {
-    let now = new Date();
+    const now = new Date();
 
     if (isSameDay(date, now)) return "Today";
 
@@ -162,7 +162,7 @@ function humanList(list: string[]) {
     if (list.length == 0) return "";
     if (list.length == 1) return list[0];
 
-    let last = list.pop();
+    const last = list.pop();
 
     return `${list.join(", ")} and ${last}`;
 }

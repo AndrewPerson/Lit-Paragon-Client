@@ -18,7 +18,7 @@ export class TokenFactory {
             }
         });
 
-        let response = await tracer.fetch(`${endpoint}/api/token`, {
+        const response = await tracer.fetch(`${endpoint}/api/token`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded"
@@ -56,7 +56,7 @@ export class TokenFactory {
         }
 
         try {
-            let token = this.Create(await response.json());
+            const token = this.Create(await response.json());
 
             tracer.addData({
                 token: {
