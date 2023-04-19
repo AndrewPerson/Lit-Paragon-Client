@@ -2,7 +2,6 @@ import { Time } from "./utils";
 
 export type BaseBell = {
     name: string,
-    shortName: string,
     startTime: Time,
     endTime: Time,
     shouldDisplay: boolean

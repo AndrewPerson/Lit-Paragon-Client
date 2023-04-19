@@ -24,7 +24,6 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
                 return {
                     type: "period",
                     name: title ?? period.title,
-                    shortName: period.title,
                     periodIndex: periodIndex++,
                     startTime: bell.startTime,
                     endTime: bell.endTime ?? bell.startTime,
@@ -40,7 +39,6 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
                 return {
                     type: "bell",
                     name: bell.bellDisplay,
-                    shortName: bell.bell ?? bell.bellDisplay,
                     startTime: bell.startTime,
                     endTime: bell.endTime ?? bell.startTime,
                     shouldDisplay: true
