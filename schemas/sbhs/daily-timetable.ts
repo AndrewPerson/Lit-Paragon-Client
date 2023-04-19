@@ -14,7 +14,8 @@ export type Bell = Infer<typeof Bell>;
 export const Period = object({
     title: string(),
     room: string(),
-    fullTeacher: string()
+    fullTeacher: string(),
+    year: string(),
 });
 
 export type Period = Infer<typeof Period>;
@@ -27,8 +28,7 @@ export const PartialPeriod = object({
 export type PartialPeriod = Infer<typeof PartialPeriod>;
 
 export const Subject = object({
-    title: string(),
-    shortTitle: string()
+    title: string()
 });
 
 export type Subject = Infer<typeof Subject>;

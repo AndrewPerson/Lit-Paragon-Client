@@ -1,5 +1,5 @@
 import { Resource } from "./resource";
-import { ClassVariation, DailyTimetable, Bell, Period, PartialPeriod, RoomVariation } from "schemas/sbhs/daily-timetable";
+import { ClassVariation, DailyTimetable, Bell, Period, PartialPeriod, RoomVariation, Subject } from "schemas/sbhs/daily-timetable";
 import { DailyTimetable as TransformedDailyTimetable, Bell as TransformedBell, Period as TransformedPeriod } from "schemas/daily-timetable";
 
 export class DailyTimetableResource extends Resource<DailyTimetable, TransformedDailyTimetable> {
@@ -16,19 +16,23 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
             if (period !== undefined && "fullTeacher" in period) {
                 const roomVariation = original.roomVariations[bell.period] as RoomVariation | undefined;
                 const classVariation = original.classVariations[bell.period] as ClassVariation | undefined;
+                const subject = original.timetable.subjects[`${period.year}${period.title}`] as Subject | undefined;
+
+                const titleParts = subject?.title.split(" ");
+                const title = titleParts?.slice(1, titleParts.length).join(" ");
 
                 return {
                     type: "period",
-                    name: period.title,
+                    name: title ?? period.title,
+                    shortName: period.title,
                     periodIndex: periodIndex++,
-                    shortName: bell.bell ?? period.title,
                     startTime: bell.startTime,
                     endTime: bell.endTime ?? bell.startTime,
                     room: roomVariation?.roomTo ?? period.room,
                     roomChanged: roomVariation !== undefined,
                     teacher: classVariation?.casualSurname ?? classVariation?.casual ?? period.fullTeacher,
                     teacherChanged: classVariation !== undefined && classVariation.type !== "nocover",
-                    shouldDisplay: true,
+                    shouldDisplay: true
                 } as TransformedPeriod;
             }
             else
