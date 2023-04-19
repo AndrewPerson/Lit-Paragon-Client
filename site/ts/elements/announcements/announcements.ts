@@ -159,6 +159,7 @@ function humanDate(date: Date) {
 
 // TODO Will need reworking to support doing stuff like "Year 7, 8, 9 and 10"
 function humanList(list: string[]) {
+    if (list.length == 0) return "";
     if (list.length == 1) return list[0];
 
     let last = list.pop();
