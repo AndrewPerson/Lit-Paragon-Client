@@ -1,6 +1,6 @@
 import { Resource } from "./resource";
 import { Timetable, Period } from "schemas/sbhs/timetable";
-import { Timetable as TransformedTimetable, Week } from "schemas/timetable";
+import { Timetable as TransformedTimetable, Week, Day } from "schemas/timetable";
 
 export class TimetableResource extends Resource<Timetable, TransformedTimetable> {
     public readonly name = "timetable";
@@ -8,22 +8,21 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
     public readonly validator = Timetable;
 
     public transform(original: Timetable): TransformedTimetable {
-        let weeks: Week[] = [];
+        const weeks = Object.values(original.days).sort((a, b) => a.dayNumber - b.dayNumber)
+        .reduce((days, day) => {
+            const currentDay = days[days.length - 1] as Day | undefined;
 
-        Object.values(original.days).forEach(day => {
-            // Day numbers are 1-indexed, but we want 0-indexed
-            const weekIndex = Math.floor((day.dayNumber - 1) / 5);
-
-            if (weeks[weekIndex] === undefined) {
-                weeks[weekIndex] = {
-                    weekName: String.fromCharCode(65 + weekIndex),
-                    days: []
-                };
+            if (currentDay !== undefined) {
+                for (let i = currentDay.dayNumber; i < day.dayNumber; i++) {
+                    days.push({
+                        dayName: "",
+                        dayNumber: i,
+                        periods: []
+                    });
+                }
             }
 
-            const week = weeks[weekIndex];
-
-            week.days.push({
+            days.push({
                 dayName: day.dayname,
                 dayNumber: day.dayNumber,
                 periods: (Object.entries(day.periods).filter(([_, period]) => period.room != null) as [string, Period][]).map(([periodIndexString, period]) => ({
@@ -34,7 +33,23 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
                     teacher: period.fullTeacher
                 }))
             });
-        });
+
+            return days;
+        }, [] as Day[])
+        .reduce((weeks, day) => {
+            const currentWeek = weeks[weeks.length - 1];
+
+            if (currentWeek.days.length == 5) {
+                weeks.push({
+                    days: [day]
+                });
+            }
+            else {
+                currentWeek.days.push(day);
+            }
+
+            return weeks;
+        }, [{ days: [] }] as Week[]);
 
         return {
             weeks: weeks
