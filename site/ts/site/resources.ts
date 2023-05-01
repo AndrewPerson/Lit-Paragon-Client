@@ -84,9 +84,10 @@ export class Resources {
     static async update(): Promise<UpdateFailure | null> {
         if (this._updating) {
             let promiseResolve: (value: UpdateFailure | null | PromiseLike<UpdateFailure | null>) => void = null!;
+            
             return new Promise<UpdateFailure | null>(resolve => {
                 promiseResolve = resolve;
-                this._updateEndCallbacks.add(resolve);
+                this._updateEndCallbacks.add(promiseResolve);
             }).then(result => {
                 this._updateEndCallbacks.remove(promiseResolve);
                 return result;
@@ -127,65 +128,44 @@ export class Resources {
 
         this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
 
-        const parser = parseJSONStream([
-            ["result", "*"],
-            ["token"],
-            ["error"]
-        ]);
+        let error: UpdateFailure | null = null;
 
-        let finishedPiping = false;
-        let objectHandlerCount = 0;
+        const parser = parseJSONStream()
+            .onStructure(["token"], async token => {
+                let cache = await caches.open(RESOURCE_CACHE);
 
-        let objectHandlerPromiseResolve: (value: UpdateFailure | null | PromiseLike<UpdateFailure | null>) => void = null!;
+                await cache.put("Token", new Response(token));
+            })
+            .onStructure(["errors"], errorsString => {
+                const errors: { [key: string]: number } = JSON.parse(errorsString);
 
-        const objectHandlerPromise = new Promise<UpdateFailure | null>(resolve => {
-            objectHandlerPromiseResolve = resolve;
+                const statusCodes = Object.values(errors);
 
-            parser.onObject(async (path, object) => {
-                objectHandlerCount++;
+                // TODO Better error handling
+                if (statusCodes.length > 0) error = statusCodeToFailure(statusCodes[0]);
+            })
+            .onStructure(["result", "*"], async (object, path) => {
+                await this.set(path[1], object);
+                receivedResourceCount++;
 
-                if (path[0] == "token") {
-                    let cache = await caches.open(RESOURCE_CACHE);
-
-                    await cache.put("Token", new Response(object));
-                }
-                else if (path[0] == "error") {
-                    resolve(statusCodeToFailure(parseInt(object)));
-                }
-                else {
-                    await this.set(path[1], object);
-                    receivedResourceCount++;
-
-                    this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
-                }
-
-                objectHandlerCount--;
-
-                if (objectHandlerCount == 0 && finishedPiping) resolve(null);
+                this._updateResourceReceivedCallbacks.invoke(receivedResourceCount, resourceCount);
             });
-        });
 
         await resourceResponse.body?.pipeTo(new WritableStream({
             write: parser.write.bind(parser)
         }));
 
-        parser.finish();
-        finishedPiping = true;
+        await parser.finish();
 
-        // Possible that all processing finished before we finished piping
-        if (objectHandlerCount == 0) objectHandlerPromiseResolve(null);
-
-        const failure = await objectHandlerPromise;
-
-        if (failure == null) {
+        if (error == null) {
             this._updateEndCallbacks.invoke(null);
             this._updating = false;
             return null;
         }
         else {
-            this._updateEndCallbacks.invoke(failure);
+            this._updateEndCallbacks.invoke(error);
             this._updating = false;
-            return failure;
+            return error;
         }
     }
 }
