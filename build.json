@@ -9,7 +9,7 @@
     "env": {
         "shared": {
             "vars": {
-                "VERSION": "2.4.3",
+                "VERSION": "2.4.4",
                 "FILE_CACHE": "Offline Resources",
                 "RESOURCE_CACHE": "User Resources",
                 "SKIN_CACHE": "Skin Resources",
