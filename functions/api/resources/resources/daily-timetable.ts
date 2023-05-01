@@ -46,17 +46,8 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
             }
         });
 
-        for (const bell of timetable.reverse()) {
-            if (bell.type == "period") break;
-
-            bell.shouldDisplay = false;
-        }
-
-        for (const bell of timetable.reverse()) {
-            if (bell.type == "period") break;
-
-            bell.shouldDisplay = false;
-        }
+        hideLeadingBells(timetable.reverse());
+        hideLeadingBells(timetable.reverse());
 
         return {
             date: original.date,
@@ -65,4 +56,20 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
             timetable: timetable
         };
     }
+}
+
+function hideLeadingBells(bells: (TransformedBell | TransformedPeriod)[]) {
+    let prevBell = null;
+
+    for (const bell of bells) {
+        if (bell.type == "period") {
+            if (prevBell != null) prevBell.shouldDisplay = true;
+            break;
+        }
+
+        bell.shouldDisplay = false;
+        prevBell = bell;
+    }
+
+    return bells;
 }
