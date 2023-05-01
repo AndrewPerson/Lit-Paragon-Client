@@ -81,36 +81,39 @@ export class TokenFactory {
         }
     }
 
-    static Create(unformatted: any): Token {
+    static Create(unformatted: unknown): Token {
+        if (unformatted == null || typeof unformatted != "object")
+            throw new Error("Token is not an object");
+
         if ("error" in unformatted)
-            throw new Error(unformatted.error);
+            throw new Error(unformatted.error?.toString());
 
         let access_token: string;
-        if ("access_token" in unformatted)
+        if ("access_token" in unformatted && typeof unformatted.access_token == "string")
             access_token = unformatted.access_token;
         else
             throw new Error("No access token present in token");
 
         let refresh_token: string;
-        if ("refresh_token" in unformatted)
+        if ("refresh_token" in unformatted && typeof unformatted.refresh_token == "string")
             refresh_token = unformatted.refresh_token;
         else
             throw new Error("No refresh token present in token");
 
         let expiry: Date;
-        if ("expiry" in unformatted)
+        if ("expiry" in unformatted && typeof unformatted.expiry == "string")
             expiry = new Date(unformatted.expiry);
         else {
             expiry = new Date();
 
-            if ("expires_in" in unformatted)
+            if ("expires_in" in unformatted && typeof unformatted.expires_in == "number")
                 expiry.setHours(expiry.getHours() + unformatted.expires_in / 3600);
             else
                 expiry.setHours(expiry.getHours() + 1);
         }
 
         let termination: Date;
-        if ("termination" in unformatted)
+        if ("termination" in unformatted && typeof unformatted.termination == "string")
             termination = new Date(unformatted.termination);
         else {
             termination = new Date();
