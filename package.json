@@ -15,7 +15,7 @@
         "esbuild-linux-64": "^0.14.2",
         "esbuild-plugin-conditional-build": "^1.0.2",
         "minimatch": "^6.1.8",
-        "sbhs-random-data": "^1.2.7",
+        "sbhs-random-data": "^1.2.9",
         "typescript": "^5.0.4",
         "wrangler": "^2.16.0"
     },
