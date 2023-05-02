@@ -46,8 +46,9 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
             }
         });
 
-        hideLeadingBells(timetable.reverse());
-        hideLeadingBells(timetable.reverse());
+        timetable.reverse();
+        hideLeadingBells(timetable);
+        timetable.reverse();
 
         return {
             date: original.date,
