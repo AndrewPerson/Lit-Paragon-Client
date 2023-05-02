@@ -10,10 +10,10 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
     public transform(original: Timetable): TransformedTimetable {
         const weeks = Object.values(original.days).sort((a, b) => a.dayNumber - b.dayNumber)
         .reduce((days, day) => {
-            const currentDay = days[days.length - 1] as Day | undefined;
+            const prevDay = days[days.length - 1] as Day | undefined;
 
-            if (currentDay !== undefined) {
-                for (let i = currentDay.dayNumber; i < day.dayNumber; i++) {
+            if (prevDay !== undefined) {
+                for (let i = prevDay.dayNumber + 1; i < day.dayNumber; i++) {
                     days.push({
                         dayName: "",
                         dayNumber: i,
