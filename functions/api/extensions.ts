@@ -8,16 +8,16 @@ export const onRequestGet = create<SBHSEnv>("extensions", true, async ({ env: { 
     const page = parseInt(searchParams.get("page") ?? "0");
 
     const extensionsRequest = PARAGON_DB.prepare("SELECT * FROM extensions LIMIT ?,?").bind(pageSize * (page - 1), pageSize);
-    const extensions = (await extensionsRequest.all<object>()).results.map(e => {
+    const extensions = (await extensionsRequest.all<any>()).results?.map(e => {
         return {
             ...e,
             preview: e["preview"] == 1
         }
-    }) as object[];
+    }) ?? [];
 
     return new Response(JSON.stringify(extensions), {
         headers: {
-            "content-type": "application/json",
+            "Content-Type": "application/json",
             "Cache-Control": "max-age=86400, immutable"
         }
     });
