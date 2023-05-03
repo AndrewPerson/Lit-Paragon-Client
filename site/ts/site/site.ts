@@ -3,7 +3,7 @@ import { Extensions } from "./extensions";
 import { Callbacks, Callback } from "./callback";
 
 import { Page as PageElement } from "../elements/page/page";
-import { ExtensionPage } from "../elements/extensions/extensions";
+import { ExtensionPage } from "../elements/extension/extension";
 
 export type Page = {
     page: string,

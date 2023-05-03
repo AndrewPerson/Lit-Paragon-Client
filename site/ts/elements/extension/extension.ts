@@ -13,6 +13,7 @@ import "../loader/loader";
 
 //@ts-ignore
 import extensionsCss from "./extensions.css";
+import { Callbacks } from "site/ts/site/callback";
 
 @customElement("extension-page")
 export class ExtensionPage extends Page {
@@ -25,19 +26,24 @@ export class ExtensionPage extends Page {
     @property()
     src: string = "";
 
-    @query("iframe", true)
-    frame: HTMLIFrameElement;
+    @query("#frame")
+    frame: HTMLIFrameElement | null;
 
-    @query("loading-indicator", true)
+    @query("#loader", true)
     loader: LoadingIndicator;
+
+    loadedCallbacks = new Callbacks<[], unknown>();
 
     stopLoading() {
         this.loader.remove();
-        this.frame.removeAttribute("style");
+        this.frame?.removeAttribute("style");
+
+        this.loadedCallbacks.invoke();
     }
 
     postMessage(message: any) {
-        this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
+        if (this.frame == null) this.loadedCallbacks.add(() => this.postMessage(message));
+        else this.frame.contentWindow?.postMessage(message, new URL(this.src).origin);
     }
 
     constructor() {
@@ -71,7 +77,7 @@ export class ExtensionPage extends Page {
     disconnectedCallback() {
         super.disconnectedCallback();
 
-        this.frame.removeEventListener("load", this.stopLoading);
+        this.frame?.removeEventListener("load", this.stopLoading);
 
         const ids = Extensions.extensionNotificationIds.get(new URL(this.src).origin);
 
@@ -88,8 +94,8 @@ export class ExtensionPage extends Page {
 
     render() {
         return html`
-        <iframe @load="${this.stopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation allow-top-navigation" style="display: none"></iframe>
-        <loading-indicator></loading-indicator>
+        <iframe id="frame" @load="${this.stopLoading}" src="${this.src}" sandbox="allow-downloads allow-forms allow-modals allow-popups allow-scripts allow-same-origin allow-storage-access-by-user-activation allow-top-navigation" style="display: none"></iframe>
+        <loading-indicator id="loader"></loading-indicator>
         `;
     }
 }
