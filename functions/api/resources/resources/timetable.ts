@@ -1,6 +1,7 @@
 import { Resource } from "./resource";
 import { Timetable, Period } from "schemas/sbhs/timetable";
 import { Timetable as TransformedTimetable, Week, Day } from "schemas/timetable";
+import { skipEnd } from "utils/utils";
 
 export class TimetableResource extends Resource<Timetable, TransformedTimetable> {
     public readonly name = "timetable";
@@ -55,8 +56,4 @@ export class TimetableResource extends Resource<Timetable, TransformedTimetable>
             weeks: weeks
         };
     }
-}
-
-function skipEnd<T>(arr: T[], n: number) {
-    return arr.slice(0, arr.length - n);
 }

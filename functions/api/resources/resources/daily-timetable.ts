@@ -1,6 +1,7 @@
 import { Resource } from "./resource";
-import { ClassVariation, DailyTimetable, Bell, Period, PartialPeriod, RoomVariation, Subject } from "schemas/sbhs/daily-timetable";
+import { ClassVariation, DailyTimetable, Period, PartialPeriod, RoomVariation, Subject } from "schemas/sbhs/daily-timetable";
 import { DailyTimetable as TransformedDailyTimetable, Bell as TransformedBell, Period as TransformedPeriod } from "schemas/daily-timetable";
+import { skipEnd } from "utils/utils";
 
 export class DailyTimetableResource extends Resource<DailyTimetable, TransformedDailyTimetable> {
     public readonly name = "dailytimetable";
@@ -23,7 +24,7 @@ export class DailyTimetableResource extends Resource<DailyTimetable, Transformed
 
                 return {
                     type: "period",
-                    name: title ?? period.title,
+                    name: formatPeriodTitle(title ?? period.title),
                     periodIndex: periodIndex++,
                     startTime: bell.startTime,
                     endTime: bell.endTime ?? bell.startTime,
@@ -71,4 +72,8 @@ function hideLeadingBells(bells: (TransformedBell | TransformedPeriod)[]) {
     }
 
     return bells;
+}
+
+function formatPeriodTitle(title: string) {
+    return skipEnd(title.split(" ")).join()
 }
